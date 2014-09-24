@@ -1,0 +1,12 @@
+1. install X11 on mac  (quartz)
+
+> brew install <name>
+> brew list (shows what's installed)
+
+
+this commpiled opencvsg++ DisplayImage.cpp -o hello-world `pkg-config --cflags --libs opencv` 
+
+
+http://opencv.wikispaces.com/
+
+Note: A color image is assumed to have data in BGR order !!

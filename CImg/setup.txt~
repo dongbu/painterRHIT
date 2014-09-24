@@ -1,0 +1,8 @@
+1. install X11 on mac  (quartz)
+
+> brew install <name>
+> brew list (shows what's installed)
+
+
+this commpiled opencv
+g++ DisplayImage.cpp -o hello-world `pkg-config --cflags --libs opencv` 

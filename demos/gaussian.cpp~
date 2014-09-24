@@ -1,0 +1,31 @@
+#include <cv.h>
+#include <highgui.h>
+ 
+int main(int argc, char* argv[])
+{
+    //Load an image to transform !!
+        IplImage* img = cvLoadImage( "image.jpg" );
+ 
+        // Define two window for showing input image and processed output of an Image.
+        cvNamedWindow( "example_input" );
+    cvNamedWindow( "example_output" );
+ 
+    // Show the original image
+    cvShowImage("example_input", img);
+ 
+    // Create an image for the output
+    IplImage* out = cvCreateImage( cvGetSize(img), IPL_DEPTH_8U, 3 );
+ 
+    // Perform a Gaussian blur ( Convolving with 11 X 11 Gaussian).
+    cvSmooth( img, out, CV_GAUSSIAN, 11, 11 );
+ 
+    // Show the processed image
+    cvShowImage("example_output", out);
+ 
+    cvWaitKey(0);
+    cvReleaseImage( &img );
+    cvReleaseImage( &out );
+    cvDestroyWindow( "example_input" );
+    cvDestroyWindow( "example_output" );
+    return 0;
+}
