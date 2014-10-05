@@ -14,3 +14,5 @@ Note: A color image is assumed to have data in BGR order !!
 
 # this commits w/ message
 sudo git commit -a -m "simplify compiling"
+
+Eric Guilford was here.
