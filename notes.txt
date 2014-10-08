@@ -17,3 +17,4 @@ sudo git commit -a -m "simplify compiling"
 
 
 # Ben Paul here!
+# Eric Guilford was here
