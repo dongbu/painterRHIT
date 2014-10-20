@@ -24,9 +24,18 @@ void thresh_callback(int, void* );
 
 int main(int, char**)
 {
-    VideoCapture cap(0); // open the default camera
-    if(!cap.isOpened())  // check if we succeeded
-        return -1;
+    VideoCapture cap0(0); // open the default camera
+    if(!cap0.isOpened()) {  // check if we succeeded
+      printf("Camera0 not open\n");
+      return -1;
+    }
+
+    int cap1_on=1;
+    VideoCapture cap1(1); // open the default camera
+    if(!cap1.isOpened()) {  // check if we succeeded
+      cap1_on=0;
+      printf("Camera1 not open\n");
+    }
 
     namedWindow("edges",1);
     moveWindow("edges",100,30);
@@ -34,13 +43,17 @@ int main(int, char**)
     namedWindow("aveedges",1);
     moveWindow("aveedges",100,300);
 
+    if (cap1_on) {
+      namedWindow("webcam1",1);
+    }
+
     createTrackbar( " Canny thresh:", "aveedges", &thresh, max_thresh, thresh_callback );
     thresh_callback( 0, 0 );
 
     namedWindow("contours",1);
     moveWindow("contours",100,500);
 
-    //    cap >> aveedges; // get a new frame from camera
+    //    cap0 >> aveedges; // get a new frame from camera
       
     int c=0;
 
@@ -48,7 +61,7 @@ int main(int, char**)
     {
       c++;
         Mat frame;
-        cap >> frame; // get a new frame from camera
+        cap0 >> frame; // get a new frame from camera
         cvtColor(frame, edges, CV_BGR2GRAY);
 	grey=edges.clone();
 
@@ -64,6 +77,12 @@ int main(int, char**)
         imshow("aveedges", aveedges);
 
 	fuzzy=aveedges.clone();
+
+	if (cap1_on) {
+	  Mat frame1;
+	  cap1 >> frame1; // get a new frame from camera
+	  imshow("webcam1", frame1);
+	}
 
 	//        imshow("edges", edges);
         if(waitKey(10) >= 0) break;

@@ -96,6 +96,13 @@ void thresh_callback(int, void* )
       num_drawn++;
       drawContours( drawing, contours_poly, i, color, 1, 8, hierarchy, 0, Point() );      
     }
+
+    // test printing out some contour points
+    if (i==3) {
+      for (int j=0; j<contours_poly[i].size();j++) {
+	//cout << contours[i][j] << endl; //do whatever
+      }
+    }
   }
 
   char text[50];
