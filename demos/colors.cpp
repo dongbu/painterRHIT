@@ -22,6 +22,10 @@ int g_paint_color[3] = {255,255,255};
 double *g_gradients;
 RNG rng(12345);
 
+// helper functions to move windows in a grid
+int win_w (int n,int offset=0) { return 20+n*520+offset; }
+int win_h (int n,int offset=0) { return 20+n*550+offset; }
+
 // returns a random color
 static Scalar randomColor( RNG& rng ) {
   int icolor = (unsigned) rng;
@@ -127,7 +131,7 @@ void showGradients() {
 
     namedWindow( "gradient_window", CV_WINDOW_AUTOSIZE );
     imshow( "graident_window", gradients_image );
-    moveWindow("graident_window",1000,100); 
+    moveWindow("graident_window",win_w(3),win_h(0)); 
   }
 
   // try to "paint" by lots of lines in the right direction
@@ -157,7 +161,7 @@ void showGradients() {
 
   namedWindow( "lines_window", CV_WINDOW_AUTOSIZE );
   imshow( "lines_window", lines_image );
-  moveWindow("lines_window",1000,700); 
+  moveWindow("lines_window",win_w(2),win_h(0)); 
 
 }
 
@@ -167,7 +171,7 @@ void autoPaint(int candidate_multiplier=1) {
   Mat paint_image = Mat::zeros( s.height, s.width, CV_8UC3 );
   namedWindow( "paint_window", CV_WINDOW_AUTOSIZE );
   imshow( "paint_window", paint_image );
-  moveWindow("paint_window",1000,700); 
+  moveWindow("paint_window",win_w(2),win_h(1)); 
 
   // brush stroke parameters
   int thickness=3;  //6
@@ -277,6 +281,8 @@ void updateColorWindow(int r, int g, int b)
 
   namedWindow( "color", CV_WINDOW_AUTOSIZE );
   imshow( "color", color_image );
+  moveWindow("color",win_w(0),win_h(2)); 
+
   createTrackbar( " Distance:", "color", &g_color_distance, g_max_color_distance, color_distance_callback );
   // set global paint color
   g_paint_color[0] = b;
@@ -315,7 +321,7 @@ void showSingleColor(int use_kmeans=1) {
   
   namedWindow( "single_color_image_window", CV_WINDOW_AUTOSIZE );
   imshow( "single_color_image_window", single_color_image );
-  moveWindow("single_color_image_window",10,700); 
+  moveWindow("single_color_image_window",win_w(0),win_h(1)); 
 }
 
 
@@ -575,7 +581,7 @@ void colors_callback(int, void* )
 
   namedWindow( "kmeans_window", CV_WINDOW_AUTOSIZE );
   imshow( "kmeans_window", kmeans_image );
-  moveWindow("kmeans_window",650,100);
+  moveWindow("kmeans_window",win_w(1),win_h(0));
 
   std::vector<Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
   sortColorsInImage(&kmeans_image,colors); // prints out which colors are in image
@@ -586,6 +592,16 @@ void colors_callback(int, void* )
 /** @function main */
 int main( int argc, char** argv )
 {
+
+  printf("colors <image_filename>\n");
+  printf("Commands:\n");
+  printf("  p = autopaint, P = autopaint (3x strokes) \n");
+  printf("  n = create a fresh (green) canvas \n");
+  printf("  i = paint starting with darkest ('space'=interate,'i' again=do all in order \n");
+  printf("      NOTE: make sure you press 'n' first to create a fresh canvas before press 'i'\n");
+  printf("  s = paint only a single color in the canvas (choose color by clicking in any window) \n");
+  printf("  c = show where single color on the kmeans image (choose color by clicking in any window) \n");
+
   char* image="images/lena.jpg";
   if (argv[1]) {
     image = argv[1];
@@ -598,14 +614,10 @@ int main( int argc, char** argv )
     return -1;
   }  
 
-  /// Convert image to gray and blur it
-  //cvtColor( src, src_gray, CV_BGR2GRAY );
-  //blur( src_gray, src_gray, Size(3,3) );
-
   /// Create Window
   char source_window[] = "Source";
   namedWindow( source_window, CV_WINDOW_AUTOSIZE );
-  moveWindow(source_window,100,100);
+  moveWindow(source_window,win_w(0),win_h(0,-30));
   imshow( source_window, src );
 
   createTrackbar( " Blur loops:", source_window, &g_blur_loops, g_max_blur_loops, colors_callback );
@@ -634,7 +646,7 @@ int main( int argc, char** argv )
       canvas_image.setTo(cv::Scalar(0,255,0)); // redVal,greenVal,blueVal
       namedWindow( "canvas_window", CV_WINDOW_AUTOSIZE );
       imshow( "canvas_window", canvas_image );
-      moveWindow("canvas_window",1500,700); 
+      moveWindow("canvas_window",win_w(1),win_h(1)); 
       setMouseCallback("canvas_window", canvasMouseCallBackFunc, NULL);
 
     } else if (k == int('s')) { // paint one color on canvas
