@@ -19,6 +19,8 @@ int g_max_blur_loops = 64;
 int g_color_distance = 0; // color picker error levels
 int g_max_color_distance = 255;
 int g_paint_color[3] = {255,255,255};
+Scalar g_default_canvas_color = cv::Scalar(0,255,0);
+
 double *g_gradients;
 RNG rng(12345);
 
@@ -67,17 +69,33 @@ void defineGradients(Mat* original, double gradArray[], int grid_size=3) {
 }
 
 // returns a number that estimates the difference between 2 images
-double calcDiffBetweenImages(Mat* mat1, Mat* mat2) {
+// if canvas_mat is defined, then discount pixels in it that have the default canvas rgb
+// canvas_mat is basically a mask... show regions that have yet to be painted
+double calcDiffBetweenImages(Mat* mat1, Mat* mat2, Mat* canvas_mat=NULL) {
   double diff=0;
+
+  double weight = 1.0; // how much to weigh a pixels 'difference'
   for (int i=0; i<mat1->cols; i++) {
     for (int j=0; j<mat2->rows; j++) {
+
+      // discount "improving" places that have yet to be painted (this code shows limited benefit)
+      // the goal is to avoid strokes that partially paint over other paint
+      weight=1.0;
+      if (canvas_mat) {
+	Vec3b canvas_color = canvas_mat->at<Vec3b>(Point(i,j));
+	if (canvas_color[0]==g_default_canvas_color[0] &&
+	    canvas_color[1]==g_default_canvas_color[1] &&
+	    canvas_color[2]==g_default_canvas_color[2]) { 
+	  weight=.1; 
+	}
+      }
+
       Vec3b color1 = mat1->at<Vec3b>(Point(i,j));
       Vec3b color2 = mat2->at<Vec3b>(Point(i,j));
 
-      //cv::Vec3b d = color1-color2; // Vec4d?
-      //double distance = cv::norm(d);
       double distance = sqrt((color1[0]-color2[0])*(color1[0]-color2[0]) + (color1[1]-color2[1])*(color1[1]-color2[1]) + (color1[2]-color2[2])*(color1[2]-color2[2]));
-      diff += distance;
+      diff += distance * weight;
+      //double distance = cv::norm(color1-color2);
     }
   }
   return diff;
@@ -212,8 +230,8 @@ void autoPaint(int candidate_multiplier=1) {
       // see if it's better than before
       Mat origimageROI = src(roi).clone();
       
-      double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI);
-      double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI);
+      double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI);
+      double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI);
       if (i%100==0) {
 	printf("%d/%d: NEW:%f ORIG:%f",num_strokes, i, newDiff,origDiff);
       }
@@ -392,8 +410,8 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
 
       // see if it's better than before
       Mat origimageROI = src(roi).clone();
-      double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI);
-      double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI);
+      double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI);
+      double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI);
       if (i%1000==0) {
 	printf("%d/%d: NEW:%f ORIG:%f",num_strokes, i, newDiff,origDiff);
       }
@@ -596,9 +614,8 @@ int main( int argc, char** argv )
   printf("colors <image_filename>\n");
   printf("Commands:\n");
   printf("  p = autopaint, P = autopaint (3x strokes) \n");
-  printf("  n = create a fresh (green) canvas \n");
+  printf("  n = create/reset a fresh (green) canvas \n");
   printf("  i = paint starting with darkest ('space'=interate,'i' again=do all in order \n");
-  printf("      NOTE: make sure you press 'n' first to create a fresh canvas before press 'i'\n");
   printf("  s = paint only a single color in the canvas (choose color by clicking in any window) \n");
   printf("  c = show where single color on the kmeans image (choose color by clicking in any window) \n");
 
@@ -628,6 +645,15 @@ int main( int argc, char** argv )
   setMouseCallback("kmeans_window", kmeansMouseCallBackFunc, NULL);
   setMouseCallback(source_window, sourceMouseCallBackFunc, NULL);
 
+  // create the default canvas
+  Size s = src.size();
+  canvas_image = Mat::zeros( s.height, s.width, CV_8UC3 );
+  canvas_image.setTo(g_default_canvas_color); // redVal,greenVal,blueVal
+  namedWindow( "canvas_window", CV_WINDOW_AUTOSIZE );
+  imshow( "canvas_window", canvas_image );
+  moveWindow("canvas_window",win_w(1),win_h(1)); 
+  setMouseCallback("canvas_window", canvasMouseCallBackFunc, NULL);
+
   while (1) {
     int k = waitKey(33);
     if (k==27) { // Esc key to stop
@@ -641,14 +667,8 @@ int main( int argc, char** argv )
       paintByIncreasedLightnessOfColors();
 
     } else if (k == int('n')) { // reset canvas
-      Size s = src.size();
-      canvas_image = Mat::zeros( s.height, s.width, CV_8UC3 );
-      canvas_image.setTo(cv::Scalar(0,255,0)); // redVal,greenVal,blueVal
-      namedWindow( "canvas_window", CV_WINDOW_AUTOSIZE );
-      imshow( "canvas_window", canvas_image );
-      moveWindow("canvas_window",win_w(1),win_h(1)); 
-      setMouseCallback("canvas_window", canvasMouseCallBackFunc, NULL);
-
+      canvas_image.setTo(g_default_canvas_color); // redVal,greenVal,blueVal
+  
     } else if (k == int('s')) { // paint one color on canvas
       singlePaintColorOnCanvas();
     } else if (k == int('c')) { // show where single color exists on kmeans image
