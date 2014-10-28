@@ -76,7 +76,7 @@ int main() {
 
 	for (int i = 0; i < numBrushes; i++) {
 		startBrush(myfile, brushes[i]);
-		drawContours(myfile, contours, z, numContours, numPoints);
+		writeROBOFORTHFromContours(myfile, contours, z);
 		stopBrush(myfile, brushes[i]);
 	}
 

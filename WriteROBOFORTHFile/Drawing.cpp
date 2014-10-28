@@ -8,22 +8,20 @@
 using namespace std;
 using namespace cv;
 
-void drawContours(ofstream &myfile, vector<vector<Point> > &contours, double z, int numContours, int numPoints){
+void writeROBOFORTHFromContours(ofstream &myfile, vector<vector<Point> > &contours, double z){
 	char movetoCommand[25];
-	int n=0;
-	  for(int j = 0; j < numContours; j++){
-		  for(int i = 0; i < numPoints; i++){
-			  n=i;
+
+	for (vector<vector<Point> >::iterator pathIterator = contours.begin(); pathIterator != contours.end(); pathIterator++) {
+		for (vector<Point>::iterator pointIterator = pathIterator->begin(); pointIterator != pathIterator->end(); pointIterator++){
 			  //Move up first, then over, then down
-			  if(i==0){// First point in contour
-				  sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)contours[j][i].x, (double)contours[j][i].y, z+20);
+			  if(pointIterator == pathIterator->begin()){// First point in contour
+				  sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)pointIterator->x, (double)pointIterator->y, z+20);
 				  myfile << movetoCommand;
 			  }
-		  	  sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)contours[j][i].x, (double)contours[j][i].y, z);
-//		  	  i=n;
+		  	  sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)pointIterator->x, (double)pointIterator->y, z);
 		  	  myfile << movetoCommand;
-		  	  if(i==numPoints-1){
-		  		sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)contours[j][i].x, (double)contours[j][i].y, z+20);
+		  	  if((pointIterator+1) == pathIterator->end()){
+		  		sprintf(movetoCommand, "%.1f %.1f %.1f MOVETO\n", (double)pointIterator->x, (double)pointIterator->y, z+20);
 		  		myfile << movetoCommand;
 		  	  }
 	  	  }
