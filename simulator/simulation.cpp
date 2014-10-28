@@ -30,9 +30,12 @@ int main(int argc, char** argv) {
 	}
 
 	vector<vector<double*> > positions = vector<vector<double*> >();
+	vector<double*> tmp = vector<double*>();
+	positions.push_back(tmp);
+
 	vector<double> workingStack;
 
-	bool drawing = false;
+	bool drawing = true;
 	for(unsigned int i = 0; i <  stack.size(); i++) {
 		double value;
 		if(isdigit(stack[i][0]) || stack[i][0] == '-' || stack[i][0] == '+') {
@@ -76,11 +79,14 @@ int main(int argc, char** argv) {
 
 	int drawWidth = 3;
 	double* lastPoint;
+	int zoffset = -75;
+	int zmul = 3;
 	for(vector<vector<double*> >::iterator iter = positions.begin(); iter != positions.end(); ++iter) {
 		lastPoint = (*iter)[0];
 		for(vector<double*>::iterator iter2 = (*iter).begin(); iter2 != (*iter).end(); ++iter2) {
-				cout << (*iter2)[0] << " " << (*iter2)[1] << " " << (*iter2)[2] << " " << endl;
-				line(image, coord2Point(lastPoint), coord2Point((*iter2)), CV_RGB(0,0,0), drawWidth, 8);
+				cout << (*iter2)[2] << " " << (*iter2)[1] << " " << (*iter2)[0] << " " << endl;
+				int z = (*iter2)[0]*zmul + zoffset;
+				line(image, coord2Point(lastPoint), coord2Point((*iter2)), CV_RGB(z,z,z), drawWidth, 8);
 				lastPoint = (*iter2);
 		}
 		cout << "New Path" << endl;
@@ -93,10 +99,10 @@ int main(int argc, char** argv) {
 }
 
 Point coord2Point(double* in) {
-	const static double scaleFactor = 10;
+	const static double scaleFactor = 1;
 	const static Point offset = Point(0,-0);
 
-	Point ret = Point(in[0]+offset.x,in[1]+offset.y);
+	Point ret = Point(in[2]+offset.x,in[1]+offset.y);
 	ret *= scaleFactor;
 	ret += offset;
 	return ret;
