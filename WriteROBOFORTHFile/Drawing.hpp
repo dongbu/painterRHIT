@@ -10,7 +10,7 @@
 using namespace std;
 using namespace cv;
 
-void writeROBOFORTHFromContours(ofstream &myfile, vector<vector<Point> > &contours, double z);
+void writeROBOFORTHFromContours(ofstream &myfile, vector<vector<Point> > &contours, double z, double scale = 1);
 void stopBrush(ofstream &myfile, Brush &currentBrush);
 void startBrush(ofstream &myfile, Brush &nextBrush);
 #endif
