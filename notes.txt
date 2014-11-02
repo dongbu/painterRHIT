@@ -7,6 +7,15 @@
 this commpiled opencvsg++ DisplayImage.cpp -o hello-world `pkg-config --cflags --libs opencv` 
 
 
+how to install opencv on mac
+1. install homebrew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+2. install opencv
+brew tap homebrew/science
+brew install opencv
+
+
 http://opencv.wikispaces.com/
 
 Note: A color image is assumed to have data in BGR order !!

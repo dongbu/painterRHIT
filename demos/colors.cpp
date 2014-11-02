@@ -3,19 +3,30 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>       /* pow */
 
 #include "kmeansSegment.cpp"
 
 using namespace cv;
 using namespace std;
 
+//cv::namedWindow("myWindow", CV_WINDOW_NORMAL)
+//cv::setWindowProperties("myWindow", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN)
+//http://stackoverflow.com/questions/6512094/how-to-display-an-image-in-full-screen-borderless-window-in-opencv
+
 Mat src; 
 Mat kmeans_image;
 Mat canvas_image; 
 int g_colors = 20; // kmeans
 int g_max_colors = 64;
-int g_blur_loops = 0;
-int g_max_blur_loops = 64;
+int g_blur_loops = 0; // after doing a kmeans
+int g_max_blur_loops = 264;
+int g_gradient_blur_loops = 0; // when defining a gradient
+int g_max_gradient_blur_loops = 64;
+int g_pass_num = 1; // used to define paint thickness (not used much now)
+int g_line_width = 3; // initial value
+int g_line_length = 6; // initial value
+
 int g_color_distance = 0; // color picker error levels
 int g_max_color_distance = 255;
 int g_paint_color[3] = {255,255,255};
@@ -28,45 +39,29 @@ RNG rng(12345);
 int win_w (int n,int offset=0) { return 20+n*520+offset; }
 int win_h (int n,int offset=0) { return 20+n*550+offset; }
 
-// returns a random color
-static Scalar randomColor( RNG& rng ) {
-  int icolor = (unsigned) rng;
-  return Scalar( icolor&255, (icolor>>8)&255, (icolor>>16)&255 );
-}
+// simple stroke
+class LineStroke {
+public:
+  double length;   // length of a stroke
+  double width;    // width of stroke
+  double direction;  // radian
+  int r,g,b;
+  int i,j; // pixels
+  double score; // how much improvement it makes
+  int prev,next; // index of prev and next line stroke (default = -1 which means none)
+  int start, end; // 1 = start / end of a multiple segment stroke
+  int painted; // 1 = has been painted
 
-// creates an array of gradients for every pixel of an image.  grid_size=1,3,5,7 (for sobel operator)
-void defineGradients(Mat* original, double gradArray[], int grid_size=3) {
-  Mat original_Mat = original->clone();
-  
-  // Convert it to gray
-  cvtColor( original_Mat, original_Mat, CV_RGB2GRAY );
-  //blur(original_Mat, original_Mat, Size(7,7));
-  
-  /// Generate grad_x and grad_y
-  Size s = original_Mat.size();
-  Mat grad_x = Mat::zeros(s.height, s.width, CV_16S); 
-  Mat grad_y = Mat::zeros(s.height, s.width, CV_16S);
-  
-  /// Gradient X
-  Sobel(original_Mat, grad_x, CV_16S, 1, 0, grid_size);
-  
-  /// Gradient Y
-  Sobel(original_Mat, grad_y, CV_16S, 0, 1, grid_size);
-  
-  short* pixelX = grad_x.ptr<short>(0);
-  short* pixelY = grad_y.ptr<short>(0);
-  
-  for(int i = 0; i < grad_x.rows * grad_x.cols; i++) 
-    {
-      double directionRAD = atan2((double)pixelY[i], (double)pixelX[i]);
-      //int directionDEG = (int)(180 + directionRAD / M_PI * 180);
-      gradArray[i]=directionRAD;
-      
-      if (i%1000==0) {
-	//printf("%5i: (%f,%f) => Rad: %5.3f, Deg: %5.1d\n",i, (double)pixelY[i], (double)pixelX[i],directionRAD,directionDEG);
-      }
-    }
-}
+  LineStroke() { // constructor
+    r=0; g=0; b=0; i=0; j=0; score=0; direction=0; length=2; width=1; prev=-1; next=-1; start=1; end=1; painted=0;
+  }
+};
+
+// returns a random color
+//static Scalar randomColor( RNG& rng ) {
+//  int icolor = (unsigned) rng;
+//  return Scalar( icolor&255, (icolor>>8)&255, (icolor>>16)&255 );
+//}
 
 // returns a number that estimates the difference between 2 images
 // if canvas_mat is defined, then discount pixels in it that have the default canvas rgb
@@ -101,6 +96,86 @@ double calcDiffBetweenImages(Mat* mat1, Mat* mat2, Mat* canvas_mat=NULL) {
   return diff;
 }
 
+// creates an array of gradients for every pixel of an image.  grid_size=1,3,5,7 (for sobel operator)
+void defineGradients(Mat* original, double gradArray[], int grid_size=3, int num_blurs=0) {
+  Mat original_Mat = original->clone();
+  
+  // Convert it to gray
+  cvtColor( original_Mat, original_Mat, CV_RGB2GRAY );
+  //blur(original_Mat, original_Mat, Size(7,7));
+  
+  /// Generate grad_x and grad_y
+  Size s = original_Mat.size();
+  Mat grad_x = Mat::zeros(s.height, s.width, CV_16S); 
+  Mat grad_y = Mat::zeros(s.height, s.width, CV_16S);
+  
+  /// Gradient X
+  Sobel(original_Mat, grad_x, CV_16S, 1, 0, grid_size);
+  
+  /// Gradient Y
+  Sobel(original_Mat, grad_y, CV_16S, 0, 1, grid_size);
+  
+  short* pixelX = grad_x.ptr<short>(0);
+  short* pixelY = grad_y.ptr<short>(0);
+  
+  for(int i = 0; i < grad_x.rows * grad_x.cols; i++)  {
+    double directionRAD = atan2((double)pixelY[i], (double)pixelX[i]);
+    //int directionDEG = (int)(180 + directionRAD / M_PI * 180);
+    gradArray[i]=directionRAD;
+    // if (i%1000==0) { printf("%5i: (%f,%f) => Rad: %5.3f, Deg: %5.1d\n",i, (double)pixelY[i], (double)pixelX[i],directionRAD,directionDEG); }
+  }
+
+  //  num_blurs = 1;
+  if (num_blurs>0) {  // "tame" gradients
+    // post process gradient to make each average
+    double *new_gradients; // new blurred gradient
+    new_gradients = new double[s.height * s.width];   
+
+    for (int loop=0; loop<num_blurs; loop++) {
+    
+      for (int i=1; i<src.cols-1; i++) {
+	for (int j=1; j<src.rows-1; j++) {
+	
+	  int index = s.width*j + i;
+
+	  // add the 9 neighbors
+	  int c=0;
+	  double sumx=0;
+	  double sumy=0;
+	
+	  for (int n=-1; n==1; n++) {
+	    for (int m=-1; m==1; m++) {
+	    
+	      if (i+n >= 0 && i+n<s.width &&
+		  j+m >= 0 && j+m<s.height && !(n==0 && m==0)) {
+		c++;
+		sumx += cos(gradArray[index + n * s.width + m]);
+		sumy += sin(gradArray[index + n * s.width + m]);
+	      }
+	    }
+	  }
+	  if (c==0) { c=1; } // just for div zero bugs
+	
+	  double dx = 0.6 * cos(gradArray[index]) + 0.4 * sumx/c;
+	  double dy = 0.6 * sin(gradArray[index]) + 0.4 * sumy/c;
+
+	  //debug
+	  //dx = cos(gradArray[index]);
+	  //dy = sin(gradArray[index]);
+	
+	  new_gradients[index]=atan2(dy, dx);
+	}
+      }
+    
+      // copy back the blurred gradient
+      for (int i = 0; i < grad_x.rows * grad_x.cols; i++) {
+	  gradArray[i]=new_gradients[i];
+      }
+      //delete [] new_gradients;
+    }
+  }
+}
+
 
 // look at gradients
 void showGradients() {
@@ -110,16 +185,9 @@ void showGradients() {
   double *gradients;
 
   gradients = new double[s.height * s.width];   
-  defineGradients(&gradients_image,gradients,3);
+  defineGradients(&gradients_image,gradients,3,g_gradient_blur_loops);
   g_gradients = gradients;
   
-  // perhaps post process gradient to make each value the median of it's 9-neighbors
-  for (int i=1; i<src.cols-1; i++) {
-    for (int j=1; j<src.rows-1; j++) {
-      
-    }
-  }
-
   // show the gradients on the image (debug)
   if (1) {
     for (int i=0; i<src.cols; i++) {
@@ -192,8 +260,8 @@ void autoPaint(int candidate_multiplier=1) {
   moveWindow("paint_window",win_w(2),win_h(1)); 
 
   // brush stroke parameters
-  int thickness=3;  //6
-  double line_length=6; // 12
+  int thickness=g_line_width;
+  double line_length=g_line_length;
   int lineType=8; // always keep 8 for solid antialiased line
 
   int num_candidates=candidate_multiplier*src.rows*src.cols/(thickness*line_length/15);
@@ -283,9 +351,12 @@ void autoPaint(int candidate_multiplier=1) {
   }
 }
 
-/** @function color_distance_callback */
+void line_callback(int, void* ) {
+  printf("line width: %i, line lenght: %i\n", g_line_width, g_line_length);
+}
+
 void color_distance_callback(int, void* ) {
-    cout << "color distance" << g_color_distance << endl;
+  printf("Color distance: %i\n",g_color_distance);
 }
 
 void updateColorWindow(int r, int g, int b) 
@@ -351,8 +422,8 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
   if (b<0) { b=g_paint_color[0]; }
 
   // brush stroke parameters
-  int thickness=3;  //6
-  double line_length=6; // 12
+  int thickness=g_line_width;
+  double line_length=g_line_length;
   int lineType=8; // always keep 8 for solid antialiased line
 
   // get a list of valid pixels
@@ -371,69 +442,223 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
   printf("%d pixels found\n",n_pixels);
 
   int num_candidates=n_pixels/(thickness*line_length/15);
-  //int num_candidates=n_pixels/5;
-  int num_strokes=0;
 
+  // test all the candiates to see how they improve things alone
+  LineStroke *strokes = new LineStroke[num_candidates];
   for (int i=0; i<num_candidates; i++) {
     int index = rng.uniform(0,n_pixels);
-    int x = pixels[index][0];
-    int y = pixels[index][1];
+    int x = strokes[i].i = pixels[index][0];
+    int y = strokes[i].j = pixels[index][1];
+    strokes[i].direction = g_gradients[src.rows*y + x] + M_PI/2; // rotate 90;
 
-    // check to see if it's the right color
-    Vec3b color = kmeans_image.at<Vec3b>(Point(x,y));
-    if (color[0] != b || color[1] != g || color[2] != r) {
-      continue;
-    } 
+    strokes[i].r = r;
+    strokes[i].g = g;
+    strokes[i].b = b;
+    strokes[i].length = line_length;
+    strokes[i].width = thickness;    
 
-    double rad = g_gradients[src.rows*y + x];
+    // do quick score = count how many pixels of kmeans image in the stroke are the right color
+    int c = 0;
+    for (int n=-strokes[i].width; n<=strokes[i].width; n++) { // go along width
+      for (int m=-strokes[i].length; m<=strokes[i].length; m++) { // go along length
+	double cosine = cos(strokes[i].direction);
+	double sine = sin(strokes[i].direction);
+	int dx = floor(m * cosine - n * sine);
+	int dy = floor(m * sine + n * cosine);
 
-    rad=rad+M_PI/2; // rotate 90;
-    double dx1=.2*line_length*cos(rad);
-    double dy1=.2*line_length*sin(rad);
-    double dx2=.8*line_length*cos(rad);
-    double dy2=.8*line_length*sin(rad);
-
-    if (0 && rad==M_PI/2) { //means no idea which way is gradient
-      //cv::line( paint_image, Point(x-dy1,y-dy1), Point(x+dy2,y+dy2), Scalar(0, 255, 0), thickness, lineType );
-    } else { 
-      // save a region around where you are planning to paint
-      cv::Rect roi = cv::Rect(fmax(0,x-1.5*line_length),fmax(0,y-1.5*line_length),
-			      fmin(src.cols-x+line_length,3*line_length),
-			      fmin(src.rows-y+line_length,3*line_length));
-      //roi = cv::Rect(0,0,src.cols,src.rows);
-      Mat paintROI = canvas_image(roi).clone();
-
-      // paint a line
-      cv::line( canvas_image, Point(x-dx1,y-dy1), Point(x+dx2,y+dy2), 
-		Scalar( g_paint_color[0], g_paint_color[1], g_paint_color[2] ), thickness, lineType );
-      Mat newpaintROI = canvas_image(roi).clone();
-
-      // see if it's better than before
-      Mat origimageROI = src(roi).clone();
-      double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI);
-      double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI);
-      if (i%1000==0) {
-	printf("%d/%d: NEW:%f ORIG:%f",num_strokes, i, newDiff,origDiff);
+	Vec3b color = kmeans_image.at<Vec3b>(Point(x + dx,y + dy));
+	if (color[0] == strokes[i].b && color[1] == strokes[i].g && color[2] == strokes[i].r) {
+	  c++;
+	}
       }
+    }
+    strokes[i].score = c;
+  }
 
-      // if not, revert back to the original
-      if (newDiff>=origDiff) {
-	cv::Mat destinationROI = canvas_image( roi );
-	paintROI.copyTo( destinationROI );
-	if (i%1000==0) { printf(" WORSE\n"); }
-      } else {
-	if (i%1000==0) { printf(" BETTER\n"); }
-	num_strokes++;
-      }
+  struct compare_LineStroke_by_score {
+    bool operator() (const LineStroke & lhs, const LineStroke & rhs) { return lhs.score > rhs.score; }
+  };
 
-      if (i%1000==0) {
-	imshow( "canvas_window", canvas_image );
-	waitKey(1);
+  struct compare_LineStroke_by_location {
+    bool operator() (const LineStroke & lhs, const LineStroke & rhs) { 
+      double dlhs = lhs.i + 2 * lhs.j;
+      double drhs = rhs.i + 2 * rhs.j;
+      return dlhs > drhs;
+    }
+  };
+
+  // sort by best candidates first 
+  //for (int i=0; i<10; i++) { printf("CANDIDATE %i : %f\n",i,strokes[i].score); }
+  std::sort(strokes, strokes+num_candidates, compare_LineStroke_by_score());
+  //std::sort(strokes, strokes+num_candidates, compare_LineStroke_by_location());
+  //for (int i=0; i<10; i++) { printf("SORT CANDIDATE %i : %f\n",i,strokes[i].score); }
+
+  // connect all the strokes that have the end of one near the beginning of next
+  printf("Connecting %i strokes\n", num_candidates);
+  for (int i=0; i<=num_candidates; i++) {
+    continue; // comment this out later for real
+
+    if (strokes[i].painted == 0) { // unattached stroke... see if can attach
+      strokes[i].painted = 1;
+
+      int prev_index=i;
+      int done=0;
+      while (!done) {
+	// calc the coordinate of the end of the previous stroke
+	double endx = strokes[prev_index].i + strokes[prev_index].length * cos(strokes[prev_index].direction);
+	double endy = strokes[prev_index].j + strokes[prev_index].length * sin(strokes[prev_index].direction);
+	double width = strokes[prev_index].width;
+	
+	// find the best next stroke (combination of score and start of next stroke = end of this one)
+	int best_index=-1; // none found
+	double best_score=-9999999;
+	for (int j=0; j<=num_candidates; j++) {
+	  if (prev_index != j && strokes[j].painted == 0) { // a candidate to be the next one
+	    double startx = strokes[j].i;
+	    double starty = strokes[j].j;
+	    
+	    double distance = sqrt((startx - endx)*(startx - endx) + (starty - endy)*(starty - endy));
+	    if (distance<width/3) { // inside the end of the stroke (assuming it ends in a circle)
+	      double score = (width/3 - distance) * strokes[j].score;
+	      if (score > best_score) {
+		best_score = score;
+		best_index = j;
+	      }
+	    }
+	  }
+	}
+
+	if (best_index>-1) { // found a stroke to attach
+	  strokes[prev_index].end = 0;
+	  strokes[prev_index].next = best_index;
+	  strokes[best_index].prev = prev_index;
+	  strokes[best_index].painted = 1; // mark it used
+	  prev_index = best_index; 
+	
+	} else { // didn't find a stroke to attach... so call this one an end
+	  strokes[prev_index].end = 1;
+	  done = 1;
+	}
       }
     }
   }
+  // order them so they are clustered
+  //std::sort(strokes, strokes+num_candidates, compare_LineStroke_by_location());
+  
+  // apply the strokes
+  printf("Painting strokes\n");
+
+  int num_strokes_attempts=0;
+  int num_strokes=0;
+  for (int i=0; i<num_candidates; i++) { strokes[i].painted=0; }
+  
+  int done=0;
+  int this_index = -1;
+  while (!done) {
+    // find stroke 
+    if (this_index == -1) { // first loop
+      this_index = 0; // pick the first one
+    } else {
+      // find the closest unpainted stroke that is nearest from where you're at.
+      double min_distance=99999999999999;
+      double min_index=-1;
+      double endx = strokes[this_index].i + strokes[this_index].length * cos(strokes[this_index].direction);
+      double endy = strokes[this_index].j + strokes[this_index].length * sin(strokes[this_index].direction);
+      for (int i=0; i<num_candidates; i++) {
+	if (strokes[i].painted == 0 && strokes[i].prev == -1) { // hasn't been painted yet and it's a start of a stroke
+	  double startx = strokes[i].i;
+	  double starty = strokes[i].j;
+	  double distance = sqrt((startx - endx)*(startx - endx) + (starty - endy)*(starty - endy));
+	  if (distance < min_distance) {
+	    min_distance=distance;
+	    min_index = i; 
+	  }
+	}
+      }
+      if (min_index == -1) { done=1; }
+      this_index = min_index;
+    }
+  
+    if (!done) {
+      int stroke_done=0;
+      while (!stroke_done) {
+	num_strokes_attempts++;
+
+	// paint this stroke
+	int x = strokes[this_index].i;
+	int y = strokes[this_index].j;
+
+	//printf("PAINTING stroke #%i (%i,%i) ... next is %i\n",this_index , x, y, strokes[this_index].next);
+
+	// check to see if it's the right color... mostly for debug
+	Vec3b color = kmeans_image.at<Vec3b>(Point(x,y));
+	if (color[0] != b || color[1] != g || color[2] != r) { 
+	  printf("HEY...wrong color [%i,%i,%i] not [%i,%i,%i] index:%i next:%i x,y=%i,%i\n",r,b,g,color[2],color[1],color[0],this_index,strokes[this_index].next, x,y); stroke_done=1; continue; 
+	}
+	
+	//double rad = g_gradients[src.rows*y + x];
+	double rad = strokes[this_index].direction;
+	
+	double dx1=.2*line_length*cos(rad);
+	double dy1=.2*line_length*sin(rad);
+	double dx2=.8*line_length*cos(rad);
+	double dy2=.8*line_length*sin(rad);
+	
+	if (0 && rad==M_PI/2) { //means no idea which way is gradient
+	  //cv::line( paint_image, Point(x-dy1,y-dy1), Point(x+dy2,y+dy2), Scalar(0, 255, 0), thickness, lineType );
+	} else { 
+	  // save a region around where you are planning to paint
+	  cv::Rect roi = cv::Rect(fmax(0,x-1.5*line_length),fmax(0,y-1.5*line_length),
+				  fmin(src.cols-x+line_length,3*line_length),
+				  fmin(src.rows-y+line_length,3*line_length));
+	  //roi = cv::Rect(0,0,src.cols,src.rows);
+	  Mat paintROI = canvas_image(roi).clone();
+	  
+	  // paint a line
+	  cv::line( canvas_image, Point(x-dx1,y-dy1), Point(x+dx2,y+dy2), 
+		    Scalar( g_paint_color[0], g_paint_color[1], g_paint_color[2] ), thickness, lineType );
+	  Mat newpaintROI = canvas_image(roi).clone();
+	  
+	  // see if it's better than before
+	  Mat origimageROI = src(roi).clone();
+	  double origDiff = calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI);
+	  double newDiff = calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI);
+	  if (num_strokes_attempts % 1000==0) { printf("%d/%d: NEW:%f ORIG:%f",num_strokes, num_strokes_attempts, newDiff,origDiff); }
+	  
+	  // if not, revert back to the original
+	  if (newDiff>=origDiff) {
+	    cv::Mat destinationROI = canvas_image( roi );
+	    paintROI.copyTo( destinationROI );
+	    if (num_strokes_attempts % 1000==0) { printf(" WORSE\n"); }
+	  } else {
+	    if (num_strokes_attempts % 1000==0) { printf(" BETTER\n"); }
+	    num_strokes++;
+	  }
+	  
+	  if (num_strokes % 1000 == 0) {
+	    imshow( "canvas_window", canvas_image );
+	    waitKey(1);
+	  }
+	}
+	strokes[this_index].painted = 1;
+
+	// check for next stroke
+	if (strokes[this_index].next >= 0) { // move to the next stroke in the series
+	  this_index = strokes[this_index].next;
+
+	} else { // no more to paint in this series
+	  stroke_done = 1;
+	}
+      }
+    }
+
+  }
+  printf("Done painting strokes\n");
   imshow( "canvas_window", canvas_image );
   waitKey(1);
+
+  delete [] strokes;
+  //delete pixels;
 }
 
 // given an image, return a sorted list of colors (darkest first)
@@ -497,7 +722,7 @@ void paintByIncreasedLightnessOfColors() {
 
   int do_wait=1;
   for (int i=0; i<colors.size(); i++) {
-    printf("XSORTED %d: [%d,%d,%d] = NORM:%f\n",i,colors[i][0],colors[i][1],colors[i][2],norm(colors[i]));
+    printf("Painting color #%d: [%d,%d,%d] = brightness norm:%f\n",i,colors[i][0],colors[i][1],colors[i][2],norm(colors[i]));
     //g_paint_color[0] = colors[i][0];
     //g_paint_color[1] = colors[i][1];
     //g_paint_color[2] = colors[i][2];
@@ -637,8 +862,11 @@ int main( int argc, char** argv )
   moveWindow(source_window,win_w(0),win_h(0,-30));
   imshow( source_window, src );
 
-  createTrackbar( " Blur loops:", source_window, &g_blur_loops, g_max_blur_loops, colors_callback );
+  createTrackbar( " Blur loops:", source_window, &g_blur_loops, g_max_blur_loops, colors_callback ); 
   createTrackbar( " Colors:", source_window, &g_colors, g_max_colors, colors_callback );
+  createTrackbar( " Gradient blur loops:", source_window, &g_gradient_blur_loops, g_max_gradient_blur_loops, colors_callback );
+  createTrackbar( " Line width:", source_window, &g_line_width, 20, line_callback );
+  createTrackbar( " Line length:", source_window, &g_line_length, 40, line_callback );
   colors_callback( 0, 0 );
 
   //set the callback function for any mouse event
@@ -665,6 +893,7 @@ int main( int argc, char** argv )
 	autoPaint(3);
     } else if (k == int('i')) { 
       paintByIncreasedLightnessOfColors();
+      g_pass_num++;
 
     } else if (k == int('n')) { // reset canvas
       canvas_image.setTo(g_default_canvas_color); // redVal,greenVal,blueVal

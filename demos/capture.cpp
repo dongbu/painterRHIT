@@ -84,7 +84,14 @@ int main(int, char**)
 	  imshow("webcam1", frame1);
 	}
 
-	//        imshow("edges", edges);
+
+	int k = waitKey(33);
+	if (k==27) { // Esc key to stop
+	  break;
+	} else if (k == int('s')) { 
+	  printf("saving test.jpg\n");
+	  imwrite("test.jpg", frame);
+	}
         if(waitKey(10) >= 0) break;
     }
     // the camera will be deinitialized automatically in VideoCapture destructor
