@@ -10,7 +10,7 @@ using namespace cv;
 
 void writeROBOFORTHFromContours(ofstream &myfile, vector<vector<Point> > &contours, double z, double scale){
 	char movetoCommand[25];
-	sprintf(movetoCommand, "10000 SPEED !\n");
+	sprintf(movetoCommand, "5000 SPEED !\n");
 	myfile << movetoCommand;
 	sprintf(movetoCommand, "1000 ACCEL !\n");
 	myfile << movetoCommand;
@@ -36,7 +36,7 @@ void stopBrush(ofstream &myfile, Brush &currentBrush){
 	char movetoCommand[25];
 	sprintf(movetoCommand, "1000 SPEED !\n");
 	myfile << movetoCommand;
-	sprintf(movetoCommand, "100 ACCEL !\n");
+	sprintf(movetoCommand, "500 ACCEL !\n");
 	myfile << movetoCommand;
 
 	double plungeDepth = 100.0;
@@ -54,7 +54,9 @@ void stopBrush(ofstream &myfile, Brush &currentBrush){
 	plunge(myfile, plungeDepth, increment);
 
 	// Let go of the brush
-	sprintf(movetoCommand, "TELL WRIST -500 MOVE\n");
+	sprintf(movetoCommand, "TELL WRIST -5000 MOVE\n");
+	myfile << movetoCommand;
+	sprintf(movetoCommand, "CARTESIAN\n");
 	myfile << movetoCommand;
 }
 
@@ -62,7 +64,7 @@ void startBrush(ofstream &myfile, Brush &nextBrush){
 	char movetoCommand[25];
 	sprintf(movetoCommand, "1000 SPEED !\n");
 	myfile << movetoCommand;
-	sprintf(movetoCommand, "100 ACCEL !\n");
+	sprintf(movetoCommand, "500 ACCEL !\n");
 	myfile << movetoCommand;
 
 
@@ -80,7 +82,9 @@ void startBrush(ofstream &myfile, Brush &nextBrush){
 	plunge(myfile, plungeDepth, increment);
 
 	// Grab the next brush
-	sprintf(movetoCommand, "TELL WRIST 500 MOVE\n");
+	sprintf(movetoCommand, "TELL WRIST 5000 MOVE\n");
+	myfile << movetoCommand;
+	sprintf(movetoCommand, "CATESIAN\n");
 	myfile << movetoCommand;
 
 	// Retract upwards
