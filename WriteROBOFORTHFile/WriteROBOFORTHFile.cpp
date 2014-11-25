@@ -25,12 +25,6 @@ double fRand(double fMin, double fMax);
 int main() {
 	clock_t t;
 	srand((unsigned int)time(&t)%UINT_MAX);
-//	char msg[10];
-//	for (int i = 0; i < 5; i++) {
-//		sprintf(msg, "%d: %u\n", i, (unsigned int)time(&t)%UINT_MAX);
-//		cout << msg;
-//		usleep(10000);
-//	}
 
 	ofstream myfile;
 	myfile.open("Output.ED2");
@@ -42,7 +36,7 @@ int main() {
 	myfile << "READY\n";
 
 	// Create vectors to store Points
-	int numPoints = 5, numContours = 4, numBrushes = 3;
+	int numPoints = 4, numContours = 4, numBrushes = 3;
 
 	// Create vector to store contour vectors
 	vector<vector<Point> > contours(numContours, vector<Point>(numPoints));
@@ -76,12 +70,14 @@ int main() {
 
 	for (int i = 0; i < numBrushes; i++) {
 		startBrush(myfile, brushes[i]);
-		writeROBOFORTHFromContours(myfile, contours, z);
+		writeROBOFORTHFromContours(myfile, contours, z, 1);
 		stopBrush(myfile, brushes[i]);
 	}
 
 	// Retract after last brush put back
-	myfile << "0.0 0.0 100.0 MOVE\n";
+	double plungeDepth = 100.0;
+	double increment = 5.0;
+	retract(myfile, plungeDepth, increment);
 
 	// Move back to HOME position
 	myfile << "HOME\n";
@@ -141,7 +137,6 @@ void triangle(vector<vector<Point> > &contours, double yReady, double yMax, int 
 	contours[0][1] = Point(200.0f / tan(PI/3.0f), 400.0f);
 	contours[0][2] = Point(-200.0f / tan(PI/3.0f), 400.0f);
 	contours[0][3] = Point(0.0f, 200.0f);
-	contours[0][4] = Point(0.0f, 200.0f);
 }
 
 double fRand(double fMin, double fMax)

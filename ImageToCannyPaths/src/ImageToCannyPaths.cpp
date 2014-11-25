@@ -11,13 +11,14 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "../../WriteROBOFORTHFile/Drawing.hpp"
+#include "../../WriteROBOFORTHFile/Brush.hpp"
 
 using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
-	if (argc != 4) {
-		cout << "Usage: ImageToCannyPaths.exe <path to image> <path to output file> <canny threshold>" << endl;
+	if (argc != 5) {
+		cout << "Usage: ImageToCannyPaths.exe <path to image> <path to output file> <canny threshold> <z-height>" << endl;
 		return 0;
 	}
 	char* inputFilePath = argv[1];
@@ -25,6 +26,7 @@ int main(int argc, char* argv[]) {
 	ofstream outputFile;
 	outputFile.open(outputFilePath);
 	int cannyThresh = atoi(argv[3]);
+	int z = atoi(argv[4]);
 
 	outputFile << "CARTESIAN\n";
 
@@ -33,19 +35,15 @@ int main(int argc, char* argv[]) {
 	Canny(grayscaleImage,cannyOutput, cannyThresh, cannyThresh*2);
 
 	vector<vector<Point> > contours;
-	findContours(cannyOutput, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_L1, Point(-300, 300));
+	findContours(cannyOutput, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_L1, Point(-600, 600));
 
-	Mat drawing = Mat::zeros( cannyOutput.size(), CV_8UC3 );
-	  for( int i = 0; i< contours.size(); i++ ) {
-	    //Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-	    Scalar color = Scalar( 255, 255, 255);
-	      drawContours( drawing, contours, i, color, 1, 8);
-	    }
+	Brush rBrush = Brush("RDROP", "RGET");
+	Brush gBrush = Brush("GDROP", "GGET");
 
+	vector<Brush> brushes = {rBrush, rBrush, rBrush, rBrush};
 
-	writeROBOFORTHFromContours(outputFile, contours, -163, 0.5);
+	writeROBOFORTHFromContours(outputFile, contours, brushes, z, 0.25);
 	cout << "Done" << endl;
-	  imshow("Canny", drawing);
 	  imshow("GraySource", grayscaleImage);
 	  waitKey(0);
 
