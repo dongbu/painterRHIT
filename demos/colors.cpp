@@ -856,9 +856,14 @@ int main( int argc, char** argv )
     return -1;
   }  
 
+  std::cout << CV_VERSION << std::endl;
+
   /// Create Window
   char source_window[] = "Source";
   namedWindow( source_window, CV_WINDOW_AUTOSIZE );
+  //   setWindowProperty(source_window, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN); //#FULLSCREEN)
+   setWindowProperty(source_window, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN); //#FULLSCREEN)
+
   moveWindow(source_window,win_w(0),win_h(0,-30));
   imshow( source_window, src );
 
