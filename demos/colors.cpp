@@ -3,7 +3,13 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cv.h>
+#include <highgui.h>
 #include <math.h>       /* pow */
+
+
+//#include "opencv2/opencv.hpp"
+
 
 #include "kmeansSegment.cpp"
 
@@ -380,6 +386,137 @@ void updateColorWindow(int r, int g, int b)
   //createTrackbar( " Colors:", "color", &g_colors, g_max_colors, colors_callback );
 }
 
+// BEGIN PROJECTOR FUNCTIONS
+int g_projector_calibrated = 0;
+Mat g_projector_lambda( 2, 4, CV_32FC1 );
+int g_projector_pixels_width = 1920;
+int g_projector_pixels_height = 1000; //should be 1080... but reduce to have image header
+Mat g_projector_image;
+
+Point2f projectorInputQuad[4]; // Input Quadilateral or Image plane coordinates
+Point2f projectorOutputQuad[4]; // Input Quadilateral or Image plane coordinates
+
+void calibrate_projector() {
+  int w = 512;
+  int h = 512;
+  int offset_x = floor((g_projector_pixels_width - w)/2);
+  int offset_y = floor((g_projector_pixels_height - h)/2);
+  int g_projector_corner = 0;
+
+  projectorInputQuad[0] = Point2f( 0,0 );
+  projectorInputQuad[1] = Point2f( g_projector_pixels_width,0);
+  projectorInputQuad[2] = Point2f( g_projector_pixels_width,g_projector_pixels_height);
+  projectorInputQuad[3] = Point2f( 0,g_projector_pixels_height ); 
+
+  projectorInputQuad[0] = Point2f( offset_x, offset_y );
+  projectorInputQuad[1] = Point2f( offset_x + w, offset_y);
+  projectorInputQuad[2] = Point2f( offset_x + w, offset_y + h);
+  projectorInputQuad[3] = Point2f( offset_x, offset_y + h ); 
+
+  for (int i=0; i<4; i++) {
+    projectorOutputQuad[i] = projectorInputQuad[i];
+  }
+
+  namedWindow( "projector_window", CV_WINDOW_AUTOSIZE );
+
+  g_projector_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
+  rectangle( g_projector_image, Point(offset_x,offset_y), Point(offset_x+w,offset_y+h), Scalar( 0, 55, 255 ), +1, 4 );
+
+  float delta = 1.0;
+  int projector_done=0;
+  while (!projector_done)
+    {
+      Mat projector_corrected_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
+
+      // Set the lambda matrix the same type and size as webcam
+      g_projector_lambda = Mat::zeros( g_projector_image.rows, g_projector_image.cols, g_projector_image.type() );
+		
+      // Get the Perspective Transform Matrix i.e. lambda
+      g_projector_lambda = getPerspectiveTransform( projectorInputQuad, projectorOutputQuad );
+
+      // Apply the Perspective Transform for the webcam MIGHT NEED TEMP IMAGE
+      warpPerspective(g_projector_image, projector_corrected_image, g_projector_lambda, projector_corrected_image.size() );
+
+      imshow( "projector_window", projector_corrected_image );
+	
+      int k = waitKey(33);
+      if (k==27) { // Esc key to stop
+	break;
+      } else if (k == int('1')) {
+	g_projector_corner = 0;
+	printf("Click on upper left corner\n");
+      } else if (k == int('2')) {
+	g_projector_corner = 1;
+	printf("Click on upper right corner\n");
+      } else if (k == int('3')) {
+	g_projector_corner = 2;
+	printf("Click on lower right corner\n");
+      } else if (k == int('4')) {
+	g_projector_corner = 3;
+	printf("Click on lower left corner\n");
+
+      } else if (k == 63235) { // right arrow
+	printf("moving %i.x to right by %.3f\n",g_projector_corner,delta);
+	projectorOutputQuad[g_projector_corner].x += delta;
+      } else if (k == 63234) { // left arrow
+	printf("moving %i.x to left by %.3f\n",g_projector_corner,delta);
+	projectorOutputQuad[g_projector_corner].x += -delta;
+      } else if (k == 63232) { // up arrow
+	printf("moving %i.y up by %.3f\n",g_projector_corner,delta);
+	projectorOutputQuad[g_projector_corner].y += -delta;
+      } else if (k == 63233) { // down arrow
+	printf("moving %i.y down by %.3f\n",g_projector_corner,delta);
+	projectorOutputQuad[g_projector_corner].y += delta;
+
+      } else if (k == 43) { // +
+	delta = delta * 2;
+	printf("Changed delta to %.1f\n",delta);
+      } else if (k == 45) { // -
+	delta = delta * 0.5;
+	printf("Changed delta to %.1f\n",delta);
+
+      } else if (k == int('s')) { 
+	printf("saving projector calibration matrix to ...\n");
+	print(g_projector_lambda);
+
+      } else if (k == int('x')) { 
+	projector_done=1;
+      } else if (k == int('d')) { 
+	projector_done=1;
+	g_projector_calibrated = 1;
+      }
+      
+    }
+  printf("Projector calibration matrix defined.\n");
+  print(g_projector_lambda);
+
+}
+
+// show projector window
+void showProjectorWindow(Mat image) {
+  g_projector_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
+
+  int w = image.cols;
+  int h = image.rows;
+  int offset_x = floor((g_projector_pixels_width - w)/2);
+  int offset_y = floor((g_projector_pixels_height - h)/2);
+
+  image.copyTo(g_projector_image(Rect(offset_x,offset_y,w,h)));
+  rectangle( g_projector_image, Point(offset_x,offset_y), Point(offset_x+w,offset_y+h), Scalar( 0, 55, 255 ), +1, 4 );
+
+  namedWindow( "projector_window", CV_WINDOW_AUTOSIZE );
+  if (g_projector_calibrated) {
+    Mat projector_corrected_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
+    warpPerspective(g_projector_image, projector_corrected_image, g_projector_lambda, projector_corrected_image.size() );
+    imshow( "projector_window", projector_corrected_image );
+  } else {
+    imshow( "projector_window", g_projector_image );
+  }
+
+}
+
+// END PROJECTOR FUNCTIONS
+
 // show the region where the picked color exists in the kmeans_image
 void showSingleColor(int use_kmeans=1) {
   Size s = src.size();
@@ -411,6 +548,8 @@ void showSingleColor(int use_kmeans=1) {
   namedWindow( "single_color_image_window", CV_WINDOW_AUTOSIZE );
   imshow( "single_color_image_window", single_color_image );
   moveWindow("single_color_image_window",win_w(0),win_h(1)); 
+
+  showProjectorWindow(single_color_image);
 }
 
 
@@ -831,6 +970,126 @@ void colors_callback(int, void* )
   showGradients(); 
 }
 
+/// WEBCAM FUNCTIONS ///////////////////////
+
+int g_webcam_calibrated = 0;
+int g_flip_webcam = 1; 
+int g_webcamID = 0;
+int g_webcam_corner = 0;	
+int g_canvas_pixels_width = 1000;
+int g_canvas_pixels_height = 800;
+Point2f webcamQuad[4]; // Input Quadilateral or Image plane coordinates
+Point2f canvasCornersQuad[4]; // Output Quadilateral or World plane coordinates
+
+// Lambda Matrix
+Mat webcam_lambda( 2, 4, CV_32FC1 );
+
+// handle mouse clicks in the webcam window
+void webcamWindowMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+  if  ( event == EVENT_LBUTTONDOWN ) {
+    printf("Setting canvas corner %i to %i, %i\n",g_webcam_corner+1, x, y);
+    webcamQuad[g_webcam_corner] = Point2f( x,y );
+  }
+}
+
+void calibrate_webcam () {
+  VideoCapture cap0(g_webcamID); // open the default camera
+  if(!cap0.isOpened()) {  // check if we succeeded
+    printf("Camera0 not open\n");
+    return;
+  }
+  
+  namedWindow("webcam0",1);
+  moveWindow("webcam0",100,30);
+  setMouseCallback("webcam0", webcamWindowMouseCallBackFunc, NULL);
+
+  namedWindow("webcam corrected",1);
+  moveWindow("webcam corrected",100,300);
+             
+  Mat webcam;
+  cap0 >> webcam; // get a new frame from camera
+
+  // this is the "canvas"
+  Mat webcam_corrected = Mat::zeros(g_canvas_pixels_height, g_canvas_pixels_width, webcam.type() );
+
+  // The 4 points that select quadilateral on the input , from top-left in clockwise order
+  // These four pts are the sides of the rect box used as input
+  webcamQuad[0] = Point2f( 0,0 );
+  webcamQuad[1] = Point2f( webcam.cols-0,0);
+  webcamQuad[2] = Point2f( webcam.cols-0,webcam.rows-0);
+  webcamQuad[3] = Point2f( 0,webcam.rows-0  ); 
+  printf("Input is %i by %i\n",webcam.cols,webcam.rows);
+  printf("Click on upper left corner of canvas (press 1,2,3,4 to pick corner)\n");
+  printf("Click 'd' when done.  Click 'x' to cancel.\n");
+
+  // The 4 points where the mapping is to be done , from top-left in clockwise order
+  canvasCornersQuad[0] = Point2f( 0,0 );
+  canvasCornersQuad[1] = Point2f( g_canvas_pixels_width,0);
+  canvasCornersQuad[2] = Point2f( g_canvas_pixels_width,g_canvas_pixels_height);
+  canvasCornersQuad[3] = Point2f( 0,g_canvas_pixels_height );
+
+  int webcam_done=0;
+  while (!webcam_done)
+    {
+      // blend a few webcam images together
+      cap0 >> webcam; // get a new frame from camera
+      Mat temp_webcam;
+      for (int i=0; i<3; i++) {
+	cap0 >> temp_webcam; // get a new frame from camera
+	addWeighted( temp_webcam, .1, webcam, .9, 0.0, webcam);
+      }
+
+      if (g_flip_webcam) {
+	flip(webcam,webcam,-1); // horizontal and vertically
+      }
+      imshow("webcam0", webcam);
+
+      // Set the lambda matrix the same type and size as webcam
+      webcam_lambda = Mat::zeros( webcam.rows, webcam.cols, webcam.type() );
+		
+      // Get the Perspective Transform Matrix i.e. lambda
+      webcam_lambda = getPerspectiveTransform( webcamQuad, canvasCornersQuad );
+	
+      // Apply the Perspective Transform just found to the src image
+      warpPerspective(webcam, webcam_corrected,webcam_lambda,webcam_corrected.size() );
+      imshow("webcam corrected", webcam_corrected);
+
+      int k = waitKey(33);
+      if (k==27) { // Esc key to stop
+	break;
+      } else if (k == int('1')) {
+	g_webcam_corner = 0;
+	printf("Click on upper left corner\n");
+      } else if (k == int('2')) {
+	g_webcam_corner = 1;
+	printf("Click on upper right corner\n");
+      } else if (k == int('3')) {
+	g_webcam_corner = 2;
+	printf("Click on lower right corner\n");
+      } else if (k == int('4')) {
+	g_webcam_corner = 3;
+	printf("Click on lower left corner\n");
+
+      } else if (k == int('s')) { 
+	printf("saving webcam calibration matrix to ...\n");
+	print(webcam_lambda);
+
+      } else if (k == int('x')) { 
+	webcam_done=1;
+      } else if (k == int('d')) { 
+	webcam_done=1;
+	g_webcam_calibrated = 1;
+      }
+      if (k>0) { printf("K:%d\n",k); }
+      
+    }
+  printf("Webcam calibration matrix defined.\n");
+  print(webcam_lambda);
+}
+
+/// END OF WEBCAM FUNCTIONS ///////////////////
+
 
 /** @function main */
 int main( int argc, char** argv )
@@ -883,6 +1142,11 @@ int main( int argc, char** argv )
   setMouseCallback("canvas_window", canvasMouseCallBackFunc, NULL);
 
   while (1) {
+
+    if (g_webcam_calibrated) {
+      // continue to show the webcam?
+    }
+
     int k = waitKey(33);
     if (k==27) { // Esc key to stop
       return(0);
@@ -902,6 +1166,12 @@ int main( int argc, char** argv )
       singlePaintColorOnCanvas();
     } else if (k == int('c')) { // show where single color exists on kmeans image
       showSingleColor(1);
+
+    } else if (k == int('w')) { // calibrate webcam
+      calibrate_webcam();
+    } else if (k == int('W')) { // calibrate projector
+      calibrate_projector();
+
     } else {
       //print k # else print its value
       //Upkey : 2490368
