@@ -1,15 +1,13 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <cv.h>
 #include <highgui.h>
 #include <math.h>       /* pow */
-
-
-//#include "opencv2/opencv.hpp"
-
+#include <unistd.h> // sleep
 
 #include "kmeansSegment.cpp"
 
@@ -20,21 +18,32 @@ using namespace std;
 //cv::setWindowProperties("myWindow", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN)
 //http://stackoverflow.com/questions/6512094/how-to-display-an-image-in-full-screen-borderless-window-in-opencv
 
+void showSingleColor(int use_kmeans);
+
 Mat src; 
 Mat kmeans_image;
 Mat canvas_image; 
+int g_photo_width = 512;
+int g_photo_height = 512;
 int g_colors = 20; // kmeans
 int g_max_colors = 64;
 int g_blur_loops = 0; // after doing a kmeans
 int g_max_blur_loops = 264;
 int g_gradient_blur_loops = 0; // when defining a gradient
 int g_max_gradient_blur_loops = 64;
+
+// for canny thresholding
+int g_thresh = 100;
+int g_max_thresh = 255;
+int g_min_contour_length = 10;
+
 int g_pass_num = 1; // used to define paint thickness (not used much now)
 int g_line_width = 3; // initial value
 int g_line_length = 6; // initial value
 
 int g_color_distance = 0; // color picker error levels
 int g_max_color_distance = 255;
+int g_single_color_display_type = 0;
 int g_paint_color[3] = {255,255,255};
 Scalar g_default_canvas_color = cv::Scalar(0,255,0);
 
@@ -363,6 +372,7 @@ void line_callback(int, void* ) {
 
 void color_distance_callback(int, void* ) {
   printf("Color distance: %i\n",g_color_distance);
+  showSingleColor(0);
 }
 
 void updateColorWindow(int r, int g, int b) 
@@ -376,7 +386,7 @@ void updateColorWindow(int r, int g, int b)
 
   namedWindow( "color", CV_WINDOW_AUTOSIZE );
   imshow( "color", color_image );
-  moveWindow("color",win_w(0),win_h(2)); 
+  //moveWindow("color",win_w(0),win_h(2)); 
 
   createTrackbar( " Distance:", "color", &g_color_distance, g_max_color_distance, color_distance_callback );
   // set global paint color
@@ -387,6 +397,7 @@ void updateColorWindow(int r, int g, int b)
 }
 
 // BEGIN PROJECTOR FUNCTIONS
+
 int g_projector_calibrated = 0;
 Mat g_projector_lambda( 2, 4, CV_32FC1 );
 int g_projector_pixels_width = 1920;
@@ -396,17 +407,22 @@ Mat g_projector_image;
 Point2f projectorInputQuad[4]; // Input Quadilateral or Image plane coordinates
 Point2f projectorOutputQuad[4]; // Input Quadilateral or Image plane coordinates
 
+void getProjectorQuadPointsFromFile() {
+  ifstream infile; 
+  infile.open("projector_4_points.txt"); 
+  for (int i=0; i<4; i++) {
+    infile >> projectorOutputQuad[i].x;
+    infile >> projectorOutputQuad[i].y;
+  }
+  g_projector_lambda = getPerspectiveTransform( projectorInputQuad, projectorOutputQuad );
+}
+
 void calibrate_projector() {
-  int w = 512;
-  int h = 512;
+  int w = src.cols; //g_photo_width;
+  int h = src.rows; //g_photo_height;
   int offset_x = floor((g_projector_pixels_width - w)/2);
   int offset_y = floor((g_projector_pixels_height - h)/2);
   int g_projector_corner = 0;
-
-  projectorInputQuad[0] = Point2f( 0,0 );
-  projectorInputQuad[1] = Point2f( g_projector_pixels_width,0);
-  projectorInputQuad[2] = Point2f( g_projector_pixels_width,g_projector_pixels_height);
-  projectorInputQuad[3] = Point2f( 0,g_projector_pixels_height ); 
 
   projectorInputQuad[0] = Point2f( offset_x, offset_y );
   projectorInputQuad[1] = Point2f( offset_x + w, offset_y);
@@ -422,7 +438,7 @@ void calibrate_projector() {
   g_projector_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
   rectangle( g_projector_image, Point(offset_x,offset_y), Point(offset_x+w,offset_y+h), Scalar( 0, 55, 255 ), +1, 4 );
 
-  float delta = 1.0;
+  float delta = 16.0;
   int projector_done=0;
   while (!projector_done)
     {
@@ -475,9 +491,18 @@ void calibrate_projector() {
 	delta = delta * 0.5;
 	printf("Changed delta to %.1f\n",delta);
 
+      } else if (k == int('r')) { 
+	printf("loading projector calibration quad points.\n");
+	getProjectorQuadPointsFromFile();
       } else if (k == int('s')) { 
-	printf("saving projector calibration matrix to ...\n");
-	print(g_projector_lambda);
+	printf("saving projector 4 points (for calibration matrix) to ...\n");
+	ofstream outfile;
+	outfile.open ("projector_4_points.txt");
+	for (int i=0; i<4; i++) {
+	  outfile << projectorOutputQuad[i].x << endl;
+	  outfile << projectorOutputQuad[i].y << endl;
+	}
+	outfile.close();
 
       } else if (k == int('x')) { 
 	projector_done=1;
@@ -522,9 +547,23 @@ void showSingleColor(int use_kmeans=1) {
   Size s = src.size();
   Mat single_color_image = Mat::zeros( s.height, s.width, CV_8UC3 );
 
-  //int min_diff=0;
-  //if (!use_kmeans) { min_diff=10; }
+  int min_diff=0;
+  if (!use_kmeans) { min_diff=g_color_distance; }
   int n_pixels=0;
+
+  Vec3b default_color;
+  default_color[0]=255; default_color[1]=255; default_color[2]=255;
+  if (g_single_color_display_type == 2) { // black on white background
+    default_color[0]=0; default_color[1]=0; default_color[2]=0;
+    single_color_image.setTo(cv::Scalar(255,255,255)); // redVal,greenVal,blueVal
+  } 
+  if (g_single_color_display_type == 3) { // green on white background
+    default_color[0]=0; default_color[1]=255; default_color[2]=0;
+    single_color_image.setTo(cv::Scalar(255,255,255)); // redVal,greenVal,blueVal
+  } 
+  if (g_single_color_display_type == 4) { // white on white background
+    single_color_image.setTo(cv::Scalar(255,255,255)); // redVal,greenVal,blueVal
+  } 
 
   for (int i=0; i<src.cols; i++) {
     for (int j=0; j<src.rows; j++) {
@@ -535,10 +574,16 @@ void showSingleColor(int use_kmeans=1) {
       } else {
 	color = src.at<Vec3b>(Point(i,j));
       }
-      //int diff = (color[0]-g_paint_color[0])^2 + (color[1]-g_paint_color[1])^2 + (color[2]-g_paint_color[2])^2;
-      if (color[0] == g_paint_color[0] && color[1] == g_paint_color[1] && color[2] == g_paint_color[2]) {
-	//if (diff<=min_diff) {
+      int diff = sqrt((color[0]-g_paint_color[0])*(color[0]-g_paint_color[0]) + 
+		      (color[1]-g_paint_color[1])*(color[1]-g_paint_color[1]) + 
+		      (color[2]-g_paint_color[2])*(color[2]-g_paint_color[2]));
+      //if (color[0] == g_paint_color[0] && color[1] == g_paint_color[1] && color[2] == g_paint_color[2]) {
+      if (diff<=min_diff) {
 	single_color_image.at<Vec3b>(Point(i,j)) = color; // set pixel      
+	if (g_single_color_display_type > 0) {
+	  single_color_image.at<Vec3b>(Point(i,j)) = default_color;
+	} 
+
 	n_pixels++;
       }
     }
@@ -548,6 +593,7 @@ void showSingleColor(int use_kmeans=1) {
   namedWindow( "single_color_image_window", CV_WINDOW_AUTOSIZE );
   imshow( "single_color_image_window", single_color_image );
   moveWindow("single_color_image_window",win_w(0),win_h(1)); 
+
 
   showProjectorWindow(single_color_image);
 }
@@ -888,6 +934,7 @@ void kmeansMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
     cout << "kmeans R(" << r << ")" << "G(" << g << ")" << "B(" << b << ")" << endl;
     updateColorWindow(r,g,b);
     showSingleColor(1);
+    usleep(2000);
 
   } else if  ( event == EVENT_RBUTTONDOWN ) {
     cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
@@ -895,7 +942,6 @@ void kmeansMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
     cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
   } else if ( event == EVENT_MOUSEMOVE ) {
     // cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
-
     int b= kmeans_image.at<Vec3b>(y,x)[0];
     int g= kmeans_image.at<Vec3b>(y,x)[1];
     int r= kmeans_image.at<Vec3b>(y,x)[2];
@@ -934,6 +980,75 @@ void canvasMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
   }
 }
 
+/** @function thresh_callback */
+void thresh_callback(int, void* )
+{
+  Mat canny_output;
+  vector<vector<Point> > contours;
+  vector<Vec4i> hierarchy;
+
+  Mat src_gray;
+  cvtColor( src, src_gray, CV_BGR2GRAY );
+  blur( src_gray, src_gray, Size(3,3) );
+
+  /// Detect edges using canny
+  Canny( src_gray, canny_output, g_thresh, g_thresh*2, 3 );
+  
+  /// Show in a window
+  namedWindow( "Canny", CV_WINDOW_AUTOSIZE );
+  moveWindow("Canny",700,600);
+  imshow( "Canny", canny_output );
+
+  /// Find contours
+  findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+  // only finds the most external contours
+  //findContours( canny_output, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+  // simplified contours
+  vector<vector<Point> > contours_poly( contours.size() ); 
+  for( int i = 0; i< contours.size(); i++ ) {
+    approxPolyDP( Mat(contours[i]), contours_poly[i], 1.1, true ); 
+  }
+
+  //approxPolyDP(InputArray curve, OutputArray approxCurve, double epsilon, bool closed)
+
+  /// Draw contours
+  int num_drawn=0;
+  Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+  for( int i = 0; i< contours.size(); i++ ) {
+    //Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+
+    Scalar color = Scalar(255,255,255);
+    if (g_single_color_display_type % 2 == 0) { color = Scalar(0,255,0);}
+
+    g_min_contour_length = 0;
+    if (contours_poly[i].size()>g_min_contour_length) {
+      num_drawn++;
+      drawContours( drawing, contours_poly, i, color, 1, 8, hierarchy, 0, Point() );      
+    }
+
+    // test printing out some contour points
+    if (i==3) {
+      for (int j=0; j<contours_poly[i].size();j++) {
+	//cout << contours[i][j] << endl; //do whatever
+      }
+    }
+  }
+
+  //char text[50];
+  //sprintf(text,"Lines: drew %i out of %lu",num_drawn,contours.size());
+  //putText(drawing, text, cvPoint(30,30), FONT_HERSHEY_DUPLEX, 0.8, cvScalar(200,200,250), 1, CV_AA);
+  printf("Lines: drew %i out of %lu",num_drawn,contours.size());
+
+  /// Show in a window
+  //namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+  //moveWindow("Contours",1250,600);
+  //imshow( "Contours", drawing );
+  showProjectorWindow(drawing);
+ 
+}
+
 /** @function colors_callback */
 void colors_callback(int, void* )
 {
@@ -950,7 +1065,7 @@ void colors_callback(int, void* )
   // blur and try again... perhaps will make the transitionsmore smooth
   //result = adaptiveThreshold(result,255,ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY,11,2)
   if (g_blur_loops) {
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<2; i++) {
       blur( kmeans_image, kmeans_image, Size(3,3) );
       kmeans_image = kmeans.segment(kmeans_image);
     }
@@ -974,7 +1089,7 @@ void colors_callback(int, void* )
 
 int g_webcam_calibrated = 0;
 int g_flip_webcam = 1; 
-int g_webcamID = 0;
+int g_webcamID = 1;
 int g_webcam_corner = 0;	
 int g_canvas_pixels_width = 1000;
 int g_canvas_pixels_height = 800;
@@ -999,10 +1114,21 @@ void calibrate_webcam () {
     printf("Camera0 not open\n");
     return;
   }
+
+  VideoCapture cap1(1); // open the default camera
+  if(!cap1.isOpened()) {  // check if we succeeded
+    printf("Camera1 not open\n");
+    return;
+  }
+  Mat webcam1;
+  cap1 >> webcam1; // get a new frame from camera
+  namedWindow("webcam1",1);
+  imshow("webcam1", webcam1);
   
   namedWindow("webcam0",1);
   moveWindow("webcam0",100,30);
   setMouseCallback("webcam0", webcamWindowMouseCallBackFunc, NULL);
+
 
   namedWindow("webcam corrected",1);
   moveWindow("webcam corrected",100,300);
@@ -1094,7 +1220,6 @@ void calibrate_webcam () {
 /** @function main */
 int main( int argc, char** argv )
 {
-
   printf("colors <image_filename>\n");
   printf("Commands:\n");
   printf("  p = autopaint, P = autopaint (3x strokes) \n");
@@ -1115,6 +1240,13 @@ int main( int argc, char** argv )
     return -1;
   }  
 
+  //g_photo_width = src.cols;
+  //g_photo_height = src.rows;
+  //if (argv[2]) { g_photo_width = atoi(argv[2]); }
+  //  if (argv[3]) { g_photo_height = atoi(argv[3]); }
+  printf("Photo width = %i\n", g_photo_width); 
+  printf("Photo height = %i\n", g_photo_height); 
+
   std::cout << CV_VERSION << std::endl;
 
   /// Create Window
@@ -1126,11 +1258,15 @@ int main( int argc, char** argv )
   moveWindow(source_window,win_w(0),win_h(0,-30));
   imshow( source_window, src );
 
-  createTrackbar( " Blur loops:", source_window, &g_blur_loops, g_max_blur_loops, colors_callback ); 
-  createTrackbar( " Colors:", source_window, &g_colors, g_max_colors, colors_callback );
-  createTrackbar( " Gradient blur loops:", source_window, &g_gradient_blur_loops, g_max_gradient_blur_loops, colors_callback );
-  createTrackbar( " Line width:", source_window, &g_line_width, 20, line_callback );
-  createTrackbar( " Line length:", source_window, &g_line_length, 40, line_callback );
+  namedWindow( "controls", CV_WINDOW_AUTOSIZE );
+  createTrackbar( " Canny thresh:", "controls", &g_thresh, g_max_thresh, thresh_callback );
+  createTrackbar( " Blur loops:", "controls", &g_blur_loops, g_max_blur_loops, colors_callback ); 
+  createTrackbar( " Colors:", "controls", &g_colors, g_max_colors, colors_callback );
+  createTrackbar( " Gradient blur loops:", "controls", &g_gradient_blur_loops, g_max_gradient_blur_loops, colors_callback );
+  createTrackbar( " Line width:", "controls", &g_line_width, 20, line_callback );
+  createTrackbar( " Line length:", "controls", &g_line_length, 40, line_callback );
+
+  thresh_callback( 0, 0 );
   colors_callback( 0, 0 );
 
   //set the callback function for any mouse event
@@ -1172,12 +1308,19 @@ int main( int argc, char** argv )
     } else if (k == int('c')) { // show where single color exists on kmeans image
       showSingleColor(1);
 
-    } else if (k == int('w')) { // calibrate webcam
+    } else if (k == int('W')) { // calibrate webcam
       calibrate_webcam();
-    } else if (k == int('W')) { // calibrate projector
+    } else if (k == int('w')) { // calibrate projector
       calibrate_projector();
 
+    } else if (k == 32) { // space bar
+      printf("Setting single color display type to %i\n",g_single_color_display_type);
+      g_single_color_display_type++;
+      if (g_single_color_display_type>4) { g_single_color_display_type=0; }
+      showSingleColor();
+
     } else {
+    printf("K:%i\n",k);
       //print k # else print its value
       //Upkey : 2490368
       //DownKey : 2621440
