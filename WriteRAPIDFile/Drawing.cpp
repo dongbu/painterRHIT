@@ -11,7 +11,7 @@ using namespace cv;
 void writeROBOFORTHFromContours(ofstream &myfile,
 		vector<vector<Point> > &contours, vector<Brush> &brushes, double z,
 		double scale) {
-	char movetoCommand[100];
+	char movetoCommand[512];
 	unsigned int n=1, numPoints=1;
 	sprintf(movetoCommand, "MODULE Module1\n");
 	myfile << movetoCommand;
