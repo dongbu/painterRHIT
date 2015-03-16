@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{529E1DD4-6872-4073-9000-82BF1954775C}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>cytonCommandExample</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\ConsoleApplication1\OpenCV-Release.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\bin\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cytonCommandExample.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cytonCommandExample</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cytonCommandExample.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cytonCommandExample</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\bin\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">cytonCommandExample.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">cytonCommandExample</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\bin\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">cytonCommandExample.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">cytonCommandExample</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 /debug %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;ecFoundCore.lib;ecXml.lib;ecXmlReaderWriter.lib;ecManipulation.lib;ecManipulationDirector.lib;ecSimulation.lib;ecManipulator.lib;ecFoundCommon.lib;ecGeometry.lib;ecControl.lib;ecPathPlanning.lib;ecMatrixUtilities.lib;ecMeasure.lib;ecFunction.lib;ecPlugins.lib;ecboost_iostreams-mt.lib;ecboost_filesystem-mt.lib;ecboost_program_options-mt.lib;ecboost_system-mt.lib;ecboost_thread-mt.lib;ecboost_timer-mt.lib;ecboost_date_time-mt.lib;ecRemoteCommand.lib;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\lib\remoteCommandClientPlugin.ecp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>C:/Users/guilfoej/SeniorProject/visualStudioCyton/Debug/cytonCommandExample.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/guilfoej/SeniorProject/visualStudioCyton/bin/Debug/cytonCommandExample.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;ecFoundCore.lib;ecXml.lib;ecXmlReaderWriter.lib;ecManipulation.lib;ecManipulationDirector.lib;ecSimulation.lib;ecManipulator.lib;ecFoundCommon.lib;ecGeometry.lib;ecControl.lib;ecPathPlanning.lib;ecMatrixUtilities.lib;ecMeasure.lib;ecFunction.lib;ecPlugins.lib;ecboost_iostreams-mt.lib;ecboost_filesystem-mt.lib;ecboost_program_options-mt.lib;ecboost_system-mt.lib;ecboost_thread-mt.lib;ecboost_timer-mt.lib;ecboost_date_time-mt.lib;ecRemoteCommand.lib;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\lib\remoteCommandClientPlugin.ecp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ImportLibrary>C:/Users/guilfoej/SeniorProject/visualStudioCyton/Release/cytonCommandExample.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/guilfoej/SeniorProject/visualStudioCyton/bin/Release/cytonCommandExample.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;ecFoundCore.lib;ecXml.lib;ecXmlReaderWriter.lib;ecManipulation.lib;ecManipulationDirector.lib;ecSimulation.lib;ecManipulator.lib;ecFoundCommon.lib;ecGeometry.lib;ecControl.lib;ecPathPlanning.lib;ecMatrixUtilities.lib;ecMeasure.lib;ecFunction.lib;ecPlugins.lib;ecboost_iostreams-mt.lib;ecboost_filesystem-mt.lib;ecboost_program_options-mt.lib;ecboost_system-mt.lib;ecboost_thread-mt.lib;ecboost_timer-mt.lib;ecboost_date_time-mt.lib;ecRemoteCommand.lib;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\lib\remoteCommandClientPlugin.ecp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ImportLibrary>C:/Users/guilfoej/SeniorProject/visualStudioCyton/MinSizeRel/cytonCommandExample.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/guilfoej/SeniorProject/visualStudioCyton/bin/MinSizeRel/cytonCommandExample.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;EC_BUILD_SHARED_LIBS;EC_HAVE_ACTIN;UNICODE;_UNICODE;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\boost-20140909-msvc2013-i386\boost_1_56_0\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\OSG-3.2.1\include;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\external\render_OSS-20141031-msvc2013-i386\Qt-5.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 /debug %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;ecFoundCore.lib;ecXml.lib;ecXmlReaderWriter.lib;ecManipulation.lib;ecManipulationDirector.lib;ecSimulation.lib;ecManipulator.lib;ecFoundCommon.lib;ecGeometry.lib;ecControl.lib;ecPathPlanning.lib;ecMatrixUtilities.lib;ecMeasure.lib;ecFunction.lib;ecPlugins.lib;ecboost_iostreams-mt.lib;ecboost_filesystem-mt.lib;ecboost_program_options-mt.lib;ecboost_system-mt.lib;ecboost_thread-mt.lib;ecboost_timer-mt.lib;ecboost_date_time-mt.lib;ecRemoteCommand.lib;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\..\..\..\toolkits\..\lib\remoteCommandClientPlugin.ecp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/boost-20140909-msvc2013-i386/boost_1_56_0/include/../lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/OpenCV-2.4.10/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/OSG-3.2.1/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/render_OSS-20141031-msvc2013-i386/Qt-5.3.2/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits/../external/sensor_OSS-20141028-msvc2013-i386/tiff-3.9.5/lib/$(Configuration);;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib;C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/../../../toolkits../lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>C:/Users/guilfoej/SeniorProject/visualStudioCyton/RelWithDebInfo/cytonCommandExample.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/guilfoej/SeniorProject/visualStudioCyton/bin/RelWithDebInfo/cytonCommandExample.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version>
+      </Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" "-HC:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample" -BC:/Users/guilfoej/SeniorProject/visualStudioCyton --check-stamp-file C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeSystem.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCCompiler.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeGenericSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeRCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCXXInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\CytonBuildDefaults.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" "-HC:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample" -BC:/Users/guilfoej/SeniorProject/visualStudioCyton --check-stamp-file C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeSystem.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCCompiler.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeGenericSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeRCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCXXInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\CytonBuildDefaults.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" "-HC:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample" -BC:/Users/guilfoej/SeniorProject/visualStudioCyton --check-stamp-file C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeSystem.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCCompiler.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeGenericSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeRCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCXXInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\CytonBuildDefaults.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" "-HC:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample" -BC:/Users/guilfoej/SeniorProject/visualStudioCyton --check-stamp-file C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Program Files (x86)/Robai/Cyton Gamma 1500 Viewer_4.X/cyton/examples/src/cytonCommandExample/CMakeLists.txt;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeSystem.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCCompiler.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeCXXCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeGenericSystem.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\3.0.2\CMakeRCCompiler.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeRCInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCXXInformation.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files (x86)\CMake\share\cmake-3.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\CytonBuildDefaults.cmake;C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\guilfoej\SeniorProject\visualStudioCyton\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\ecCytonCommands.cpp" />
+    <ClCompile Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:/Users/guilfoej/SeniorProject/visualStudioCyton/ZERO_CHECK.vcxproj">
+      <Project>E4F0E485-3E94-4EB6-8537-C840D5CAC576</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\ecCytonCommands.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

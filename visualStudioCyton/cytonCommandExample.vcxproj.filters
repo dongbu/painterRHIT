@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\ecCytonCommands.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0A527F79-6666-401E-B41C-D888000FB907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{D304E932-D84A-4139-A68A-913431FF9782}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Program Files (x86)\Robai\Cyton Gamma 1500 Viewer_4.X\cyton\examples\src\cytonCommandExample\ecCytonCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
