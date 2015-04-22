@@ -3,8 +3,9 @@
 #include <String>
 #include <opencv2/opencv.hpp>
 #include <boost/thread/tss.hpp>
+
 #include <control/ecEndEffectorSet.h>
-#include <control/ecFrameEndEffector.h>
+#include <controlCore/ecFrameEndEffector.h>
 #include <control/ecManipEndEffectorPlace.h>
 #include <foundCommon/ecCoordSysXForm.h>
 #include <foundCore/ecApplication.h>
@@ -14,9 +15,6 @@
 #include <manipulation/ecManipulationActionManager.h>
 #include <manipulationDirector/ecManipulationScript.h>
 #include <remoteCommand/ecRemoteCommand.h>
-#include <xml/ecXmlObjectReaderWriter.h>
-
-
 
 #define POINT_EE_SET 0
 #define FRAME_EE_SET 1
