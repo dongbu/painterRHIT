@@ -5,7 +5,7 @@
 #include <boost/thread/tss.hpp>
 
 #include <control/ecEndEffectorSet.h>
-#include <controlCore/ecFrameEndEffector.h>
+#include <control/ecFrameEndEffector.h>
 #include <control/ecManipEndEffectorPlace.h>
 #include <foundCommon/ecCoordSysXForm.h>
 #include <foundCore/ecApplication.h>
@@ -19,6 +19,7 @@
 #define POINT_EE_SET 0
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
+#define COLORS 6
 
 using namespace cv;
 using namespace std;
@@ -26,12 +27,13 @@ using namespace Ec;
 
 void net_move(Point3d p);
 void swap_brush(Point3d, Point3d);
+void get_paint(Point3d paintSource);
+void stroke();
 bool moveGripper(const double gripperPos);
 
 int main(int argc, char* argv[])
 {
-	//string inputFilePath = "C:\\Users\\guilfoej\\SeniorProject\\test.png";
-	string inputFilePath = "C:\\Users\\guilfoej\\SeniorProject\\lines.png";
+	string inputFilePath = "C:\\Pictures\\logo.bmp";
 
 	int cannyThresh = 240;
 
@@ -57,6 +59,18 @@ int main(int argc, char* argv[])
 
 	vector<vector<Point>> contours;
 	findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
+
+	vector<pair<vector<Point3d>, int>> newFormat; 
+	//newFormat[0].first = the path
+	//newFormat[0].second = the color index
+
+	for (int i = 0; i < COLORS; i++) {
+		for (int j = 0; j < newFormat.size(); i++) {
+			if (newFormat[j].second == i) {
+				// TODO: Paint contours
+			}
+		}
+	}
 
 	vector<vector<Point3d>> outputPoints;
 	for (vector<Point> i : contours) {
@@ -99,12 +113,21 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+
+
+void get_paint(Point3d paintSource){
+	net_move(paintSource + Point3d(0, 0, 0.1));
+	net_move(paintSource);
+	net_move(paintSource + Point3d(0, 0, 0.1));
+}
+
 void swap_brush(Point3d brushDropoff, Point3d newBrush) {
 	net_move(brushDropoff + Point3d(0, 0, 0.1));
 	net_move(brushDropoff);
 	moveGripper(0.002);
 	net_move(brushDropoff + Point3d(0, 0, 0.1));
 	net_move(newBrush + Point3d(0, 0, 0.1));
+	waitKey(0);
 	net_move(newBrush);
 	moveGripper(0.000);
 	net_move(newBrush + Point3d(0, 0, 0.1));
