@@ -19,7 +19,7 @@
 #define POINT_EE_SET 0
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
-#define COLORS 6
+#define COLORS 4
 
 using namespace cv;
 using namespace std;
@@ -30,6 +30,7 @@ void swap_brush(Point3d, Point3d);
 void get_paint(Point3d paintSource);
 void stroke();
 bool moveGripper(const double gripperPos);
+Point3d dropoff, pickup;
 
 int main(int argc, char* argv[])
 {
@@ -63,35 +64,48 @@ int main(int argc, char* argv[])
 	vector<pair<vector<Point3d>, int>> newFormat; 
 	//newFormat[0].first = the path
 	//newFormat[0].second = the color index
+	
+	if (init()) {
+		cout << "Established Connection" << endl;
+	}else {
+		cout << "Error establishing connection" << endl;
+		exit(1);
+	}
 
+	cout << "Moving through points" << endl;
 	for (int i = 0; i < COLORS; i++) {
-		for (int j = 0; j < newFormat.size(); i++) {
+		for (int j = 0; j < newFormat.size(); j++) {
 			if (newFormat[j].second == i) {
-				// TODO: Paint contours
+				for (Point3d k : newFormat[j].first) {
+					net_move(k);
+				}
 			}
 		}
+		swap_brush(dropoff, pickup);
 	}
+	cout << "Done moving" << endl;
 
-	vector<vector<Point3d>> outputPoints;
-	for (vector<Point> i : contours) {
-		outputPoints.push_back(vector<Point3d>());
-		//cout << "new path" << endl;
-		Point3d first = Point3d(i.front().x, i.front().y, 0);
-		first = first*scale + offset;
-		outputPoints.back().push_back(first + liftOff);
-		Point3d last;
-		for (Point j : i) {
-			Point3d k = Point3d(j.x, j.y, 0);
-			k = k*scale;
-			k = k + offset;
-			outputPoints.back().push_back(k);
-			last = k;
-			//cout << k << endl;
-		}
-		outputPoints.back().push_back(last + liftOff);
-	}
 
-	if (init()) {
+	//vector<vector<Point3d>> outputPoints;
+	//for (vector<Point> i : contours) {
+	//	outputPoints.push_back(vector<Point3d>());
+	//	//cout << "new path" << endl;
+	//	Point3d first = Point3d(i.front().x, i.front().y, 0);
+	//	first = first*scale + offset;
+	//	outputPoints.back().push_back(first + liftOff);
+	//	Point3d last;
+	//	for (Point j : i) {
+	//		Point3d k = Point3d(j.x, j.y, 0);
+	//		k = k*scale;
+	//		k = k + offset;
+	//		outputPoints.back().push_back(k);
+	//		last = k;
+	//		//cout << k << endl;
+	//	}
+	//	outputPoints.back().push_back(last + liftOff);
+	//}
+
+	/*if (init()) {
 		cout << "Established Connection" << endl;
 	} else {
 		cout << "Error establishing connection" << endl;
@@ -105,10 +119,10 @@ int main(int argc, char* argv[])
 		}
 		swap_brush(Point3d(0.12,-0.1,0.05), Point3d(0.17,-0.1,0.05));
 	}
-	cout << "Done moving" << endl;
+	cout << "Done moving" << endl;*/
 
 	//imshow("Canny Output", cannyOutput);
-	//waitKey();
+	//waitKey(0);
 
 	return 0;
 }
@@ -127,6 +141,7 @@ void swap_brush(Point3d brushDropoff, Point3d newBrush) {
 	moveGripper(0.002);
 	net_move(brushDropoff + Point3d(0, 0, 0.1));
 	net_move(newBrush + Point3d(0, 0, 0.1));
+	// imshow
 	waitKey(0);
 	net_move(newBrush);
 	moveGripper(0.000);
