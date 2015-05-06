@@ -16,10 +16,17 @@
 #include <manipulationDirector/ecManipulationScript.h>
 #include <remoteCommand/ecRemoteCommand.h>
 
+# define M_PI 3.14159265358979323846  /* pi */
+
 #define POINT_EE_SET 0
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
 #define COLORS 4
+#define SOURCE_COLOR1	Point3d(0.2586, -0.0693, 0.0682)
+#define SOURCE_COLOR2	Point3d(0.1938, -0.0579, 0.0682)
+#define SOURCE_COLOR3	Point3d(0.1938, -0.0579, 0.0682)
+#define DROPOFF		Point3d(0.2586, -0.0693, 0.0682)
+#define PICKUP		Point3d(0.1938, -0.0579, 0.0682)
 
 using namespace cv;
 using namespace std;
@@ -30,7 +37,8 @@ void swap_brush(Point3d, Point3d);
 void get_paint(Point3d paintSource);
 void stroke();
 bool moveGripper(const double gripperPos);
-Point3d dropoff, pickup;
+vector<Point3d> makeCircle(float z);
+Point3d getLeadIn(vector<Point3d> contour);
 
 int main(int argc, char* argv[])
 {
@@ -61,9 +69,27 @@ int main(int argc, char* argv[])
 	vector<vector<Point>> contours;
 	findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
 
-	vector<pair<vector<Point3d>, int>> newFormat; 
+	//vector<pair<vector<Point>, int>> newFormat1; 
 	//newFormat[0].first = the path
 	//newFormat[0].second = the color index
+
+	//code here to convert to
+	vector<pair<vector<Point3d>, int>> newFormat;
+	int colorIndex = 0;
+	for (vector<Point> i : contours) {
+		vector<Point3d> tmpPath;
+		newFormat.push_back(make_pair(tmpPath, colorIndex));
+		colorIndex += 1;
+		colorIndex %= 4;
+		//cout << "new path" << endl;
+		for (Point j : i) {
+			Point3d k = Point3d(j.x, j.y, 0);
+			k = k*scale;
+			k = k + offset;
+			tmpPath.push_back(k);
+			//cout << k << endl;
+		}
+	}
 	
 	if (init()) {
 		cout << "Established Connection" << endl;
@@ -71,55 +97,39 @@ int main(int argc, char* argv[])
 		cout << "Error establishing connection" << endl;
 		exit(1);
 	}
-
+	
+	Point3d leadin, lastPoint, source;
+	vector<Point3d> circle = makeCircle(newFormat[0].first[0].z);
 	cout << "Moving through points" << endl;
-	for (int i = 0; i < COLORS; i++) {
-		for (int j = 0; j < newFormat.size(); j++) {
+	for (int i = 1; i < COLORS; i++) {
+		for (unsigned int j = 0; j < newFormat.size(); j++) {
 			if (newFormat[j].second == i) {
+				// Get more paint				
+				if (i == 1){source = SOURCE_COLOR1;}
+				else if (i == 2){source = SOURCE_COLOR2;}
+				else if (i == 3){source = SOURCE_COLOR3;}
+
+				net_move(source + Point3d(0, 0, 0.02));
+				net_move(source);
+				// Move in a circle
+				for (int n = 0; n < circle.size(); n++){
+					net_move(source + circle[n]);
+				}
+				net_move(source + Point3d(0, 0, 0.02));
+
+				// Lead-in motion
+				net_move(getLeadIn(newFormat[j].first));
+				
 				for (Point3d k : newFormat[j].first) {
 					net_move(k);
+					lastPoint = k;
 				}
+				net_move(lastPoint + Point3d(0, 0, 0.02));
 			}
 		}
-		swap_brush(dropoff, pickup);
+		swap_brush(DROPOFF, PICKUP);
 	}
 	cout << "Done moving" << endl;
-
-
-	//vector<vector<Point3d>> outputPoints;
-	//for (vector<Point> i : contours) {
-	//	outputPoints.push_back(vector<Point3d>());
-	//	//cout << "new path" << endl;
-	//	Point3d first = Point3d(i.front().x, i.front().y, 0);
-	//	first = first*scale + offset;
-	//	outputPoints.back().push_back(first + liftOff);
-	//	Point3d last;
-	//	for (Point j : i) {
-	//		Point3d k = Point3d(j.x, j.y, 0);
-	//		k = k*scale;
-	//		k = k + offset;
-	//		outputPoints.back().push_back(k);
-	//		last = k;
-	//		//cout << k << endl;
-	//	}
-	//	outputPoints.back().push_back(last + liftOff);
-	//}
-
-	/*if (init()) {
-		cout << "Established Connection" << endl;
-	} else {
-		cout << "Error establishing connection" << endl;
-		exit(1);
-	}
-
-	cout << "Moving through points" << endl;
-	for (vector<Point3d> i : outputPoints) {
-		for (Point3d j : i) {
-			net_move(j);
-		}
-		swap_brush(Point3d(0.12,-0.1,0.05), Point3d(0.17,-0.1,0.05));
-	}
-	cout << "Done moving" << endl;*/
 
 	//imshow("Canny Output", cannyOutput);
 	//waitKey(0);
@@ -127,7 +137,26 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+Point3d getLeadIn(vector<Point3d> contour){
+	Point3d leadin;
+	int dx, dy, dist, lx, ly;
+	dy = (contour[1].y - contour[0].y);
+	dx = (contour[1].x - contour[0].x);
+	dist = sqrt(dx*dx + dy*dy);
+	lx = contour[0].x - 0.02 * (dx / dist);
+	ly = contour[0].y - 0.02 * (dy / dist);
+	leadin = Point3d(lx, ly, (contour[0].z + 0.01));
+	return leadin;
+}
 
+vector<Point3d> makeCircle(float z){
+	vector<Point3d> circle;
+	float cm = 0.01;
+	for (float i = 0; i < 2*M_PI; i += M_PI/4){
+		circle[i] = Point3d(cm*cos(i), cm*sin(i), z);
+	}
+	return circle;
+}
 
 void get_paint(Point3d paintSource){
 	net_move(paintSource + Point3d(0, 0, 0.1));
