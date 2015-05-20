@@ -56,7 +56,7 @@ vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
 	//*
 	vector<Mat> channels;
 	Mat value = Mat::ones(edgeMagnitude.size(), CV_32F);
-	channels.push_back((edgeDirection / CV_2PI) * 360);
+	channels.push_back((edgeDirection / CV_2PI) * 360); 
 	channels.push_back(value);
 	double max;
 	minMaxIdx(edgeMagnitude, 0, &max);

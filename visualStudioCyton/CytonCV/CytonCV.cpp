@@ -26,9 +26,9 @@
 #define SOURCE_COLOR0	Point3d(0.2586, -0.0693, 0.0682)
 #define SOURCE_COLOR1	Point3d(0.2586, -0.0693, 0.0682)
 #define SOURCE_COLOR2	Point3d(0.1938, -0.0579, 0.0682)
-#define SOURCE_COLOR3	Point3d(0.0986, -0.0566, 0.0682)
-#define DROPOFF		Point3d(0.2, -0.2, 0.1)
-#define PICKUP		Point3d(0.1, -0.1, 0.1)
+#define SOURCE_COLOR3	Point3d(0.1938, -0.0579, 0.0682)
+#define DROPOFF		Point3d(0.2586, -0.0693, 0.0682)
+#define PICKUP		Point3d(0.2586, -0.0693, 0.0682)
 
 using namespace cv;
 using namespace std;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 	}
 
 	const Point3d offset = Point3d(0.0468, -0.3137, 0.0682);
-	const double scale = 0.6;
+	const double scale = 0.05;
 	const Point3d liftOff = Point3d(0, 0, 0.02);
 
 	const Point3d Brush1Position;
