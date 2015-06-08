@@ -4,10 +4,10 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include <math.h>       /* pow */
-#include <unistd.h> // sleep
+#include <Windows.h> // sleep
 
 #include "kmeansSegment.cpp"
 
@@ -17,6 +17,8 @@ using namespace std;
 //cv::namedWindow("myWindow", CV_WINDOW_NORMAL)
 //cv::setWindowProperties("myWindow", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN)
 //http://stackoverflow.com/questions/6512094/how-to-display-an-image-in-full-screen-borderless-window-in-opencv
+
+int M_PI = 3.141459265359;
 
 void showSingleColor(int use_kmeans);
 
@@ -613,7 +615,13 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
 
   // get a list of valid pixels
   int n_pixels=0;
-  int pixels[src.rows*src.cols][2];
+  //go here
+  //int pixels[src.rows*src.cols][2];
+
+  int** pixels = new int*[src.rows*src.cols];
+  for (int i = 0; i < src.rows*src.cols; ++i)
+	  pixels[i] = new int[2];
+
   for (int i=0; i<src.cols; i++) {
     for (int j=0; j<src.rows; j++) {
       Vec3b color = kmeans_image.at<Vec3b>(Point(i,j));
@@ -624,6 +632,11 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
       }
     }
   }
+  for (int i = 0; i < src.rows*src.cols; ++i) {
+	  delete[] pixels[i];
+  }
+  delete[] pixels;
+
   printf("%d pixels found\n",n_pixels);
 
   int num_candidates=n_pixels/(thickness*line_length/15);
@@ -934,7 +947,7 @@ void kmeansMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
     cout << "kmeans R(" << r << ")" << "G(" << g << ")" << "B(" << b << ")" << endl;
     updateColorWindow(r,g,b);
     showSingleColor(1);
-    usleep(2000);
+    Sleep(2000);
 
   } else if  ( event == EVENT_RBUTTONDOWN ) {
     cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
