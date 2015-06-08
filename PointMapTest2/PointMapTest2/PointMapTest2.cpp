@@ -10,7 +10,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	std::cout << "hi!" << std::endl;
 	
-	PointMap p = PointMap();
+	PointMap p = PointMap("black");
 
 	p.addPoint(1, 2);
 	p.addPoint(3, 4);

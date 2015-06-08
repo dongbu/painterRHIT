@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "Point.cpp"
+#include <string>
 
 
 
@@ -11,6 +12,7 @@ private:
 	std::vector<Point> points;
 	int size;
 	int currentPos;
+	std::string color;
 
 	//if this runs, something horrible has happened.
 	void sizeMisMatch() {
@@ -23,9 +25,10 @@ private:
 public:
 	
 
-	PointMap() {
+	PointMap(std::string lineColor) {
 		size = 0;
 		currentPos = -1;
+		color = lineColor;
 	}
 	
 	int getNumberOfPoints() {
