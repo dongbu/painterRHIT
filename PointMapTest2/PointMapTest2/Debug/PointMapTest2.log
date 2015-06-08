@@ -1,10 +1,14 @@
-﻿Build started 6/8/2015 9:07:10 AM.
+﻿Build started 6/8/2015 9:43:32 AM.
      1>Project "C:\Users\doughezj\Documents\GitHub\painter\PointMapTest2\PointMapTest2\PointMapTest2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Debug\PointMapTest2.pch" /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt PointMapTest2.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Debug\PointMapTest2.pch" /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt PointMap.cpp PointMapTest2.cpp
          PointMapTest2.cpp
-     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(52): warning C4018: '>=': signed/unsigned mismatch
-     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(71): warning C4018: '>=': signed/unsigned mismatch
+     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(54): warning C4018: '>=': signed/unsigned mismatch
+     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(85): warning C4018: '>=': signed/unsigned mismatch
+         PointMap.cpp
+     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(54): warning C4018: '>=': signed/unsigned mismatch
+     1>c:\users\doughezj\documents\github\painter\pointmaptest2\pointmaptest2\pointmap.cpp(85): warning C4018: '>=': signed/unsigned mismatch
+         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\doughezj\Documents\GitHub\painter\PointMapTest2\Debug\PointMapTest2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\doughezj\Documents\GitHub\painter\PointMapTest2\Debug\PointMapTest2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\doughezj\Documents\GitHub\painter\PointMapTest2\Debug\PointMapTest2.lib" /MACHINE:X86 Debug\Point.obj
          Debug\PointMap.obj
@@ -15,4 +19,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.78
+Time Elapsed 00:00:01.22
