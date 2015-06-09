@@ -50,13 +50,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>Insert</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
@@ -80,7 +73,7 @@
       <x>680</x>
       <y>0</y>
       <width>421</width>
-      <height>351</height>
+      <height>381</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -89,13 +82,39 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
+    <widget class="QPushButton" name="AddPointButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>320</y>
+       <width>403</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add Point</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="RemovePointButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>350</y>
+       <width>403</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Remove Point</string>
+     </property>
+    </widget>
     <widget class="QWidget" name="Parameter" native="true">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
        <width>421</width>
-       <height>351</height>
+       <height>321</height>
       </rect>
      </property>
      <property name="sizePolicy">
@@ -108,13 +127,6 @@
       <property name="sizeConstraint">
        <enum>QLayout::SetMinimumSize</enum>
       </property>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="pushButton_5">
-        <property name="text">
-         <string>Add Point</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="Command_Editor_Label">
         <property name="text">
@@ -285,6 +297,45 @@
     </property>
     <property name="checked">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="AddCommandButton">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>640</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add Command</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>1113</x>
+      <y>0</y>
+      <width>20</width>
+      <height>931</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>-3</x>
+      <y>660</y>
+      <width>1121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

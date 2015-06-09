@@ -59,12 +59,12 @@ public:
     QPushButton *pushButton;
     QPushButton *pushButton_4;
     QPushButton *pushButton_3;
-    QPushButton *pushButton_2;
     QLabel *Command_List_Label;
     QFrame *Command_Editor_Frame;
+    QPushButton *AddPointButton;
+    QPushButton *RemovePointButton;
     QWidget *Parameter;
     QGridLayout *gridLayout;
-    QPushButton *pushButton_5;
     QLabel *Command_Editor_Label;
     QFormLayout *ParameterHolder;
     QLabel *label;
@@ -78,6 +78,9 @@ public:
     QLineEdit *Point_2;
     QLineEdit *lineEdit;
     QToolButton *toolButton;
+    QPushButton *AddCommandButton;
+    QFrame *line;
+    QFrame *line_2;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
     QMenu *menuNew_Window;
@@ -193,11 +196,6 @@ public:
 
         horizontalLayout->addWidget(pushButton_3);
 
-        pushButton_2 = new QPushButton(layoutWidget);
-        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-
-        horizontalLayout->addWidget(pushButton_2);
-
 
         verticalLayout->addLayout(horizontalLayout);
 
@@ -206,12 +204,18 @@ public:
         Command_List_Label->setGeometry(QRect(0, 670, 1101, 31));
         Command_Editor_Frame = new QFrame(centralWidget);
         Command_Editor_Frame->setObjectName(QStringLiteral("Command_Editor_Frame"));
-        Command_Editor_Frame->setGeometry(QRect(680, 0, 421, 351));
+        Command_Editor_Frame->setGeometry(QRect(680, 0, 421, 381));
         Command_Editor_Frame->setFrameShape(QFrame::StyledPanel);
         Command_Editor_Frame->setFrameShadow(QFrame::Raised);
+        AddPointButton = new QPushButton(Command_Editor_Frame);
+        AddPointButton->setObjectName(QStringLiteral("AddPointButton"));
+        AddPointButton->setGeometry(QRect(10, 320, 403, 23));
+        RemovePointButton = new QPushButton(Command_Editor_Frame);
+        RemovePointButton->setObjectName(QStringLiteral("RemovePointButton"));
+        RemovePointButton->setGeometry(QRect(10, 350, 403, 23));
         Parameter = new QWidget(Command_Editor_Frame);
         Parameter->setObjectName(QStringLiteral("Parameter"));
-        Parameter->setGeometry(QRect(0, 0, 421, 351));
+        Parameter->setGeometry(QRect(0, 0, 421, 321));
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -222,11 +226,6 @@ public:
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
-        pushButton_5 = new QPushButton(Parameter);
-        pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
-
-        gridLayout->addWidget(pushButton_5, 2, 0, 1, 1);
-
         Command_Editor_Label = new QLabel(Parameter);
         Command_Editor_Label->setObjectName(QStringLiteral("Command_Editor_Label"));
 
@@ -303,6 +302,19 @@ public:
         toolButton->setGeometry(QRect(1100, 0, 25, 19));
         toolButton->setCheckable(false);
         toolButton->setChecked(false);
+        AddCommandButton = new QPushButton(centralWidget);
+        AddCommandButton->setObjectName(QStringLiteral("AddCommandButton"));
+        AddCommandButton->setGeometry(QRect(1010, 640, 101, 23));
+        line = new QFrame(centralWidget);
+        line->setObjectName(QStringLiteral("line"));
+        line->setGeometry(QRect(1113, 0, 20, 931));
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Sunken);
+        line_2 = new QFrame(centralWidget);
+        line_2->setObjectName(QStringLiteral("line_2"));
+        line_2->setGeometry(QRect(-3, 660, 1121, 20));
+        line_2->setFrameShape(QFrame::HLine);
+        line_2->setFrameShadow(QFrame::Sunken);
         MainWindow->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -402,11 +414,11 @@ public:
         pushButton->setText(QApplication::translate("MainWindow", "Move Up", 0));
         pushButton_4->setText(QApplication::translate("MainWindow", "Move Down", 0));
         pushButton_3->setText(QApplication::translate("MainWindow", "Delete", 0));
-        pushButton_2->setText(QApplication::translate("MainWindow", "Insert", 0));
         Command_List_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        pushButton_5->setText(QApplication::translate("MainWindow", "Add Point", 0));
+        AddPointButton->setText(QApplication::translate("MainWindow", "Add Point", 0));
+        RemovePointButton->setText(QApplication::translate("MainWindow", "Remove Point", 0));
         Command_Editor_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt;\">Command Editor</span></p></body></html>", 0));
-        label->setText(QApplication::translate("MainWindow", "Command Name", 0));
+        label->setText(QApplication::translate("MainWindow", "Command Name:", 0));
         label_5->setText(QApplication::translate("MainWindow", "Color:", 0));
         comboBox->clear();
         comboBox->insertItems(0, QStringList()
@@ -431,6 +443,7 @@ public:
         label_4->setText(QApplication::translate("MainWindow", "Point 2:", 0));
         Point_2->setText(QApplication::translate("MainWindow", "0,0", 0));
         toolButton->setText(QApplication::translate("MainWindow", "...", 0));
+        AddCommandButton->setText(QApplication::translate("MainWindow", "Add Command", 0));
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));

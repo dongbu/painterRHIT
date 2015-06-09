@@ -22,13 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     numberOfPoints = 2;
+    //end of command editor work
 
+    //to do with command list
     QStringList list;
     list << "cats" << "dogs" << "birds";
     model->setStringList(list);
 
     ui->listView->setModel(model);
     ui->listView->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
+    //end of command list work
 }
 
 MainWindow::~MainWindow()
@@ -36,17 +39,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-    //insert
-    int row = ui->listView->currentIndex().row();
-    model->insertRows(row,1);
+//void MainWindow::on_pushButton_2_clicked()
+//{
+//    //insert
+//    int row = ui->listView->currentIndex().row();
+//    model->insertRows(row,1);
 
-    QModelIndex index = model->index(row);
+//    QModelIndex index = model->index(row);
 
-    ui->listView->setCurrentIndex(index);
-    ui->listView->edit(index);
-}
+//    ui->listView->setCurrentIndex(index);
+//    ui->listView->edit(index);
+//}
 
 void MainWindow::on_pushButton_3_clicked()
 {
@@ -75,13 +78,7 @@ void MainWindow::on_pushButton_clicked()
 //    ui->listView->setCurrentRow(currentRow + 1);
 }
 
-void MainWindow::on_pushButton_5_clicked()
-{
-    numberOfPoints++;
-    QString s = ("Point " + QString::number(numberOfPoints) + ":");
-    ui->ParameterHolder->addRow(new QLabel(s),new QLineEdit("0,0"));
-}
-
+//hides and shows the command editor frame
 void MainWindow::on_toolButton_clicked()
 {
     if(ui->Command_Editor_Frame->isVisible()){
@@ -89,4 +86,35 @@ void MainWindow::on_toolButton_clicked()
     } else{
         ui->Command_Editor_Frame->show();
     }
+}
+//adds point to command editor
+void MainWindow::on_AddPointButton_clicked()
+{
+    numberOfPoints++;
+    QString s = ("Point " + QString::number(numberOfPoints) + ":");
+    ui->ParameterHolder->addRow(new QLabel(s),new QLineEdit("0,0"));
+    ui->RemovePointButton->setEnabled(true);
+}
+//removes point from command editor
+void MainWindow::on_RemovePointButton_clicked()
+{
+    if(numberOfPoints > 2){
+        numberOfPoints--;
+        if(numberOfPoints == 2){
+            ui->RemovePointButton->setDisabled(true);
+        }
+        int lastInput = ui->ParameterHolder->count() - 1;
+        int secondLast = lastInput - 1;
+        QLayoutItem *toDelete1 = ui->ParameterHolder->itemAt(lastInput);
+        QLayoutItem *toDelete2 = ui->ParameterHolder->itemAt(secondLast);
+        ui->ParameterHolder->removeItem(toDelete1);
+        ui->ParameterHolder->removeItem(toDelete2);
+        toDelete1->widget()->setVisible(false);
+        toDelete2->widget()->setVisible(false);
+    }
+}
+//adds command from command editor into command list
+void MainWindow::on_AddCommandButton_clicked()
+{
+
 }
