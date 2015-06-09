@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QScrollArea>
+#include <iostream>
+#include <QListWidget>
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +36,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setModel(model);
     ui->listView->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
     //end of command list work
+
+    //to do with tab manager
+    ui->tabWidget->removeTab(0);
+    ui->tabWidget->removeTab(0);
+    ui->tabWidget->setTabsClosable(true);
+
+    //end of tab manager work
 }
 
 MainWindow::~MainWindow()
@@ -60,12 +71,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     //move down
-//    int currentRow = ui->listView->currentIndex().row();
-//    if (currentRow == 0) return;
-//    ui->listView->model()
-//    QListViewItem *currentItem = ui->listView->takeItem(currentRow);
-//    ui->listView->insertItem(currentRow - 1, currentItem);
-//    ui->listView->setCurrentRow(currentRow - 1);
+    ui->tabWidget->addTab(ui->Command_Editor_Frame,"check");
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -113,8 +119,22 @@ void MainWindow::on_RemovePointButton_clicked()
         toDelete2->widget()->setVisible(false);
     }
 }
+
 //adds command from command editor into command list
+void MainWindow::on_actionDraw_Point_Map_triggered()
+{
+    QListWidget *toAdd = new QListWidget(this);
+    ui->tabWidget->addTab(toAdd,"hi");
+}
+
+//button that doesn't do anything yet.  (to add command).
 void MainWindow::on_AddCommandButton_clicked()
 {
 
+}
+
+//Routes the "x-clicked on tab" signal.
+void MainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    ui->tabWidget->removeTab(index);
 }

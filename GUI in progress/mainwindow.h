@@ -29,9 +29,15 @@ private slots:
 
     void on_RemovePointButton_clicked();
 
-    void on_pushButton_5_clicked();
-
     void on_AddCommandButton_clicked();
+
+    void on_actionDraw_Point_Map_triggered();
+
+    void on_actionDraw_Point_Map_toggled(bool arg1);
+
+    void on_actionDraw_Point_Map_hovered();
+
+    void on_tabWidget_tabCloseRequested(int index);
 
 private:
     Ui::MainWindow *ui;

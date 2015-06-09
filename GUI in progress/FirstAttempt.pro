@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    comandeditor.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    comandeditor.h
 
 FORMS    += mainwindow.ui
 
