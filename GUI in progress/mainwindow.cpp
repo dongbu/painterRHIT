@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     //to do with saving
     projectName = "Change_Me"; //"garbage" value
     saved = false;
@@ -26,20 +25,27 @@ MainWindow::MainWindow(QWidget *parent) :
     //end of saving
 
 
-    //to do with command editor
-    QScrollArea *scrollArea = new QScrollArea(); //scroll area stuff.  not pleasant.
+    ///to do with command editor
+//    QScrollArea *scrollArea = new QScrollArea(); //scroll area stuff.  not pleasant.
 
-    scrollArea->setParent(ui->Command_Editor_Frame);
+//    scrollArea->setParent(ui->Command_Editor_Frame);
 
-    scrollArea->setWidget(ui->Parameter);
-    ui->Parameter->show();
-    scrollArea->show();
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    scrollArea->setWidget(ui->Parameter);
+//    ui->Parameter->show();
+//    scrollArea->show();
+//    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+//    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     numberOfPoints = 2;
-    ui->RemovePointButton->setDisabled(true);
-    //end of command editor work
+//    ui->RemovePointButton->setDisabled(true);
+    currentEditor = 0;
+    editors.push_back(new CommandEditor("New Command",ui->listWidget));
+
+    CommandEditor *temp = editors.at(currentEditor);
+    temp->setParent(this);
+    ui->CommandEditLayout->addWidget(temp->CommandEditorWidget);
+
+    ///end of command editor work
 
     //to do with command list
     ui->listWidget->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
@@ -55,7 +61,8 @@ MainWindow::~MainWindow()
 
 //load command when clicked in commandViewer
 void MainWindow::loadCommandFromList(QListWidgetItem* item){
-    GuiLoadSave::updateCommandEditor(item->text(),projectName,ui->Parameter,this);
+    GuiLoadSave::updateCommandEditor(item->text(),projectName,editors.at(currentEditor)->CommandEditorWidget);
+
 
 }
 
@@ -96,70 +103,74 @@ void MainWindow::on_pushButton_clicked()
 //hides and shows the command editor frame
 void MainWindow::on_toolButton_clicked()
 {
-    if(ui->Command_Editor_Frame->isVisible()){
-        ui->Command_Editor_Frame->hide();
+    if(editors.at(currentEditor)->CommandEditorWidget->isVisible()){
+        editors.at(currentEditor)->CommandEditorWidget->hide();
     } else{
-        ui->Command_Editor_Frame->show();
+        editors.at(currentEditor)->CommandEditorWidget->show();
     }
 }
 
-//adds point to command editor
-void MainWindow::on_AddPointButton_clicked()
-{
-    //fairly self explanatory.  Adds point options
-    numberOfPoints++;
-    QString s = ("Point " + QString::number(numberOfPoints) + ":");
-    ui->ParameterHolder->addRow(new QLabel(s),new QLineEdit("0,0"));
-    ui->RemovePointButton->setEnabled(true);
-    ui->ParameterHolder->update();
-    ui->Parameter->update();
+void MainWindow::changeCurrentEditor(QString editorName){
+    std::cout << "implement later" <<std::endl;
 }
+
+////adds point to command editor
+//void MainWindow::on_AddPointButton_clicked()
+//{
+//    //fairly self explanatory.  Adds point options
+//    numberOfPoints++;
+//    QString s = ("Point " + QString::number(numberOfPoints) + ":");
+//    ui->ParameterHolder->addRow(new QLabel(s),new QLineEdit("0,0"));
+//    ui->RemovePointButton->setEnabled(true);
+//    ui->ParameterHolder->update();
+//    ui->Parameter->update();
+//}
 
 //removes point from command editor
-void MainWindow::on_RemovePointButton_clicked()
-{
-    //will not remove first two points
-    if(numberOfPoints > 2){
-        numberOfPoints--;
-        if(numberOfPoints == 2){
-            ui->RemovePointButton->setDisabled(true);
-        }
-        //last two items (paired together)
-        int lastInput = ui->ParameterHolder->count() - 1;
-        int secondLast = lastInput - 1;
-        QLayoutItem *toDelete1 = ui->ParameterHolder->itemAt(lastInput);
-        QLayoutItem *toDelete2 = ui->ParameterHolder->itemAt(secondLast);
-        //removes with gusto.  Probably some overkill here.
-        ui->ParameterHolder->removeItem(toDelete1);
-        ui->ParameterHolder->removeItem(toDelete2);
-        toDelete1->widget()->setVisible(false);
-        toDelete2->widget()->setVisible(false);
-        toDelete1->widget()->deleteLater();
-        toDelete2->widget()->deleteLater();
-        ui->ParameterHolder->update();
-        ui->Parameter->update();
-    }
-}
+//void MainWindow::on_RemovePointButton_clicked()
+//{
+//    //will not remove first two points
+//    if(numberOfPoints > 2){
+//        numberOfPoints--;
+//        if(numberOfPoints == 2){
+//            ui->RemovePointButton->setDisabled(true);
+//        }
+//        //last two items (paired together)
+//        int lastInput = ui->ParameterHolder->count() - 1;
+//        int secondLast = lastInput - 1;
+//        QLayoutItem *toDelete1 = ui->ParameterHolder->itemAt(lastInput);
+//        QLayoutItem *toDelete2 = ui->ParameterHolder->itemAt(secondLast);
+//        //removes with gusto.  Probably some overkill here.
+//        ui->ParameterHolder->removeItem(toDelete1);
+//        ui->ParameterHolder->removeItem(toDelete2);
+//        toDelete1->widget()->setVisible(false);
+//        toDelete2->widget()->setVisible(false);
+//        toDelete1->widget()->deleteLater();
+//        toDelete2->widget()->deleteLater();
+//        ui->ParameterHolder->update();
+//        ui->Parameter->update();
+//    }
+//}
 
 //adds command from command editor into command list and saves the command as an .xml file
-void MainWindow::on_AddCommandButton_clicked()
-{
-    //checks to make sure it has been saved. ie. ensures projectName is not a garbage variable.
-    if(!saved){
-        alert.setText("");
-        alert.setInformativeText("Must Save Or Select Project Before Adding Commands");
-        alert.show();
-        return;
-    }
-    //saves the command and outputs a message if it was malformed.  Still saves even if malformed.
-    if(!GuiLoadSave::writeCommandToFolder(projectName,ui->Parameter,ui->listWidget)){
-        alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-        alert.setInformativeText("File Malformed");
-        alert.show();
-        return;
-    }
+//void MainWindow::on_AddCommandButton_clicked()
+//{
+//    //checks to make sure it has been saved. ie. ensures projectName is not a garbage variable.
+//    if(!saved){
+//        alert.setText("");
+//        alert.setInformativeText("Must Save Or Select Project Before Adding Commands");
+//        alert.show();
+//        return;
+//    }
+//    //saves the command and outputs a message if it was malformed.  Still saves even if malformed.
+//    if(!GuiLoadSave::writeCommandToFolder(projectName,ui->Parameter,ui->listWidget)){
+//        alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+//        alert.setInformativeText("File Malformed");
+//        alert.show();
+//        return;
+//    }
 
-}
+//}
 
 
 //allows saveas functionality.
@@ -187,6 +198,9 @@ void MainWindow::on_actionSave_As_triggered()
                 saved = true;
                 projectName = name;
                 this->setWindowTitle(projectName);
+                foreach(CommandEditor *edits, editors){
+                    edits->setProjectName(projectName);
+                }
             }
         }else{
             //basically user put in a bad filename

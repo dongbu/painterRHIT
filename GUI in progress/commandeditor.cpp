@@ -1,11 +1,14 @@
 #include "commandeditor.h"
+#include "guiloadsave.h"
 #include <QTextStream>
 
-CommandEditor::CommandEditor() {
+CommandEditor::CommandEditor(QString name, QListWidget *widget) {
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
     this->BuildEditor();
     this->ConnectButtons();
+    this->name = name;
+    this->widget = widget;
 }
 
 /*
@@ -18,6 +21,9 @@ void CommandEditor::BuildEditor() {
     ParameterHolder = new QFormLayout();
     QGridLayout *ButtonHolder = new QGridLayout();
     QFormLayout *HolderHolder = new QFormLayout();
+
+    //making parameterHolder form more useful
+    ParameterHolder->setSizeConstraint(QLayout::SetMinimumSize);
 
     //Populating forms
     PopulateButtons(ButtonHolder);
@@ -113,6 +119,12 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
  */
 void CommandEditor::Add_Command_Clicked() {
     QTextStream(stdout) << "The add command button was pressed.\n";
+    if(projectName.isEmpty()){
+        return;
+    } else{
+        GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget);
+    }
+
 }
 
 /*
@@ -156,3 +168,25 @@ void CommandEditor::ConnectButtons() {
     connect(Add_Point, QPushButton::clicked, this, Add_Point_Clicked);
     connect(Remove_Point, QPushButton::clicked, this, Remove_Point_Clicked);
 }
+
+/*
+ * this method returns the name of this editor.
+ */
+QString CommandEditor::getName(){
+    return name;
+}
+
+/*
+ * this method sets the name of this editor.
+ */
+void CommandEditor::setName(QString newName){
+    this->name = newName;
+}
+
+/*
+ * This method allows this class to know what the project name is that it is within.
+ */
+void CommandEditor::setProjectName(QString name){
+    projectName = name;
+}
+

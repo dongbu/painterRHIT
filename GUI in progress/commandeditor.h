@@ -1,8 +1,6 @@
 #ifndef COMMANDEDITOR_H
 #define COMMANDEDITOR_H
 
-#endif // COMMANDEDITOR_H
-
 #include <QWidget>
 #include <QGridLayout>
 #include <QFormLayout>
@@ -15,12 +13,16 @@
 #include <QFormLayout>
 #include <QScrollArea>
 #include <vector>
+#include <QListWidget>
 
 class CommandEditor : public QObject
 {
 public:
-    CommandEditor();
+    CommandEditor(QString name, QListWidget *listWidget);
     void ConnectButtons();
+    void setName(QString newName);
+    QString getName();
+    void setProjectName(QString name);
 
     QWidget *CommandEditorWidget;
     std::vector<QLineEdit*> *PointVec;
@@ -36,6 +38,9 @@ private:
 
     int pointCount;
     QFormLayout *ParameterHolder;
+    QString name;
+    QString projectName;
+    QListWidget *widget;
 
 
 public slots:
@@ -43,3 +48,5 @@ public slots:
     void Add_Point_Clicked();
     void Remove_Point_Clicked();
 };
+
+#endif // COMMANDEDITOR_H

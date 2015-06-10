@@ -6,8 +6,9 @@ GuiLoadSave::GuiLoadSave()
 
 }
 
-
-//written in this horrible fashion to ensure compiling.  Will need updated with the new code upgrade.
+/*
+ * takes the command and puts it in its place.
+ */
 boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEditor, QListWidget *CommandList){
 
     //boolean checker to make sure the file inputs are correct.
@@ -20,7 +21,7 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     QList<QComboBox *> comboBoxes = CommandEditor->findChildren<QComboBox *>();
 
     //the second object is the filename.
-    QString fileName = lineEdits.at(2)->text();
+    QString fileName = lineEdits.at(0)->text();
 
     //adds file stuff to the commandlist.
     CommandList->addItem(fileName);
@@ -51,11 +52,8 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     writer.writeComment("Point Map Information");
     writer.writeStartElement("PointMap");
     writer.writeAttribute("length",QString::number(lineEdits.count()-1));
-    for(int i = 0; i < lineEdits.count(); i++){
-        if(i == 2){
-            // do nothing.
-            //the second one is the command name since it was the third thing added.  sorry for any confusion.
-        }else{
+    for(int i = 1; i < lineEdits.count(); i++){
+
             writer.writeStartElement("Point");
             QString point = lineEdits.at(i)->text();
             QStringList xy = point.split(',');
@@ -71,7 +69,7 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
             if(!okValue1 || !okValue2){
                 std::cout << "input malformed" <<std::endl;
                 fileMalformed = true;
-            }
+
         }
     }
     writer.writeEndElement();//PointMap
@@ -88,7 +86,9 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
 
 }
 
-//create folder for saving within
+/*
+ * create folder for saving within.
+ */
 int GuiLoadSave::createProjectDirectory(QString projectName){
     //create main ProjectFiles folder if it does not exist.
     if(!QDir(QString("ProjectFiles")).exists()){
@@ -112,8 +112,10 @@ int GuiLoadSave::createProjectDirectory(QString projectName){
     }
 }
 
-//puts info from xml into command editor.
-int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWidget *commandEditor, MainWindow *mainWindow){
+/*
+ * puts info from xml into command editor.
+ */
+int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWidget *commandEditor){
 
     QList<QLineEdit *> lineEdits = commandEditor->findChildren<QLineEdit *>();
 
@@ -138,10 +140,10 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWid
     //delete all buttons except for the first two.  two extra added "just in case".
     int numChildrenToRemove = (commandEditor->findChildren<QLineEdit *>().size());
     for(int l = 0; l < numChildrenToRemove; l++){
-        mainWindow->on_RemovePointButton_clicked();
+//        mainWindow->on_RemovePointButton_clicked();
     }
 
-    int k = 0;
+    int k = 1;
 
     while(!reader.isEndDocument()){
         reader.readNext();
@@ -150,7 +152,7 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWid
             if(reader.name().toString() == "PointMap"){
                 int numPoints = reader.attributes().at(0).value().toString().toInt();
                 for(int j = 0; j < (numPoints - 2); j++){
-                    mainWindow->on_AddPointButton_clicked();
+//                    mainWindow->on_AddPointButton_clicked();
 
                 }
                 lineEdits = commandEditor->findChildren<QLineEdit *>();
@@ -165,10 +167,6 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWid
 
                 commandEditor->findChildren<QLineEdit *>().at(k)->setText(pointString);
                 k++;
-                if(k == 2){
-                    k++;
-                }
-
 
             } else if(reader.name().toString() == "FileMalformed"){
                 if(reader.attributes().value(0).toString() == "1"){

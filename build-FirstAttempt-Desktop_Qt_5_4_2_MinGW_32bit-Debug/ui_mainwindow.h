@@ -13,14 +13,10 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
-#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -60,27 +56,11 @@ public:
     QPushButton *pushButton_4;
     QPushButton *pushButton_3;
     QLabel *Command_List_Label;
-    QFrame *Command_Editor_Frame;
-    QPushButton *AddPointButton;
-    QPushButton *RemovePointButton;
-    QWidget *Parameter;
-    QGridLayout *gridLayout;
-    QLabel *Command_Editor_Label;
-    QFormLayout *ParameterHolder;
-    QLabel *label;
-    QLabel *label_5;
-    QComboBox *comboBox;
-    QLabel *label_2;
-    QComboBox *comboBox_2;
-    QLabel *label_3;
-    QLineEdit *Point_1;
-    QLabel *label_4;
-    QLineEdit *Point_2;
-    QLineEdit *lineEdit;
     QToolButton *toolButton;
-    QPushButton *AddCommandButton;
     QFrame *line;
     QFrame *line_2;
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *CommandEditLayout;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
     QMenu *menuNew_Window;
@@ -202,112 +182,19 @@ public:
         Command_List_Label = new QLabel(centralWidget);
         Command_List_Label->setObjectName(QStringLiteral("Command_List_Label"));
         Command_List_Label->setGeometry(QRect(0, 670, 1101, 31));
-        Command_Editor_Frame = new QFrame(centralWidget);
-        Command_Editor_Frame->setObjectName(QStringLiteral("Command_Editor_Frame"));
-        Command_Editor_Frame->setGeometry(QRect(680, 0, 421, 381));
-        Command_Editor_Frame->setFrameShape(QFrame::StyledPanel);
-        Command_Editor_Frame->setFrameShadow(QFrame::Raised);
-        AddPointButton = new QPushButton(Command_Editor_Frame);
-        AddPointButton->setObjectName(QStringLiteral("AddPointButton"));
-        AddPointButton->setGeometry(QRect(10, 320, 403, 23));
-        RemovePointButton = new QPushButton(Command_Editor_Frame);
-        RemovePointButton->setObjectName(QStringLiteral("RemovePointButton"));
-        RemovePointButton->setGeometry(QRect(10, 350, 403, 23));
-        Parameter = new QWidget(Command_Editor_Frame);
-        Parameter->setObjectName(QStringLiteral("Parameter"));
-        Parameter->setGeometry(QRect(0, 0, 421, 321));
-        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(Parameter->sizePolicy().hasHeightForWidth());
-        Parameter->setSizePolicy(sizePolicy);
-        gridLayout = new QGridLayout(Parameter);
-        gridLayout->setSpacing(6);
-        gridLayout->setContentsMargins(11, 11, 11, 11);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
-        Command_Editor_Label = new QLabel(Parameter);
-        Command_Editor_Label->setObjectName(QStringLiteral("Command_Editor_Label"));
-
-        gridLayout->addWidget(Command_Editor_Label, 0, 0, 1, 1);
-
-        ParameterHolder = new QFormLayout();
-        ParameterHolder->setSpacing(6);
-        ParameterHolder->setObjectName(QStringLiteral("ParameterHolder"));
-        ParameterHolder->setSizeConstraint(QLayout::SetMinimumSize);
-        ParameterHolder->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
-        ParameterHolder->setLabelAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-        ParameterHolder->setFormAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
-        ParameterHolder->setContentsMargins(17, 0, -1, -1);
-        label = new QLabel(Parameter);
-        label->setObjectName(QStringLiteral("label"));
-
-        ParameterHolder->setWidget(0, QFormLayout::LabelRole, label);
-
-        label_5 = new QLabel(Parameter);
-        label_5->setObjectName(QStringLiteral("label_5"));
-
-        ParameterHolder->setWidget(1, QFormLayout::LabelRole, label_5);
-
-        comboBox = new QComboBox(Parameter);
-        comboBox->setObjectName(QStringLiteral("comboBox"));
-
-        ParameterHolder->setWidget(1, QFormLayout::FieldRole, comboBox);
-
-        label_2 = new QLabel(Parameter);
-        label_2->setObjectName(QStringLiteral("label_2"));
-        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
-        label_2->setSizePolicy(sizePolicy1);
-
-        ParameterHolder->setWidget(2, QFormLayout::LabelRole, label_2);
-
-        comboBox_2 = new QComboBox(Parameter);
-        comboBox_2->setObjectName(QStringLiteral("comboBox_2"));
-
-        ParameterHolder->setWidget(2, QFormLayout::FieldRole, comboBox_2);
-
-        label_3 = new QLabel(Parameter);
-        label_3->setObjectName(QStringLiteral("label_3"));
-
-        ParameterHolder->setWidget(3, QFormLayout::LabelRole, label_3);
-
-        Point_1 = new QLineEdit(Parameter);
-        Point_1->setObjectName(QStringLiteral("Point_1"));
-
-        ParameterHolder->setWidget(3, QFormLayout::FieldRole, Point_1);
-
-        label_4 = new QLabel(Parameter);
-        label_4->setObjectName(QStringLiteral("label_4"));
-
-        ParameterHolder->setWidget(4, QFormLayout::LabelRole, label_4);
-
-        Point_2 = new QLineEdit(Parameter);
-        Point_2->setObjectName(QStringLiteral("Point_2"));
-
-        ParameterHolder->setWidget(4, QFormLayout::FieldRole, Point_2);
-
-        lineEdit = new QLineEdit(Parameter);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
-
-        ParameterHolder->setWidget(0, QFormLayout::FieldRole, lineEdit);
-
-
-        gridLayout->addLayout(ParameterHolder, 1, 0, 1, 1);
-
+        sizePolicy.setHeightForWidth(Command_List_Label->sizePolicy().hasHeightForWidth());
+        Command_List_Label->setSizePolicy(sizePolicy);
         toolButton = new QToolButton(centralWidget);
         toolButton->setObjectName(QStringLiteral("toolButton"));
-        toolButton->setGeometry(QRect(1100, 0, 25, 19));
+        toolButton->setGeometry(QRect(1080, 0, 25, 19));
         toolButton->setCheckable(false);
         toolButton->setChecked(false);
-        AddCommandButton = new QPushButton(centralWidget);
-        AddCommandButton->setObjectName(QStringLiteral("AddCommandButton"));
-        AddCommandButton->setGeometry(QRect(1010, 640, 101, 23));
         line = new QFrame(centralWidget);
         line->setObjectName(QStringLiteral("line"));
-        line->setGeometry(QRect(1113, 0, 20, 931));
+        line->setGeometry(QRect(1110, 0, 20, 931));
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
         line_2 = new QFrame(centralWidget);
@@ -315,17 +202,15 @@ public:
         line_2->setGeometry(QRect(-3, 660, 1121, 20));
         line_2->setFrameShape(QFrame::HLine);
         line_2->setFrameShadow(QFrame::Sunken);
+        verticalLayoutWidget = new QWidget(centralWidget);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(670, 10, 391, 411));
+        CommandEditLayout = new QVBoxLayout(verticalLayoutWidget);
+        CommandEditLayout->setSpacing(6);
+        CommandEditLayout->setContentsMargins(11, 11, 11, 11);
+        CommandEditLayout->setObjectName(QStringLiteral("CommandEditLayout"));
+        CommandEditLayout->setContentsMargins(0, 0, 0, 0);
         MainWindow->setCentralWidget(centralWidget);
-        layoutWidget->raise();
-        Command_List_Label->raise();
-        Command_Editor_Frame->raise();
-        toolButton->raise();
-        AddCommandButton->raise();
-        line->raise();
-        line_2->raise();
-        pushButton->raise();
-        pushButton_4->raise();
-        pushButton_3->raise();
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
@@ -425,35 +310,7 @@ public:
         pushButton_4->setText(QApplication::translate("MainWindow", "Move Down", 0));
         pushButton_3->setText(QApplication::translate("MainWindow", "Delete", 0));
         Command_List_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        AddPointButton->setText(QApplication::translate("MainWindow", "Add Point", 0));
-        RemovePointButton->setText(QApplication::translate("MainWindow", "Remove Point", 0));
-        Command_Editor_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt;\">Command Editor</span></p></body></html>", 0));
-        label->setText(QApplication::translate("MainWindow", "Command Name:", 0));
-        label_5->setText(QApplication::translate("MainWindow", "Color:", 0));
-        comboBox->clear();
-        comboBox->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "Red", 0)
-         << QApplication::translate("MainWindow", "Blue", 0)
-         << QApplication::translate("MainWindow", "Green", 0)
-         << QApplication::translate("MainWindow", "Yellow", 0)
-         << QApplication::translate("MainWindow", "Black", 0)
-         << QApplication::translate("MainWindow", "Purple", 0)
-         << QApplication::translate("MainWindow", "Orange", 0)
-         << QApplication::translate("MainWindow", "White", 0)
-        );
-        label_2->setText(QApplication::translate("MainWindow", "Style:                                 ", 0));
-        comboBox_2->clear();
-        comboBox_2->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "Solid", 0)
-         << QApplication::translate("MainWindow", "Dashed", 0)
-         << QApplication::translate("MainWindow", "Dashed Dot", 0)
-        );
-        label_3->setText(QApplication::translate("MainWindow", "Point 1:", 0));
-        Point_1->setText(QApplication::translate("MainWindow", "0,0", 0));
-        label_4->setText(QApplication::translate("MainWindow", "Point 2:", 0));
-        Point_2->setText(QApplication::translate("MainWindow", "0,0", 0));
         toolButton->setText(QApplication::translate("MainWindow", "...", 0));
-        AddCommandButton->setText(QApplication::translate("MainWindow", "Add Command", 0));
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));
