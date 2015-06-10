@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    guiloadsave.cpp
+    guiloadsave.cpp \
+    commandeditor.cpp
 
 HEADERS  += mainwindow.h \
-    guiloadsave.h
+    guiloadsave.h \
+    commandeditor.h
 
 FORMS    += mainwindow.ui
 

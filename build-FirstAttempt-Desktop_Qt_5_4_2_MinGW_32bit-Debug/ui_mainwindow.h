@@ -21,7 +21,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListView>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
@@ -54,7 +54,7 @@ public:
     QWidget *centralWidget;
     QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
-    QListView *listView;
+    QListWidget *listWidget;
     QHBoxLayout *horizontalLayout;
     QPushButton *pushButton;
     QPushButton *pushButton_4;
@@ -173,10 +173,10 @@ public:
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        listView = new QListView(layoutWidget);
-        listView->setObjectName(QStringLiteral("listView"));
+        listWidget = new QListWidget(layoutWidget);
+        listWidget->setObjectName(QStringLiteral("listWidget"));
 
-        verticalLayout->addWidget(listView);
+        verticalLayout->addWidget(listWidget);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -316,6 +316,16 @@ public:
         line_2->setFrameShape(QFrame::HLine);
         line_2->setFrameShadow(QFrame::Sunken);
         MainWindow->setCentralWidget(centralWidget);
+        layoutWidget->raise();
+        Command_List_Label->raise();
+        Command_Editor_Frame->raise();
+        toolButton->raise();
+        AddCommandButton->raise();
+        line->raise();
+        line_2->raise();
+        pushButton->raise();
+        pushButton_4->raise();
+        pushButton_3->raise();
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
