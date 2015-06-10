@@ -1,0 +1,85 @@
+//check to make sure the project has been saved
+    if(!saved){
+        alert.setText("You must create a save before adding commands");
+        alert.setStandardButtons(QMessageBox::Close);
+        alert.show();
+        return;
+    }
+
+    //boolean checker to make sure the file inputs are correct.
+    bool fileMalformed = false;
+
+    //gets all the line edit pieces and puts them into an array
+    QList<QLineEdit *> lineEdits = commandWidge->findChildren<QLineEdit *>();
+
+    //gets all the combobox pieces and puts them into an array
+    QList<QComboBox *> comboBoxes = commandWidge->findChildren<QComboBox *>();
+
+    //the second object is the filename.
+    QString fileName = lineEdits.at(2)->text();
+
+    //adds file stuff to the commandlist.
+    listWidget->addItem(fileName);
+
+    //sets up a save file to put the information into.  Should overwrite any previous file with same name in directory.
+    QString fileLoc = QString("ProjectFiles/") + projectName + QString("/") + fileName + QString(".xml");   
+    QFile saveFile;
+    saveFile.setFileName(fileLoc);
+    saveFile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
+    QXmlStreamWriter writer(&saveFile);
+
+
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument("1.0");
+    writer.writeComment(fileName);
+
+    writer.writeStartElement("Command");
+
+    writer.writeComment("Line Information");
+    writer.writeStartElement("Line");
+    writer.writeAttribute("color",comboBoxes.at(0)->property("currentText").toString());
+    writer.writeAttribute("style", comboBoxes.at(1)->property("currentText").toString());
+    writer.writeEndElement();//Line
+
+
+    writer.writeComment("Point Map Information");
+    writer.writeStartElement("PointMap");
+    writer.writeAttribute("length",QString::number(lineEdits.count()-1));
+    for(int i = 0; i < lineEdits.count(); i++){
+        if(i == 2){
+            // do nothing.
+            //the second one is the command name since it was the third thing added.  sorry for any confusion.
+        }else{
+            writer.writeStartElement("Point");
+            QString point = lineEdits.at(i)->text();
+            QStringList xy = point.split(',');
+            QString xValue = xy.value(0);
+            QString yValue = xy.value(1);
+            writer.writeAttribute("x",xValue);
+            writer.writeAttribute("y",yValue);
+            writer.writeEndElement();//Point
+            bool okValue1;
+            bool okValue2;
+            xValue.toDouble(&okValue1);
+            yValue.toDouble(&okValue2);
+            if(!okValue1 || !okValue2){
+                std::cout << "input malformed" <<std::endl;
+                fileMalformed = true;
+            }
+        }
+    }
+    writer.writeEndElement();//PointMap
+
+    writer.writeStartElement("FileMalformed");
+    writer.writeAttribute("bool",QString::number(fileMalformed));
+    writer.writeEndElement();//FileMalformed
+    writer.writeEndElement();//Command
+    writer.writeEndDocument();//end
+
+    saveFile.close();
+
+    if(fileMalformed){
+        alert.setText("ERROR: Bad Input");
+        alert.setInformativeText("This command will not be runnable until fixed");
+        alert.show();
+    }

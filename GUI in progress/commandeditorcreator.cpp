@@ -1,4 +1,0 @@
-CommandEditorCreator::CommandEditorCreator()
-{
-
-}

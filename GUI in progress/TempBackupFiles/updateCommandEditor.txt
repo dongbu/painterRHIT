@@ -1,0 +1,86 @@
+//puts info from xml into command editor.
+void MainWindow::updateCommandEditor(QString fileName){
+
+    QList<QLineEdit *> lineEdits;
+    //= ui->Parameter->findChildren<QLineEdit *>();
+
+    QFile loadFile;
+    loadFile.setFileName(QString("ProjectFiles/").append(projectName.append("/")).append(fileName.append(".xml")));
+    loadFile.open(QIODevice::ReadOnly);
+    QXmlStreamReader reader(&loadFile);
+
+    reader.readNextStartElement();
+    reader.readNextStartElement();
+    int i = 0;
+    fileName.chop(4);
+    ui->lineEdit->setText(fileName);
+    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+        if(i == 0){
+            ui->comboBox->setCurrentIndex(ui->comboBox->findText(attr.value().toString()));
+        } else if(i == 1){
+            ui->comboBox_2->setCurrentIndex(ui->comboBox_2->findText(attr.value().toString()));
+        }
+        i++;
+    }
+    i = 0;
+    //delete all buttons except for the first two.  two extra added "just in case".
+    int numChildrenToRemove = (ui->Parameter->findChildren<QLineEdit *>().size() + 2);
+    for(int l = 0; l < numChildrenToRemove; l++){
+        on_RemovePointButton_clicked();
+    }
+
+    int k = 0;
+    //int currentLength = lineEdits.length();
+    while(!reader.isEndDocument()){
+        reader.readNext();
+        if(reader.isStartElement()){
+            QString pointString = "";
+            if(reader.name().toString() == "PointMap"){
+                int numPoints = reader.attributes().at(0).value().toString().toInt();
+                for(int j = 0; j < (numPoints - 2); j++){
+                    on_AddPointButton_clicked();
+                }
+                lineEdits = ui->Parameter->findChildren<QLineEdit *>();
+            }
+            if(reader.name().toString() == "Point"){
+                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                    pointString.append(attr.value().toString());
+                    pointString.append(",");
+                }
+                pointString.chop(1);
+                //                if((k+1) >= (lineEdits.length()-1)){
+                //                    on_AddPointButton_clicked();
+                //                    lineEdits = ui->Parameter->findChildren<QLineEdit *>();
+                //                }
+                //                lineEdits.at(k)->setText(pointString);
+//                std::cout << pointString.toStdString() << std::endl;
+//                if(k > 2){
+//                    on_AddPointButton_clicked();
+//                }
+//                ui->Parameter->findChildren<QLineEdit *>().at(k)->setText(pointString);
+                std::cout << "adding coord: " << pointString.toStdString() << " to spot : " << k << std::endl;
+                lineEdits.at(k)->setText(pointString);
+                k++;
+                if(k == 2){
+                    k++;
+                }
+
+
+            } else if(reader.name().toString() == "FileMalformed"){
+                if(reader.attributes().value(0).toString() == "1"){
+                    std::cout << "FILE WAS MALFORMED!" << std::endl;
+                }
+            }
+
+        }
+    }
+    std::cout << "stop" << std::endl;
+    //    while((lineEdits.length()-1) > k){
+    //        on_RemovePointButton_clicked();
+    //        k++;
+    //    }
+    if(reader.hasError()){
+        std::cout << "there was an error in reading the file" <<std::endl;
+    }
+    loadFile.close();
+}
