@@ -187,6 +187,7 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionDraw_Point_Map_triggered()
 {
     CommandEditor *editor = new CommandEditor(ui->listWidget);
+    editor->setProjectName(projectName);
     editors.push_back(editor);
     currentEditor++;
     tabCount++;

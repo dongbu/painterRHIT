@@ -184,3 +184,60 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, QWid
     return 0;
 }
 
+int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *CommandList){
+    QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
+    QFile saveIndexFile;
+    saveIndexFile.setFileName(fileLoc);
+    saveIndexFile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
+    QXmlStreamWriter writer(&saveIndexFile);
+
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument("1.0");
+    writer.writeComment("index");
+
+    writer.writeStartElement("index");
+
+    QList<QListWidgetItem *> listOfCommandNames = CommandList->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+
+    for(int i = 0; i < listOfCommandNames.size(); i++){
+    writer.writeStartElement(listOfCommandNames.at(i)->text());//index at
+    writer.writeEndElement();//index at
+    std::cout << listOfCommandNames.at(i)->text().toStdString() << std::endl;
+    }
+
+    writer.writeEndElement();//index
+    writer.writeEndDocument();//end of doc
+
+    saveIndexFile.close();
+
+    //one if no error, zero if error
+    return(!writer.hasError());
+
+}
+
+
+int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *CommandList){
+    QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
+    QFile loadIndexFile;
+    loadIndexFile.setFileName(fileLoc);
+    loadIndexFile.open(QIODevice::ReadOnly);
+    QXmlStreamReader reader(&loadIndexFile);
+
+    while(!reader.isEndDocument()){
+        reader.readNext();
+        if(reader.isStartElement()){
+            QString text = reader.name().toString();
+            if(text != "index"){
+                CommandList->addItem(text);
+            }
+        }
+    }
+
+
+    loadIndexFile.close();
+
+    //one if no error, zero if error
+    return(!reader.hasError());
+}
+
+
