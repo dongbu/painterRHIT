@@ -16,41 +16,25 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //to do with saving
+    //Tab Work//
+    EditorTabs = new QTabWidget();
+    currentEditor = -1;
+    tabCount = 0;
+    ui->EditorTabLayout->addWidget(EditorTabs);
+    this->EditorTabs->connect(EditorTabs,QTabWidget::tabCloseRequested, this,MainWindow::closeTab);
+    EditorTabs->setTabsClosable(true);
+    //Tab work//
+
+    //save work//
     projectName = "Change_Me"; //"garbage" value
     saved = false;
-
     ui->actionSave->setDisabled(true);//disable save until saveAs has been used.
+    //save work//
 
-    //end of saving
-
-
-    ///to do with command editor
-//    QScrollArea *scrollArea = new QScrollArea(); //scroll area stuff.  not pleasant.
-
-//    scrollArea->setParent(ui->Command_Editor_Frame);
-
-//    scrollArea->setWidget(ui->Parameter);
-//    ui->Parameter->show();
-//    scrollArea->show();
-//    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-//    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    numberOfPoints = 2;
-//    ui->RemovePointButton->setDisabled(true);
-    currentEditor = 0;
-    editors.push_back(new CommandEditor("New Command",ui->listWidget));
-
-    CommandEditor *temp = editors.at(currentEditor);
-    temp->setParent(this);
-    ui->CommandEditLayout->addWidget(temp->CommandEditorWidget);
-
-    ///end of command editor work
-
-    //to do with command list
+    //command list//
     ui->listWidget->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
     ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(loadCommandFromList(QListWidgetItem*)));
-    //end of command list work
+    //command list//
 }
 
 //default delete function
@@ -62,14 +46,11 @@ MainWindow::~MainWindow()
 //load command when clicked in commandViewer
 void MainWindow::loadCommandFromList(QListWidgetItem* item){
     GuiLoadSave::updateCommandEditor(item->text(),projectName,editors.at(currentEditor)->CommandEditorWidget);
-
-
 }
 
-//remove item from commandViewer
+//delete item from commandViewer
 void MainWindow::on_pushButton_3_clicked()
 {
-    //delete
     ui->listWidget->takeItem(ui->listWidget->currentRow());
 }
 
@@ -98,20 +79,6 @@ void MainWindow::on_pushButton_clicked()
     QListWidgetItem *currentItem = ui->listWidget->takeItem(currentRow);
     ui->listWidget->insertItem(currentRow - 1, currentItem);
     ui->listWidget->setCurrentRow(currentRow - 1);
-}
-
-//hides and shows the command editor frame
-void MainWindow::on_toolButton_clicked()
-{
-    if(editors.at(currentEditor)->CommandEditorWidget->isVisible()){
-        editors.at(currentEditor)->CommandEditorWidget->hide();
-    } else{
-        editors.at(currentEditor)->CommandEditorWidget->show();
-    }
-}
-
-void MainWindow::changeCurrentEditor(QString editorName){
-    std::cout << "implement later" <<std::endl;
 }
 
 ////adds point to command editor
@@ -208,10 +175,7 @@ void MainWindow::on_actionSave_As_triggered()
             alert.setInformativeText(name + " is not a valid name");
             alert.show();
         }
-
-
     }
-
 }
 
 
@@ -220,4 +184,15 @@ void MainWindow::on_actionOpen_triggered()
 {
 }
 
+void MainWindow::on_actionDraw_Point_Map_triggered()
+{
+    CommandEditor *editor = new CommandEditor(ui->listWidget);
+    editors.push_back(editor);
+    currentEditor++;
+    tabCount++;
+    EditorTabs->addTab(editor->CommandEditorWidget,"untitled (" + QString::number(tabCount) + ")");
+}
 
+void MainWindow::closeTab() {
+    EditorTabs->removeTab(EditorTabs->currentIndex());
+}

@@ -18,11 +18,11 @@
 class CommandEditor : public QObject
 {
 public:
-    CommandEditor(QString name, QListWidget *listWidget);
+    CommandEditor(QListWidget *listWidget);
     void ConnectButtons();
     void setName(QString newName);
-    QString getName();
     void setProjectName(QString name);
+    QString getName();
 
     QWidget *CommandEditorWidget;
     std::vector<QLineEdit*> *PointVec;
@@ -41,7 +41,6 @@ private:
     QString name;
     QString projectName;
     QListWidget *widget;
-
 
 public slots:
     void Add_Command_Clicked();

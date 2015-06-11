@@ -73,25 +73,6 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Command List&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton">
-    <property name="geometry">
-     <rect>
-      <x>1080</x>
-      <y>0</y>
-      <width>25</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>...</string>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
@@ -118,16 +99,16 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>10</x>
       <y>10</y>
-      <width>391</width>
-      <height>411</height>
+      <width>571</width>
+      <height>321</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="CommandEditLayout"/>
+    <layout class="QHBoxLayout" name="EditorTabLayout"/>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -137,7 +118,7 @@
      <x>0</x>
      <y>0</y>
      <width>1921</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNew_Window">

@@ -2,12 +2,12 @@
 #include "guiloadsave.h"
 #include <QTextStream>
 
-CommandEditor::CommandEditor(QString name, QListWidget *widget) {
+CommandEditor::CommandEditor(QListWidget *widget) {
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
     this->BuildEditor();
     this->ConnectButtons();
-    this->name = name;
+    this->name = "untitled";
     this->widget = widget;
 }
 
@@ -157,6 +157,9 @@ void CommandEditor::Remove_Point_Clicked() {
     ParameterHolder->removeItem(toDelete1);
     toDelete1->widget()->setVisible(false);
     toDelete2->widget()->setVisible(false);
+    toDelete1->widget()->deleteLater();
+    toDelete2->widget()->deleteLater();
+    ParameterHolder->update();
 }
 
 /*
