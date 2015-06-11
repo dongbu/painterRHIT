@@ -208,10 +208,11 @@ int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *Comm
     writer.writeEndElement();//index
     writer.writeEndDocument();//end of doc
 
+    int error = !writer.hasError();
     saveIndexFile.close();
 
     //one if no error, zero if error
-    return(!writer.hasError());
+    return(error);
 
 }
 
@@ -220,6 +221,9 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
     QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
     QFile loadIndexFile;
     loadIndexFile.setFileName(fileLoc);
+    if(!loadIndexFile.exists()){
+        return 0;
+    }
     loadIndexFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadIndexFile);
 
@@ -234,10 +238,11 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
     }
 
 
+    int error = !reader.hasError();
     loadIndexFile.close();
 
     //one if no error, zero if error
-    return(!reader.hasError());
+    return(error);
 }
 
 

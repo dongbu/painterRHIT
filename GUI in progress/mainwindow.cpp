@@ -8,6 +8,7 @@
 #include <QXmlStreamReader>
 #include <QMessageBox>
 #include <QListWidget>
+#include <QFileDialog>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -35,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listWidget->setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
     ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(loadCommandFromList(QListWidgetItem*)));
     //command list//
+
+    //misc work//
+    //misc work//
 }
 
 //default delete function
@@ -143,45 +147,169 @@ void MainWindow::on_pushButton_clicked()
 //allows saveas functionality.
 void MainWindow::on_actionSave_As_triggered()
 {
-    if(saved){
-        std::cout << "will figure out eventually" << std::endl;
-    }else{
-        //brings up a box for you to put in the name of your project
-        bool ok;
-        QString name = saveProjectWindow.getText(NULL, "Please name your project", NULL, QLineEdit::Normal, "projectName", &ok);
-        //checks to make sure the input is good
-        if (ok && !name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
-            int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
-            //return code 0 means it worked.
-            if(loadReturnCode != 0){
-                alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                if(loadReturnCode == 1){
-                alert.setInformativeText("Folder Creation Failed");
-                }else if(loadReturnCode == 2){
-                    alert.setInformativeText("Project Name Already Taken!");
+//    if(saved){
+//        std::cout << "will figure out eventually" << std::endl;
+//    }else{
+//        //brings up a box for you to put in the name of your project
+//        bool ok;
+//        QString name = saveProjectWindow.getText(NULL, "Please name your project", NULL, QLineEdit::Normal, "projectName", &ok);
+//        //checks to make sure the input is good
+//        if (ok && !name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
+//            //creates proper folders
+//            int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
+//            //return code 0 means it worked.
+//            if(loadReturnCode != 0){
+//                alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+//                if(loadReturnCode == 1){
+//                alert.setInformativeText("Folder Creation Failed");
+//                }else if(loadReturnCode == 2){
+//                    alert.setInformativeText("Project Name Already Taken!");
+//                }
+//                alert.show();
+//            } else{
+//                saved = true;
+//                projectName = name;
+//                this->setWindowTitle(projectName);
+//                ui->actionSave->setEnabled(true);
+//                foreach(CommandEditor *edits, editors){
+//                    edits->setProjectName(projectName);
+//                }
+
+//                //chunks in index.xml file
+//                if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+//                    alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+//                    alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+//                    alert.show();
+//                }
+//            }
+
+
+//        }else{
+//            //basically user put in a bad filename
+//            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+//            alert.setInformativeText(name + " is not a valid name");
+//            alert.show();
+//        }
+//    }
+
+    QFileDialog saveDirectory;
+    saveDirectory.setDirectory("ProjectFiles");
+//    saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
+    saveDirectory.setFileMode(QFileDialog::Directory);
+    saveDirectory.setOptions(QFileDialog::ShowDirsOnly);
+
+
+
+
+    if(saveDirectory.exec()){
+        QString name = saveDirectory.selectedFiles().at(0).split("ProjectFiles/").last();
+                if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
+                    //creates proper folders
+                    int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
+                    //return code 0 means it worked.
+                    if(loadReturnCode != 0){
+                        //ProjectFiles folder could not be created
+                        if(loadReturnCode == 1){
+                            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                            alert.setInformativeText("Failed To Create ProjectFiles directory");
+                            alert.show();
+                            return;
+                        }
+                        //project already exists
+                        else if(loadReturnCode == 2){
+                            std::cout << "confirm overwrite" << std::endl;
+                            QMessageBox confirmSaveBox;
+                            confirmSaveBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+
+                            confirmSaveBox.setText("Confirm Overwrite");
+                            confirmSaveBox.setButtonText(0,"overwrite");
+                            if(confirmSaveBox.exec()){
+
+                                std::cout << "overwrite comfirmed" << std::endl;
+                                QDir dir(name);
+                                if(dir.exists(name)){
+                                    if(!dir.removeRecursively()){
+                                        std::cout << "failed to remove previous folder" <<std::endl;
+                                        return;
+                                    }
+                                }
+                                saved = true;
+                                projectName = name;
+                                this->setWindowTitle(projectName);
+                                ui->actionSave->setEnabled(true);
+                                foreach(CommandEditor *edits, editors){
+                                    edits->setProjectName(projectName);
+                                }
+                                if(!GuiLoadSave::writeCommandListToFolder(projectName,ui->listWidget)){
+                                    alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                                    alert.setInformativeText("Failed To Save " + projectName);
+                                    alert.show();
+                                }
+
+                            }
+
+                    } else{
+                        saved = true;
+                        projectName = name;
+                        this->setWindowTitle(projectName);
+                        ui->actionSave->setEnabled(true);
+                        foreach(CommandEditor *edits, editors){
+                            edits->setProjectName(projectName);
+                        }
+
+                        //chunks in index.xml file
+                        if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+                            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                            alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+                            alert.show();
+                        }
+                    }
+
+
+                }else{
+                    //basically user put in a bad filename
+                    alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                    alert.setInformativeText(name + " is not a valid name");
+                    alert.show();
                 }
-                alert.show();
-            } else{
-                saved = true;
-                projectName = name;
-                this->setWindowTitle(projectName);
-                foreach(CommandEditor *edits, editors){
-                    edits->setProjectName(projectName);
-                }
-            }
-        }else{
-            //basically user put in a bad filename
-            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-            alert.setInformativeText(name + " is not a valid name");
-            alert.show();
-        }
     }
+    }
+
 }
 
 
-//open functionality TODO
+//open functionality
 void MainWindow::on_actionOpen_triggered()
 {
+    QFileDialog directory;
+    directory.setDirectory("ProjectFiles");
+    directory.setFileMode(QFileDialog::Directory);
+    directory.setOptions(QFileDialog::ShowDirsOnly);
+    if(directory.exec()){
+
+
+    projectName = directory.selectedFiles().at(0).split("ProjectFiles/").last();
+    std::cout << projectName.toStdString() << std::endl;
+    if(!GuiLoadSave::loadCommandListFromFolder(projectName,ui->listWidget)){
+        alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+        alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
+        alert.show();
+    }else{
+        this->setWindowTitle(projectName);
+        saved=true;
+        ui->actionSave->setEnabled(true);
+    }
+    }
+}
+
+//save functionality
+void MainWindow::on_actionSave_triggered()
+{
+    if(!GuiLoadSave::writeCommandListToFolder(projectName,ui->listWidget)){
+        alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+        alert.setInformativeText("Failed To Save " + projectName);
+        alert.show();
+    }
 }
 
 void MainWindow::on_actionDraw_Point_Map_triggered()
@@ -197,3 +325,5 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
 void MainWindow::closeTab() {
     EditorTabs->removeTab(EditorTabs->currentIndex());
 }
+
+

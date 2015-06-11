@@ -34,13 +34,14 @@ private slots:
     void on_actionDraw_Point_Map_triggered();
     void closeTab();
 
+    void on_actionSave_triggered();
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
     QString projectName;
     bool saved;
     QMessageBox alert;
-    QInputDialog saveProjectWindow;
 
     std::vector<CommandEditor*> editors;
     QTabWidget *EditorTabs;
