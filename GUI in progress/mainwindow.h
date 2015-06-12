@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ui_mainwindow.h"
+#include "guiloadsave.h"
 #include "commandeditor.h"
 #include <QtGui>
 #include <QMainWindow>
@@ -9,6 +11,14 @@
 #include <QListWidget>
 #include <QFile>
 #include <vector>
+#include <QScrollArea>
+#include <iostream>
+#include <QFile>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
+#include <QMessageBox>
+#include <QListWidget>
+#include <QFileDialog>
 
 
 namespace Ui {
@@ -25,14 +35,14 @@ public:
 
 
 private slots:
-    void on_pushButton_clicked();
-    void on_pushButton_3_clicked();
-    void on_pushButton_4_clicked();
+    void MoveUp_clicked();
+    void DeleteCommand_clicked();
+    void MoveDown_clicked();
     void on_actionSave_As_triggered();
     void on_actionOpen_triggered();
     void loadCommandFromList(QListWidgetItem*);
     void on_actionDraw_Point_Map_triggered();
-    void closeTab();
+    void closeTab(int index);
 
     void on_actionSave_triggered();
 
@@ -47,6 +57,7 @@ private:
     QTabWidget *EditorTabs;
     int currentEditor;
     int tabCount;
+    int untitledCount;
 
     void changeCurrentEditor(QString editorName);
 };

@@ -52,16 +52,16 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>420</y>
       <width>571</width>
-      <height>211</height>
+      <height>223</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="CommandListLayout">
      <item>
       <widget class="QLabel" name="Command_List_Label">
        <property name="sizePolicy">
@@ -83,28 +83,28 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="EditCommand">
            <property name="text">
-            <string>Insert</string>
+            <string>Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_3">
+          <widget class="QPushButton" name="DeleteCommand">
            <property name="text">
             <string>Delete</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_4">
+          <widget class="QPushButton" name="MoveDown">
            <property name="text">
             <string>Move Down</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="MoveUp">
            <property name="text">
             <string>Move Up</string>
            </property>
@@ -116,16 +116,9 @@
      </item>
     </layout>
    </widget>
-   <zorder>Command_List_Label</zorder>
+   <zorder>layoutWidget</zorder>
    <zorder>line_2</zorder>
-   <zorder>pushButton</zorder>
-   <zorder>pushButton_4</zorder>
-   <zorder>pushButton_3</zorder>
-   <zorder>pushButton_2</zorder>
-   <zorder>listWidget</zorder>
-   <zorder></zorder>
    <zorder>verticalLayoutWidget</zorder>
-   <zorder>Command_Editor</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
