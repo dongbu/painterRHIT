@@ -194,15 +194,17 @@ void MainWindow::on_actionSave_As_triggered()
 
     QFileDialog saveDirectory;
     saveDirectory.setDirectory("ProjectFiles");
-//    saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
-    saveDirectory.setFileMode(QFileDialog::Directory);
-    saveDirectory.setOptions(QFileDialog::ShowDirsOnly);
+    saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Text files (*.txt)";
+    saveDirectory.setNameFilters(filters);
 
 
 
 
     if(saveDirectory.exec()){
-        QString name = saveDirectory.selectedFiles().at(0).split("ProjectFiles/").last();
+        QString name = saveDirectory.selectedFiles().at(0).split("/").last();
+        std::cout << name.toStdString() <<std::endl;
                 if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
                     //creates proper folders
                     int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
@@ -245,8 +247,14 @@ void MainWindow::on_actionSave_As_triggered()
                                     alert.setInformativeText("Failed To Save " + projectName);
                                     alert.show();
                                 }
+                                //adds a "dummy" txt file
+                                QFile dummy;
+                                dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
+                                dummy.open(QIODevice::WriteOnly);
+                                dummy.close();
 
                             }
+                        }
 
                     } else{
                         saved = true;
@@ -263,6 +271,10 @@ void MainWindow::on_actionSave_As_triggered()
                             alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
                             alert.show();
                         }
+                        QFile dummy;
+                        dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
+                        dummy.open(QIODevice::WriteOnly);
+                        dummy.close();
                     }
 
 
@@ -273,7 +285,6 @@ void MainWindow::on_actionSave_As_triggered()
                     alert.show();
                 }
     }
-    }
 
 }
 
@@ -281,14 +292,23 @@ void MainWindow::on_actionSave_As_triggered()
 //open functionality
 void MainWindow::on_actionOpen_triggered()
 {
+    if(!QDir(QString("ProjectFiles")).exists()){
+        if(!QDir().mkdir(QString("ProjectFiles"))){
+            std::cout << "failed to create ProjectFiles folder" <<std::endl;
+            return;
+        }
+    }
+
     QFileDialog directory;
     directory.setDirectory("ProjectFiles");
-    directory.setFileMode(QFileDialog::Directory);
-    directory.setOptions(QFileDialog::ShowDirsOnly);
+    QStringList filters;
+    filters << "Text files (*.txt)";
+    directory.setNameFilters(filters);
     if(directory.exec()){
 
 
-    projectName = directory.selectedFiles().at(0).split("ProjectFiles/").last();
+    projectName = directory.selectedFiles().at(0).split("/").last();
+    projectName.chop(4);
     std::cout << projectName.toStdString() << std::endl;
     if(!GuiLoadSave::loadCommandListFromFolder(projectName,ui->listWidget)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
