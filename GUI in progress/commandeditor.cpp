@@ -87,7 +87,6 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     Line_Style->addItems(styles);
 
     //adding input lines
-    ParameterHolder->addRow(new QLabel("<span style=\"text-align:center; font-size:40px \"> Command Editor </span> "));
     ParameterHolder->addRow("Command Name: ",Command_Name);
     ParameterHolder->addRow("Color: ",Line_Color);
     ParameterHolder->addRow("Style: ",Line_Style);
