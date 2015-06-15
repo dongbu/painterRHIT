@@ -1,18 +1,28 @@
 #include "commandeditor.h"
 #include "guiloadsave.h"
 #include <QTextStream>
+#include <QMessageBox>
 
-CommandEditor::CommandEditor(QListWidget *widget) {
+CommandEditor::CommandEditor(QListWidget *widget, int tabPosition, QTabWidget *editorTabs) {
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
     this->BuildEditor();
     this->ConnectButtons();
     this->name = "untitled";
     this->widget = widget;
+    this->tabPosition = tabPosition;
+    this->editorTabs = editorTabs;
+    ///TEMP SOLUTION///
+    this->commandAdded = false;
+    ///TEMP SOLUTION///
+
 }
 
-/*
- *This method is designed to create the CommandEditor widget
+
+
+
+/**
+ * @brief This method is designed to create the CommandEditor widget
  * representative of this class and assign it to the appropriate
  * class variable.
  */
@@ -50,8 +60,11 @@ void CommandEditor::BuildEditor() {
     this->CommandEditorWidget = HolderWidg;
 }
 
-/*
- *This method is designed to create a std. point box, add it to
+
+
+
+/**
+ * @brief This method is designed to create a std. point box, add it to
  * the point vector, and return said point
  */
 void CommandEditor::MakePoint() {
@@ -64,15 +77,23 @@ void CommandEditor::MakePoint() {
     ParameterHolder->addRow(new QLabel(label),point);
 }
 
-/*
- *This method is designed to populate a provided layout with the 5
+
+
+
+/**
+ * @brief This method is designed to populate a provided layout with the 5
  * input types necessary for controlling the command editor.
+ * @param ParameterHolder
  */
 void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     //creating input lines
     Command_Name = new QLineEdit();
     Line_Color = new QComboBox();
     Line_Style = new QComboBox();
+
+    //forcing command name to be acceptable. Previously, entering only a number as a command name caused crash upon load.
+    QRegExp rx("^[A-Za-z][A-Za-z0-9]*");
+    Command_Name->setValidator(new QRegExpValidator(rx,this));
 
     //constraining sizes
     Command_Name->setFixedSize(200,22);
@@ -95,9 +116,17 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
 
 }
 
-/*
- *This method is designed to populate a provided layout with the 3
+
+/**
+ * @brief This method is designed to populate a provided layout with the 3
  * buttons necessary for controlling the command editor.
+ * @param ButtonHolder
+ */
+
+
+/**
+ * @brief populates the command editor with the appropriate buttons.
+ * @param ButtonHolder
  */
 void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
     //creating buttons
@@ -113,29 +142,63 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
     Remove_Point->setDisabled(true);
 }
 
-/*
- * Add_Command slot
- */
-void CommandEditor::Add_Command_Clicked() {
-    QTextStream(stdout) << "The add command button was pressed.\n";
-    if(projectName.isEmpty()){
-        return;
-    } else{
-        GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget);
-    }
 
+/**
+ * @brief Add_Command slot
+ */
+
+void CommandEditor::Add_Command_Clicked() {
+
+    QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+
+
+    //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
+    //these commands then crash the program.
+    if(lineEdits.at(0)->text().toLower() == "index"){
+        QMessageBox alert;
+        alert.setText("Alert");
+        alert.setInformativeText("index is protected");
+        if(alert.exec()){
+            return;
+        }
+    }
+    //make sure everything else is acceptable.
+    if(projectName.isEmpty() || projectName.isNull()){
+        QMessageBox alert;
+        alert.setText("Alert");
+        alert.setInformativeText("Please Save Before Adding Commands");
+        if(alert.exec()){
+            return;
+        }
+    } else{
+        lineEdits.at(0)->setDisabled(true);
+        GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
+        commandAdded = true;
+        //sets the name and changes the tabname
+        CommandEditor::setName(lineEdits.at(0)->text());
+        editorTabs->setTabText(tabPosition,name);
+        emit fileStatusChanged();
+
+
+    ///TEMP SOLUTION///
+    this->Add_Command->setText("Save");
+
+    ///TEMP SOLUTION///
+    }
 }
 
-/*
- * Add_Point slot.
+
+/**
+ * @brief Add_Point slot.
  */
 void CommandEditor::Add_Point_Clicked() {
     Remove_Point->setDisabled(false);
     MakePoint();
 }
 
-/*
- * Remove_Point slot.
+
+/**
+ * @brief Remove_Point slot.
  */
 void CommandEditor::Remove_Point_Clicked() {
     //Button De-activation logic
@@ -161,8 +224,9 @@ void CommandEditor::Remove_Point_Clicked() {
     ParameterHolder->update();
 }
 
-/*
- *This method is designed to connect the 3 editor buttons to their slots.
+
+/**
+ * @brief This method is designed to connect the 3 editor buttons to their slots.
  */
 void CommandEditor::ConnectButtons() {
     //Connecting button signals/slots
@@ -171,24 +235,51 @@ void CommandEditor::ConnectButtons() {
     connect(Remove_Point, QPushButton::clicked, this, Remove_Point_Clicked);
 }
 
-/*
- * this method returns the name of this editor.
+
+/**
+ * @brief get the name of this editor.
+ * @return name
+ * @deprecated
  */
 QString CommandEditor::getName(){
     return name;
 }
 
-/*
- * this method sets the name of this editor.
+
+/**
+ * @brief set the name of this editor
+ * @param newName
+ * @deprecated
  */
 void CommandEditor::setName(QString newName){
     this->name = newName;
 }
 
-/*
- * This method allows this class to know what the project name is that it is within.
+
+
+
+/**
+ * @brief This method allows this class to know what the project name is that it is within.
+ * @param name
  */
 void CommandEditor::setProjectName(QString name){
+
     projectName = name;
+}
+
+/**
+ * @brief sets whether this commandEditor is in "add command" mode or "save" mode.
+ * Part of TEMP SOLUTION
+ * @param bool for toggle
+ */
+void CommandEditor::setCommandAdded(bool commandAdded){
+    this->commandAdded = commandAdded;
+    if(commandAdded){
+        this->Add_Command->setText("Save");
+        this->Command_Name->setDisabled(true);
+    }else{
+        this->Add_Command->setText("Add Command");
+        this->Command_Name->setEnabled(true);
+    }
 }
 

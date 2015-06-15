@@ -17,47 +17,66 @@ MainWindow::MainWindow(QWidget *parent) :
     //Tab work//
 
     //save work//
-    projectName = "Change_Me"; //"garbage" value
+    projectName = ""; //"garbage" value
     saved = false;
+    fileChanged = false;
     ui->actionSave->setDisabled(true);//disable save until saveAs has been used.
     //save work//
 
     //command list//
-    ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(loadCommandFromList(QListWidgetItem*)));
+    ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(on_EditCommand_clicked()));
     ui->MoveUp->connect(ui->MoveUp,QPushButton::clicked,this,MainWindow::MoveUp_clicked);
     ui->MoveDown->connect(ui->MoveDown,QPushButton::clicked,this,MainWindow::MoveDown_clicked);
     ui->DeleteCommand->connect(ui->DeleteCommand,QPushButton::clicked,this,MainWindow::DeleteCommand_clicked);
     //command list//
 
-    //misc work//
-    //misc work//
 }
 
-/*
- * Default close function (when you press "X").
+
+/**
+ * @brief Default close function (when you press "X").
+ * Also prompts to save or discard unsaved work.
+ * Cannot prevent exiting out once begun.
  */
 MainWindow::~MainWindow()
 {
-    delete ui;
+    if(fileChanged){
+        QMessageBox queryUnsavedWork;
+        queryUnsavedWork.setText("The document has been modified");
+        queryUnsavedWork.setInformativeText("Would you like to save your changes?");
+        queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
+        queryUnsavedWork.setDefaultButton(QMessageBox::Save);
+        int result = queryUnsavedWork.exec();
+
+        switch(result){
+        case QMessageBox::Save:
+            MainWindow::on_actionSave_triggered();
+            break;
+        case QMessageBox::Discard:
+            delete ui;
+            break;
+        case QMessageBox::Default:
+            //should not get here
+            return;
+        }
+    }else{
+        delete ui;
+    }
 }
 
-/*
- * load command when clicked in commandViewer
- */
-void MainWindow::loadCommandFromList(QListWidgetItem* item){
-    GuiLoadSave::updateCommandEditor(item->text(),projectName,editors.at(currentEditor)->CommandEditorWidget);
-}
 
-/*
- * delete item from commandViewer
+/**
+ * @brief slot to delete item from commandViewer
  */
 void MainWindow::DeleteCommand_clicked()
 {
     ui->listWidget->takeItem(ui->listWidget->currentRow());
+    fileChanged = true;
 }
 
-/*
- * move item in commandViewer down
+
+/**
+ * @brief slot to move item in commandViewer down
  */
 void MainWindow::MoveDown_clicked()
 {
@@ -69,10 +88,12 @@ void MainWindow::MoveDown_clicked()
     QListWidgetItem *currentItem = ui->listWidget->takeItem(currentRow);
     ui->listWidget->insertItem(currentRow + 1, currentItem);
     ui->listWidget->setCurrentRow(currentRow + 1);
+    fileChanged = true;
 }
 
-/*
- * move item in commandViewer up
+
+/**
+ * @brief slot to move item in commandViewer up
  */
 void MainWindow::MoveUp_clicked()
 {
@@ -83,111 +104,112 @@ void MainWindow::MoveUp_clicked()
     QListWidgetItem *currentItem = ui->listWidget->takeItem(currentRow);
     ui->listWidget->insertItem(currentRow - 1, currentItem);
     ui->listWidget->setCurrentRow(currentRow - 1);
+    fileChanged = true;
 }
 
-/*
- * allows save as functionality.
+
+/**
+ * @brief Save As functionality.
  */
 void MainWindow::on_actionSave_As_triggered()
 {
-    QFileDialog saveDirectory;
-    saveDirectory.setDirectory("ProjectFiles");
-    saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
-    QStringList filters;
-    filters << "Text files (*.txt)";
-    saveDirectory.setNameFilters(filters);
-
-    if(saveDirectory.exec()){
-        QString name = saveDirectory.selectedFiles().at(0).split("/").last();
-        std::cout << name.toStdString() <<std::endl;
-                if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
-                    //creates proper folders
-                    int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
-                    //return code 0 means it worked.
-                    if(loadReturnCode != 0){
-                        //ProjectFiles folder could not be created
-                        if(loadReturnCode == 1){
-                            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                            alert.setInformativeText("Failed To Create ProjectFiles directory");
-                            alert.show();
-                            return;
-                        }
-                        //project already exists
-                        else if(loadReturnCode == 2){
-                            std::cout << "confirm overwrite" << std::endl;
-                            QMessageBox confirmSaveBox;
-                            confirmSaveBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
-
-                            confirmSaveBox.setText("Confirm Overwrite");
-                            confirmSaveBox.setButtonText(0,"overwrite");
-                            if(confirmSaveBox.exec()){
-
-                                std::cout << "overwrite comfirmed" << std::endl;
-                                QDir dir(name);
-                                if(dir.exists(name)){
-                                    if(!dir.removeRecursively()){
-                                        std::cout << "failed to remove previous folder" <<std::endl;
-                                        return;
-                                    }
-                                }
-                                saved = true;
-                                projectName = name;
-                                this->setWindowTitle(projectName);
-                                ui->actionSave->setEnabled(true);
-                                foreach(CommandEditor *edits, editors){
-                                    edits->setProjectName(projectName);
-                                }
-                                if(!GuiLoadSave::writeCommandListToFolder(projectName,ui->listWidget)){
-                                    alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                                    alert.setInformativeText("Failed To Save " + projectName);
-                                    alert.show();
-                                }
-                                //adds a "dummy" txt file
-                                QFile dummy;
-                                dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
-                                dummy.open(QIODevice::WriteOnly);
-                                dummy.close();
-
-                            }
-                        }
-
-                    } else{
-                        saved = true;
-                        projectName = name;
-                        this->setWindowTitle(projectName);
-                        ui->actionSave->setEnabled(true);
-                        foreach(CommandEditor *edits, editors){
-                            edits->setProjectName(projectName);
-                        }
-
-                        //chunks in index.xml file
-                        if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
-                            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                            alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
-                            alert.show();
-                        }
-                        QFile dummy;
-                        dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
-                        dummy.open(QIODevice::WriteOnly);
-                        dummy.close();
-                    }
 
 
-                }else{
-                    //basically user put in a bad filename
-                    alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                    alert.setInformativeText(name + " is not a valid name");
-                    alert.show();
+    //make sure ProjectFiles folder exists
+    if(!saved){
+        if(!QDir(QString("ProjectFiles")).exists()){
+            if(!QDir().mkdir(QString("ProjectFiles"))){
+                std::cout << "failed to create ProjectFiles folder" <<std::endl;
+                return;
+            }
+        }
+
+    QString name = GuiLoadSave::saveAsProject();
+    if(!name.isEmpty()){
+        saved = true;
+        projectName = name;
+        this->setWindowTitle(projectName);
+        ui->actionSave->setEnabled(true);
+        foreach(CommandEditor *edits, editors){
+            edits->setProjectName(projectName);
+        }
+
+        //chunks in index.xml file
+        if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+            alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+            if(alert.exec()){
+                return;
+            }
+        }
+        QFile dummy;
+        dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
+        dummy.open(QIODevice::WriteOnly);
+        dummy.close();
+        fileChanged = false;
+    }
+    }else{
+        QString prevProjectName = projectName;
+        QString name = GuiLoadSave::saveAsProject();
+        if(!name.isEmpty()){
+            saved = true;
+            projectName = name;
+            this->setWindowTitle(projectName);
+            ui->actionSave->setEnabled(true);
+            foreach(CommandEditor *edits, editors){
+                edits->setProjectName(projectName);
+            }
+
+            //chunks in index.xml file
+            if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+                alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+                if(alert.exec()){
+                    return;
                 }
+            }
+            QFile dummy;
+            dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
+            dummy.open(QIODevice::WriteOnly);
+            dummy.close();
+
+            if(!GuiLoadSave::copyAllFilesFrom(prevProjectName, projectName)){
+                std::cout << "something went wrong transfering files from " <<prevProjectName.toStdString() << " to " << projectName.toStdString() << std::endl;
+            }else{
+                fileChanged = false;
+            }
     }
 
 }
+}
 
-/*
- * open functionality
+
+/**
+ * @brief opening project functionality
  */
 void MainWindow::on_actionOpen_triggered()
 {
+    if(fileChanged){
+        QMessageBox queryUnsavedWork;
+        queryUnsavedWork.setText("The document has been modified");
+        queryUnsavedWork.setInformativeText("Would you like to save your changes?");
+        queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        queryUnsavedWork.setDefaultButton(QMessageBox::Save);
+        int result = queryUnsavedWork.exec();
+
+        switch(result){
+        case QMessageBox::Save:
+            MainWindow::on_actionSave_triggered();
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+            return;
+        case QMessageBox::Default:
+            //should not get here
+            return;
+        }
+    }
     if(!QDir(QString("ProjectFiles")).exists()){
         if(!QDir().mkdir(QString("ProjectFiles"))){
             std::cout << "failed to create ProjectFiles folder" <<std::endl;
@@ -201,7 +223,7 @@ void MainWindow::on_actionOpen_triggered()
     filters << "Text files (*.txt)";
     directory.setNameFilters(filters);
     if(directory.exec()){
-
+    MainWindow::cleanUp();
 
     projectName = directory.selectedFiles().at(0).split("/").last();
     projectName.chop(4);
@@ -219,8 +241,8 @@ void MainWindow::on_actionOpen_triggered()
 }
 
 
-/*
- * save functionality
+/**
+ * @brief normal save functionality
  */
 void MainWindow::on_actionSave_triggered()
 {
@@ -229,28 +251,84 @@ void MainWindow::on_actionSave_triggered()
         alert.setInformativeText("Failed To Save " + projectName);
         alert.show();
     }
+    fileChanged = false;
 }
 
-/*
- * Allows the insertion of a point map command into
+
+/**
+ * @brief Allows the insertion of a point map command into
  * the command editor
  */
 void MainWindow::on_actionDraw_Point_Map_triggered()
 {
-    CommandEditor *editor = new CommandEditor(ui->listWidget);
+    tabCount++;
+    CommandEditor *editor = new CommandEditor(ui->listWidget,tabCount, EditorTabs);
     editor->setProjectName(projectName);
     editors.push_back(editor);
     currentEditor++;
-    tabCount++;
+
     untitledCount++;
     EditorTabs->addTab(editor->CommandEditorWidget,"PointMap (" + QString::number(untitledCount) + ")");
     EditorTabs->setCurrentIndex(tabCount);
+
+    //connection so that we know when something has been changed.
+    connect(editor,editor->fileStatusChanged,this,fileChangedTrue);
+
+
 }
 
-/*
- * allows tabs in command editor to close themsleves
+
+/**
+ * @brief closes the indecated commandEditor tab.
+ * @param index
  */
 void MainWindow::closeTab(int index) {
     tabCount--;
     EditorTabs->removeTab(index);
+}
+
+
+/**
+ * @brief brings up a new commandEditor with preloaded information.
+ */
+void MainWindow::on_EditCommand_clicked()
+{
+    QListWidgetItem *item = ui->listWidget->currentItem();
+    QString tempProjectName = projectName;
+
+    //adds new instance of editor
+    MainWindow::on_actionDraw_Point_Map_triggered();
+    //retrieves most recent editor
+    CommandEditor *newEditor = editors.at(currentEditor);
+    EditorTabs->setTabText(tabCount,item->text());
+
+    GuiLoadSave::updateCommandEditor(item->text(),tempProjectName,newEditor);
+}
+
+/**
+ * @brief cleans up everything for a "fresh" start.
+ */
+
+
+/**
+ * @brief removes all project specific variables and clears away
+ * tabs and lists.
+ */
+void MainWindow::cleanUp(){
+    EditorTabs->clear();
+    tabCount = -1;
+    untitledCount = 0;
+    currentEditor = -1;
+    ui->listWidget->clear();
+    editors.clear();
+    this->fileChanged = false;
+
+}
+
+
+/**
+ * @brief slot that sets fileChanged to true
+ */
+void MainWindow::fileChangedTrue(){
+    fileChanged = true;
 }

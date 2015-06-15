@@ -40,11 +40,11 @@ private slots:
     void MoveDown_clicked();
     void on_actionSave_As_triggered();
     void on_actionOpen_triggered();
-    void loadCommandFromList(QListWidgetItem*);
     void on_actionDraw_Point_Map_triggered();
     void closeTab(int index);
-
     void on_actionSave_triggered();
+    void on_EditCommand_clicked();
+    void fileChangedTrue();
 
 private:
     Ui::MainWindow *ui;
@@ -52,6 +52,7 @@ private:
     QString projectName;
     bool saved;
     QMessageBox alert;
+    bool fileChanged;
 
     std::vector<CommandEditor*> editors;
     QTabWidget *EditorTabs;
@@ -60,6 +61,7 @@ private:
     int untitledCount;
 
     void changeCurrentEditor(QString editorName);
+    void cleanUp();
 };
 
 #endif // MAINWINDOW_H

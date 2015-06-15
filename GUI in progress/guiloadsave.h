@@ -2,6 +2,7 @@
 #define GUILOADSAVE_H
 
 #include "mainwindow.h"
+#include "commandeditor.h"
 #include <QtGui>
 #include <QMessageBox>
 #include <QLineEdit>
@@ -18,11 +19,13 @@ class GuiLoadSave
 
 public:
     GuiLoadSave();
-    static boolean writeCommandToFolder(QString ProjectName, QWidget* CommandEditor, QListWidget* CommandList);
+    static boolean writeCommandToFolder(QString ProjectName, QWidget* CommandEditor, QListWidget* CommandList, boolean CommandAdded);
     static int createProjectDirectory(QString ProjectName);
-    static int updateCommandEditor(QString fileName, QString ProjectName, QWidget* CommandEditor);
+    static int updateCommandEditor(QString fileName, QString ProjectName, CommandEditor* loadedEditor);
     static int writeCommandListToFolder(QString ProjectName, QListWidget* CommandList);
     static int loadCommandListFromFolder(QString ProjectName, QListWidget* CommandList);
+    static QString saveAsProject();
+    static boolean copyAllFilesFrom(QString prevFolder, QString newFolder);
 
 };
 
