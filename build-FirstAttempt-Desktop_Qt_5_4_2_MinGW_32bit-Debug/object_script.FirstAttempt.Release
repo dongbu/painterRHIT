@@ -1,0 +1,13 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\guiloadsave.o
+./release\commandeditor.o
+./release\painter.o
+./release\pairedcoordinates.o
+./release\commandinterpreter.o
+./release\qrc_myres.o
+./release\moc_mainwindow.o
+./release\moc_commandeditor.o
+./release\moc_painter.o
+);

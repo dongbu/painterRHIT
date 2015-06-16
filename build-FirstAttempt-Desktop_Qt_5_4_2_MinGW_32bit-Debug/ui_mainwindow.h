@@ -59,8 +59,9 @@ public:
     QVBoxLayout *verticalLayout_2;
     QPushButton *EditCommand;
     QPushButton *DeleteCommand;
-    QPushButton *MoveDown;
     QPushButton *MoveUp;
+    QPushButton *MoveDown;
+    QPushButton *pushButton;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
     QMenu *menuNew_Window;
@@ -74,7 +75,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(645, 740);
+        MainWindow->resize(647, 749);
         actionOpen = new QAction(MainWindow);
         actionOpen->setObjectName(QStringLiteral("actionOpen"));
         QIcon icon;
@@ -204,15 +205,15 @@ public:
 
         verticalLayout_2->addWidget(DeleteCommand);
 
-        MoveDown = new QPushButton(layoutWidget);
-        MoveDown->setObjectName(QStringLiteral("MoveDown"));
-
-        verticalLayout_2->addWidget(MoveDown);
-
         MoveUp = new QPushButton(layoutWidget);
         MoveUp->setObjectName(QStringLiteral("MoveUp"));
 
         verticalLayout_2->addWidget(MoveUp);
+
+        MoveDown = new QPushButton(layoutWidget);
+        MoveDown->setObjectName(QStringLiteral("MoveDown"));
+
+        verticalLayout_2->addWidget(MoveDown);
 
 
         horizontalLayout_2->addLayout(verticalLayout_2);
@@ -220,16 +221,20 @@ public:
 
         CommandListLayout->addLayout(horizontalLayout_2);
 
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(10, 650, 131, 23));
         MainWindow->setCentralWidget(centralWidget);
         layoutWidget->raise();
         line_2->raise();
         verticalLayoutWidget->raise();
+        pushButton->raise();
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 645, 26));
+        menuBar->setGeometry(QRect(0, 0, 647, 21));
         menuNew_Window = new QMenu(menuBar);
         menuNew_Window->setObjectName(QStringLiteral("menuNew_Window"));
         menuDraw_Commands = new QMenu(menuBar);
@@ -323,8 +328,9 @@ public:
         Command_List_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
         EditCommand->setText(QApplication::translate("MainWindow", "Edit", 0));
         DeleteCommand->setText(QApplication::translate("MainWindow", "Delete", 0));
-        MoveDown->setText(QApplication::translate("MainWindow", "Move Down", 0));
         MoveUp->setText(QApplication::translate("MainWindow", "Move Up", 0));
+        MoveDown->setText(QApplication::translate("MainWindow", "Move Down", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Add External Command", 0));
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));

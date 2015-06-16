@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     saved = false;
     fileChanged = false;
     ui->actionSave->setDisabled(true);//disable save until saveAs has been used.
+    ui->pushButton->setDisabled(true);//can't load external file until saved.
     //save work//
 
     //command list//
@@ -29,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->MoveDown->connect(ui->MoveDown,QPushButton::clicked,this,MainWindow::MoveDown_clicked);
     ui->DeleteCommand->connect(ui->DeleteCommand,QPushButton::clicked,this,MainWindow::DeleteCommand_clicked);
     //command list//
+
+    //interpreter work//
+    interpreter = new CommandInterpreter("");
+    //interpreter work//
 
 }
 
@@ -40,28 +45,39 @@ MainWindow::MainWindow(QWidget *parent) :
  */
 MainWindow::~MainWindow()
 {
+    //if the file was changed and not saved, asks you if you would like to save
+    //or discard changes.
     if(fileChanged){
         QMessageBox queryUnsavedWork;
         queryUnsavedWork.setText("The document has been modified");
         queryUnsavedWork.setInformativeText("Would you like to save your changes?");
         queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
         queryUnsavedWork.setDefaultButton(QMessageBox::Save);
+
         int result = queryUnsavedWork.exec();
 
         switch(result){
         case QMessageBox::Save:
+            if(saved){
             MainWindow::on_actionSave_triggered();
+            }else{
+                MainWindow::on_actionSave_As_triggered();
+            }
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
             break;
         case QMessageBox::Discard:
-            delete ui;
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
             break;
         case QMessageBox::Default:
-            //should not get here
+            //If the user manages to click some other button, return.
             return;
         }
-    }else{
-        delete ui;
     }
+    delete ui;
 }
 
 
@@ -124,38 +140,16 @@ void MainWindow::on_actionSave_As_triggered()
             }
         }
 
-    QString name = GuiLoadSave::saveAsProject();
-    if(!name.isEmpty()){
-        saved = true;
-        projectName = name;
-        this->setWindowTitle(projectName);
-        ui->actionSave->setEnabled(true);
-        foreach(CommandEditor *edits, editors){
-            edits->setProjectName(projectName);
-        }
-
-        //chunks in index.xml file
-        if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
-            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-            alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
-            if(alert.exec()){
-                return;
-            }
-        }
-        QFile dummy;
-        dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
-        dummy.open(QIODevice::WriteOnly);
-        dummy.close();
-        fileChanged = false;
-    }
-    }else{
-        QString prevProjectName = projectName;
+        //saveAsProject() returns the name that was chosen to save the project under.
         QString name = GuiLoadSave::saveAsProject();
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
             this->setWindowTitle(projectName);
+            interpreter->setProjectName(projectName);
             ui->actionSave->setEnabled(true);
+            ui->pushButton->setEnabled(true);
+            //updates the commandEditors.
             foreach(CommandEditor *edits, editors){
                 edits->setProjectName(projectName);
             }
@@ -168,19 +162,64 @@ void MainWindow::on_actionSave_As_triggered()
                     return;
                 }
             }
+            //creates the "dummy" file that is used for clicking.
+            QFile dummy;
+            dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
+            dummy.open(QIODevice::WriteOnly);
+            dummy.close();
+            fileChanged = false;
+
+            //moves all files from temp folder into current folder if temp folder exists.  Also deletes temp folder.
+            if(QDir("ProjectFiles/Temp").exists()){
+               if(!GuiLoadSave::copyAllFilesFrom("Temp",projectName)){
+                   std::cout << "Problem with Temp" << std::endl;
+               }else{
+                   QDir("ProjectFiles/Temp").removeRecursively();
+               }
+            }
+        }
+    }else{
+        //has been saved before.
+        QString prevProjectName = projectName;
+        //same as above.
+        QString name = GuiLoadSave::saveAsProject();
+
+        if(!name.isEmpty()){
+            saved = true;
+            ui->pushButton->setEnabled(true);
+            projectName = name;
+            this->setWindowTitle(projectName);
+            ui->actionSave->setEnabled(true);
+            interpreter->setProjectName(projectName);
+
+            //updates commandEditors
+            foreach(CommandEditor *edits, editors){
+                edits->setProjectName(projectName);
+            }
+
+            //chunks in index.xml file
+            if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+                alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+                alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+                if(alert.exec()){
+                    return;
+                }
+            }
+            //creates the "dummy" file that is used for clicking.
             QFile dummy;
             dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
 
+            //transfers all files over from the previous location to the new location.
             if(!GuiLoadSave::copyAllFilesFrom(prevProjectName, projectName)){
                 std::cout << "something went wrong transfering files from " <<prevProjectName.toStdString() << " to " << projectName.toStdString() << std::endl;
             }else{
                 fileChanged = false;
             }
-    }
+        }
 
-}
+    }
 }
 
 
@@ -189,6 +228,7 @@ void MainWindow::on_actionSave_As_triggered()
  */
 void MainWindow::on_actionOpen_triggered()
 {
+    //asks you if you want to save your work before opening something new.
     if(fileChanged){
         QMessageBox queryUnsavedWork;
         queryUnsavedWork.setText("The document has been modified");
@@ -199,9 +239,19 @@ void MainWindow::on_actionOpen_triggered()
 
         switch(result){
         case QMessageBox::Save:
-            MainWindow::on_actionSave_triggered();
+            if(saved){
+                MainWindow::on_actionSave_triggered();
+            }else{
+                MainWindow::on_actionSave_As_triggered();
+            }
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
             break;
         case QMessageBox::Discard:
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
             break;
         case QMessageBox::Cancel:
             return;
@@ -217,6 +267,7 @@ void MainWindow::on_actionOpen_triggered()
         }
     }
 
+    //opens up a directory viewer that only shows folders and .txt files.
     QFileDialog directory;
     directory.setDirectory("ProjectFiles");
     QStringList filters;
@@ -236,6 +287,8 @@ void MainWindow::on_actionOpen_triggered()
         this->setWindowTitle(projectName);
         saved=true;
         ui->actionSave->setEnabled(true);
+        ui->pushButton->setEnabled(true);
+        interpreter->setProjectName(projectName);
     }
     }
 }
@@ -294,6 +347,9 @@ void MainWindow::closeTab(int index) {
 void MainWindow::on_EditCommand_clicked()
 {
     QListWidgetItem *item = ui->listWidget->currentItem();
+    if(item == NULL){
+        return;
+    }
     QString tempProjectName = projectName;
 
     //adds new instance of editor
@@ -301,14 +357,9 @@ void MainWindow::on_EditCommand_clicked()
     //retrieves most recent editor
     CommandEditor *newEditor = editors.at(currentEditor);
     EditorTabs->setTabText(tabCount,item->text());
-
+    //populates said editor with information loaded via xml.
     GuiLoadSave::updateCommandEditor(item->text(),tempProjectName,newEditor);
 }
-
-/**
- * @brief cleans up everything for a "fresh" start.
- */
-
 
 /**
  * @brief removes all project specific variables and clears away
@@ -322,6 +373,15 @@ void MainWindow::cleanUp(){
     ui->listWidget->clear();
     editors.clear();
     this->fileChanged = false;
+    this->saved = false;
+    this->setWindowTitle("Untitled");
+    this->projectName = "";
+    interpreter->setProjectName("");
+    ui->actionSave->setDisabled(true);
+    if(QDir("ProjectFiles/Temp").exists()){
+       QDir("ProjectFiles/Temp").removeRecursively();
+    }
+    ui->pushButton->setDisabled(true);
 
 }
 
@@ -331,4 +391,64 @@ void MainWindow::cleanUp(){
  */
 void MainWindow::fileChangedTrue(){
     fileChanged = true;
+}
+
+
+/**
+ * @brief slot for a new project
+ */
+void MainWindow::on_actionNew_triggered()
+{
+    //asks you if you want to save your work before starting something new.
+    if(fileChanged){
+        QMessageBox queryUnsavedWork;
+        queryUnsavedWork.setText("The document has been modified");
+        queryUnsavedWork.setInformativeText("Would you like to save your changes?");
+        queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        queryUnsavedWork.setDefaultButton(QMessageBox::Save);
+        int result = queryUnsavedWork.exec();
+
+        switch(result){
+        case QMessageBox::Save:
+            if(saved){
+                MainWindow::on_actionSave_triggered();
+            }else{
+                MainWindow::on_actionSave_As_triggered();
+            }
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+            return;
+        case QMessageBox::Default:
+            //should not get here
+            return;
+        }
+    }
+    MainWindow::cleanUp();
+}
+
+/**
+ * @brief slot for adding a command not shown in list
+ */
+void MainWindow::on_pushButton_clicked()
+{
+
+    if(GuiLoadSave::loadExternalFile(projectName,ui->listWidget)){
+        this->fileChanged = true;
+    }
+
+}
+
+/**
+ * @brief slot for starting or continuing painting.
+ */
+void MainWindow::on_actionRun_triggered()
+{
+    //temporarily disabled.
+//    interpreter->beginPaintingCommands(ui->listWidget);
+    //only included for demonstrational purposes.
+    Painter *p = new Painter();
+    p->paintCommand(0,0,300,300,"blue","solid");
+
 }

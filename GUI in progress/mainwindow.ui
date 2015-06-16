@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
-    <height>740</height>
+    <width>647</width>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,16 +97,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="MoveDown">
+          <widget class="QPushButton" name="MoveUp">
            <property name="text">
-            <string>Move Down</string>
+            <string>Move Up</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="MoveUp">
+          <widget class="QPushButton" name="MoveDown">
            <property name="text">
-            <string>Move Up</string>
+            <string>Move Down</string>
            </property>
           </widget>
          </item>
@@ -116,9 +116,23 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>650</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add External Command</string>
+    </property>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>line_2</zorder>
    <zorder>verticalLayoutWidget</zorder>
+   <zorder>pushButton</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -126,8 +140,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>645</width>
-     <height>26</height>
+     <width>647</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNew_Window">

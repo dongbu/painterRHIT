@@ -122,12 +122,6 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
  * buttons necessary for controlling the command editor.
  * @param ButtonHolder
  */
-
-
-/**
- * @brief populates the command editor with the appropriate buttons.
- * @param ButtonHolder
- */
 void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
     //creating buttons
     Add_Command = new QPushButton("Add Command");
@@ -164,13 +158,12 @@ void CommandEditor::Add_Command_Clicked() {
     }
     //make sure everything else is acceptable.
     if(projectName.isEmpty() || projectName.isNull()){
-        QMessageBox alert;
-        alert.setText("Alert");
-        alert.setInformativeText("Please Save Before Adding Commands");
-        if(alert.exec()){
-            return;
+        //creates a "Temp" folder to put things into until saved.
+        if(!QDir("ProjectFiles/Temp").exists()){
+           QDir().mkdir("ProjectFiles/Temp");
         }
-    } else{
+        projectName = "Temp";
+    }
         lineEdits.at(0)->setDisabled(true);
         GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
         commandAdded = true;
@@ -184,7 +177,7 @@ void CommandEditor::Add_Command_Clicked() {
     this->Add_Command->setText("Save");
 
     ///TEMP SOLUTION///
-    }
+
 }
 
 

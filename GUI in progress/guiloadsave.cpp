@@ -91,6 +91,7 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     writer.writeEndElement();//Command
     writer.writeEndDocument();//end
 
+    //always close files when done.
     saveFile.close();
 
     return !fileMalformed;
@@ -137,7 +138,9 @@ int GuiLoadSave::createProjectDirectory(QString projectName){
 int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, CommandEditor *loadedEditor){
 
     loadedEditor->setName(fileName);
+    ///TEMP SOLUTION///
     loadedEditor->setCommandAdded(true);
+    ///TEMP SOLUTION///
     QList<QLineEdit *> lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
 
     //load file and set up the reader.
@@ -146,19 +149,25 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
     loadFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadFile);
 
+    //skip over unimportant doc headers.
     reader.readNextStartElement();
     reader.readNextStartElement();
 
     int i = 0;
 
+    //get list of comboBoxes
     QList<QComboBox *> comboBoxes = loadedEditor->CommandEditorWidget->findChildren<QComboBox *>();
+
+    //set text for the command name slot.
     lineEdits.at(0)->setText(fileName);
+
+    //set the information for both comboboxes.
     foreach(const QXmlStreamAttribute &attr, reader.attributes()){
         comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
         i++;
     }
     i = 0;
-    //delete all buttons except for the first two.  two extra added "just in case".
+    //delete all buttons so we ensure we start from fresh.
     int numChildrenToRemove = (loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>().size());
     for(int l = 0; l < numChildrenToRemove; l++){
         loadedEditor->Remove_Point_Clicked();
@@ -166,18 +175,20 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
 
     int k = 1;
 
+    //keep going until the document is finished.
     while(!reader.isEndDocument()){
         reader.readNext();
         if(reader.isStartElement()){
             QString pointString = "";
             if(reader.name().toString() == "PointMap"){
+                //find and add the correct number of points.
                 int numPoints = reader.attributes().at(0).value().toString().toInt();
                 for(int j = 0; j < (numPoints - 2); j++){
                     loadedEditor->Add_Point_Clicked();
 
                 }
                 lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
-                std::cout << "number of coordinates to load : " << numPoints << std::endl;
+//                std::cout << "number of coordinates to load : " << numPoints << std::endl;
             }
             if(reader.name().toString() == "Point"){
                 foreach(const QXmlStreamAttribute &attr, reader.attributes()){
@@ -192,6 +203,7 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
             } else if(reader.name().toString() == "FileMalformed"){
                 if(reader.attributes().value(0).toString() == "1"){
                     std::cout << "FILE WAS MALFORMED!" << std::endl;
+                    //potentially highlight poorly made files.
                 }
             }
 
@@ -199,6 +211,7 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
     }
     if(reader.hasError()){
         std::cout << "there was an error in reading the file" <<std::endl;
+        //shouldn't be an issue, but put in just in case.
     }
 
     loadFile.close();
@@ -213,6 +226,7 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
  * @return 1 if successful
  */
 int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *CommandList){
+    //set up writer
     QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
     QFile saveIndexFile;
     saveIndexFile.setFileName(fileLoc);
@@ -225,8 +239,10 @@ int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *Comm
 
     writer.writeStartElement("index");
 
+    //get all the command names.
     QList<QListWidgetItem *> listOfCommandNames = CommandList->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
 
+    //put the command names into the proper place.
     for(int i = 0; i < listOfCommandNames.size(); i++){
     writer.writeStartElement(listOfCommandNames.at(i)->text());//index at
     writer.writeEndElement();//index at
@@ -253,6 +269,7 @@ int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *Comm
  * @return 1 if successful
  */
 int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *CommandList){
+    //setup reader
     QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
     QFile loadIndexFile;
     loadIndexFile.setFileName(fileLoc);
@@ -262,6 +279,7 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
     loadIndexFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadIndexFile);
 
+    //keep reading until reach the end.
     while(!reader.isEndDocument()){
         reader.readNext();
         std::cout << reader.name().toString().toStdString() << std::endl;
@@ -269,6 +287,7 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
             QString text;
                 text = reader.name().toString();
             if(text != "index"){
+                //add item to list.
                 CommandList->addItem(text);
             }
         }
@@ -297,54 +316,62 @@ QString GuiLoadSave::saveAsProject(){
     if(saveDirectory.exec()){
         QString name = saveDirectory.selectedFiles().at(0).split("/").last();
         name.chop(4);
-        std::cout << name.toStdString() <<std::endl;
-                if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
-                    //creates proper folders
-                    int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
-                    //return code 0 means it worked.
-                    if(loadReturnCode != 0){
-                        //ProjectFiles folder could not be created
-                        if(loadReturnCode == 1){
-                            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                            alert.setInformativeText("Failed To Create ProjectFiles directory");
-                            alert.show();
-                            return "";
-                        }
-                        //project already exists and overwrite was confirmed
-                        else if(loadReturnCode == 2){
-                            QDir dir(QString("ProjectFiles/") + name);
-                            if(dir.exists()){
-                                if(!dir.removeRecursively()){
-                                    std::cout << "failed to remove previous folder" <<std::endl;
-                                    return 0;
-                                }
-                                GuiLoadSave::createProjectDirectory(name);
-
-                                return name;
-
-                            }else{
-                                std::cout << name.toStdString() << " does not exist!" << std::endl;
-                                return "";
-                            }
-                        }
-
-                    } else{
-                        //adds a "dummy" txt file
-                        return name;
-                    }
-
-
-                }else{
-                    //basically user put in a bad filename
+        //makes sure temp is not used as a folder name.
+        if(name.toLower() == "temp"){
+            QMessageBox alert;
+            alert.setText("Alert");
+            alert.setInformativeText("temp is protected");
+            if(alert.exec()){
+                return "";
+            }
+        }
+        if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
+            //creates proper folders
+            int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
+            //return code 0 means it worked.
+            if(loadReturnCode != 0){
+                //ProjectFiles folder could not be created
+                if(loadReturnCode == 1){
                     alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                    alert.setInformativeText(name + " is not a valid name");
+                    alert.setInformativeText("Failed To Create ProjectFiles directory");
                     alert.show();
                     return "";
                 }
+                //project already exists and overwrite was confirmed
+                else if(loadReturnCode == 2){
+                    QDir dir(QString("ProjectFiles/") + name);
+                    if(dir.exists()){
+                        if(!dir.removeRecursively()){
+                            std::cout << "failed to remove previous folder" <<std::endl;
+                            return 0;
+                        }
+                        GuiLoadSave::createProjectDirectory(name);
+
+                        return name;
+
+                    }else{
+                        std::cout << name.toStdString() << " does not exist!" << std::endl;
+                        return "";
+                    }
+                }
+
+            } else{
+                return name;
+            }
+
+
+        }else{
+            //basically user put in a bad filename
+            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+            alert.setInformativeText(name + " is not a valid name");
+            alert.show();
+            return "";
+        }
     }
     return "";
 
 }
+
 
 /**
  * @brief copies all files (except index.xml and the .txt file) from one file into the other.
@@ -376,6 +403,56 @@ boolean GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
 
     }
     return true;
+}
+
+/**
+ * @brief used to load a command into the commandlist regardless of project origin.
+ * @param projectName
+ * @param CommandList
+ * @return true if successful
+ */
+boolean GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandList){
+    //file directory
+    QFileDialog loadDirectory;
+    loadDirectory.setDirectory("ProjectFiles");
+    loadDirectory.setAcceptMode(QFileDialog::AcceptOpen);
+    QStringList filters;
+    filters << "XML files (*.xml)";
+    loadDirectory.setNameFilters(filters);
+
+
+    if(loadDirectory.exec()){
+        QString name = loadDirectory.selectedFiles().at(0).split("/").last();
+        name.chop(4);
+        //ensure selected file is not index.
+        if(name.toLower() == "index"){
+            QMessageBox alert;
+            alert.setText("Alert");
+            alert.setInformativeText("not a valid file!");
+            alert.show();
+            return false;
+        }
+        QString prevFolder = loadDirectory.selectedFiles().at(0).split("ProjectFiles/").last();
+
+
+        //file is in same project.  just add filename to list.
+        if(prevFolder.split("/").first() == projectName){
+            CommandList->addItem(name);
+            return true;
+        }else{
+            //must copy file from prevFolder to new folder.
+            QFile temp;
+            temp.setFileName("ProjectFiles/" + prevFolder);
+            if(temp.copy(temp.fileName(),"ProjectFiles/" + projectName + "/" + name + ".xml")){
+                CommandList->addItem(name);
+                return true;
+            }
+            return false;
+
+        }
+
+    }
+    return false;
 }
 
 

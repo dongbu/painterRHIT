@@ -15,13 +15,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     guiloadsave.cpp \
-    commandeditor.cpp
+    commandeditor.cpp \
+    painter.cpp \
+    pairedcoordinates.cpp \
+    commandinterpreter.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
-    commandeditor.h
+    commandeditor.h \
+    painter.h \
+    pairedcoordinates.h \
+    commandinterpreter.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    painter.ui
 
 RESOURCES += \
     myres.qrc

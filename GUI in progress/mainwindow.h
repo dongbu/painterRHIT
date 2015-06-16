@@ -4,6 +4,7 @@
 #include "ui_mainwindow.h"
 #include "guiloadsave.h"
 #include "commandeditor.h"
+#include "commandinterpreter.h"
 #include <QtGui>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -46,6 +47,12 @@ private slots:
     void on_EditCommand_clicked();
     void fileChangedTrue();
 
+    void on_actionNew_triggered();
+
+    void on_pushButton_clicked();
+
+    void on_actionRun_triggered();
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
@@ -53,6 +60,7 @@ private:
     bool saved;
     QMessageBox alert;
     bool fileChanged;
+    CommandInterpreter *interpreter;
 
     std::vector<CommandEditor*> editors;
     QTabWidget *EditorTabs;
