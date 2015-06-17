@@ -57,7 +57,7 @@ public slots:
 
 signals:
     void fileStatusChanged();
-    void tell_Command_Added();
+    void tell_Command_Added(int index);
 };
 
 #endif // COMMANDEDITOR_H

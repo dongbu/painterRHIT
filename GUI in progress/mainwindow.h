@@ -52,7 +52,7 @@ private slots:
     void on_actionNew_triggered();
     void on_pushButton_clicked();
     void on_actionRun_triggered();
-    void noticeCommandAdded();
+    void noticeCommandAdded(int index);
 
 private:
     Ui::MainWindow *ui;

@@ -171,7 +171,7 @@ void CommandEditor::Add_Command_Clicked() {
         CommandEditor::setName(lineEdits.at(0)->text());
         editorTabs->setTabText(tabPosition,name);
         emit fileStatusChanged();
-        emit tell_Command_Added();
+        emit tell_Command_Added(-10);
 
 
     ///TEMP SOLUTION///
@@ -224,9 +224,9 @@ void CommandEditor::Remove_Point_Clicked() {
  */
 void CommandEditor::ConnectButtons() {
     //Connecting button signals/slots
-    connect(Add_Command, QPushButton::clicked, this, Add_Command_Clicked);
-    connect(Add_Point, QPushButton::clicked, this, Add_Point_Clicked);
-    connect(Remove_Point, QPushButton::clicked, this, Remove_Point_Clicked);
+    connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
+    connect(Add_Point, SIGNAL(clicked()), this, SLOT(Add_Point_Clicked()));
+    connect(Remove_Point, SIGNAL(clicked()), this, SLOT(Remove_Point_Clicked()));
 }
 
 

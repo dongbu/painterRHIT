@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabCount = -1;
     untitledCount = 0;
     ui->EditorTabLayout->addWidget(EditorTabs);
-    this->EditorTabs->connect(EditorTabs,QTabWidget::tabCloseRequested, this,MainWindow::closeTab);
+    this->EditorTabs->connect(EditorTabs,SIGNAL(tabCloseRequested(int)), this,SLOT(closeTab(int)));
     EditorTabs->setTabsClosable(true);
     //Tab work//
 
@@ -26,9 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //command list//
     ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(on_EditCommand_clicked()));
-    ui->MoveUp->connect(ui->MoveUp,QPushButton::clicked,this,MainWindow::MoveUp_clicked);
-    ui->MoveDown->connect(ui->MoveDown,QPushButton::clicked,this,MainWindow::MoveDown_clicked);
-    ui->DeleteCommand->connect(ui->DeleteCommand,QPushButton::clicked,this,MainWindow::DeleteCommand_clicked);
+    ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
+    ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
+    ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
     //command list//
 
     //interpreter work//
@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     drawOn->setFixedWidth(1000);
     drawOn->setFixedHeight(750);
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
+    ui->widget->setStyleSheet("background-color:white;");
     ///temporarily disabled until further discussion///
     ui->actionDraw_Circle->setDisabled(true);
     ui->actionDraw_Function->setDisabled(true);
@@ -340,14 +341,14 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     EditorTabs->setCurrentIndex(tabCount);
 
     //connection so that we know when something has been changed.
-    connect(editor,editor->fileStatusChanged,this,fileChangedTrue);
+    connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
     //connection so we know if addcommand button was pressed.
-    connect(editor,editor->tell_Command_Added,this,noticeCommandAdded);
+    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
 
     //connection so we know if a tab was closed.  clears drawer if a tab is closed.
-    QList<CommandEditor *> editors = EditorTabs->findChildren<CommandEditor *>();
-    connect(EditorTabs,EditorTabs->tabCloseRequested,this,this->noticeCommandAdded);
+//    QList<CommandEditor *> editors = EditorTabs->findChildren<CommandEditor *>();
+    connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
 
 
 
@@ -485,10 +486,14 @@ void MainWindow::on_actionRun_triggered()
 void MainWindow::recievePoint(int x, int y, int pointCount){
     //means command is over.
     if(x == -10 && y == -10){
-        if(pointCount >= 2){
+        if(pointCount >= 3){
            CommandEditor *temp = editors.at(currentEditor);
            temp->add_Command_Externally();
+           std::cout<<pointCount<<std::endl;
            return;
+        }else{
+            drawOn->clearAll();
+            return;
         }
     }
     if(pointCount == 1){
@@ -502,6 +507,8 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 
 }
 
-void MainWindow::noticeCommandAdded(){
+void MainWindow::noticeCommandAdded(int index){
+    if(index == (tabCount+1) || index == -10){
     drawOn->clearAll();
+    }
 }
