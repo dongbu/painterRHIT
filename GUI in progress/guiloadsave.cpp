@@ -143,6 +143,10 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
     ///TEMP SOLUTION///
     QList<QLineEdit *> lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
 
+    if(projectName.isEmpty() || projectName.isNull()){
+        projectName = "Temp";
+    }
+
     //load file and set up the reader.
     QFile loadFile;
     loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + fileName+ QString(".xml"));

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--two-->
+<!--PointMap_2-->
 <Command>
     <!--Line Information-->
     <Line color="black" style="solid"/>
     <!--Point Map Information-->
     <PointMap length="2">
-        <Point x="2" y="2"/>
-        <Point x="2" y="2"/>
+        <Point x="702" y="110"/>
+        <Point x="710" y="341"/>
     </PointMap>
     <FileMalformed bool="0"/>
 </Command>

@@ -26,6 +26,8 @@ public:
     void setProjectName(QString name);
     QString getName();
     void setCommandAdded(bool commandAdded);
+    void add_Command_Externally();
+    void set_Point_At(int index, int x, int y);
 
     QWidget *CommandEditorWidget;
     std::vector<QLineEdit*> *PointVec;
@@ -55,6 +57,7 @@ public slots:
 
 signals:
     void fileStatusChanged();
+    void tell_Command_Added();
 };
 
 #endif // COMMANDEDITOR_H

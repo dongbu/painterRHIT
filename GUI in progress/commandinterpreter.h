@@ -1,7 +1,7 @@
 #ifndef COMMANDINTERPRETER_H
 #define COMMANDINTERPRETER_H
 
-#include "painter.h";
+#include "painter.h"
 #include "pairedcoordinates.h"
 #include <QListWidget>
 

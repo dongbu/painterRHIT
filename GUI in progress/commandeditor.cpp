@@ -171,6 +171,7 @@ void CommandEditor::Add_Command_Clicked() {
         CommandEditor::setName(lineEdits.at(0)->text());
         editorTabs->setTabText(tabPosition,name);
         emit fileStatusChanged();
+        emit tell_Command_Added();
 
 
     ///TEMP SOLUTION///
@@ -246,6 +247,8 @@ QString CommandEditor::getName(){
  */
 void CommandEditor::setName(QString newName){
     this->name = newName;
+    QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+    lineEdits.at(0)->setText(this->name);
 }
 
 
@@ -274,5 +277,23 @@ void CommandEditor::setCommandAdded(bool commandAdded){
         this->Add_Command->setText("Add Command");
         this->Command_Name->setEnabled(true);
     }
+}
+
+/**
+ * @brief allows you to tell the command to add itself to the list from somewhere else.
+ */
+void CommandEditor::add_Command_Externally(){
+    this->Add_Command_Clicked();
+}
+
+/**
+ * @brief sets the point at the given index to the given coordinates.
+ * @param index
+ * @param x
+ * @param y
+ */
+void CommandEditor::set_Point_At(int index, int x, int y){
+    QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+    lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
 }
 

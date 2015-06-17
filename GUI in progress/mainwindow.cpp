@@ -35,6 +35,20 @@ MainWindow::MainWindow(QWidget *parent) :
     interpreter = new CommandInterpreter("");
     //interpreter work//
 
+    //click to draw work//
+    drawOn = new drawOnWidget(ui->widget);
+    drawOn->setFixedWidth(1000);
+    drawOn->setFixedHeight(750);
+    connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
+    ///temporarily disabled until further discussion///
+    ui->actionDraw_Circle->setDisabled(true);
+    ui->actionDraw_Function->setDisabled(true);
+    ui->actionDraw_Line->setDisabled(true);
+    ui->actionDraw_Point_Map->setDisabled(true);
+    ui->actionDraw_Square->setDisabled(true);
+    ///temporarily disabled until further discussion///
+    //click to draw work//
+
 }
 
 
@@ -317,6 +331,7 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     tabCount++;
     CommandEditor *editor = new CommandEditor(ui->listWidget,tabCount, EditorTabs);
     editor->setProjectName(projectName);
+    editor->setName("PointMap_" + QString::number(untitledCount + 1));
     editors.push_back(editor);
     currentEditor++;
 
@@ -326,6 +341,14 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
 
     //connection so that we know when something has been changed.
     connect(editor,editor->fileStatusChanged,this,fileChangedTrue);
+
+    //connection so we know if addcommand button was pressed.
+    connect(editor,editor->tell_Command_Added,this,noticeCommandAdded);
+
+    //connection so we know if a tab was closed.  clears drawer if a tab is closed.
+    QList<CommandEditor *> editors = EditorTabs->findChildren<CommandEditor *>();
+    connect(EditorTabs,EditorTabs->tabCloseRequested,this,this->noticeCommandAdded);
+
 
 
 }
@@ -382,6 +405,7 @@ void MainWindow::cleanUp(){
        QDir("ProjectFiles/Temp").removeRecursively();
     }
     ui->pushButton->setDisabled(true);
+    drawOn->clearAll();
 
 }
 
@@ -451,4 +475,33 @@ void MainWindow::on_actionRun_triggered()
     Painter *p = new Painter();
     p->paintCommand(0,0,300,300,"blue","solid");
 
+}
+
+/**
+ * @brief slot for DrawOnWidget to get points that were clicked.
+ * @param x
+ * @param y
+ */
+void MainWindow::recievePoint(int x, int y, int pointCount){
+    //means command is over.
+    if(x == -10 && y == -10){
+        if(pointCount >= 2){
+           CommandEditor *temp = editors.at(currentEditor);
+           temp->add_Command_Externally();
+           return;
+        }
+    }
+    if(pointCount == 1){
+        this->on_actionDraw_Point_Map_triggered();
+    }
+    CommandEditor *temp = editors.at(currentEditor);
+    if(pointCount > 2){
+        temp->Add_Point_Clicked();
+    }
+    temp->set_Point_At(pointCount, x, y);
+
+}
+
+void MainWindow::noticeCommandAdded(){
+    drawOn->clearAll();
 }

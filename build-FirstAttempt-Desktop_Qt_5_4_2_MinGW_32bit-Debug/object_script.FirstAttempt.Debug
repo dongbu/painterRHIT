@@ -4,10 +4,11 @@ INPUT(
 ./debug\guiloadsave.o
 ./debug\commandeditor.o
 ./debug\painter.o
-./debug\pairedcoordinates.o
 ./debug\commandinterpreter.o
+./debug\drawonwidget.o
 ./debug\qrc_myres.o
 ./debug\moc_mainwindow.o
 ./debug\moc_commandeditor.o
 ./debug\moc_painter.o
+./debug\moc_drawonwidget.o
 );

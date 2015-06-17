@@ -17,15 +17,15 @@ SOURCES += main.cpp\
     guiloadsave.cpp \
     commandeditor.cpp \
     painter.cpp \
-    pairedcoordinates.cpp \
-    commandinterpreter.cpp
+    commandinterpreter.cpp \
+    drawonwidget.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
     commandeditor.h \
     painter.h \
-    pairedcoordinates.h \
-    commandinterpreter.h
+    commandinterpreter.h \
+    drawonwidget.h
 
 FORMS    += mainwindow.ui \
     painter.ui

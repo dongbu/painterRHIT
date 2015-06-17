@@ -5,6 +5,7 @@
 #include "guiloadsave.h"
 #include "commandeditor.h"
 #include "commandinterpreter.h"
+#include "drawonwidget.h"
 #include <QtGui>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -34,6 +35,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void recievePoint(int x, int y, int pointCount);
 
 private slots:
     void MoveUp_clicked();
@@ -46,12 +49,10 @@ private slots:
     void on_actionSave_triggered();
     void on_EditCommand_clicked();
     void fileChangedTrue();
-
     void on_actionNew_triggered();
-
     void on_pushButton_clicked();
-
     void on_actionRun_triggered();
+    void noticeCommandAdded();
 
 private:
     Ui::MainWindow *ui;
@@ -61,6 +62,7 @@ private:
     QMessageBox alert;
     bool fileChanged;
     CommandInterpreter *interpreter;
+    drawOnWidget *drawOn;
 
     std::vector<CommandEditor*> editors;
     QTabWidget *EditorTabs;
