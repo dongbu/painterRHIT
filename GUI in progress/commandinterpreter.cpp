@@ -30,7 +30,6 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
 
     if(stopped){
         CommandInterpreter::buildPointVectors(widget);
-        picasso->clearPainter();
         stopped = false;
     }
     if(!updateTimer.isActive()){
@@ -47,6 +46,8 @@ void CommandInterpreter::sendCommand(){
         currentPos++;
     }else{
         updateTimer.stop();
+        currentPos = 0;
+        stopped = true;
     }
 }
 
@@ -60,6 +61,7 @@ void CommandInterpreter::stopPaintingCommands(){
     updateTimer.stop();
     currentPos = 0;
     picasso->raise();
+    picasso->clearPainter();
 }
 
 /**
@@ -120,6 +122,10 @@ void CommandInterpreter::setProjectName(QString name){
     this->stopped = true;
 }
 
+/**
+ * @brief looks at the widget and pulls forth all necessary information from xml files
+ * @param widget
+ */
 void CommandInterpreter::buildPointVectors(QListWidget* widget){
     if(projectName.isEmpty() || projectName.isNull()){
         return;
@@ -158,10 +164,8 @@ void CommandInterpreter::buildPointVectors(QListWidget* widget){
                     foreach(const QXmlStreamAttribute &attr, reader.attributes()){
                         if(j == 0){
                             currentColor = attr.value().toString();
-                            std::cout << currentColor.toStdString() << std::endl;
                         }else{
                             currentStyle = attr.value().toString();
-                            std::cout << currentStyle.toStdString() << std::endl;
                         }
 
                         j++;
@@ -181,8 +185,6 @@ void CommandInterpreter::buildPointVectors(QListWidget* widget){
                             }
                         }else{
                             if(k == 0){
-                                std::cout<<"prevX: " << prevX << std::endl;
-                                std::cout <<"newX: "<< attr.value().toInt() << std::endl;
                                 x1.push_back(prevX);
                                 x2.push_back(attr.value().toInt());
                                 prevX = attr.value().toInt();

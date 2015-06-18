@@ -368,7 +368,6 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
 
     //connection so we know if a tab was closed.  clears drawer if a tab is closed.
-//    QList<CommandEditor *> editors = EditorTabs->findChildren<CommandEditor *>();
     connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
 
 

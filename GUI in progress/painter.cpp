@@ -41,7 +41,6 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
     }
     if(temp->isNull()){
         std::cout<<"buttons clicked too fast. caused overload"<<std::endl;
-        clearPainter();
         return;
     }
     QPainter painter(temp);
