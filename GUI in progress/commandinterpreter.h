@@ -2,30 +2,42 @@
 #define COMMANDINTERPRETER_H
 
 #include "painter.h"
-#include "pairedcoordinates.h"
 #include <QListWidget>
+#include <QThread>
+#include <QTimer>
+#include <vector>
 
 
-class CommandInterpreter
+
+class CommandInterpreter : public QObject
 {
+    Q_OBJECT
+    QThread workerThread;
+
 public:
     CommandInterpreter(QString projectName);
-
-    void beginPaintingCommands(QListWidget* widget);
-    void stopPaintingCommands(QListWidget* widget);
-    void stepForwardCommands(QListWidget* widget);
-    void stepBackwardCommands(QListWidget* widget);
+    void beginPaintingCommands(QListWidget* widget, int index);
+    void stopPaintingCommands();
+    void stepForwardCommands();
+    void stepBackwardCommands();
     void setProjectName(QString name);
+    void pausePaintingCommands();
+
+private slots:
+    void sendCommand();
 
 private:
-    int currentCommand;
     Painter *picasso;
     QString projectName;
     bool continuePainting;
+    bool stopped;
+    QTimer updateTimer;
+    std::vector<int> x1,x2,y1,y2;
+    int currentPos, startPos;
+    std::vector<QString> colorList, styleList;
 
-    void clearPainter();
-    void drawUntilCommand(QListWidget* widget, int stopPos);
-    QList<PairedCoordinates> getCommandCoords(QString commandName);
+    void drawUntilCommand(int stopPos);
+    void buildPointVectors(QListWidget* widget);
 };
 
 #endif // COMMANDINTERPRETER_H

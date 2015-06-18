@@ -1,6 +1,7 @@
 #include "commandinterpreter.h"
-#include "windows.h"
-#include "pairedcoordinates.h"
+#include "math.h"
+#include <QFile>
+#include <QXmlStreamWriter>
 
 CommandInterpreter::CommandInterpreter(QString projectName)
 {
@@ -8,6 +9,13 @@ CommandInterpreter::CommandInterpreter(QString projectName)
     //painter work//
     picasso = new Painter();
     picasso->setWindowTitle("Painter");
+    stopped = true;
+    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(sendCommand()));
+
+    startPos = 0;
+    currentPos = 0;
+
+
     //painter work//
 }
 
@@ -16,24 +24,64 @@ CommandInterpreter::CommandInterpreter(QString projectName)
  * unless told to stop or reaches the end.
  * @param widget
  */
-void CommandInterpreter::beginPaintingCommands(QListWidget* widget){
+void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
+    startPos = index;
+    picasso->show();
+
+    if(stopped){
+        CommandInterpreter::buildPointVectors(widget);
+        picasso->clearPainter();
+        stopped = false;
+    }
+    if(!updateTimer.isActive()){
+    updateTimer.start(100);
+    }
+    picasso->raise();
+
 
 }
 
-/**
- * @brief tells the beginPaintingCommands function that it should stop.
- * @param widget
- */
-void CommandInterpreter::stopPaintingCommands(QListWidget* widget){
+void CommandInterpreter::sendCommand(){
+    if(currentPos < x1.size()){
+        picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
+        currentPos++;
+    }else{
+        updateTimer.stop();
+    }
+}
 
+
+
+/**
+ * @brief stops the painting animation.
+ */
+void CommandInterpreter::stopPaintingCommands(){
+    stopped=true;
+    updateTimer.stop();
+    currentPos = 0;
+    picasso->raise();
+}
+
+/**
+ * @brief pauses the painting animation.
+ */
+void CommandInterpreter::pausePaintingCommands(){
+    if(updateTimer.isActive()){
+        updateTimer.stop();
+    }
 }
 
 /**
  * @brief step forward and paint one command.
  * @param widget
  */
-void CommandInterpreter::stepForwardCommands(QListWidget* widget){
-
+void CommandInterpreter::stepForwardCommands(){
+    CommandInterpreter::pausePaintingCommands();
+    picasso->raise();
+    if(currentPos < x1.size()){
+        picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
+        currentPos++;
+    }
 }
 
 /**
@@ -41,32 +89,26 @@ void CommandInterpreter::stepForwardCommands(QListWidget* widget){
  * removes all painted commands and then paints up until the previous command.
  * @param widget
  */
-void CommandInterpreter::stepBackwardCommands(QListWidget* widget){
-
+void CommandInterpreter::stepBackwardCommands(){
+    CommandInterpreter::pausePaintingCommands();
+    if(currentPos > startPos){
+        picasso->raise();
+        currentPos--;
+        CommandInterpreter::drawUntilCommand(currentPos);
+    }
 }
-/**
- * @brief clears the paint space
- */
-void CommandInterpreter::clearPainter(){
 
-}
 
 /**
  * @brief draws all of the commands up until the given index.
  * @param widget
  * @param stopPos
  */
-void CommandInterpreter::drawUntilCommand(QListWidget* widget, int stopPos){
-
-}
-
-/**
- * @brief gets a list of the coordinates for a given command.
- * @param commandName
- * @return
- */
-QList<PairedCoordinates> CommandInterpreter::getCommandCoords(QString commandName){
-    return QList<PairedCoordinates>();
+void CommandInterpreter::drawUntilCommand(int stopPos){
+    picasso->clearPainter();
+    for(int i = startPos; i < stopPos; i++){
+        picasso->paintCommand(x1.at(i),y1.at(i),x2.at(i),y2.at(i),colorList.at(i),styleList.at(i));
+    }
 }
 
 /**
@@ -75,4 +117,104 @@ QList<PairedCoordinates> CommandInterpreter::getCommandCoords(QString commandNam
  */
 void CommandInterpreter::setProjectName(QString name){
     this->projectName=name;
+    this->stopped = true;
+}
+
+void CommandInterpreter::buildPointVectors(QListWidget* widget){
+    if(projectName.isEmpty() || projectName.isNull()){
+        return;
+    }
+    x1.clear();
+    x2.clear();
+    y1.clear();
+    y2.clear();
+    colorList.clear();
+    styleList.clear();
+
+    int prevX;
+    int prevY;
+    QString currentColor;
+    QString currentStyle;
+
+    QList<QListWidgetItem *> listOfCommands = widget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+
+    for(int i = 0; i < listOfCommands.length(); i++){
+        bool firstPoint = true;
+        QFile loadFile;
+        loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + listOfCommands.at(i)->text()+ QString(".xml"));
+        loadFile.open(QIODevice::ReadOnly);
+        QXmlStreamReader reader(&loadFile);
+
+
+
+        //keep going until the document is finished.
+        while(!reader.isEndDocument()){
+            reader.readNext();
+            if(reader.isStartElement()){
+                if(reader.name().toString() == "Line"){
+                    int j = 0;
+
+                    //set the color and linestyle info.
+                    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                        if(j == 0){
+                            currentColor = attr.value().toString();
+                            std::cout << currentColor.toStdString() << std::endl;
+                        }else{
+                            currentStyle = attr.value().toString();
+                            std::cout << currentStyle.toStdString() << std::endl;
+                        }
+
+                        j++;
+                    }
+                }
+                if(reader.name().toString() == "Point"){
+                    int k = 0;
+                    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+//                        std::cout<<attr.value().toInt()<<std::endl;
+                        std::cout<<"k: " <<k<<std::endl;
+                        if(firstPoint){
+                            if(k == 0){
+                                prevX = attr.value().toInt();
+                            }else{
+                                prevY = attr.value().toInt();
+                                firstPoint = false;
+                            }
+                        }else{
+                            if(k == 0){
+                                std::cout<<"prevX: " << prevX << std::endl;
+                                std::cout <<"newX: "<< attr.value().toInt() << std::endl;
+                                x1.push_back(prevX);
+                                x2.push_back(attr.value().toInt());
+                                prevX = attr.value().toInt();
+                            }else{
+                                y1.push_back(prevY);
+                                y2.push_back(attr.value().toInt());
+                                prevY = attr.value().toInt();
+                                colorList.push_back(currentColor);
+                                styleList.push_back(currentStyle);
+                            }
+
+                        }
+
+                        k++;
+                    }
+
+
+                } else if(reader.name().toString() == "FileMalformed"){
+                    if(reader.attributes().value(0).toString() == "1"){
+                        std::cout << "FILE WAS MALFORMED!" << std::endl;
+                        return;
+                        //potentially highlight poorly made files.
+                    }
+                }
+
+            }
+        }
+        if(reader.hasError()){
+            std::cout << "there was an error in reading the file" <<std::endl;
+            //shouldn't be an issue, but put in just in case.
+        }
+
+        loadFile.close();
+    }
 }

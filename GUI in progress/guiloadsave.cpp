@@ -37,6 +37,8 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     }
     ///TEMP SOLUTION///
 
+
+
     //sets up a save file to put the information into.  Should overwrite any previous file with same name in directory.
     QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/") + fileName + QString(".xml");
     QFile saveFile;
@@ -459,4 +461,81 @@ boolean GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandL
     return false;
 }
 
+
+std::vector<std::vector<int> > getPointVectors(QString projectName, QListWidget* CommandList){
+    std::vector<std::vector<int> > result;
+
+    std::vector<int> x1;
+    std::vector<int> x2;
+    std::vector<int> y1;
+    std::vector<int> y2;
+    int prevX;
+    int prevY;
+
+    QList<QListWidgetItem *> listOfCommands = CommandList->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+
+    for(int i = 0; i < listOfCommands.length(); i++){
+
+    QFile loadFile;
+    loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + listOfCommands.at(i)->text()+ QString(".xml"));
+    loadFile.open(QIODevice::ReadOnly);
+    QXmlStreamReader reader(&loadFile);
+
+    //skip over unimportant doc headers.
+    reader.readNextStartElement();
+    reader.readNextStartElement();
+
+
+    //keep going until the document is finished.
+    while(!reader.isEndDocument()){
+        reader.readNext();
+        if(reader.isStartElement()){
+            if(reader.name().toString() == "Point"){
+                int k = 0;
+                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                    if(x1.size() <= 0){
+                        if(k == 0){
+                            prevX = attr.value().toInt();
+                        }else{
+                            prevY = attr.value().toInt();
+                        }
+                    }else{
+                        if(k == 0){
+                            x1.push_back(prevX);
+                            x2.push_back(attr.value().toInt());
+                            prevX = attr.value().toInt();
+                        }else{
+                            y1.push_back(prevY);
+                            y2.push_back(attr.value().toInt());
+                            prevY = attr.value().toInt();
+                        }
+                    }
+                    k++;
+                }
+
+
+            } else if(reader.name().toString() == "FileMalformed"){
+                if(reader.attributes().value(0).toString() == "1"){
+                    std::cout << "FILE WAS MALFORMED!" << std::endl;
+                    return result;
+                    //potentially highlight poorly made files.
+                }
+            }
+
+        }
+    }
+    if(reader.hasError()){
+        std::cout << "there was an error in reading the file" <<std::endl;
+        //shouldn't be an issue, but put in just in case.
+    }
+
+    loadFile.close();
+    }
+
+    result.push_back(x1);
+    result.push_back(y1);
+    result.push_back(x2);
+    result.push_back(y2);
+    return result;
+}
 

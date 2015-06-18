@@ -13,6 +13,7 @@
 #include <QXmlStreamReader>
 #include <iostream>
 #include <QListWidget>
+#include <vector>
 
 class GuiLoadSave
 {
@@ -27,6 +28,7 @@ public:
     static QString saveAsProject();
     static boolean copyAllFilesFrom(QString prevFolder, QString newFolder);
     static boolean loadExternalFile(QString projectName, QListWidget* CommandList);
+    static std::vector<std::vector<int> > getPointVectors(QString projectName, QListWidget* CommandList);
 
 
 };

@@ -205,47 +205,6 @@
    <zorder>widget</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1680</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuNew_Window">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="actionNew"/>
-   </widget>
-   <widget class="QMenu" name="menuDraw_Commands">
-    <property name="title">
-     <string>Draw Commands</string>
-    </property>
-    <addaction name="actionDraw_Square"/>
-    <addaction name="actionDraw_Circle"/>
-    <addaction name="actionDraw_Line"/>
-    <addaction name="actionDraw_Function"/>
-    <addaction name="actionDraw_Point_Map"/>
-   </widget>
-   <widget class="QMenu" name="menuDebugger">
-    <property name="title">
-     <string>Debugger</string>
-    </property>
-    <addaction name="actionStop"/>
-    <addaction name="actionPause"/>
-    <addaction name="actionNext"/>
-    <addaction name="actionPrevious"/>
-   </widget>
-   <addaction name="menuNew_Window"/>
-   <addaction name="menuDraw_Commands"/>
-   <addaction name="menuDebugger"/>
-  </widget>
   <widget class="QToolBar" name="GeneralCommands">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -292,6 +251,47 @@
    <addaction name="actionPrevious"/>
    <addaction name="actionPause"/>
    <addaction name="actionNext"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1680</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuNew_Window">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="actionNew"/>
+   </widget>
+   <widget class="QMenu" name="menuDraw_Commands">
+    <property name="title">
+     <string>Draw Commands</string>
+    </property>
+    <addaction name="actionDraw_Square"/>
+    <addaction name="actionDraw_Circle"/>
+    <addaction name="actionDraw_Line"/>
+    <addaction name="actionDraw_Function"/>
+    <addaction name="actionDraw_Point_Map"/>
+   </widget>
+   <widget class="QMenu" name="menuDebugger">
+    <property name="title">
+     <string>Debugger</string>
+    </property>
+    <addaction name="actionStop"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionNext"/>
+    <addaction name="actionPrevious"/>
+   </widget>
+   <addaction name="menuNew_Window"/>
+   <addaction name="menuDraw_Commands"/>
+   <addaction name="menuDebugger"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">

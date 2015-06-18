@@ -16,9 +16,11 @@ public:
     explicit Painter(QWidget *parent = 0);
     ~Painter();
     void paintCommand(int startX, int startY, int endX, int endY, QString color, QString lineStyle);
+    void clearPainter();
 
 private:
     Ui::Painter *ui;
+    int fudge;
 
     QColor getPenColor(QString color);
     Qt::PenStyle getPenStyle(QString style);

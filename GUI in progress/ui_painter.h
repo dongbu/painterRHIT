@@ -13,7 +13,6 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
@@ -24,13 +23,12 @@ class Ui_Painter
 {
 public:
     QLabel *label;
-    QFrame *line;
 
     void setupUi(QWidget *Painter)
     {
         if (Painter->objectName().isEmpty())
             Painter->setObjectName(QStringLiteral("Painter"));
-        Painter->resize(1040, 800);
+        Painter->resize(1015, 765);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -38,14 +36,10 @@ public:
         Painter->setSizePolicy(sizePolicy);
         label = new QLabel(Painter);
         label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(20, 40, 1000, 750));
+        label->setGeometry(QRect(10, 10, 1000, 750));
         sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
         label->setSizePolicy(sizePolicy);
-        line = new QFrame(Painter);
-        line->setObjectName(QStringLiteral("line"));
-        line->setGeometry(QRect(0, 30, 1041, 20));
-        line->setFrameShape(QFrame::HLine);
-        line->setFrameShadow(QFrame::Sunken);
+        label->setIndent(0);
 
         retranslateUi(Painter);
 

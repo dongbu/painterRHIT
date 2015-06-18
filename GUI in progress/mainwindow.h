@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
+#include "commandinterpreter.h"
 #include "guiloadsave.h"
 #include "commandeditor.h"
-#include "commandinterpreter.h"
 #include "drawonwidget.h"
 #include <QtGui>
 #include <QMainWindow>
@@ -21,6 +21,7 @@
 #include <QMessageBox>
 #include <QListWidget>
 #include <QFileDialog>
+#include <QThread>
 
 
 namespace Ui {
@@ -54,6 +55,14 @@ private slots:
     void on_actionRun_triggered();
     void noticeCommandAdded(int index);
 
+    void on_actionStop_triggered();
+
+    void on_actionPause_triggered();
+
+    void on_actionNext_triggered();
+
+    void on_actionPrevious_triggered();
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
@@ -72,6 +81,8 @@ private:
 
     void changeCurrentEditor(QString editorName);
     void cleanUp();
+
+    startPainting(QListWidget* widget, int index);
 };
 
 #endif // MAINWINDOW_H

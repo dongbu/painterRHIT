@@ -22,6 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
     fileChanged = false;
     ui->actionSave->setDisabled(true);//disable save until saveAs has been used.
     ui->pushButton->setDisabled(true);//can't load external file until saved.
+    //creates a ProjectFiles folder if one doesn't exist
+    if(!QDir(QString("ProjectFiles")).exists()){
+        if(!QDir().mkdir(QString("ProjectFiles"))){
+            std::cout << "failed to create ProjectFiles folder" <<std::endl;
+        }
+    }
     //save work//
 
     //command list//
@@ -160,6 +166,7 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
+            interpreter->setProjectName(projectName);
             this->setWindowTitle(projectName);
             interpreter->setProjectName(projectName);
             ui->actionSave->setEnabled(true);
@@ -203,6 +210,7 @@ void MainWindow::on_actionSave_As_triggered()
             saved = true;
             ui->pushButton->setEnabled(true);
             projectName = name;
+            interpreter->setProjectName(projectName);
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
             interpreter->setProjectName(projectName);
@@ -293,7 +301,7 @@ void MainWindow::on_actionOpen_triggered()
 
     projectName = directory.selectedFiles().at(0).split("/").last();
     projectName.chop(4);
-    std::cout << projectName.toStdString() << std::endl;
+    interpreter->setProjectName(projectName);
     if(!GuiLoadSave::loadCommandListFromFolder(projectName,ui->listWidget)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
         alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
@@ -332,7 +340,20 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     tabCount++;
     CommandEditor *editor = new CommandEditor(ui->listWidget,tabCount, EditorTabs);
     editor->setProjectName(projectName);
-    editor->setName("PointMap_" + QString::number(untitledCount + 1));
+
+    //searches through and sets the default name to 1 + the largest.
+    editor->setName("PointMap_1");
+    QList<QListWidgetItem *> listOfCommands = ui->listWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    QList<QString> texts;
+    foreach(QListWidgetItem *item, listOfCommands)
+      texts.append(item->text());
+    int k = 1;
+    while(texts.contains(editor->getName())){
+        editor->setName("PointMap_" + QString::number(k));
+        k++;
+    }
+
+
     editors.push_back(editor);
     currentEditor++;
 
@@ -400,6 +421,7 @@ void MainWindow::cleanUp(){
     this->saved = false;
     this->setWindowTitle("Untitled");
     this->projectName = "";
+    interpreter->setProjectName(projectName);
     interpreter->setProjectName("");
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
@@ -470,11 +492,9 @@ void MainWindow::on_pushButton_clicked()
  */
 void MainWindow::on_actionRun_triggered()
 {
-    //temporarily disabled.
-//    interpreter->beginPaintingCommands(ui->listWidget);
-    //only included for demonstrational purposes.
-    Painter *p = new Painter();
-    p->paintCommand(0,0,300,300,"blue","solid");
+    //currently always starts from beginning.
+    interpreter->setProjectName(projectName);
+    interpreter->beginPaintingCommands(ui->listWidget, 0);
 
 }
 
@@ -511,4 +531,29 @@ void MainWindow::noticeCommandAdded(int index){
     if(index == (tabCount+1) || index == -10){
     drawOn->clearAll();
     }
+}
+
+
+void MainWindow::on_actionStop_triggered()
+{
+    interpreter->stopPaintingCommands();
+}
+
+void MainWindow::on_actionPause_triggered()
+{
+    interpreter->pausePaintingCommands();
+}
+
+void MainWindow::on_actionNext_triggered()
+{
+    interpreter->setProjectName(projectName);
+    interpreter->stepForwardCommands();
+}
+
+
+
+void MainWindow::on_actionPrevious_triggered()
+{
+    interpreter->setProjectName(projectName);
+    interpreter->stepBackwardCommands();
 }

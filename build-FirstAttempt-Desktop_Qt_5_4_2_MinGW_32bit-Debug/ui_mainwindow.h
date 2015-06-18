@@ -68,13 +68,13 @@ public:
     QFrame *line_5;
     QWidget *widget;
     QStatusBar *statusBar;
+    QToolBar *GeneralCommands;
+    QToolBar *DrawFunctions;
+    QToolBar *DebugFunctions;
     QMenuBar *menuBar;
     QMenu *menuNew_Window;
     QMenu *menuDraw_Commands;
     QMenu *menuDebugger;
-    QToolBar *GeneralCommands;
-    QToolBar *DrawFunctions;
-    QToolBar *DebugFunctions;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -266,6 +266,15 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
+        GeneralCommands = new QToolBar(MainWindow);
+        GeneralCommands->setObjectName(QStringLiteral("GeneralCommands"));
+        MainWindow->addToolBar(Qt::TopToolBarArea, GeneralCommands);
+        DrawFunctions = new QToolBar(MainWindow);
+        DrawFunctions->setObjectName(QStringLiteral("DrawFunctions"));
+        MainWindow->addToolBar(Qt::LeftToolBarArea, DrawFunctions);
+        DebugFunctions = new QToolBar(MainWindow);
+        DebugFunctions->setObjectName(QStringLiteral("DebugFunctions"));
+        MainWindow->addToolBar(Qt::TopToolBarArea, DebugFunctions);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1680, 21));
@@ -276,16 +285,21 @@ public:
         menuDebugger = new QMenu(menuBar);
         menuDebugger->setObjectName(QStringLiteral("menuDebugger"));
         MainWindow->setMenuBar(menuBar);
-        GeneralCommands = new QToolBar(MainWindow);
-        GeneralCommands->setObjectName(QStringLiteral("GeneralCommands"));
-        MainWindow->addToolBar(Qt::TopToolBarArea, GeneralCommands);
-        DrawFunctions = new QToolBar(MainWindow);
-        DrawFunctions->setObjectName(QStringLiteral("DrawFunctions"));
-        MainWindow->addToolBar(Qt::LeftToolBarArea, DrawFunctions);
-        DebugFunctions = new QToolBar(MainWindow);
-        DebugFunctions->setObjectName(QStringLiteral("DebugFunctions"));
-        MainWindow->addToolBar(Qt::TopToolBarArea, DebugFunctions);
 
+        GeneralCommands->addAction(actionOpen);
+        GeneralCommands->addAction(actionNew);
+        GeneralCommands->addAction(actionSave);
+        GeneralCommands->addSeparator();
+        DrawFunctions->addAction(actionDraw_Square);
+        DrawFunctions->addAction(actionDraw_Circle);
+        DrawFunctions->addAction(actionDraw_Line);
+        DrawFunctions->addAction(actionDraw_Point_Map);
+        DrawFunctions->addAction(actionDraw_Function);
+        DebugFunctions->addAction(actionRun);
+        DebugFunctions->addAction(actionStop);
+        DebugFunctions->addAction(actionPrevious);
+        DebugFunctions->addAction(actionPause);
+        DebugFunctions->addAction(actionNext);
         menuBar->addAction(menuNew_Window->menuAction());
         menuBar->addAction(menuDraw_Commands->menuAction());
         menuBar->addAction(menuDebugger->menuAction());
@@ -302,20 +316,6 @@ public:
         menuDebugger->addAction(actionPause);
         menuDebugger->addAction(actionNext);
         menuDebugger->addAction(actionPrevious);
-        GeneralCommands->addAction(actionOpen);
-        GeneralCommands->addAction(actionNew);
-        GeneralCommands->addAction(actionSave);
-        GeneralCommands->addSeparator();
-        DrawFunctions->addAction(actionDraw_Square);
-        DrawFunctions->addAction(actionDraw_Circle);
-        DrawFunctions->addAction(actionDraw_Line);
-        DrawFunctions->addAction(actionDraw_Point_Map);
-        DrawFunctions->addAction(actionDraw_Function);
-        DebugFunctions->addAction(actionRun);
-        DebugFunctions->addAction(actionStop);
-        DebugFunctions->addAction(actionPrevious);
-        DebugFunctions->addAction(actionPause);
-        DebugFunctions->addAction(actionNext);
 
         retranslateUi(MainWindow);
 
@@ -365,12 +365,12 @@ public:
         MoveUp->setText(QApplication::translate("MainWindow", "Move Up", 0));
         MoveDown->setText(QApplication::translate("MainWindow", "Move Down", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Add External Command", 0));
-        menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
-        menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
-        menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));
         GeneralCommands->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
         DrawFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
         DebugFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
+        menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
+        menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
+        menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));
     } // retranslateUi
 
 };
