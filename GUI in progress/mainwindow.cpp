@@ -545,7 +545,6 @@ void MainWindow::on_actionPause_triggered()
 
 void MainWindow::on_actionNext_triggered()
 {
-    interpreter->setProjectName(projectName);
     interpreter->stepForwardCommands();
 }
 
@@ -553,6 +552,7 @@ void MainWindow::on_actionNext_triggered()
 
 void MainWindow::on_actionPrevious_triggered()
 {
-    interpreter->setProjectName(projectName);
     interpreter->stepBackwardCommands();
+
 }
+

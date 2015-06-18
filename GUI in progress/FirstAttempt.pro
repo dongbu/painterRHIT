@@ -18,7 +18,7 @@ SOURCES += main.cpp\
     commandeditor.cpp \
     painter.cpp \
     commandinterpreter.cpp \
-    drawonwidget.cpp
+    drawonwidget.cpp \
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \

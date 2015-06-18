@@ -174,8 +174,6 @@ void CommandInterpreter::buildPointVectors(QListWidget* widget){
                 if(reader.name().toString() == "Point"){
                     int k = 0;
                     foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-//                        std::cout<<attr.value().toInt()<<std::endl;
-                        std::cout<<"k: " <<k<<std::endl;
                         if(firstPoint){
                             if(k == 0){
                                 prevX = attr.value().toInt();

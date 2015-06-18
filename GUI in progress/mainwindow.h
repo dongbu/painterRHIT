@@ -82,7 +82,7 @@ private:
     void changeCurrentEditor(QString editorName);
     void cleanUp();
 
-    startPainting(QListWidget* widget, int index);
+    void startPainting(QListWidget* widget, int index);
 };
 
 #endif // MAINWINDOW_H
