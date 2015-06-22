@@ -33,7 +33,7 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
         stopped = false;
     }
     if(!updateTimer.isActive()){
-    updateTimer.start(100);
+        updateTimer.start(100);
     }
     picasso->raise();
 
@@ -137,84 +137,89 @@ void CommandInterpreter::buildPointVectors(QListWidget* widget){
     colorList.clear();
     styleList.clear();
 
+
+
+    QList<QListWidgetItem *> listOfCommands = widget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+
+    //used to read each file.
+    for(int i = 0; i < listOfCommands.length(); i++){
+        addPointsFromFile(listOfCommands.at(i)->text());
+    }
+}
+
+void CommandInterpreter::addPointsFromFile(QString fileName){
+    bool firstPoint = true;
     int prevX;
     int prevY;
     QString currentColor;
     QString currentStyle;
 
-    QList<QListWidgetItem *> listOfCommands = widget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
-
-    for(int i = 0; i < listOfCommands.length(); i++){
-        bool firstPoint = true;
-        QFile loadFile;
-        loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + listOfCommands.at(i)->text()+ QString(".xml"));
-        loadFile.open(QIODevice::ReadOnly);
-        QXmlStreamReader reader(&loadFile);
+    QFile loadFile;
+    loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + fileName+ QString(".xml"));
+    loadFile.open(QIODevice::ReadOnly);
+    QXmlStreamReader reader(&loadFile);
 
 
 
-        //keep going until the document is finished.
-        while(!reader.isEndDocument()){
-            reader.readNext();
-            if(reader.isStartElement()){
-                if(reader.name().toString() == "Line"){
-                    int j = 0;
+    //keep going until the document is finished.
+    while(!reader.isEndDocument() && !reader.atEnd()){
+        reader.readNextStartElement();
+        if(reader.name().toString() == "Line"){
+            int j = 0;
 
-                    //set the color and linestyle info.
-                    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                        if(j == 0){
-                            currentColor = attr.value().toString();
-                        }else{
-                            currentStyle = attr.value().toString();
-                        }
-
-                        j++;
-                    }
-                }
-                if(reader.name().toString() == "Point"){
-                    int k = 0;
-                    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                        if(firstPoint){
-                            if(k == 0){
-                                prevX = attr.value().toInt();
-                            }else{
-                                prevY = attr.value().toInt();
-                                firstPoint = false;
-                            }
-                        }else{
-                            if(k == 0){
-                                x1.push_back(prevX);
-                                x2.push_back(attr.value().toInt());
-                                prevX = attr.value().toInt();
-                            }else{
-                                y1.push_back(prevY);
-                                y2.push_back(attr.value().toInt());
-                                prevY = attr.value().toInt();
-                                colorList.push_back(currentColor);
-                                styleList.push_back(currentStyle);
-                            }
-
-                        }
-
-                        k++;
-                    }
-
-
-                } else if(reader.name().toString() == "FileMalformed"){
-                    if(reader.attributes().value(0).toString() == "1"){
-                        std::cout << "FILE WAS MALFORMED!" << std::endl;
-                        return;
-                        //potentially highlight poorly made files.
-                    }
+            //set the color and linestyle info.
+            foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                if(j == 0){
+                    currentColor = attr.value().toString();
+                }else{
+                    currentStyle = attr.value().toString();
                 }
 
+                j++;
             }
         }
-        if(reader.hasError()){
-            std::cout << "there was an error in reading the file" <<std::endl;
-            //shouldn't be an issue, but put in just in case.
+        if(reader.name().toString() == "Point"){
+            int k = 0;
+            foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                if(firstPoint){
+                    if(k == 0){
+                        prevX = attr.value().toInt();
+                    }else{
+                        prevY = attr.value().toInt();
+                        firstPoint = false;
+                    }
+                }else{
+                    if(k == 0){
+                        x1.push_back(prevX);
+                        x2.push_back(attr.value().toInt());
+                        prevX = attr.value().toInt();
+                    }else{
+                        y1.push_back(prevY);
+                        y2.push_back(attr.value().toInt());
+                        prevY = attr.value().toInt();
+                        colorList.push_back(currentColor);
+                        styleList.push_back(currentStyle);
+                    }
+
+                }
+
+                k++;
+            }
+
+
+        } else if(reader.name().toString() == "FileMalformed"){
+            if(reader.attributes().value(0).toString() == "1"){
+                std::cout << "FILE WAS MALFORMED!" << std::endl;
+                return;
+                //potentially highlight poorly made files.
+            }
         }
 
-        loadFile.close();
     }
+    if(reader.hasError()){
+        std::cout << "there was an error in reading the file" <<std::endl;
+        //shouldn't be an issue, but put in just in case.
+    }
+
+    loadFile.close();
 }

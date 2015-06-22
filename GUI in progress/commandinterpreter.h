@@ -38,6 +38,7 @@ private:
 
     void drawUntilCommand(int stopPos);
     void buildPointVectors(QListWidget* widget);
+    void addPointsFromFile(QString fileName);
 };
 
 #endif // COMMANDINTERPRETER_H
