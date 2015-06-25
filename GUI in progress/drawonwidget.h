@@ -20,7 +20,7 @@ private:
     QString penColor, penStyle;
     QPen pen;
 
-    void drawPoint(int currentX, int currentY);
+    bool drawPoint(int currentX, int currentY);
 
 signals:
     void sendPoint(int x, int y, int pointCount);

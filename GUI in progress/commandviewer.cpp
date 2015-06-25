@@ -1,5 +1,6 @@
 #include "commandviewer.h"
 #include "ui_commandviewer.h"
+#include <iostream>
 
 CommandViewer::CommandViewer(QWidget *parent) :
     QWidget(parent),
@@ -77,17 +78,29 @@ void CommandViewer::infoDump(QString projectName, std::vector<CommandEditor*> ed
 void CommandViewer::on_EditCommand_clicked()
 {
     QListWidgetItem *item = this->list->currentItem();
+    std::cout<<"checkpoint 0"<<std::endl;
     if(item == NULL){
         return;
     }
+    std::cout<<"checkpoint 1"<<std::endl;
     QString tempProjectName = projectName;
 
     //adds new instance of editor
     emit triggerPointMap();
+    std::cout<<"checkpoint 2"<<std::endl;
+
+    ///Gunnar, the following line does not work.  Please fix.
+    ///I assume it has something to do with editors not being updated after gaining an new commandeditor.
+    /// Thus editors.at(currentEditor) is out of range.
+    /// I blame your cheese method.
+
     //retrieves most recent editor
     CommandEditor *newEditor = editors.at(currentEditor);
+    std::cout<<"checkpoint 3"<<std::endl;
     EditorTabs->setTabText(tabCount,item->text());
+    std::cout<<"checkpoint 4"<<std::endl;
     //populates said editor with information loaded via xml.
     emit triggerCommandEditorUpdate(item->text(),tempProjectName,newEditor);
+    std::cout<<"checkpoint 5"<<std::endl;
 }
 

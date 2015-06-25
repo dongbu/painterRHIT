@@ -67,44 +67,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 /**
- * @brief Default close function (when you press "X").
- * Also prompts to save or discard unsaved work.
- * Cannot prevent exiting out once begun.
+ * @brief Default after close all functions (when you press "X").
  */
 MainWindow::~MainWindow()
 {
-    //if the file was changed and not saved, asks you if you would like to save
-    //or discard changes.
-    if(fileChanged){
-        QMessageBox queryUnsavedWork;
-        queryUnsavedWork.setText("The document has been modified");
-        queryUnsavedWork.setInformativeText("Would you like to save your changes?");
-        queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
-        queryUnsavedWork.setDefaultButton(QMessageBox::Save);
 
-        int result = queryUnsavedWork.exec();
-
-        switch(result){
-        case QMessageBox::Save:
-            if(saved){
-            MainWindow::on_actionSave_triggered();
-            }else{
-                MainWindow::on_actionSave_As_triggered();
-            }
-            if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
-            }
-            break;
-        case QMessageBox::Discard:
-            if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
-            }
-            break;
-        case QMessageBox::Default:
-            //If the user manages to click some other button, return.
-            return;
-        }
-    }
     delete ui;
 }
 
@@ -537,3 +504,48 @@ void MainWindow::callUpdate(QString fileName,QString ProjectName, CommandEditor*
     GuiLoadSave::updateCommandEditor(fileName,ProjectName,loadedEditor);
 }
 
+/**
+ * @brief closes all the windows when this window is closed.
+ * also prompts for a save.
+ */
+void MainWindow::closeEvent(QCloseEvent *event){
+    //if the file was changed and not saved, asks you if you would like to save
+    //or discard changes.
+    if(fileChanged){
+        QMessageBox queryUnsavedWork;
+        queryUnsavedWork.setText("The document has been modified");
+        queryUnsavedWork.setInformativeText("Would you like to save your changes?");
+        queryUnsavedWork.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        queryUnsavedWork.setDefaultButton(QMessageBox::Save);
+
+        int result = queryUnsavedWork.exec();
+
+        switch(result){
+        case QMessageBox::Save:
+            if(saved){
+            MainWindow::on_actionSave_triggered();
+            }else{
+                MainWindow::on_actionSave_As_triggered();
+            }
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
+            event->accept();
+            break;
+        case QMessageBox::Discard:
+            if(QDir("ProjectFiles/Temp").exists()){
+               QDir("ProjectFiles/Temp").removeRecursively();
+            }
+            event->accept();
+            break;
+        case QMessageBox::Cancel:
+            event->ignore();
+            return;
+        case QMessageBox::Default:
+            //If the user manages to click some other button, return.
+            event->ignore();
+            return;
+        }
+    }
+    commandView->close();
+}

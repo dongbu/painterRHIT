@@ -88,6 +88,9 @@ private:
 
     CommandViewer *commandView;
 
+protected:
+    void closeEvent(QCloseEvent *);
+
 };
 
 #endif // MAINWINDOW_H

@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	const Point3d Brush2Position;
 
 	Mat image;
-	//image = imread(inputFilePath);
+	image = imread(inputFilePath);
 	while (true) {
 		stream1.read(image);
 		imshow("cam", image);
@@ -79,25 +79,25 @@ int main(int argc, char* argv[])
 	imshow("Image", image);
 	waitKey(0);
 
-	//imshow("Input Image", greyscaleImage);
-	//Mat cannyOutput;
-	/*Canny(image, cannyOutput, cannyThresh, cannyThresh * 2);
-	assert(cannyOutput.data != NULL);*/
-	//imshow("Canny", cannyOutput);
+//	imshow("Input Image", greyscaleImage);
+	Mat cannyOutput;
+	Canny(image, cannyOutput, cannyThresh, cannyThresh * 2);
+	assert(cannyOutput.data != NULL);
+	imshow("Canny", cannyOutput);
 
-	//vector<vector<Point>> contours;
-	//findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
+	vector<vector<Point>> contours;
+	findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
 
-	//vector<pair<vector<Point>, int>> newFormat1; 
-	//newFormat[0].first = the path
-	//newFormat[0].second = the color index
+	vector<pair<vector<Point>, int>> newFormat1; 
+	//newFormat1[0].first = the path
+	//newFormat1[0].second = the color index;
 
-	vector<pair<vector<Point>, int> > contours = imageToStroke(image);
+//	vector<pair<vector<Point>, int> > contours = imageToStroke(image);
 
 	//code here to convert to
 	vector<pair<vector<Point3d>, int>> newFormat;
 	int colorIndex = 0;
-	for (pair<vector<Point>, int > i : contours) {
+/*	for (pair<vector<Point>, int > i : contours) {
 		vector<Point3d> tmpPath;
 		//cout << "new path" << endl;
 		for (Point j : i.first) {
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 			tmpPath.push_back(k);
 		}
 		newFormat.push_back(make_pair(tmpPath, i.second));
-	}
+	}*/
 	if (init()) {
 		cout << "Established Connection" << endl;
 	}else {
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 	}
 	Point3d leadin, lastPoint, source;
 	double dx, dy, dist, lx, ly;
-	//vector<Point3d> circle = makeCircle(newFormat[0].first[0].z);
+//	vector<Point3d> circle = makeCircle(newFormat[0].first[0].z);
 	waitKey(0);
 	cout << newFormat.size() << endl;
 	for (pair<vector<Point3d>, int> i : newFormat){
@@ -174,8 +174,8 @@ int main(int argc, char* argv[])
 	}
 	cout << "Done moving" << endl;
 
-	//imshow("Canny Output", cannyOutput);
-	//waitKey(0);
+	imshow("Canny Output", cannyOutput);
+	waitKey(0);
 
 	return 0;
 }
@@ -234,7 +234,7 @@ void net_move(Point3d p) {
 	EcOrientation orientation;
 	orientation.setFrom123Euler(0, 0, 0);
 	pose.setOrientation(orientation);
-	//std::cout << "Desired pose:  x: " << pose.translation().x() << " y: " << pose.translation().y() << " z: " << pose.translation().z() << "...";
+	std::cout << "Desired pose:  x: " << pose.translation().x() << " y: " << pose.translation().y() << " z: " << pose.translation().z() << "...";
 
 	setEndEffectorSet(FRAME_EE_SET); // point end effector set index
 	EcEndEffectorPlacement desiredPlacement(pose);
@@ -267,7 +267,7 @@ void net_move(Point3d p) {
 		}
 
 	}
-	//std::cout << (achieved ? "Achieved Pose" : "Failed to Achieve Pose") << std::endl;
+	std::cout << (achieved ? "Achieved Pose" : "Failed to Achieve Pose") << std::endl;
 	if (!achieved)
 		std::cout << "Failed to Achieve Pose" << std::endl;
 }
@@ -317,7 +317,7 @@ bool moveGripper(const double gripperPos) {
 			achieved = EcTrue;
 		}
 	}
-	//std::cout << (achieved ? "Achieved Gripper Position" : "Failed to Achieve Gripper Position") << std::endl;
+	std::cout << (achieved ? "Achieved Gripper Position" : "Failed to Achieve Gripper Position") << std::endl;
 	return achieved;
 }
 

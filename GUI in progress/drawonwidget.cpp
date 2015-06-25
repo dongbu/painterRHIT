@@ -29,14 +29,14 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     int currentX = event->localPos().x();
     int currentY = event->localPos().y();
 
-    drawPoint(currentX,currentY);
+    if(drawPoint(currentX,currentY));
 
     emit sendPoint(currentX, currentY, pointCount);
 
 
 }
 
-void drawOnWidget::drawPoint(int currentX, int currentY){
+bool drawOnWidget::drawPoint(int currentX, int currentY){
     //setup painter and pen
     QImage* temp;
     if(this->pixmap() == 0){
@@ -63,7 +63,7 @@ void drawOnWidget::drawPoint(int currentX, int currentY){
 
         //make elipse show up
         this->setPixmap(QPixmap::fromImage(*temp));
-        return;
+        return true;
     }
 
 
@@ -112,17 +112,18 @@ void drawOnWidget::drawPoint(int currentX, int currentY){
         this->setPixmap(QPixmap::fromImage(*temp2));
         currentX = -10;
         currentY = -10;
-//        emit sendPoint(currentX, currentY, pointCount);
+        emit sendPoint(currentX, currentY, pointCount);
         pointCount = 0;
         prevX = currentX;
         prevY = currentY;
-        return;
+        return false;
     }
     prevX = currentX;
     prevY = currentY;
 
 
 //    emit sendPoint(currentX, currentY, pointCount);
+    return true;
 }
 
 void drawOnWidget::clearAll(){
