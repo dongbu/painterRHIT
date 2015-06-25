@@ -46,7 +46,7 @@ void CommandInterpreter::sendCommand(){
         currentPos++;
     }else{
         updateTimer.stop();
-        currentPos = 0;
+        currentPos = x1.size();
         stopped = true;
     }
 }
@@ -81,6 +81,7 @@ void CommandInterpreter::stepForwardCommands(){
     CommandInterpreter::pausePaintingCommands();
     picasso->raise();
     if(currentPos < x1.size()){
+        stopped = false;
         picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
         currentPos++;
     }
@@ -93,8 +94,9 @@ void CommandInterpreter::stepForwardCommands(){
  */
 void CommandInterpreter::stepBackwardCommands(){
     CommandInterpreter::pausePaintingCommands();
+    stopped = false;
+    picasso->raise();
     if(currentPos > startPos){
-        picasso->raise();
         currentPos--;
         CommandInterpreter::drawUntilCommand(currentPos);
     }
@@ -162,64 +164,75 @@ void CommandInterpreter::addPointsFromFile(QString fileName){
 
 
     //keep going until the document is finished.
-    while(!reader.isEndDocument() && !reader.atEnd()){
-        reader.readNextStartElement();
-        if(reader.name().toString() == "Line"){
-            int j = 0;
+    while(!reader.isEndDocument()){
+        reader.readNext();
+        if(reader.isStartElement()){
 
-            //set the color and linestyle info.
-            foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                if(j == 0){
-                    currentColor = attr.value().toString();
-                }else{
-                    currentStyle = attr.value().toString();
-                }
+            if(reader.name().toString() == "Line"){
+                int j = 0;
 
-                j++;
-            }
-        }
-        if(reader.name().toString() == "Point"){
-            int k = 0;
-            foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                if(firstPoint){
-                    if(k == 0){
-                        prevX = attr.value().toInt();
+                //set the color and linestyle info.
+                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                    if(j == 0){
+                        currentColor = attr.value().toString();
                     }else{
-                        prevY = attr.value().toInt();
-                        firstPoint = false;
-                    }
-                }else{
-                    if(k == 0){
-                        x1.push_back(prevX);
-                        x2.push_back(attr.value().toInt());
-                        prevX = attr.value().toInt();
-                    }else{
-                        y1.push_back(prevY);
-                        y2.push_back(attr.value().toInt());
-                        prevY = attr.value().toInt();
-                        colorList.push_back(currentColor);
-                        styleList.push_back(currentStyle);
+                        currentStyle = attr.value().toString();
                     }
 
+                    j++;
+                }
+            }
+            if(reader.name().toString() == "Point"){
+                int k = 0;
+                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+                    if(firstPoint){
+                        if(k == 0){
+                            prevX = attr.value().toInt();
+                        }else{
+                            prevY = attr.value().toInt();
+                            firstPoint = false;
+                        }
+                    }else{
+                        if(k == 0){
+                            x1.push_back(prevX);
+                            x2.push_back(attr.value().toInt());
+                            prevX = attr.value().toInt();
+                        }else{
+                            y1.push_back(prevY);
+                            y2.push_back(attr.value().toInt());
+                            prevY = attr.value().toInt();
+                            colorList.push_back(currentColor);
+                            styleList.push_back(currentStyle);
+                        }
+
+                    }
+
+                    k++;
                 }
 
-                k++;
-            }
 
-
-        } else if(reader.name().toString() == "FileMalformed"){
-            if(reader.attributes().value(0).toString() == "1"){
-                std::cout << "FILE WAS MALFORMED!" << std::endl;
-                return;
-                //potentially highlight poorly made files.
+            } else if(reader.name().toString() == "FileMalformed"){
+                if(reader.attributes().value(0).toString() == "1"){
+                    std::cout << "FILE WAS MALFORMED!" << std::endl;
+                    return;
+                    //potentially highlight poorly made files.
+                }
             }
         }
 
     }
     if(reader.hasError()){
         std::cout << "there was an error in reading the file" <<std::endl;
+        std::cout << reader.errorString().toStdString() << std::endl;
         //shouldn't be an issue, but put in just in case.
     }
 
     loadFile.close();
+}
+
+/**
+ * @brief clears the painter
+ */
+void CommandInterpreter::clear(){
+    picasso->clearPainter();
 }

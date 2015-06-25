@@ -22,6 +22,7 @@ public:
     void stepBackwardCommands();
     void setProjectName(QString name);
     void pausePaintingCommands();
+    void clear();
 
 private slots:
     void sendCommand();

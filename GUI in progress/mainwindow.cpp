@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     projectName = ""; //"garbage" value
     saved = false;
     fileChanged = false;
-    ui->actionSave->setDisabled(true);//disable save until saveAs has been used.
     ui->pushButton->setDisabled(true);//can't load external file until saved.
     //creates a ProjectFiles folder if one doesn't exist
     if(!QDir(QString("ProjectFiles")).exists()){
@@ -53,8 +52,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDraw_Line->setDisabled(true);
     ui->actionDraw_Point_Map->setDisabled(true);
     ui->actionDraw_Square->setDisabled(true);
+    ui->DrawFunctions->setHidden(true);
     ///temporarily disabled until further discussion///
     //click to draw work//
+
+    //debug button work//
+    ui->actionPause->setDisabled(true);
+    ui->actionPrevious->setDisabled(true);
+    ui->actionStop->setDisabled(true);
+    ui->actionNext->setDisabled(true);
+    //debug button work//
 
 }
 
@@ -322,6 +329,10 @@ void MainWindow::on_actionOpen_triggered()
  */
 void MainWindow::on_actionSave_triggered()
 {
+    if(!saved){
+        MainWindow::on_actionSave_As_triggered();
+        return;
+    }
     if(!GuiLoadSave::writeCommandListToFolder(projectName,ui->listWidget)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
         alert.setInformativeText("Failed To Save " + projectName);
@@ -422,6 +433,7 @@ void MainWindow::cleanUp(){
     this->projectName = "";
     interpreter->setProjectName(projectName);
     interpreter->setProjectName("");
+    interpreter->clear();
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
        QDir("ProjectFiles/Temp").removeRecursively();
@@ -491,9 +503,20 @@ void MainWindow::on_pushButton_clicked()
  */
 void MainWindow::on_actionRun_triggered()
 {
-    //currently always starts from beginning.
-    interpreter->setProjectName(projectName);
-    interpreter->beginPaintingCommands(ui->listWidget, 0);
+    if(fileChanged || !saved){
+        MainWindow::on_actionSave_triggered();
+    }else{
+        //currently always starts from beginning.
+        ui->actionPause->setEnabled(true);
+        ui->actionStop->setEnabled(true);
+        ui->actionPrevious->setEnabled(true);
+        ui->actionNext->setEnabled(true);
+        interpreter->setProjectName(projectName);
+        interpreter->beginPaintingCommands(ui->listWidget, 0);
+
+    }
+
+
 
 }
 
@@ -535,7 +558,11 @@ void MainWindow::noticeCommandAdded(int index){
 
 void MainWindow::on_actionStop_triggered()
 {
+    ui->actionPause->setDisabled(true);
+    ui->actionStop->setDisabled(true);
+    ui->actionPrevious->setDisabled(true);
     interpreter->stopPaintingCommands();
+
 }
 
 void MainWindow::on_actionPause_triggered()

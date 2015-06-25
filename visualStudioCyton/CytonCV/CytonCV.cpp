@@ -6,7 +6,7 @@
 #include "ImageToStroke.h"
 
 #include <control/ecEndEffectorSet.h>
-#include <control/ecFrameEndEffector.h>
+#include <controlCore/ecFrameEndEffector.h>
 #include <control/ecManipEndEffectorPlace.h>
 #include <foundCommon/ecCoordSysXForm.h>
 #include <foundCore/ecApplication.h>
