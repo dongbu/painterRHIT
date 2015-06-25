@@ -5,7 +5,9 @@
 #include "commandinterpreter.h"
 #include "guiloadsave.h"
 #include "commandeditor.h"
+#include "CommandViewer.h"
 #include "drawonwidget.h"
+
 #include <QtGui>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -40,15 +42,11 @@ public slots:
     void recievePoint(int x, int y, int pointCount);
 
 private slots:
-    void MoveUp_clicked();
-    void DeleteCommand_clicked();
-    void MoveDown_clicked();
     void on_actionSave_As_triggered();
     void on_actionOpen_triggered();
     void on_actionDraw_Point_Map_triggered();
     void closeTab(int index);
     void on_actionSave_triggered();
-    void on_EditCommand_clicked();
     void fileChangedTrue();
     void on_actionNew_triggered();
     void on_pushButton_clicked();
@@ -64,6 +62,8 @@ private slots:
     void on_actionPrevious_triggered();
 
     void tabChanged(int index);
+    void callUpdate(QString fileName,QString ProjectName, CommandEditor* loadedEditor);
+
 
 private:
     Ui::MainWindow *ui;
@@ -85,6 +85,9 @@ private:
     void cleanUp();
 
     void startPainting(QListWidget* widget, int index);
+
+    CommandViewer *commandView;
+
 };
 
 #endif // MAINWINDOW_H

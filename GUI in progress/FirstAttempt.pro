@@ -19,16 +19,19 @@ SOURCES += main.cpp\
     painter.cpp \
     commandinterpreter.cpp \
     drawonwidget.cpp \
+    commandviewer.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
     commandeditor.h \
     painter.h \
     commandinterpreter.h \
-    drawonwidget.h
+    drawonwidget.h \
+    commandviewer.h
 
 FORMS    += mainwindow.ui \
-    painter.ui
+    painter.ui \
+    commandviewer.ui
 
 RESOURCES += \
     myres.qrc

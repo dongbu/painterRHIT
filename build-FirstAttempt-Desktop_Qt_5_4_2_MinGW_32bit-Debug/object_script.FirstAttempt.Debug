@@ -6,10 +6,12 @@ INPUT(
 ./debug\painter.o
 ./debug\commandinterpreter.o
 ./debug\drawonwidget.o
+./debug\commandviewer.o
 ./debug\qrc_myres.o
 ./debug\moc_mainwindow.o
 ./debug\moc_commandeditor.o
 ./debug\moc_painter.o
 ./debug\moc_commandinterpreter.o
 ./debug\moc_drawonwidget.o
+./debug\moc_commandviewer.o
 );

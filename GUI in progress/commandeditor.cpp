@@ -324,7 +324,9 @@ void CommandEditor::add_Command_Externally(){
  */
 void CommandEditor::set_Point_At(int index, int x, int y){
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-    lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
+    if(index > 1){
+        lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
+    }
 }
 
 void CommandEditor::InfoChanged(){

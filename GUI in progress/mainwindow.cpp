@@ -31,10 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //save work//
 
     //command list//
-    ui->listWidget->connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(on_EditCommand_clicked()));
-    ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
-    ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
-    ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
+    commandView = new CommandViewer();
+    commandView->infoDump(projectName,editors,currentEditor,tabCount,EditorTabs);
+    connect(commandView,SIGNAL(triggerPointMap()),this,SLOT(on_actionDraw_Point_Map_triggered()));
     //command list//
 
     //interpreter work//
@@ -109,50 +108,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-/**
- * @brief slot to delete item from commandViewer
- */
-void MainWindow::DeleteCommand_clicked()
-{
-    ui->listWidget->takeItem(ui->listWidget->currentRow());
-    fileChanged = true;
-}
-
-
-/**
- * @brief slot to move item in commandViewer down
- */
-void MainWindow::MoveDown_clicked()
-{
-    int currentRow = ui->listWidget->currentRow();
-    int listSize = ui->listWidget->model()->rowCount();
-    if(currentRow >= (listSize - 1)){
-        return;
-    }
-    QListWidgetItem *currentItem = ui->listWidget->takeItem(currentRow);
-    ui->listWidget->insertItem(currentRow + 1, currentItem);
-    ui->listWidget->setCurrentRow(currentRow + 1);
-    fileChanged = true;
-}
-
-
-/**
- * @brief slot to move item in commandViewer up
- */
-void MainWindow::MoveUp_clicked()
-{
-    int currentRow = ui->listWidget->currentRow();
-    if(currentRow == 0){
-        return;
-    }
-    QListWidgetItem *currentItem = ui->listWidget->takeItem(currentRow);
-    ui->listWidget->insertItem(currentRow - 1, currentItem);
-    ui->listWidget->setCurrentRow(currentRow - 1);
-    fileChanged = true;
-}
-
-
 /**
  * @brief Save As functionality.
  */
@@ -185,7 +140,7 @@ void MainWindow::on_actionSave_As_triggered()
             }
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+            if(!GuiLoadSave::writeCommandListToFolder(projectName, this->commandView->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
                 alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
                 if(alert.exec()){
@@ -229,7 +184,7 @@ void MainWindow::on_actionSave_As_triggered()
             }
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(projectName, ui->listWidget)){
+            if(!GuiLoadSave::writeCommandListToFolder(projectName, this->commandView->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
                 alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
                 if(alert.exec()){
@@ -310,7 +265,7 @@ void MainWindow::on_actionOpen_triggered()
     projectName = directory.selectedFiles().at(0).split("/").last();
     projectName.chop(4);
     interpreter->setProjectName(projectName);
-    if(!GuiLoadSave::loadCommandListFromFolder(projectName,ui->listWidget)){
+    if(!GuiLoadSave::loadCommandListFromFolder(projectName,this->commandView->list)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
         alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
         alert.show();
@@ -334,7 +289,7 @@ void MainWindow::on_actionSave_triggered()
         MainWindow::on_actionSave_As_triggered();
         return;
     }
-    if(!GuiLoadSave::writeCommandListToFolder(projectName,ui->listWidget)){
+    if(!GuiLoadSave::writeCommandListToFolder(projectName,this->commandView->list)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
         alert.setInformativeText("Failed To Save " + projectName);
         alert.show();
@@ -351,12 +306,12 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
 {
 
     tabCount++;
-    CommandEditor *editor = new CommandEditor(ui->listWidget,tabCount, EditorTabs);
+    CommandEditor *editor = new CommandEditor(this->commandView->list,tabCount, EditorTabs);
     editor->setProjectName(projectName);
 
     //searches through and sets the default name to 1 + the largest.
     editor->setName("PointMap_1");
-    QList<QListWidgetItem *> listOfCommands = ui->listWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    QList<QListWidgetItem *> listOfCommands = this->commandView->list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
     QList<QString> texts;
     foreach(QListWidgetItem *item, listOfCommands)
       texts.append(item->text());
@@ -374,8 +329,9 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     EditorTabs->addTab(editor->CommandEditorWidget,"PointMap (" + QString::number(untitledCount) + ")");
     EditorTabs->setCurrentIndex(tabCount);
 
-    //connection so that we know when something has been changed.
+    //connections so that we know when something has been changed.
     connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
+    connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
 //    //connection so we know if addcommand button was pressed.
 //    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
@@ -401,29 +357,6 @@ void MainWindow::closeTab(int index) {
     EditorTabs->removeTab(index);
 }
 
-
-/**
- * @brief brings up a new commandEditor with preloaded information.
- */
-void MainWindow::on_EditCommand_clicked()
-{
-    QListWidgetItem *item = ui->listWidget->currentItem();
-    if(item == NULL){
-        return;
-    }
-    QString tempProjectName = projectName;
-
-    //adds new instance of editor
-    MainWindow::on_actionDraw_Point_Map_triggered();
-    //retrieves most recent editor
-    CommandEditor *newEditor = editors.at(currentEditor);
-    EditorTabs->setTabText(tabCount,item->text());
-    //populates said editor with information loaded via xml.
-    GuiLoadSave::updateCommandEditor(item->text(),tempProjectName,newEditor);
-    connect(newEditor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
-    newEditor->InfoChanged();
-}
-
 /**
  * @brief removes all project specific variables and clears away
  * tabs and lists.
@@ -433,7 +366,7 @@ void MainWindow::cleanUp(){
     tabCount = -1;
     untitledCount = 0;
     currentEditor = -1;
-    ui->listWidget->clear();
+    this->commandView->list->clear();
     editors.clear();
     this->fileChanged = false;
     this->saved = false;
@@ -500,7 +433,7 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_pushButton_clicked()
 {
 
-    if(GuiLoadSave::loadExternalFile(projectName,ui->listWidget)){
+    if(GuiLoadSave::loadExternalFile(projectName,this->commandView->list)){
         this->fileChanged = true;
     }
 
@@ -521,7 +454,7 @@ void MainWindow::on_actionRun_triggered()
         ui->actionPrevious->setEnabled(true);
         ui->actionNext->setEnabled(true);
         interpreter->setProjectName(projectName);
-        interpreter->beginPaintingCommands(ui->listWidget, 0);
+        interpreter->beginPaintingCommands(this->commandView->list, 0);
 
     }
 
@@ -599,3 +532,8 @@ void MainWindow::tabChanged(int index){
    }
 
 }
+
+void MainWindow::callUpdate(QString fileName,QString ProjectName, CommandEditor* loadedEditor) {
+    GuiLoadSave::updateCommandEditor(fileName,ProjectName,loadedEditor);
+}
+

@@ -14,10 +14,8 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QFrame>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
@@ -47,20 +45,9 @@ public:
     QAction *actionNext;
     QAction *actionPrevious;
     QWidget *centralWidget;
-    QFrame *line_2;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *EditorTabLayout;
     QLabel *Command_Editor;
-    QWidget *layoutWidget;
-    QVBoxLayout *CommandListLayout;
-    QLabel *Command_List_Label;
-    QHBoxLayout *horizontalLayout_2;
-    QListWidget *listWidget;
-    QVBoxLayout *verticalLayout_2;
-    QPushButton *EditCommand;
-    QPushButton *DeleteCommand;
-    QPushButton *MoveUp;
-    QPushButton *MoveDown;
     QPushButton *pushButton;
     QFrame *line;
     QFrame *line_3;
@@ -151,11 +138,6 @@ public:
         actionPrevious->setIcon(icon12);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        line_2 = new QFrame(centralWidget);
-        line_2->setObjectName(QStringLiteral("line_2"));
-        line_2->setGeometry(QRect(20, 380, 551, 20));
-        line_2->setFrameShape(QFrame::HLine);
-        line_2->setFrameShadow(QFrame::Sunken);
         verticalLayoutWidget = new QWidget(centralWidget);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
         verticalLayoutWidget->setGeometry(QRect(10, 10, 571, 351));
@@ -173,58 +155,6 @@ public:
         Command_Editor->setSizePolicy(sizePolicy);
 
         EditorTabLayout->addWidget(Command_Editor);
-
-        layoutWidget = new QWidget(centralWidget);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 420, 571, 223));
-        CommandListLayout = new QVBoxLayout(layoutWidget);
-        CommandListLayout->setSpacing(6);
-        CommandListLayout->setContentsMargins(11, 11, 11, 11);
-        CommandListLayout->setObjectName(QStringLiteral("CommandListLayout"));
-        CommandListLayout->setContentsMargins(0, 0, 0, 0);
-        Command_List_Label = new QLabel(layoutWidget);
-        Command_List_Label->setObjectName(QStringLiteral("Command_List_Label"));
-        sizePolicy.setHeightForWidth(Command_List_Label->sizePolicy().hasHeightForWidth());
-        Command_List_Label->setSizePolicy(sizePolicy);
-
-        CommandListLayout->addWidget(Command_List_Label);
-
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        listWidget = new QListWidget(layoutWidget);
-        listWidget->setObjectName(QStringLiteral("listWidget"));
-
-        horizontalLayout_2->addWidget(listWidget);
-
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        EditCommand = new QPushButton(layoutWidget);
-        EditCommand->setObjectName(QStringLiteral("EditCommand"));
-
-        verticalLayout_2->addWidget(EditCommand);
-
-        DeleteCommand = new QPushButton(layoutWidget);
-        DeleteCommand->setObjectName(QStringLiteral("DeleteCommand"));
-
-        verticalLayout_2->addWidget(DeleteCommand);
-
-        MoveUp = new QPushButton(layoutWidget);
-        MoveUp->setObjectName(QStringLiteral("MoveUp"));
-
-        verticalLayout_2->addWidget(MoveUp);
-
-        MoveDown = new QPushButton(layoutWidget);
-        MoveDown->setObjectName(QStringLiteral("MoveDown"));
-
-        verticalLayout_2->addWidget(MoveDown);
-
-
-        horizontalLayout_2->addLayout(verticalLayout_2);
-
-
-        CommandListLayout->addLayout(horizontalLayout_2);
 
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
@@ -254,15 +184,6 @@ public:
         widget->setGeometry(QRect(630, 10, 1000, 750));
         widget->setCursor(QCursor(Qt::CrossCursor));
         MainWindow->setCentralWidget(centralWidget);
-        layoutWidget->raise();
-        line_2->raise();
-        verticalLayoutWidget->raise();
-        pushButton->raise();
-        line->raise();
-        line_3->raise();
-        line_4->raise();
-        line_5->raise();
-        widget->raise();
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
@@ -277,7 +198,7 @@ public:
         MainWindow->addToolBar(Qt::TopToolBarArea, DebugFunctions);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1680, 21));
+        menuBar->setGeometry(QRect(0, 0, 1680, 26));
         menuNew_Window = new QMenu(menuBar);
         menuNew_Window->setObjectName(QStringLiteral("menuNew_Window"));
         menuDraw_Commands = new QMenu(menuBar);
@@ -359,11 +280,6 @@ public:
         actionPrevious->setToolTip(QApplication::translate("MainWindow", "undo last draw", 0));
 #endif // QT_NO_TOOLTIP
         Command_Editor->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command Editor</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        Command_List_Label->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        EditCommand->setText(QApplication::translate("MainWindow", "Edit", 0));
-        DeleteCommand->setText(QApplication::translate("MainWindow", "Delete", 0));
-        MoveUp->setText(QApplication::translate("MainWindow", "Move Up", 0));
-        MoveDown->setText(QApplication::translate("MainWindow", "Move Down", 0));
         pushButton->setText(QApplication::translate("MainWindow", "Add External Command", 0));
         GeneralCommands->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
         DrawFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
