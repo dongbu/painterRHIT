@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->EditorTabLayout->addWidget(EditorTabs);
     this->EditorTabs->connect(EditorTabs,SIGNAL(tabCloseRequested(int)), this,SLOT(closeTab(int)));
     EditorTabs->setTabsClosable(true);
+    connect(EditorTabs,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     //Tab work//
 
     //save work//
@@ -348,6 +349,7 @@ void MainWindow::on_actionSave_triggered()
  */
 void MainWindow::on_actionDraw_Point_Map_triggered()
 {
+
     tabCount++;
     CommandEditor *editor = new CommandEditor(ui->listWidget,tabCount, EditorTabs);
     editor->setProjectName(projectName);
@@ -375,11 +377,15 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     //connection so that we know when something has been changed.
     connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
-    //connection so we know if addcommand button was pressed.
-    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
+//    //connection so we know if addcommand button was pressed.
+//    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
 
-    //connection so we know if a tab was closed.  clears drawer if a tab is closed.
-    connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
+//    //connection so we know if a tab was closed.  clears drawer if a tab is closed.
+//    connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
+
+    //connection to update drawOn.
+    connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
+
 
 
 
@@ -414,6 +420,8 @@ void MainWindow::on_EditCommand_clicked()
     EditorTabs->setTabText(tabCount,item->text());
     //populates said editor with information loaded via xml.
     GuiLoadSave::updateCommandEditor(item->text(),tempProjectName,newEditor);
+    connect(newEditor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
+    newEditor->InfoChanged();
 }
 
 /**
@@ -505,7 +513,8 @@ void MainWindow::on_actionRun_triggered()
 {
     if(fileChanged || !saved){
         MainWindow::on_actionSave_triggered();
-    }else{
+    }
+    if(saved){
         //currently always starts from beginning.
         ui->actionPause->setEnabled(true);
         ui->actionStop->setEnabled(true);
@@ -531,7 +540,6 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
         if(pointCount >= 3){
            CommandEditor *temp = editors.at(currentEditor);
            temp->add_Command_Externally();
-           std::cout<<pointCount<<std::endl;
            return;
         }else{
             drawOn->clearAll();
@@ -583,3 +591,11 @@ void MainWindow::on_actionPrevious_triggered()
 
 }
 
+void MainWindow::tabChanged(int index){
+   if(index >= 0){
+       currentEditor = index;
+       CommandEditor *temp = editors.at(currentEditor);
+       temp->InfoChanged();
+   }
+
+}

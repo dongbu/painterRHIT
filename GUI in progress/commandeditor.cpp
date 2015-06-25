@@ -12,9 +12,11 @@ CommandEditor::CommandEditor(QListWidget *widget, int tabPosition, QTabWidget *e
     this->widget = widget;
     this->tabPosition = tabPosition;
     this->editorTabs = editorTabs;
-    ///TEMP SOLUTION///
     this->commandAdded = false;
-    ///TEMP SOLUTION///
+
+    connect(this,SIGNAL(signal_Info_Changed()),this,SLOT(InfoChanged()));
+    connect(Line_Color,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
+    connect(Line_Style,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
 
 }
 
@@ -75,6 +77,7 @@ void CommandEditor::MakePoint() {
     pointCount++;
     QString label = ("Point " + QString::number(pointCount) + ":");
     ParameterHolder->addRow(new QLabel(label),point);
+    connect(point,SIGNAL(returnPressed()),this,SLOT(InfoChanged()));
 }
 
 
@@ -164,21 +167,48 @@ void CommandEditor::Add_Command_Clicked() {
         }
         projectName = "Temp";
     }
-        lineEdits.at(0)->setDisabled(true);
-        GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
-        commandAdded = true;
-        //sets the name and changes the tabname
-        CommandEditor::setName(lineEdits.at(0)->text());
-        editorTabs->setTabText(tabPosition,name);
-        emit fileStatusChanged();
-        emit tell_Command_Added(-10);
+    lineEdits.at(0)->setDisabled(true);
 
+    CommandEditor::removeExcessLines();
 
-    ///TEMP SOLUTION///
+    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
+    commandAdded = true;
+    //sets the name and changes the tabname
+    CommandEditor::setName(lineEdits.at(0)->text());
+    editorTabs->setTabText(tabPosition,name);
+    emit fileStatusChanged();
+    emit tell_Command_Added(-10);
+
     this->Add_Command->setText("Save");
 
-    ///TEMP SOLUTION///
 
+}
+
+void CommandEditor::removeExcessLines(){
+    //removes all empty lines
+    QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+    int linesRemoved = 0;
+    int i = 0;
+    foreach(QLineEdit *line, lineEdits){
+        if((line->text() == "" || line->text() == ",") && pointCount > 2 && i > 1){
+            i++;
+            pointCount --;
+            PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
+            int lastInput = lineEdits.indexOf(line)*2 + 5 - (2*linesRemoved);
+            int secondLast = lastInput - 1;
+            QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
+            QLayoutItem *toDelete2 = ParameterHolder->itemAt(secondLast);
+            ParameterHolder->removeItem(toDelete1);
+            ParameterHolder->removeItem(toDelete2);
+            toDelete1->widget()->setVisible(false);
+            toDelete2->widget()->setVisible(false);
+            toDelete1->widget()->deleteLater();
+            toDelete2->widget()->deleteLater();
+            ParameterHolder->update();
+            emit CommandEditor::InfoChanged();
+            linesRemoved++;
+        }
+    }
 }
 
 
@@ -297,3 +327,6 @@ void CommandEditor::set_Point_At(int index, int x, int y){
     lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
 }
 
+void CommandEditor::InfoChanged(){
+    emit CommandEditor::sendUpdateToDrawOn(this);
+}

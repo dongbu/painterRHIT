@@ -63,6 +63,8 @@ private slots:
 
     void on_actionPrevious_triggered();
 
+    void tabChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;

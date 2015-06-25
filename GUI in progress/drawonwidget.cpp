@@ -1,7 +1,7 @@
 #include "drawonwidget.h"
 #include <iostream>
 #include <QPainter>
-#include <QPen>
+
 
 
 drawOnWidget::drawOnWidget(QWidget * parent)
@@ -10,6 +10,9 @@ drawOnWidget::drawOnWidget(QWidget * parent)
    prevX = -10;
    prevY = -10;
    pointCount = 0;
+   penColor = "black";
+   penStyle = "solid";
+
 
 }
 
@@ -26,6 +29,14 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     int currentX = event->localPos().x();
     int currentY = event->localPos().y();
 
+    drawPoint(currentX,currentY);
+
+    emit sendPoint(currentX, currentY, pointCount);
+
+
+}
+
+void drawOnWidget::drawPoint(int currentX, int currentY){
     //setup painter and pen
     QImage* temp;
     if(this->pixmap() == 0){
@@ -37,14 +48,13 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
         std::cout<<"image is somehow bad. ='( time to be sad."<<std::endl;
     }
     QPainter painter(temp);
-    QPen pen;
 
 
     pointCount ++;
     if(prevX == -10 && prevY == -10){
         prevX = currentX;
         prevY = currentY;
-        emit sendPoint(currentX, currentY, pointCount);
+//        emit sendPoint(currentX, currentY, pointCount);
         //draw elipse for first point
         pen.setWidth(2);
         pen.setColor(Qt::blue);
@@ -57,7 +67,23 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     }
 
 
-    pen.setColor(Qt::black);
+    pen.setColor(penColor);
+    QStringList styles;
+    styles << "solid" << "dashed" << "dashed dot";
+    switch(styles.indexOf(penStyle)){
+    case 0:
+        pen.setStyle(Qt::SolidLine);
+        break;
+    case 1:
+        pen.setStyle(Qt::DashLine);
+        break;
+    case 2:
+        pen.setStyle(Qt::DashDotLine);
+        break;
+    default:
+        pen.setStyle(Qt::SolidLine);
+        break;
+    }
 
     pen.setWidth(5);
     painter.setPen(pen);
@@ -65,7 +91,11 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     //actual drawing//
     painter.drawLine(QPointF(prevX,prevY),QPointF(currentX,currentY)); //line
 
-    pen.setColor(Qt::blue);
+    if(penColor != "blue"){
+        pen.setColor(Qt::blue);
+    }else{
+        pen.setColor("black");
+    }
     pen.setWidth(2);
     painter.setPen(pen);
     painter.drawEllipse(QPoint(currentX,currentY),6,6); //circle
@@ -82,7 +112,7 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
         this->setPixmap(QPixmap::fromImage(*temp2));
         currentX = -10;
         currentY = -10;
-        emit sendPoint(currentX, currentY, pointCount);
+//        emit sendPoint(currentX, currentY, pointCount);
         pointCount = 0;
         prevX = currentX;
         prevY = currentY;
@@ -91,8 +121,8 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     prevX = currentX;
     prevY = currentY;
 
-    emit sendPoint(currentX, currentY, pointCount);
 
+//    emit sendPoint(currentX, currentY, pointCount);
 }
 
 void drawOnWidget::clearAll(){
@@ -104,3 +134,26 @@ void drawOnWidget::clearAll(){
 
 }
 
+void drawOnWidget::updateToEditor(CommandEditor *editor){
+    clearAll();
+    QList<QComboBox *> comboBoxes = editor->CommandEditorWidget->findChildren<QComboBox *>();
+    QList<QLineEdit *> lineEdits = editor->CommandEditorWidget->findChildren<QLineEdit *>();
+
+    penColor = comboBoxes.at(0)->currentText();
+    penStyle = comboBoxes.at(1)->currentText();
+
+    foreach(QLineEdit *line, lineEdits){
+        QString s = line->text();
+        QStringList list = s.split(',');
+        if(list.length() == 2){
+            int x = list.at(0).toInt();
+            int y = list.at(1).toInt();
+            drawPoint(x,y);
+        }else{
+            if(!list.empty()){
+                std::cout<<list.at(0).toStdString()<<std::endl;
+            }
+        }
+
+    }
+}
