@@ -1,0 +1,17 @@
+INPUT(
+./release\.obj\main.o
+./release\.obj\mainwindow.o
+./release\.obj\guiloadsave.o
+./release\.obj\commandeditor.o
+./release\.obj\painter.o
+./release\.obj\commandinterpreter.o
+./release\.obj\drawonwidget.o
+./release\.obj\commandviewer.o
+./release\.obj\qrc_myres.o
+./release\.obj\moc_mainwindow.o
+./release\.obj\moc_commandeditor.o
+./release\.obj\moc_painter.o
+./release\.obj\moc_commandinterpreter.o
+./release\.obj\moc_drawonwidget.o
+./release\.obj\moc_commandviewer.o
+);
