@@ -549,3 +549,14 @@ void MainWindow::closeEvent(QCloseEvent *event){
     }
     commandView->close();
 }
+
+void MainWindow::on_actionColors_exe_triggered()
+{
+    QProcess::execute("colors/Release/GunnarColorRunner.exe");
+}
+
+void MainWindow::on_actionCapture_exe_triggered()
+{
+    QProcess::execute("capture/Release/capture.exe");
+
+}

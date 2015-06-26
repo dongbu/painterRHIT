@@ -203,9 +203,17 @@
     <addaction name="actionNext"/>
     <addaction name="actionPrevious"/>
    </widget>
+   <widget class="QMenu" name="menuMisc_file_exe_s">
+    <property name="title">
+     <string>Misc. file.exe's</string>
+    </property>
+    <addaction name="actionColors_exe"/>
+    <addaction name="actionCapture_exe"/>
+   </widget>
    <addaction name="menuNew_Window"/>
    <addaction name="menuDraw_Commands"/>
    <addaction name="menuDebugger"/>
+   <addaction name="menuMisc_file_exe_s"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -358,6 +366,16 @@
    </property>
    <property name="toolTip">
     <string>undo last draw</string>
+   </property>
+  </action>
+  <action name="actionColors_exe">
+   <property name="text">
+    <string>Colors.exe</string>
+   </property>
+  </action>
+  <action name="actionCapture_exe">
+   <property name="text">
+    <string>Capture.exe</string>
    </property>
   </action>
  </widget>

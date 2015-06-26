@@ -65,6 +65,10 @@ private slots:
     void callUpdate(QString fileName,QString ProjectName, CommandEditor* loadedEditor);
 
 
+    void on_actionColors_exe_triggered();
+
+    void on_actionCapture_exe_triggered();
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
