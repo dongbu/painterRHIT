@@ -132,6 +132,7 @@ void drawOnWidget::clearAll(){
     pointCount = 0;
     QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
     this->setPixmap(QPixmap::fromImage(*temp2));
+    this->clear();
 
 }
 

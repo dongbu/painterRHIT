@@ -181,11 +181,6 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString *projectName, Com
 
 
     i = 0;
-    //delete all buttons so we ensure we start from fresh.
-    int numChildrenToRemove = (loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>().size());
-    for(int l = 0; l < numChildrenToRemove; l++){
-        loadedEditor->Remove_Point_Clicked();
-    }
 
     int k = 1;
 

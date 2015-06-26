@@ -77,7 +77,7 @@ void CommandEditor::MakePoint() {
     pointCount++;
     QString label = ("Point " + QString::number(pointCount) + ":");
     ParameterHolder->addRow(new QLabel(label),point);
-    connect(point,SIGNAL(returnPressed()),this,SLOT(InfoChanged()));
+    connect(point,SIGNAL(textChanged(QString)),this,SLOT(InfoChanged()));
 }
 
 
@@ -179,6 +179,8 @@ void CommandEditor::Add_Command_Clicked() {
     emit fileStatusChanged();
     emit tell_Command_Added(-10);
 
+    CommandEditor::removeExcessLines();
+
     this->Add_Command->setText("Save");
 
 
@@ -187,27 +189,24 @@ void CommandEditor::Add_Command_Clicked() {
 void CommandEditor::removeExcessLines(){
     //removes all empty lines
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-    int linesRemoved = 0;
+
+    QList<QLayoutItem *> listToDelete;
     int i = 0;
     foreach(QLineEdit *line, lineEdits){
-        if((line->text() == "" || line->text() == ",") && pointCount > 2 && i > 1){
-            i++;
+        if((line->text() == "" || line->text() == ",") && pointCount > 2 && i >= 1){
             pointCount --;
             PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
-            int lastInput = lineEdits.indexOf(line)*2 + 5 - (2*linesRemoved);
-            int secondLast = lastInput - 1;
+            int lastInput = lineEdits.indexOf(line)*2 + 4;
             QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
-            QLayoutItem *toDelete2 = ParameterHolder->itemAt(secondLast);
-            ParameterHolder->removeItem(toDelete1);
-            ParameterHolder->removeItem(toDelete2);
-            toDelete1->widget()->setVisible(false);
-            toDelete2->widget()->setVisible(false);
-            toDelete1->widget()->deleteLater();
-            toDelete2->widget()->deleteLater();
-            ParameterHolder->update();
-            emit CommandEditor::InfoChanged();
-            linesRemoved++;
+            listToDelete.append(toDelete1);
+            lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
         }
+        i++;
+    }
+    foreach(QLayoutItem *item, listToDelete){
+        ParameterHolder->removeItem(item);
+        item->widget()->setVisible(false);
+        item->widget()->deleteLater();
     }
 }
 
@@ -221,41 +220,6 @@ void CommandEditor::Add_Point_Clicked() {
 }
 
 
-/**
- * @brief Remove_Point slot.
- */
-void CommandEditor::Remove_Point_Clicked() {
-    //Button De-activation logic
-    if (pointCount == 2) return;
-    else if(pointCount ==3) Remove_Point->setDisabled(true);
-
-
-//    //Widgit deletion logic
-    int lastInput = ParameterHolder->count()-1;
-    int secondLast = lastInput - 1;
-    QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
-    QLayoutItem *toDelete2 = ParameterHolder->itemAt(secondLast);
-    ParameterHolder->removeItem(toDelete2);
-    ParameterHolder->removeItem(toDelete1);
-    toDelete1->widget()->setVisible(false);
-    toDelete2->widget()->setVisible(false);
-    toDelete1->widget()->deleteLater();
-    toDelete2->widget()->deleteLater();
-    ParameterHolder->update();
-
-//     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-//     QLineEdit *last = lineEdits.last();
-//     last->setText("");
-//     ParameterHolder->update();
-//     CommandEditor::removeExcessLines();
-
-     //class reference logic
-     pointCount--;
-     if(pointCount ) PointVec->pop_back();
-
-     emit CommandEditor::InfoChanged();
-}
-
 
 /**
  * @brief This method is designed to connect the 3 editor buttons to their slots.
@@ -264,7 +228,6 @@ void CommandEditor::ConnectButtons() {
     //Connecting button signals/slots
     connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
     connect(Add_Point, SIGNAL(clicked()), this, SLOT(Add_Point_Clicked()));
-    connect(Remove_Point, SIGNAL(clicked()), this, SLOT(Remove_Point_Clicked()));
 }
 
 
@@ -338,5 +301,6 @@ void CommandEditor::set_Point_At(int index, int x, int y){
 }
 
 void CommandEditor::InfoChanged(){
+//    CommandEditor::removeExcessLines();
     emit CommandEditor::sendUpdateToDrawOn(this);
 }

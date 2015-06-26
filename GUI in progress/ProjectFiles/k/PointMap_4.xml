@@ -4,45 +4,20 @@
     <!--Line Information-->
     <Line color="black" style="solid"/>
     <!--Point Map Information-->
-    <PointMap length="38">
-        <Point x="513" y="150"/>
-        <Point x="378" y="430"/>
-        <Point x="631" y="368"/>
-        <Point x="525" y="252"/>
-        <Point x="396" y="299"/>
-        <Point x="324" y="394"/>
-        <Point x="482" y="546"/>
-        <Point x="567" y="491"/>
-        <Point x="319" y="337"/>
-        <Point x="382" y="557"/>
-        <Point x="738" y="390"/>
-        <Point x="196" y="102"/>
-        <Point x="181" y="298"/>
-        <Point x="468" y="516"/>
-        <Point x="486" y="404"/>
-        <Point x="256" y="338"/>
-        <Point x="181" y="406"/>
-        <Point x="415" y="493"/>
-        <Point x="525" y="459"/>
-        <Point x="202" y="298"/>
-        <Point x="188" y="425"/>
-        <Point x="554" y="578"/>
-        <Point x="639" y="429"/>
-        <Point x="362" y="249"/>
-        <Point x="112" y="322"/>
-        <Point x="414" y="535"/>
-        <Point x="540" y="215"/>
-        <Point x="338" y="154"/>
-        <Point x="152" y="347"/>
-        <Point x="428" y="519"/>
-        <Point x="643" y="368"/>
-        <Point x="219" y="272"/>
-        <Point x="274" y="375"/>
-        <Point x="98" y="452"/>
-        <Point x="120" y="98"/>
-        <Point x="355" y="62"/>
-        <Point x="344" y="62"/>
-        <Point x="372" y="97"/>
+    <PointMap length="13">
+        <Point x="368" y="173"/>
+        <Point x="636" y="180"/>
+        <Point x="737" y="389"/>
+        <Point x="592" y="492"/>
+        <Point x="187" y="311"/>
+        <Point x="120" y="328"/>
+        <Point x="260" y="554"/>
+        <Point x="361" y="584"/>
+        <Point x="386" y="359"/>
+        <Point x="476" y="332"/>
+        <Point x="558" y="402"/>
+        <Point x="456" y="621"/>
+        <Point x="277" y="221"/>
     </PointMap>
     <FileMalformed bool="0"/>
 </Command>

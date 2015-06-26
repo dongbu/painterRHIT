@@ -2,12 +2,19 @@
 <!--PointMap_1-->
 <Command>
     <!--Line Information-->
-    <Line color="blue" style="dashed"/>
+    <Line color="black" style="solid"/>
     <!--Point Map Information-->
-    <PointMap length="3">
-        <Point x="239" y="99"/>
-        <Point x="233" y="341"/>
-        <Point x="" y=""/>
+    <PointMap length="10">
+        <Point x="364" y="159"/>
+        <Point x="300" y="522"/>
+        <Point x="664" y="379"/>
+        <Point x="408" y="291"/>
+        <Point x="669" y="212"/>
+        <Point x="680" y="207"/>
+        <Point x="791" y="448"/>
+        <Point x="694" y="538"/>
+        <Point x="511" y="584"/>
+        <Point x="347" y="686"/>
     </PointMap>
-    <FileMalformed bool="1"/>
+    <FileMalformed bool="0"/>
 </Command>

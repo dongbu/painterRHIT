@@ -5,16 +5,16 @@
     <Line color="black" style="solid"/>
     <!--Point Map Information-->
     <PointMap length="10">
-        <Point x="379" y="189"/>
-        <Point x="372" y="316"/>
-        <Point x="235" y="216"/>
-        <Point x="198" y="404"/>
-        <Point x="497" y="475"/>
-        <Point x="590" y="289"/>
-        <Point x="453" y="316"/>
-        <Point x="426" y="429"/>
-        <Point x="320" y="513"/>
-        <Point x="142" y="513"/>
+        <Point x="357" y="140"/>
+        <Point x="617" y="276"/>
+        <Point x="579" y="425"/>
+        <Point x="362" y="459"/>
+        <Point x="197" y="268"/>
+        <Point x="65" y="412"/>
+        <Point x="252" y="560"/>
+        <Point x="470" y="599"/>
+        <Point x="708" y="508"/>
+        <Point x="744" y="358"/>
     </PointMap>
     <FileMalformed bool="0"/>
 </Command>

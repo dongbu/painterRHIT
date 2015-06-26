@@ -54,7 +54,6 @@ private:
 public slots:
     void Add_Command_Clicked();
     void Add_Point_Clicked();
-    void Remove_Point_Clicked();
     void InfoChanged();
 
 signals:
