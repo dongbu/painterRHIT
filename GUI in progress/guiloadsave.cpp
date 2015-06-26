@@ -137,21 +137,27 @@ int GuiLoadSave::createProjectDirectory(QString projectName){
  * @param editorTabs
  * @return 0 if successful
  */
-int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, CommandEditor *loadedEditor){
-
+int GuiLoadSave::updateCommandEditor(QString fileName, QString *projectName, CommandEditor *loadedEditor){
     loadedEditor->setName(fileName);
+
     ///TEMP SOLUTION///
     loadedEditor->setCommandAdded(true);
     ///TEMP SOLUTION///
+    /// \brief lineEdits
+
     QList<QLineEdit *> lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
 
-    if(projectName.isEmpty() || projectName.isNull()){
-        projectName = "Temp";
+    QString tempProjectName;
+    if(projectName->isEmpty() || projectName->isNull()){
+        tempProjectName = "Temp";
+    }else{
+        tempProjectName = *projectName;
     }
+
 
     //load file and set up the reader.
     QFile loadFile;
-    loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + fileName+ QString(".xml"));
+    loadFile.setFileName(QString("ProjectFiles/") + tempProjectName+ QString("/") + fileName+ QString(".xml"));
     loadFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadFile);
 
@@ -172,6 +178,8 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
         comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
         i++;
     }
+
+
     i = 0;
     //delete all buttons so we ensure we start from fresh.
     int numChildrenToRemove = (loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>().size());
@@ -180,6 +188,7 @@ int GuiLoadSave::updateCommandEditor(QString fileName, QString projectName, Comm
     }
 
     int k = 1;
+
 
     //keep going until the document is finished.
     while(!reader.isEndDocument()){

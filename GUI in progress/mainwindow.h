@@ -62,7 +62,7 @@ private slots:
     void on_actionPrevious_triggered();
 
     void tabChanged(int index);
-    void callUpdate(QString fileName,QString ProjectName, CommandEditor* loadedEditor);
+    void callUpdate(QString fileName,QString *ProjectName, CommandEditor* loadedEditor);
 
 
     void on_actionColors_exe_triggered();

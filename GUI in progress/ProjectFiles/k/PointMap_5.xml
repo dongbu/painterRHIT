@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--PointMap_5-->
+<Command>
+    <!--Line Information-->
+    <Line color="black" style="solid"/>
+    <!--Point Map Information-->
+    <PointMap length="10">
+        <Point x="379" y="189"/>
+        <Point x="372" y="316"/>
+        <Point x="235" y="216"/>
+        <Point x="198" y="404"/>
+        <Point x="497" y="475"/>
+        <Point x="590" y="289"/>
+        <Point x="453" y="316"/>
+        <Point x="426" y="429"/>
+        <Point x="320" y="513"/>
+        <Point x="142" y="513"/>
+    </PointMap>
+    <FileMalformed bool="0"/>
+</Command>

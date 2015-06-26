@@ -32,8 +32,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //command list//
     commandView = new CommandViewer();
-    commandView->infoDump(projectName,editors,currentEditor,tabCount,EditorTabs);
+
+    commandView->infoDump(&projectName,&editors,&currentEditor,tabCount,EditorTabs);
     connect(commandView,SIGNAL(triggerPointMap()),this,SLOT(on_actionDraw_Point_Map_triggered()));
+    connect(commandView,SIGNAL(triggerCommandEditorUpdate(QString,QString*,CommandEditor*)),this,SLOT(callUpdate(QString,QString*,CommandEditor*)));
     //command list//
 
     //interpreter work//
@@ -500,7 +502,7 @@ void MainWindow::tabChanged(int index){
 
 }
 
-void MainWindow::callUpdate(QString fileName,QString ProjectName, CommandEditor* loadedEditor) {
+void MainWindow::callUpdate(QString fileName,QString *ProjectName, CommandEditor* loadedEditor) {
     GuiLoadSave::updateCommandEditor(fileName,ProjectName,loadedEditor);
 }
 

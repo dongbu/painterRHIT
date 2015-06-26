@@ -516,7 +516,7 @@ release/.moc/moc_mainwindow.cpp: release/.ui/ui_mainwindow.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QFileDialog \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qfiledialog.h \
 		mainwindow.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore mainwindow.h -o release\.moc\moc_mainwindow.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore mainwindow.h -o release\.moc\moc_mainwindow.cpp
 
 release/.moc/moc_commandeditor.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qwidget.h \
@@ -665,7 +665,7 @@ release/.moc/moc_commandeditor.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWid
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractitemview.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qitemselectionmodel.h \
 		commandeditor.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandeditor.h -o release\.moc\moc_commandeditor.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandeditor.h -o release\.moc\moc_commandeditor.cpp
 
 release/.moc/moc_painter.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qwidget.h \
@@ -770,7 +770,7 @@ release/.moc/moc_painter.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/5.4/mingw491_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.4/mingw491_32/include/QtGui/qtouchdevice.h \
 		painter.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore painter.h -o release\.moc\moc_painter.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore painter.h -o release\.moc\moc_painter.cpp
 
 release/.moc/moc_commandinterpreter.cpp: painter.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
@@ -901,7 +901,7 @@ release/.moc/moc_commandinterpreter.cpp: painter.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qtimer.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qbasictimer.h \
 		commandinterpreter.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandinterpreter.h -o release\.moc\moc_commandinterpreter.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandinterpreter.h -o release\.moc\moc_commandinterpreter.cpp
 
 release/.moc/moc_drawonwidget.cpp: commandeditor.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
@@ -1053,7 +1053,7 @@ release/.moc/moc_drawonwidget.cpp: commandeditor.h \
 		C:/Qt/5.4/mingw491_32/include/QtGui/QMouseEvent \
 		C:/Qt/5.4/mingw491_32/include/QtGui/QPen \
 		drawonwidget.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore drawonwidget.h -o release\.moc\moc_drawonwidget.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore drawonwidget.h -o release\.moc\moc_drawonwidget.cpp
 
 release/.moc/moc_commandviewer.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qwidget.h \
@@ -1203,7 +1203,7 @@ release/.moc/moc_commandviewer.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QWid
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QScrollArea \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qscrollarea.h \
 		commandviewer.h
-	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/horvegc/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandviewer.h -o release\.moc\moc_commandviewer.cpp
+	C:\Qt\5.4\mingw491_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -I"C:/Users/doughezj/Documents/GitHub/painter/GUI in progress" -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtCore commandviewer.h -o release\.moc\moc_commandviewer.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

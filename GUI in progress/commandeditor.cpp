@@ -229,12 +229,8 @@ void CommandEditor::Remove_Point_Clicked() {
     if (pointCount == 2) return;
     else if(pointCount ==3) Remove_Point->setDisabled(true);
 
-    //class reference logic
-    pointCount--;
-    if(pointCount )
-    PointVec->pop_back();
 
-    //Widgit deletion logic
+//    //Widgit deletion logic
     int lastInput = ParameterHolder->count()-1;
     int secondLast = lastInput - 1;
     QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
@@ -246,6 +242,18 @@ void CommandEditor::Remove_Point_Clicked() {
     toDelete1->widget()->deleteLater();
     toDelete2->widget()->deleteLater();
     ParameterHolder->update();
+
+//     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+//     QLineEdit *last = lineEdits.last();
+//     last->setText("");
+//     ParameterHolder->update();
+//     CommandEditor::removeExcessLines();
+
+     //class reference logic
+     pointCount--;
+     if(pointCount ) PointVec->pop_back();
+
+     emit CommandEditor::InfoChanged();
 }
 
 

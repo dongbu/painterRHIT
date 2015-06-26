@@ -22,7 +22,7 @@ public:
     GuiLoadSave();
     static boolean writeCommandToFolder(QString ProjectName, QWidget* CommandEditor, QListWidget* CommandList, boolean CommandAdded);
     static int createProjectDirectory(QString ProjectName);
-    static int updateCommandEditor(QString fileName, QString ProjectName, CommandEditor* loadedEditor);
+    static int updateCommandEditor(QString fileName, QString *ProjectName, CommandEditor* loadedEditor);
     static int writeCommandListToFolder(QString ProjectName, QListWidget* CommandList);
     static int loadCommandListFromFolder(QString ProjectName, QListWidget* CommandList);
     static QString saveAsProject();

@@ -18,14 +18,14 @@ public:
     ~CommandViewer();
     QListWidget *list;
 
-    void infoDump(QString projectName, std::vector<CommandEditor*> editors, int currentEditor, int tabCount,QTabWidget *EditorTabs);
+    void infoDump(QString *projectName, std::vector<CommandEditor*> *editors, int *currentEditor, int tabCount,QTabWidget *EditorTabs);
 
 private:
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
-    QString projectName;
-    std::vector<CommandEditor*> editors;
-    int currentEditor;
+    QString *projectName;
+    std::vector<CommandEditor*> *editors;
+    int *currentEditor;
     int tabCount;
     QTabWidget *EditorTabs;
 
@@ -38,7 +38,7 @@ private slots:
 signals:
     void fileStatusChanged();
     void triggerPointMap();
-    void triggerCommandEditorUpdate(QString, QString, CommandEditor*);
+    void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
 };
 
 #endif // COMMANDVIEWER_H
