@@ -95,6 +95,9 @@ private:
 protected:
     void closeEvent(QCloseEvent *);
 
+signals:
+    sendSaved(bool saved);
+
 };
 
 #endif // MAINWINDOW_H

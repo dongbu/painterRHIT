@@ -66,22 +66,22 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     writer.writeStartElement("PointMap");
     writer.writeAttribute("length",QString::number(lineEdits.count()-1));
     for(int i = 1; i < lineEdits.count(); i++){
+        QString point = lineEdits.at(i)->text();
+        QStringList xy = point.split(',');
+        QString xValue = xy.value(0);
+        QString yValue = xy.value(1);
+        //checks to make sure input is valid
+        bool okValue1;
+        bool okValue2;
+        xValue.toDouble(&okValue1);
+        yValue.toDouble(&okValue2);
 
+        if(okValue1 && okValue2){
+            //only writes the input into the file if it is valid.
             writer.writeStartElement("Point");
-            QString point = lineEdits.at(i)->text();
-            QStringList xy = point.split(',');
-            QString xValue = xy.value(0);
-            QString yValue = xy.value(1);
             writer.writeAttribute("x",xValue);
             writer.writeAttribute("y",yValue);
             writer.writeEndElement();//Point
-            bool okValue1;
-            bool okValue2;
-            xValue.toDouble(&okValue1);
-            yValue.toDouble(&okValue2);
-            if(!okValue1 || !okValue2){
-                std::cout << "input malformed" <<std::endl;
-                fileMalformed = true;
 
         }
     }

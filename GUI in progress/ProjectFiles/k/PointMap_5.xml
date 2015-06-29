@@ -4,17 +4,12 @@
     <!--Line Information-->
     <Line color="black" style="solid"/>
     <!--Point Map Information-->
-    <PointMap length="10">
-        <Point x="357" y="140"/>
-        <Point x="617" y="276"/>
-        <Point x="579" y="425"/>
-        <Point x="362" y="459"/>
-        <Point x="197" y="268"/>
-        <Point x="65" y="412"/>
-        <Point x="252" y="560"/>
-        <Point x="470" y="599"/>
-        <Point x="708" y="508"/>
-        <Point x="744" y="358"/>
+    <PointMap length="5">
+        <Point x="309" y="185"/>
+        <Point x="181" y="181"/>
+        <Point x="162" y="390"/>
+        <Point x="343" y="375"/>
+        <Point x="500" y="280"/>
     </PointMap>
     <FileMalformed bool="0"/>
 </Command>

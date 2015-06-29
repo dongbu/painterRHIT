@@ -14,6 +14,9 @@ CommandViewer::CommandViewer(QWidget *parent) :
     ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
     ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
     ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
+    ui->pushButton->connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(Add_Command_Clicked()));
+
+    ui->pushButton->setEnabled(false);
 
     mainClosed = false;
 }
@@ -91,9 +94,10 @@ void CommandViewer::on_EditCommand_clicked()
 
     //retrieves most recent editor
     CommandEditor *newEditor = editors->at(*currentEditor);
-    EditorTabs->setTabText(tabCount,item->text());
+
     //populates said editor with information loaded via xml.
     emit triggerCommandEditorUpdate(item->text(),tempProjectName,newEditor);
+
 }
 
 void CommandViewer::closeEvent(QCloseEvent *event){
@@ -108,4 +112,12 @@ void CommandViewer::closeEvent(QCloseEvent *event){
 
 void CommandViewer::setMainClosed(bool closed){
     this->mainClosed = closed;
+}
+
+void CommandViewer::Add_Command_Clicked(){
+    emit Add_External_Command();
+}
+
+void CommandViewer::fileSaved(bool saved){
+    ui->pushButton->setEnabled(saved);
 }

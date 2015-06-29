@@ -54,7 +54,7 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     if(prevX == -10 && prevY == -10){
         prevX = currentX;
         prevY = currentY;
-//        emit sendPoint(currentX, currentY, pointCount);
+
         //draw elipse for first point
         pen.setWidth(2);
         pen.setColor(Qt::blue);
@@ -88,6 +88,7 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     pen.setWidth(5);
     painter.setPen(pen);
 
+
     //actual drawing//
     painter.drawLine(QPointF(prevX,prevY),QPointF(currentX,currentY)); //line
 
@@ -104,10 +105,14 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     //have the label show what is in the image.
     this->setPixmap(QPixmap::fromImage(*temp));
 
+    painter.end();
+
+    delete temp;
+
     //clicked in roughly same spot twice.
     bool xMatch = (prevX > currentX - 7 && prevX < currentX + 7);
     bool yMatch = (prevY > currentY - 7 && prevY < currentY + 7);
-    if(xMatch && yMatch){
+    if(xMatch && yMatch && pointCount > 2){
         QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
         this->setPixmap(QPixmap::fromImage(*temp2));
         currentX = -10;

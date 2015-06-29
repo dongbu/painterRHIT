@@ -38,11 +38,16 @@ private slots:
     void MoveDown_clicked();
     void DeleteCommand_clicked();
     void on_EditCommand_clicked();
+    void Add_Command_Clicked();
+
+public slots:
+    void fileSaved(bool saved);
 
 signals:
     void fileStatusChanged();
     void triggerPointMap();
     void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
+    void Add_External_Command();
 
 protected:
     void closeEvent(QCloseEvent *);

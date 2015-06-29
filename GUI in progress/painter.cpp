@@ -58,7 +58,9 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
     //have the label show what is in the image.
     ui->label->setPixmap(QPixmap::fromImage(*temp));
 
+    painter.end();
 
+    delete temp;
 }
 
 /**

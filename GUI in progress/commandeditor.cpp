@@ -192,18 +192,18 @@ void CommandEditor::removeExcessLines(){
 
     QList<QLayoutItem *> listToDelete;
     int i = 0;
+    int linesRemoved = 0;
     foreach(QLineEdit *line, lineEdits){
         if((line->text() == "" || line->text() == ",") && pointCount > 2 && i >= 1){
             pointCount --;
-//            std::cout<<"pointVec size: "<<PointVec->size()<<std::endl;
-//            std::cout<<"pointVec call: "<<(lineEdits.indexOf(line) - 1)<<std::endl;
             if(PointVec->size() > lineEdits.indexOf(line) - 1){
                 PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
             }
-            int lastInput = lineEdits.indexOf(line)*2 + 4;
+            int lastInput = lineEdits.indexOf(line)*2 + 4 - linesRemoved;
             QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
             listToDelete.append(toDelete1);
             lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+            linesRemoved+= 2;
         }
         i++;
     }

@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     projectName = ""; //"garbage" value
     saved = false;
     fileChanged = false;
-    ui->pushButton->setDisabled(true);//can't load external file until saved.
     //creates a ProjectFiles folder if one doesn't exist
     if(!QDir(QString("ProjectFiles")).exists()){
         if(!QDir().mkdir(QString("ProjectFiles"))){
@@ -36,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     commandView->infoDump(&projectName,&editors,&currentEditor,tabCount,EditorTabs);
     connect(commandView,SIGNAL(triggerPointMap()),this,SLOT(on_actionDraw_Point_Map_triggered()));
     connect(commandView,SIGNAL(triggerCommandEditorUpdate(QString,QString*,CommandEditor*)),this,SLOT(callUpdate(QString,QString*,CommandEditor*)));
+    connect(commandView,SIGNAL(Add_External_Command()),this,SLOT(on_pushButton_clicked()));
+    connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     //command list//
 
     //interpreter work//
@@ -102,7 +103,6 @@ void MainWindow::on_actionSave_As_triggered()
             this->setWindowTitle(projectName);
             interpreter->setProjectName(projectName);
             ui->actionSave->setEnabled(true);
-            ui->pushButton->setEnabled(true);
             //updates the commandEditors.
             foreach(CommandEditor *edits, editors){
                 edits->setProjectName(projectName);
@@ -121,6 +121,7 @@ void MainWindow::on_actionSave_As_triggered()
             dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
+            emit sendSaved(true);
             fileChanged = false;
 
             //moves all files from temp folder into current folder if temp folder exists.  Also deletes temp folder.
@@ -140,7 +141,6 @@ void MainWindow::on_actionSave_As_triggered()
 
         if(!name.isEmpty()){
             saved = true;
-            ui->pushButton->setEnabled(true);
             projectName = name;
             interpreter->setProjectName(projectName);
             this->setWindowTitle(projectName);
@@ -165,6 +165,7 @@ void MainWindow::on_actionSave_As_triggered()
             dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
+            emit sendSaved(true);
 
             //transfers all files over from the previous location to the new location.
             if(!GuiLoadSave::copyAllFilesFrom(prevProjectName, projectName)){
@@ -242,8 +243,8 @@ void MainWindow::on_actionOpen_triggered()
         this->setWindowTitle(projectName);
         saved=true;
         ui->actionSave->setEnabled(true);
-        ui->pushButton->setEnabled(true);
         interpreter->setProjectName(projectName);
+        emit sendSaved(true);
     }
     }
 }
@@ -264,6 +265,7 @@ void MainWindow::on_actionSave_triggered()
         alert.show();
     }
     fileChanged = false;
+    emit sendSaved(true);
 }
 
 
@@ -284,7 +286,7 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     QList<QString> texts;
     foreach(QListWidgetItem *item, listOfCommands)
       texts.append(item->text());
-    int k = 1;
+    int k = untitledCount;
     while(texts.contains(editor->getName())){
         editor->setName("PointMap_" + QString::number(k));
         k++;
@@ -295,24 +297,18 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     currentEditor++;
 
     untitledCount++;
-    EditorTabs->addTab(editor->CommandEditorWidget,"PointMap (" + QString::number(untitledCount) + ")");
+    EditorTabs->addTab(editor->CommandEditorWidget,"PointMap_" + QString::number(untitledCount));
     EditorTabs->setCurrentIndex(tabCount);
 
     //connections so that we know when something has been changed.
     connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
-//    //connection so we know if addcommand button was pressed.
+    //connection so we know if addcommand button was pressed.
     connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
-
-//    //connection so we know if a tab was closed.  clears drawer if a tab is closed.
-//    connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
 
     //connection to update drawOn.
     connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
-
-
-
 
 }
 
@@ -323,9 +319,10 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
  */
 void MainWindow::closeTab(int index) {
     tabCount--;
-    if(tabCount <=0){
+    if(tabCount <0){
         drawOn->clearAll();
         editors.clear();
+        currentEditor = -1;
     }
     EditorTabs->removeTab(index);
 }
@@ -352,8 +349,8 @@ void MainWindow::cleanUp(){
     if(QDir("ProjectFiles/Temp").exists()){
        QDir("ProjectFiles/Temp").removeRecursively();
     }
-    ui->pushButton->setDisabled(true);
     drawOn->clearAll();
+    emit sendSaved(false);
 
 }
 
@@ -475,6 +472,7 @@ void MainWindow::on_actionStop_triggered()
     ui->actionPause->setDisabled(true);
     ui->actionStop->setDisabled(true);
     ui->actionPrevious->setDisabled(true);
+    ui->actionNext->setDisabled(true);
     interpreter->stopPaintingCommands();
 
 }
@@ -500,14 +498,20 @@ void MainWindow::on_actionPrevious_triggered()
 void MainWindow::tabChanged(int index){
    if(index >= 0){
        currentEditor = index;
-       CommandEditor *temp = editors.at(currentEditor);
-       temp->InfoChanged();
+       if(editors.size() > (unsigned)currentEditor){
+           CommandEditor *temp = editors.at(currentEditor);
+           temp->InfoChanged();
+       }else{
+           exit(1);
+       }
+
    }
 
 }
 
 void MainWindow::callUpdate(QString fileName,QString *ProjectName, CommandEditor* loadedEditor) {
     GuiLoadSave::updateCommandEditor(fileName,ProjectName,loadedEditor);
+    EditorTabs->setTabText(EditorTabs->currentIndex(),fileName);
 }
 
 /**
@@ -569,12 +573,3 @@ void MainWindow::on_actionCapture_exe_triggered()
 
 }
 
-//void MainWindow::tabDestroyed(){
-//    if(EditorTabs->count() <= 0){
-////        drawOn->clearAll();
-//        CommandEditor *temp = editors.at(0);
-////        temp->commandAdded = true;
-//        temp->add_Command_Externally();
-
-//    }
-//}
