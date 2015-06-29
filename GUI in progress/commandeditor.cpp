@@ -129,14 +129,14 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
     //creating buttons
     Add_Command = new QPushButton("Add Command");
     Add_Point = new QPushButton("Add Point");
-    Remove_Point = new QPushButton("Remove Point");
+//    Remove_Point = new QPushButton("Remove Point");
 
     //adding buttons
     ButtonHolder->addWidget(Add_Command,0,0);
     ButtonHolder->addWidget(Add_Point,0,1);
-    ButtonHolder->addWidget(Remove_Point,0,2);
+//    ButtonHolder->addWidget(Remove_Point,0,2);
 
-    Remove_Point->setDisabled(true);
+//    Remove_Point->setDisabled(true);
 }
 
 
@@ -169,8 +169,8 @@ void CommandEditor::Add_Command_Clicked() {
     }
     lineEdits.at(0)->setDisabled(true);
 
-    CommandEditor::removeExcessLines();
 
+    CommandEditor::removeExcessLines();
     GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
     commandAdded = true;
     //sets the name and changes the tabname
@@ -195,7 +195,11 @@ void CommandEditor::removeExcessLines(){
     foreach(QLineEdit *line, lineEdits){
         if((line->text() == "" || line->text() == ",") && pointCount > 2 && i >= 1){
             pointCount --;
-            PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
+//            std::cout<<"pointVec size: "<<PointVec->size()<<std::endl;
+//            std::cout<<"pointVec call: "<<(lineEdits.indexOf(line) - 1)<<std::endl;
+            if(PointVec->size() > lineEdits.indexOf(line) - 1){
+                PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
+            }
             int lastInput = lineEdits.indexOf(line)*2 + 4;
             QLayoutItem *toDelete1 = ParameterHolder->itemAt(lastInput);
             listToDelete.append(toDelete1);
@@ -215,7 +219,7 @@ void CommandEditor::removeExcessLines(){
  * @brief Add_Point slot.
  */
 void CommandEditor::Add_Point_Clicked() {
-    Remove_Point->setDisabled(false);
+//    Remove_Point->setDisabled(false);
     MakePoint();
 }
 
@@ -304,3 +308,4 @@ void CommandEditor::InfoChanged(){
 //    CommandEditor::removeExcessLines();
     emit CommandEditor::sendUpdateToDrawOn(this);
 }
+

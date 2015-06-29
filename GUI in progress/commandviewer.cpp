@@ -14,6 +14,8 @@ CommandViewer::CommandViewer(QWidget *parent) :
     ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
     ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
     ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
+
+    mainClosed = false;
 }
 
 CommandViewer::~CommandViewer()
@@ -94,3 +96,16 @@ void CommandViewer::on_EditCommand_clicked()
     emit triggerCommandEditorUpdate(item->text(),tempProjectName,newEditor);
 }
 
+void CommandViewer::closeEvent(QCloseEvent *event){
+        if(mainClosed){
+            event->accept();
+        }else{
+            event->ignore();
+            this->lower();
+
+        }
+}
+
+void CommandViewer::setMainClosed(bool closed){
+    this->mainClosed = closed;
+}

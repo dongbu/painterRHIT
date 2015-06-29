@@ -256,7 +256,7 @@ int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *Comm
     for(int i = 0; i < listOfCommandNames.size(); i++){
     writer.writeStartElement(listOfCommandNames.at(i)->text());//index at
     writer.writeEndElement();//index at
-    std::cout << listOfCommandNames.at(i)->text().toStdString() << std::endl;
+//    std::cout << listOfCommandNames.at(i)->text().toStdString() << std::endl;
     }
 
     writer.writeEndElement();//index
@@ -292,7 +292,7 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
     //keep reading until reach the end.
     while(!reader.isEndDocument()){
         reader.readNext();
-        std::cout << reader.name().toString().toStdString() << std::endl;
+//        std::cout << reader.name().toString().toStdString() << std::endl;
         if(reader.isStartElement()){
             QString text;
                 text = reader.name().toString();

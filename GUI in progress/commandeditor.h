@@ -33,9 +33,10 @@ public:
     std::vector<QLineEdit*> *PointVec;
     QLineEdit *Command_Name;
     QComboBox *Line_Color, *Line_Style;
-    QPushButton *Add_Command, *Add_Point, *Remove_Point;
+    QPushButton *Add_Command, *Add_Point;
     int tabPosition;
     QTabWidget *editorTabs;
+    bool commandAdded;
 
 private:
     void PopulateButtons(QGridLayout *ButtonHolder);
@@ -49,7 +50,6 @@ private:
     QString name;
     QString projectName;
     QListWidget *widget;
-    bool commandAdded; ///TEMP SOLUTION///
 
 public slots:
     void Add_Command_Clicked();

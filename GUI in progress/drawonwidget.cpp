@@ -29,9 +29,9 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     int currentX = event->localPos().x();
     int currentY = event->localPos().y();
 
-    if(drawPoint(currentX,currentY));
-
-    emit sendPoint(currentX, currentY, pointCount);
+    if(drawPoint(currentX,currentY)){
+        emit sendPoint(currentX, currentY, pointCount);
+    }
 
 
 }
@@ -45,7 +45,7 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
         temp = new QImage(this->pixmap()->toImage());
     }
     if(temp->isNull()){
-        std::cout<<"image is somehow bad. ='( time to be sad."<<std::endl;
+        std::cout<<"image is somehow bad."<<std::endl;
     }
     QPainter painter(temp);
 
@@ -133,6 +133,8 @@ void drawOnWidget::clearAll(){
     QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
     this->setPixmap(QPixmap::fromImage(*temp2));
     this->clear();
+    this->penColor = "black";
+    this->penStyle = Qt::SolidLine;
 
 }
 
@@ -151,10 +153,6 @@ void drawOnWidget::updateToEditor(CommandEditor *editor){
             int x = list.at(0).toInt();
             int y = list.at(1).toInt();
             drawPoint(x,y);
-        }else{
-            if(!list.empty()){
-                std::cout<<list.at(0).toStdString()<<std::endl;
-            }
         }
 
     }

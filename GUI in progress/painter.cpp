@@ -47,7 +47,7 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
     QPen pen;
 
     //setup the pen so it looks nice
-    pen.setColor(getPenColor(color));
+    pen.setColor(color);
     pen.setStyle(getPenStyle(lineStyle));
     pen.setWidth(5);
     painter.setPen(pen);
@@ -60,36 +60,7 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
 
 
 }
-/**
- * @brief takes the color string and turns it into something useful.
- * @param color
- * @return appropriate color
- */
-QColor Painter::getPenColor(QString color){
-    QStringList colors;
-    colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
-    switch(colors.indexOf(color)){
-    case 0:
-        return(Qt::black);
-    case 1:
-        std::cout<<"apparently orange is not an option" <<std::endl;
-        return (Qt::black);
-    case 2:
-        return(Qt::yellow);
-    case 3:
-        return(Qt::green);
-    case 4:
-        return(Qt::red);
-    case 5:
-        return(Qt::blue);
-    case 6:
-        std::cout << "apparently purple is not an option"<<std::endl;
-        return(Qt::black);
-    default:
-        return(Qt::black);
-    }
 
-}
 /**
  * @brief turns style string into something useful.
  * @param style

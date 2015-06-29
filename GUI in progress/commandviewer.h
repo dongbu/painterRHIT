@@ -1,9 +1,11 @@
 #ifndef COMMANDVIEWER_H
 #define COMMANDVIEWER_H
 
+#include "CommandEditor.h"
 #include <QWidget>
 #include <QListWidget>
-#include "CommandEditor.h"
+#include <QCloseEvent>
+
 
 namespace Ui {
 class CommandViewer;
@@ -19,6 +21,7 @@ public:
     QListWidget *list;
 
     void infoDump(QString *projectName, std::vector<CommandEditor*> *editors, int *currentEditor, int tabCount,QTabWidget *EditorTabs);
+    void setMainClosed(bool closed);
 
 private:
     Ui::CommandViewer *ui;
@@ -28,6 +31,7 @@ private:
     int *currentEditor;
     int tabCount;
     QTabWidget *EditorTabs;
+    bool mainClosed;
 
 private slots:
     void MoveUp_clicked();
@@ -39,6 +43,9 @@ signals:
     void fileStatusChanged();
     void triggerPointMap();
     void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
+
+protected:
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // COMMANDVIEWER_H

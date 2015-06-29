@@ -303,7 +303,7 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
 //    //connection so we know if addcommand button was pressed.
-//    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
+    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
 
 //    //connection so we know if a tab was closed.  clears drawer if a tab is closed.
 //    connect(EditorTabs,SIGNAL(tabCloseRequested(int)),this,SLOT(noticeCommandAdded(int)));
@@ -323,6 +323,10 @@ void MainWindow::on_actionDraw_Point_Map_triggered()
  */
 void MainWindow::closeTab(int index) {
     tabCount--;
+    if(tabCount <=0){
+        drawOn->clearAll();
+        editors.clear();
+    }
     EditorTabs->removeTab(index);
 }
 
@@ -461,7 +465,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 
 void MainWindow::noticeCommandAdded(int index){
     if(index == (tabCount+1) || index == -10){
-    drawOn->clearAll();
+        drawOn->clearAll();
     }
 }
 
@@ -524,6 +528,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
 
         switch(result){
         case QMessageBox::Save:
+
             if(saved){
             MainWindow::on_actionSave_triggered();
             }else{
@@ -549,6 +554,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
             return;
         }
     }
+    commandView->setMainClosed(true);
     commandView->close();
 }
 
@@ -562,3 +568,13 @@ void MainWindow::on_actionCapture_exe_triggered()
     QProcess::execute("capture/Release/capture.exe");
 
 }
+
+//void MainWindow::tabDestroyed(){
+//    if(EditorTabs->count() <= 0){
+////        drawOn->clearAll();
+//        CommandEditor *temp = editors.at(0);
+////        temp->commandAdded = true;
+//        temp->add_Command_Externally();
+
+//    }
+//}
