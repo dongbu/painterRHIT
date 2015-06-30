@@ -50,9 +50,9 @@ int main(int argc, char* argv[])
 	if (!stream1.isOpened()) { //check if video device has been initialised
 		cout << "cannot open camera 1";
 	}
-	string inputFilePath = "C:\\Pictures\\logo.bmp";
+	string inputFilePath = "C:/Users/horvegc/Pictures/Backgrounds/Dec8.jpg";
 
-	int cannyThresh = 240;
+	int cannyThresh = 100;
 
 	if (argc > 1) {
 		inputFilePath = argv[1];
@@ -67,37 +67,35 @@ int main(int argc, char* argv[])
 
 	Mat image;
 	image = imread(inputFilePath);
+
 	while (true) {
+
 		stream1.read(image);
 		imshow("cam", image);
 		if (waitKey(30) >= 0)
 			break;
 	}
+
 	stream1.release();
 
 	assert(image.data != NULL);
 	imshow("Image", image);
-	waitKey(0);
+	//waitKey(0);
 
-//	imshow("Input Image", greyscaleImage);
 	Mat cannyOutput;
 	Canny(image, cannyOutput, cannyThresh, cannyThresh * 2);
 	assert(cannyOutput.data != NULL);
 	imshow("Canny", cannyOutput);
 
-	vector<vector<Point>> contours;
-	findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
+	//vector<vector<Point>> contours;
+	//findContours(cannyOutput, contours, RETR_EXTERNAL, CHAIN_APPROX_TC89_L1);
 
-	vector<pair<vector<Point>, int>> newFormat1; 
-	//newFormat1[0].first = the path
-	//newFormat1[0].second = the color index;
-
-//	vector<pair<vector<Point>, int> > contours = imageToStroke(image);
+	vector<pair<vector<Point>, int> > contours = imageToStroke(image);
 
 	//code here to convert to
 	vector<pair<vector<Point3d>, int>> newFormat;
 	int colorIndex = 0;
-/*	for (pair<vector<Point>, int > i : contours) {
+	for (pair<vector<Point>, int > i : contours) {
 		vector<Point3d> tmpPath;
 		//cout << "new path" << endl;
 		for (Point j : i.first) {
@@ -107,80 +105,87 @@ int main(int argc, char* argv[])
 			tmpPath.push_back(k);
 		}
 		newFormat.push_back(make_pair(tmpPath, i.second));
-	}*/
-	if (init()) {
+	}
+	cout << "breaks";
+	if (init("127.0.0.1")) {
 		cout << "Established Connection" << endl;
-	}else {
+		cout << "doesn't break";
+	}
+	else {
+		cout << "doesn't break";
 		cout << "Error establishing connection" << endl;
 		exit(1);
 	}
-	vector<Point3d> circle;
-	double cm = 0.01;
-	cout << "Drawing circle" << endl;
-	for (double i = 0; i < 2 * M_PI; i += M_PI / 4){
-		circle.push_back(Point3d(cm*cos(i), cm*sin(i), 0));
-	}
-	Point3d leadin, lastPoint, source;
-	double dx, dy, dist, lx, ly;
-//	vector<Point3d> circle = makeCircle(newFormat[0].first[0].z);
-	waitKey(0);
-	cout << newFormat.size() << endl;
-	for (pair<vector<Point3d>, int> i : newFormat){
-		cout << i.second << ", ";
-	}
-	cout << endl;
 
-	cout << "Moving through points" << endl;
-	for (int i = 0; i < COLORS; i++) {
-		for (unsigned int j = 0; j < newFormat.size(); j++) {
-			if (newFormat.at(j).second == i) {
-				// Get more paint
-				if (i == 0){source = SOURCE_COLOR0;}
-				else if (i == 1){source = SOURCE_COLOR1;}
-				else if (i == 2){source = SOURCE_COLOR2;}
-				else if (i == 3){source = SOURCE_COLOR3;}
+	cout << "Passed the commented-out stuff.  \n";
 
-				net_move(source + Point3d(0, 0, 0.1));
-				net_move(source);
-				// Move in a circle
-				for (unsigned int n = 0; n < circle.size(); n++){
-					net_move(source + circle.at(n));
-				}
-				net_move(source + Point3d(0, 0, 0.1));
-
-				// Lead-in motion
-				if (newFormat.at(j).first.size() < 2){
-					leadin = newFormat.at(j).first.at(0);
-				}
-				else{
-					dy = (newFormat.at(j).first.at(1).y - newFormat.at(j).first.at(0).y);
-					dx = (newFormat.at(j).first.at(1).x - newFormat.at(j).first.at(0).x);
-					dist = sqrt(dx*dx + dy*dy);
-					lx = newFormat.at(j).first.at(0).x - 0.02 * (dx / dist);
-					ly = newFormat.at(j).first.at(0).y - 0.02 * (dy / dist);
-					leadin = Point3d(lx, ly, (newFormat.at(j).first.at(0).z + 0.01));
-				}
-				net_move(leadin);
-				//net_move(getLeadIn(newFormat[j].first));
-				
-				for (Point3d k : newFormat.at(j).first) {
-					net_move(k);
-					lastPoint = k;
-				}
-				net_move(lastPoint + Point3d(0, 0, 0.02));
-			}
+		vector<Point3d> circle;
+		double cm = 0.01;
+		cout << "Drawing circle" << endl;
+		for (double i = 0; i < 2 * M_PI; i += M_PI / 4){
+			circle.push_back(Point3d(cm*cos(i), cm*sin(i), 0));
 		}
-		swap_brush(DROPOFF, PICKUP);
-	}
-	cout << "Done moving" << endl;
+		Point3d leadin, lastPoint, source;
+		double dx, dy, dist, lx, ly;
+		//vector<Point3d> circle = makeCircle(newFormat[0].first[0].z);
+		waitKey(0);
+		cout << newFormat.size() << endl;
+		for (pair<vector<Point3d>, int> i : newFormat){
+			cout << i.second << ", ";
+		}
+		cout << endl;
 
-	imshow("Canny Output", cannyOutput);
-	waitKey(0);
+		cout << "Moving through points" << endl;
+		for (int i = 0; i < COLORS; i++) {
+			for (unsigned int j = 0; j < newFormat.size(); j++) {
+				if (newFormat.at(j).second == i) {
+					// Get more paint
+					if (i == 0){ source = SOURCE_COLOR0; }
+					else if (i == 1){ source = SOURCE_COLOR1; }
+					else if (i == 2){ source = SOURCE_COLOR2; }
+					else if (i == 3){ source = SOURCE_COLOR3; }
 
-	return 0;
+					net_move(source + Point3d(0, 0, 0.1));
+					net_move(source);
+					// Move in a circle
+					for (unsigned int n = 0; n < circle.size(); n++){
+						net_move(source + circle.at(n));
+					}
+					net_move(source + Point3d(0, 0, 0.1));
+
+					// Lead-in motion
+					if (newFormat.at(j).first.size() < 2){
+						leadin = newFormat.at(j).first.at(0);
+					}
+					else{
+						dy = (newFormat.at(j).first.at(1).y - newFormat.at(j).first.at(0).y);
+						dx = (newFormat.at(j).first.at(1).x - newFormat.at(j).first.at(0).x);
+						dist = sqrt(dx*dx + dy*dy);
+						lx = newFormat.at(j).first.at(0).x - 0.02 * (dx / dist);
+						ly = newFormat.at(j).first.at(0).y - 0.02 * (dy / dist);
+						leadin = Point3d(lx, ly, (newFormat.at(j).first.at(0).z + 0.01));
+					}
+					net_move(leadin);
+					//net_move(getLeadIn(newFormat[j].first));
+
+					for (Point3d k : newFormat.at(j).first) {
+						net_move(k);
+						lastPoint = k;
+					}
+					net_move(lastPoint + Point3d(0, 0, 0.02));
+				}
+			}
+			swap_brush(DROPOFF, PICKUP);
+		}
+		cout << "Done moving" << endl;
+
+		imshow("Canny Output", cannyOutput);
+		waitKey(0);
+
+		return 0;
 }
 
-Point3d getLeadIn(vector<Point3d> contour){
+Point3d getLeadIn(vector<Point3d> contour) {
 	if (contour.size() < 2){
 		return contour[0];
 	}

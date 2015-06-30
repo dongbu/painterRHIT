@@ -35,7 +35,6 @@ pair<Mat, Mat> discoverColors(Mat image, int numColors) {
 }
 
 vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
-
 	vector<pair<vector<Point>, int> > output;
 
 	vector<vector<Point> > paths;
@@ -67,14 +66,16 @@ vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
 	imshow("edges", edgeImage);
 	//*/
 
-
 	//Discover the colors we'll be using
 	pair<Mat, Mat> colors_labels = discoverColors(image, 4);
 	Mat colors = colors_labels.first;
 	//Also store which color each pixel is nearest to, to save time
 	//when we need to figure out what color to paint an area
 	Mat labels = colors_labels.second;
-	labels = labels.reshape(0, image.size().width);
+	//////////////////////////////////////REMEMBER ME//////////////////////////////////////////////////////////
+	labels = labels.reshape(0, image.size().height);
+	//////////////////////////////////////size().width 0--> size().height //////////////////////////////////////////////////////////
+
 
 	//segment the iamge into small areas
 	const float n = 3;
@@ -90,9 +91,12 @@ vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
 			float avgDir = 0;
 			vector<int> colorPop(colors.size().height);
 			for (int col = colStart; col < colEnd; col++) {
+				
 				for (int row = rowStart; row < rowEnd; row++) {
+					
 					avgDir += edgeDirection.at<float>(row, col) * edgeMagnitude.at<float>(row, col) / numPixels;
-					colorPop[labels.at<float>(row, col)] += 1;
+					int num = labels.at<float>(row, col);
+					colorPop[num] += 1;
 				}
 			}
 			int colorIndex = 0;
@@ -109,10 +113,7 @@ vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
 			tmp.push_back(Point((i - n / 2) / n + lineLength*cos(avgDir), (j - n / 2) / n + lineLength*sin(avgDir)));
 			tmp.push_back(Point((i - n / 2) / n, (j - n / 2) / n));
 			output.push_back(make_pair(tmp, colorIndex));
-
 		}
 	}
-
-
 	return output;
 }
