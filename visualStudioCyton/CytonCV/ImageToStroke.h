@@ -73,7 +73,7 @@ vector<pair<vector<Point>, int> > imageToStroke(Mat image) {
 	//when we need to figure out what color to paint an area
 	Mat labels = colors_labels.second;
 	//////////////////////////////////////REMEMBER ME//////////////////////////////////////////////////////////
-	labels = labels.reshape(0, image.size().height);
+	labels = labels.reshape(0, image.size().width);
 	//////////////////////////////////////size().width 0--> size().height //////////////////////////////////////////////////////////
 
 

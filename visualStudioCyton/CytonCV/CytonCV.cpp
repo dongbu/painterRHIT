@@ -45,8 +45,8 @@ Point3d getLeadIn(vector<Point3d> contour);
 int main(int argc, char* argv[])
 {
 	VideoCapture stream1(0);
-	stream1.set(CV_CAP_PROP_FRAME_WIDTH, 400);
-	stream1.set(CV_CAP_PROP_FRAME_HEIGHT, 300);
+	stream1.set(CV_CAP_PROP_FRAME_WIDTH, 352);
+	stream1.set(CV_CAP_PROP_FRAME_HEIGHT, 288);
 	if (!stream1.isOpened()) { //check if video device has been initialised
 		cout << "cannot open camera 1";
 	}
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 		newFormat.push_back(make_pair(tmpPath, i.second));
 	}
 	cout << "breaks";
-	if (init("127.0.0.1")) {
+	if (init()) {
 		cout << "Established Connection" << endl;
 		cout << "doesn't break";
 	}
