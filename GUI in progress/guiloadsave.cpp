@@ -16,7 +16,6 @@ GuiLoadSave::GuiLoadSave()
  * @return boolean for success
  */
 boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEditor, QListWidget *CommandList, boolean commandAdded){
-
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 
@@ -29,15 +28,12 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     //the first object is the filename.  makes sure it is
     QString fileName = lineEdits.at(0)->text();
 
-
     //adds file stuff to the commandlist. Only if it wasn't added before.
     ///TEMP SOLUTION///
     if(!commandAdded){
         CommandList->addItem(fileName);
     }
     ///TEMP SOLUTION///
-
-
 
     //sets up a save file to put the information into.  Should overwrite any previous file with same name in directory.
     QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/") + fileName + QString(".xml");
@@ -97,7 +93,7 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
     saveFile.close();
 
     return !fileMalformed;
-
+    qDebug() <<"Wrote command to folder";
 }
 
 
@@ -107,14 +103,6 @@ boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandE
  * @return 0 if successful
  */
 int GuiLoadSave::createProjectDirectory(QString projectName){
-    //create main ProjectFiles folder if it does not exist.
-    if(!QDir(QString("ProjectFiles")).exists()){
-        if(!QDir().mkdir(QString("ProjectFiles"))){
-            std::cout << "failed to create ProjectFiles folder" <<std::endl;
-            return 1;
-        }
-    }
-
     //check if the project already exists.  return code 2 if exists.
     if(QDir(QString("ProjectFiles/") + (projectName)).exists()){
         return 2;
@@ -128,106 +116,6 @@ int GuiLoadSave::createProjectDirectory(QString projectName){
         }
     }
 }
-
-
-/**
- * @brief puts info from xml into command editor
- * @param fileName
- * @param projectName
- * @param editorTabs
- * @return 0 if successful
- */
-int GuiLoadSave::updateCommandEditor(QString fileName, QString *projectName, CommandEditor *loadedEditor){
-    loadedEditor->setName(fileName);
-
-    ///TEMP SOLUTION///
-    loadedEditor->setCommandAdded(true);
-    ///TEMP SOLUTION///
-    /// \brief lineEdits
-
-    QList<QLineEdit *> lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
-
-    QString tempProjectName;
-    if(projectName->isEmpty() || projectName->isNull()){
-        tempProjectName = "Temp";
-    }else{
-        tempProjectName = *projectName;
-    }
-
-
-    //load file and set up the reader.
-    QFile loadFile;
-    loadFile.setFileName(QString("ProjectFiles/") + tempProjectName+ QString("/") + fileName+ QString(".xml"));
-    loadFile.open(QIODevice::ReadOnly);
-    QXmlStreamReader reader(&loadFile);
-
-    //skip over unimportant doc headers.
-    reader.readNextStartElement();
-    reader.readNextStartElement();
-
-    int i = 0;
-
-    //get list of comboBoxes
-    QList<QComboBox *> comboBoxes = loadedEditor->CommandEditorWidget->findChildren<QComboBox *>();
-
-    //set text for the command name slot.
-    lineEdits.at(0)->setText(fileName);
-
-    //set the information for both comboboxes.
-    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-        comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
-        i++;
-    }
-
-
-    i = 0;
-
-    int k = 1;
-
-
-    //keep going until the document is finished.
-    while(!reader.isEndDocument()){
-        reader.readNext();
-        if(reader.isStartElement()){
-            QString pointString = "";
-            if(reader.name().toString() == "PointMap"){
-                //find and add the correct number of points.
-                int numPoints = reader.attributes().at(0).value().toString().toInt();
-                for(int j = 0; j < (numPoints - 2); j++){
-                    loadedEditor->Add_Point_Clicked();
-
-                }
-                lineEdits = loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>();
-//                std::cout << "number of coordinates to load : " << numPoints << std::endl;
-            }
-            if(reader.name().toString() == "Point"){
-                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                    pointString.append(attr.value().toString());
-                    pointString.append(",");
-                }
-                pointString.chop(1);
-
-                loadedEditor->CommandEditorWidget->findChildren<QLineEdit *>().at(k)->setText(pointString);
-                k++;
-
-            } else if(reader.name().toString() == "FileMalformed"){
-                if(reader.attributes().value(0).toString() == "1"){
-                    std::cout << "FILE WAS MALFORMED!" << std::endl;
-                    //potentially highlight poorly made files.
-                }
-            }
-
-        }
-    }
-    if(reader.hasError()){
-        std::cout << "there was an error in reading the file" <<std::endl;
-        //shouldn't be an issue, but put in just in case.
-    }
-
-    loadFile.close();
-    return 0;
-}
-
 
 /**
  * @brief puts the list of commands into an xml file.
@@ -516,8 +404,6 @@ std::vector<std::vector<int> > getPointVectors(QString projectName, QListWidget*
                     }
                     k++;
                 }
-
-
             } else if(reader.name().toString() == "FileMalformed"){
                 if(reader.attributes().value(0).toString() == "1"){
                     std::cout << "FILE WAS MALFORMED!" << std::endl;

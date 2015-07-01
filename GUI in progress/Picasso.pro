@@ -15,23 +15,24 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     guiloadsave.cpp \
-    commandeditor.cpp \
     painter.cpp \
     commandinterpreter.cpp \
     drawonwidget.cpp \
-    commandviewer.cpp
+    commandviewer.cpp \
+    commandeditor.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
-    commandeditor.h \
     painter.h \
     commandinterpreter.h \
     drawonwidget.h \
-    commandviewer.h
+    commandviewer.h \
+    commandeditor.h
 
 FORMS    += mainwindow.ui \
     painter.ui \
-    commandviewer.ui
+    commandviewer.ui \
+    commandeditor.ui
 
 RESOURCES += \
     myres.qrc

@@ -1,8 +1,7 @@
 #include "drawonwidget.h"
 #include <iostream>
 #include <QPainter>
-
-
+#include <QDebug>
 
 drawOnWidget::drawOnWidget(QWidget * parent)
     :QLabel(parent)
@@ -12,11 +11,7 @@ drawOnWidget::drawOnWidget(QWidget * parent)
    pointCount = 0;
    penColor = "black";
    penStyle = "solid";
-
-
 }
-
-
 
 /**
  * @brief gets the coordinates of clicks and draws lines between them.
@@ -32,8 +27,6 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     if(drawPoint(currentX,currentY)){
         emit sendPoint(currentX, currentY, pointCount);
     }
-
-
 }
 
 bool drawOnWidget::drawPoint(int currentX, int currentY){
@@ -65,7 +58,6 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
         this->setPixmap(QPixmap::fromImage(*temp));
         return true;
     }
-
 
     pen.setColor(penColor);
     QStringList styles;
@@ -125,9 +117,6 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     }
     prevX = currentX;
     prevY = currentY;
-
-
-//    emit sendPoint(currentX, currentY, pointCount);
     return true;
 }
 
@@ -140,7 +129,6 @@ void drawOnWidget::clearAll(){
     this->clear();
     this->penColor = "black";
     this->penStyle = Qt::SolidLine;
-
 }
 
 void drawOnWidget::updateToEditor(CommandEditor *editor){

@@ -14,8 +14,6 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 
     startPos = 0;
     currentPos = 0;
-
-
     //painter work//
 }
 

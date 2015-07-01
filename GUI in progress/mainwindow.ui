@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1680</width>
+    <width>964</width>
     <height>848</height>
    </rect>
   </property>
@@ -14,89 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>571</width>
-      <height>351</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="EditorTabLayout">
-     <item>
-      <widget class="QLabel" name="Command_Editor">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Command Editor&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>10</y>
-      <width>20</width>
-      <height>751</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_3">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>0</y>
-      <width>1001</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_4">
-    <property name="geometry">
-     <rect>
-      <x>1620</x>
-      <y>10</y>
-      <width>20</width>
-      <height>751</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_5">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>750</y>
-      <width>1001</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QWidget" name="widget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>10</y>
-      <width>1000</width>
+      <width>901</width>
       <height>750</height>
      </rect>
     </property>
@@ -158,8 +81,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1680</width>
-     <height>21</height>
+     <width>964</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNew_Window">
@@ -190,17 +113,9 @@
     <addaction name="actionNext"/>
     <addaction name="actionPrevious"/>
    </widget>
-   <widget class="QMenu" name="menuMisc_file_exe_s">
-    <property name="title">
-     <string>Misc. file.exe's</string>
-    </property>
-    <addaction name="actionColors_exe"/>
-    <addaction name="actionCapture_exe"/>
-   </widget>
    <addaction name="menuNew_Window"/>
    <addaction name="menuDraw_Commands"/>
    <addaction name="menuDebugger"/>
-   <addaction name="menuMisc_file_exe_s"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -353,16 +268,6 @@
    </property>
    <property name="toolTip">
     <string>undo last draw</string>
-   </property>
-  </action>
-  <action name="actionColors_exe">
-   <property name="text">
-    <string>Colors.exe</string>
-   </property>
-  </action>
-  <action name="actionCapture_exe">
-   <property name="text">
-    <string>Capture.exe</string>
    </property>
   </action>
  </widget>

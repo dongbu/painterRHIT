@@ -7,8 +7,6 @@
 #include <QTimer>
 #include <vector>
 
-
-
 class CommandInterpreter : public QObject
 {
     Q_OBJECT

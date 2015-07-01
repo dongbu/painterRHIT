@@ -8,10 +8,7 @@ Painter::Painter(QWidget *parent) :
     ui(new Ui::Painter)
 {
     ui->setupUi(this);
-//    setHeight(750);
-//    setWidth(1000);
     setFixedSize(this->width(),this->height());
-//    this->setStyleSheet("background-color:white;");
     ui->label->setStyleSheet("background-color:white;");
     fudge = 7;//y-offset between drawing (user input) and painting (simulation).
 }

@@ -2,10 +2,13 @@
 #define COMMANDVIEWER_H
 
 #include "CommandEditor.h"
+#include "ui_commandviewer.h"
 #include <QWidget>
 #include <QListWidget>
 #include <QCloseEvent>
-
+#include <iostream>
+#include <QXmlStreamReader>
+#include <QDebug.h>
 
 namespace Ui {
 class CommandViewer;
@@ -19,18 +22,18 @@ public:
     explicit CommandViewer(QWidget *parent = 0);
     ~CommandViewer();
     QListWidget *list;
+    std::vector<CommandEditor*> editors;
 
-    void infoDump(QString *projectName, std::vector<CommandEditor*> *editors, int *currentEditor, int tabCount,QTabWidget *EditorTabs);
+    int PopulateCommandEditor(QString fileName);
+    void setProjectName(QString *projectName);
     void setMainClosed(bool closed);
+    void MakeEditor();
+    CommandEditor *currentEditor;
 
 private:
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
     QString *projectName;
-    std::vector<CommandEditor*> *editors;
-    int *currentEditor;
-    int tabCount;
-    QTabWidget *EditorTabs;
     bool mainClosed;
 
 private slots:
@@ -48,6 +51,7 @@ signals:
     void triggerPointMap();
     void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
     void Add_External_Command();
+    void EmitConnectEditor(CommandEditor*);
 
 protected:
     void closeEvent(QCloseEvent *);

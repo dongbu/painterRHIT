@@ -1,27 +1,40 @@
 #include "commandeditor.h"
+#include "ui_commandeditor.h"
+#include "commandeditor.h"
 #include "guiloadsave.h"
 #include <QTextStream>
 #include <QMessageBox>
+#include <QDebug>
 
-CommandEditor::CommandEditor(QListWidget *widget, int tabPosition, QTabWidget *editorTabs) {
+CommandEditor::CommandEditor(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::CommandEditor)
+{
+    ui->setupUi(this);
+
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
     this->BuildEditor();
     this->ConnectButtons();
     this->name = "untitled";
-    this->widget = widget;
-    this->tabPosition = tabPosition;
-    this->editorTabs = editorTabs;
     this->commandAdded = false;
 
     connect(this,SIGNAL(signal_Info_Changed()),this,SLOT(InfoChanged()));
     connect(Line_Color,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
     connect(Line_Style,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
 
+    ui->verticalLayout->addWidget(this->CommandEditorWidget);
+    this->show();    
 }
 
+void CommandEditor::setList(QListWidget *list) {
+    this->list = list;
+}
 
-
+CommandEditor::~CommandEditor()
+{
+    delete ui;
+}
 
 /**
  * @brief This method is designed to create the CommandEditor widget
@@ -129,14 +142,10 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
     //creating buttons
     Add_Command = new QPushButton("Add Command");
     Add_Point = new QPushButton("Add Point");
-//    Remove_Point = new QPushButton("Remove Point");
 
     //adding buttons
     ButtonHolder->addWidget(Add_Command,0,0);
     ButtonHolder->addWidget(Add_Point,0,1);
-//    ButtonHolder->addWidget(Remove_Point,0,2);
-
-//    Remove_Point->setDisabled(true);
 }
 
 
@@ -145,9 +154,7 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
  */
 
 void CommandEditor::Add_Command_Clicked() {
-
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-
 
     //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
     //these commands then crash the program.
@@ -159,6 +166,7 @@ void CommandEditor::Add_Command_Clicked() {
             return;
         }
     }
+
     //make sure everything else is acceptable.
     if(projectName.isEmpty() || projectName.isNull()){
         //creates a "Temp" folder to put things into until saved.
@@ -169,21 +177,17 @@ void CommandEditor::Add_Command_Clicked() {
     }
     lineEdits.at(0)->setDisabled(true);
 
-
     CommandEditor::removeExcessLines();
-    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,widget,commandAdded);
+    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,list,commandAdded);
     commandAdded = true;
     //sets the name and changes the tabname
     CommandEditor::setName(lineEdits.at(0)->text());
-    editorTabs->setTabText(tabPosition,name);
     emit fileStatusChanged();
     emit tell_Command_Added(-10);
 
     CommandEditor::removeExcessLines();
 
     this->Add_Command->setText("Save");
-
-
 }
 
 void CommandEditor::removeExcessLines(){
@@ -264,7 +268,6 @@ void CommandEditor::setName(QString newName){
  * @param name
  */
 void CommandEditor::setProjectName(QString name){
-
     projectName = name;
 }
 
@@ -305,7 +308,5 @@ void CommandEditor::set_Point_At(int index, int x, int y){
 }
 
 void CommandEditor::InfoChanged(){
-//    CommandEditor::removeExcessLines();
     emit CommandEditor::sendUpdateToDrawOn(this);
 }
-

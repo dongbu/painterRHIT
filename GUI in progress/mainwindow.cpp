@@ -1,21 +1,11 @@
 #include "mainwindow.h"
+#include "QDebug.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    //Tab Work//
-    EditorTabs = new QTabWidget();
-    currentEditor = -1;
-    tabCount = -1;
-    untitledCount = 0;
-    ui->EditorTabLayout->addWidget(EditorTabs);
-    this->EditorTabs->connect(EditorTabs,SIGNAL(tabCloseRequested(int)), this,SLOT(closeTab(int)));
-    EditorTabs->setTabsClosable(true);
-    connect(EditorTabs,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
-    //Tab work//
 
     //save work//
     projectName = ""; //"garbage" value
@@ -31,12 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //command list//
     commandView = new CommandViewer();
-
-    commandView->infoDump(&projectName,&editors,&currentEditor,tabCount,EditorTabs);
-    connect(commandView,SIGNAL(triggerPointMap()),this,SLOT(on_actionDraw_Point_Map_triggered()));
-    connect(commandView,SIGNAL(triggerCommandEditorUpdate(QString,QString*,CommandEditor*)),this,SLOT(callUpdate(QString,QString*,CommandEditor*)));
-    connect(commandView,SIGNAL(Add_External_Command()),this,SLOT(on_pushButton_clicked()));
+    commandView->setProjectName(&projectName);
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
+    connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
+    connect(commandView,SIGNAL(EmitConnectEditor(CommandEditor*)),this,SLOT(ConnectEditor(CommandEditor*)));
     //command list//
 
     //interpreter work//
@@ -49,14 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     drawOn->setFixedHeight(750);
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
     ui->widget->setStyleSheet("background-color:white;");
-    ///temporarily disabled until further discussion///
-    ui->actionDraw_Circle->setDisabled(true);
-    ui->actionDraw_Function->setDisabled(true);
-    ui->actionDraw_Line->setDisabled(true);
-    ui->actionDraw_Point_Map->setDisabled(true);
-    ui->actionDraw_Square->setDisabled(true);
     ui->DrawFunctions->setHidden(true);
-    ///temporarily disabled until further discussion///
     //click to draw work//
 
     //debug button work//
@@ -65,16 +46,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStop->setDisabled(true);
     ui->actionNext->setDisabled(true);
     //debug button work//
-
 }
-
 
 /**
  * @brief Default after close all functions (when you press "X").
  */
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
@@ -83,17 +61,8 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_actionSave_As_triggered()
 {
-
-
     //make sure ProjectFiles folder exists
     if(!saved){
-        if(!QDir(QString("ProjectFiles")).exists()){
-            if(!QDir().mkdir(QString("ProjectFiles"))){
-                std::cout << "failed to create ProjectFiles folder" <<std::endl;
-                return;
-            }
-        }
-
         //saveAsProject() returns the name that was chosen to save the project under.
         QString name = GuiLoadSave::saveAsProject();
         if(!name.isEmpty()){
@@ -104,7 +73,7 @@ void MainWindow::on_actionSave_As_triggered()
             interpreter->setProjectName(projectName);
             ui->actionSave->setEnabled(true);
             //updates the commandEditors.
-            foreach(CommandEditor *edits, editors){
+            foreach(CommandEditor *edits, commandView->editors){
                 edits->setProjectName(projectName);
             }
 
@@ -116,6 +85,7 @@ void MainWindow::on_actionSave_As_triggered()
                     return;
                 }
             }
+
             //creates the "dummy" file that is used for clicking.
             QFile dummy;
             dummy.setFileName(QString("ProjectFiles/") + projectName + QString("/") + name + QString(".txt"));
@@ -126,11 +96,11 @@ void MainWindow::on_actionSave_As_triggered()
 
             //moves all files from temp folder into current folder if temp folder exists.  Also deletes temp folder.
             if(QDir("ProjectFiles/Temp").exists()){
-               if(!GuiLoadSave::copyAllFilesFrom("Temp",projectName)){
-                   std::cout << "Problem with Temp" << std::endl;
-               }else{
-                   QDir("ProjectFiles/Temp").removeRecursively();
-               }
+                if(!GuiLoadSave::copyAllFilesFrom("Temp",projectName)){
+                    std::cout << "Problem with Temp" << std::endl;
+                }else{
+                    QDir("ProjectFiles/Temp").removeRecursively();
+                }
             }
         }
     }else{
@@ -148,7 +118,7 @@ void MainWindow::on_actionSave_As_triggered()
             interpreter->setProjectName(projectName);
 
             //updates commandEditors
-            foreach(CommandEditor *edits, editors){
+            foreach(CommandEditor *edits, commandView->editors){
                 edits->setProjectName(projectName);
             }
 
@@ -174,10 +144,8 @@ void MainWindow::on_actionSave_As_triggered()
                 fileChanged = false;
             }
         }
-
     }
 }
-
 
 /**
  * @brief opening project functionality
@@ -201,24 +169,18 @@ void MainWindow::on_actionOpen_triggered()
                 MainWindow::on_actionSave_As_triggered();
             }
             if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
+                QDir("ProjectFiles/Temp").removeRecursively();
             }
             break;
         case QMessageBox::Discard:
             if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
+                QDir("ProjectFiles/Temp").removeRecursively();
             }
             break;
         case QMessageBox::Cancel:
             return;
         case QMessageBox::Default:
             //should not get here
-            return;
-        }
-    }
-    if(!QDir(QString("ProjectFiles")).exists()){
-        if(!QDir().mkdir(QString("ProjectFiles"))){
-            std::cout << "failed to create ProjectFiles folder" <<std::endl;
             return;
         }
     }
@@ -230,25 +192,24 @@ void MainWindow::on_actionOpen_triggered()
     filters << "Text files (*.txt)";
     directory.setNameFilters(filters);
     if(directory.exec()){
-    MainWindow::cleanUp();
+        MainWindow::cleanUp();
 
-    projectName = directory.selectedFiles().at(0).split("/").last();
-    projectName.chop(4);
-    interpreter->setProjectName(projectName);
-    if(!GuiLoadSave::loadCommandListFromFolder(projectName,this->commandView->list)){
-        alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-        alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
-        alert.show();
-    }else{
-        this->setWindowTitle(projectName);
-        saved=true;
-        ui->actionSave->setEnabled(true);
+        projectName = directory.selectedFiles().at(0).split("/").last();
+        projectName.chop(4);
         interpreter->setProjectName(projectName);
-        emit sendSaved(true);
-    }
+        if(!GuiLoadSave::loadCommandListFromFolder(projectName,this->commandView->list)){
+            alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+            alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
+            alert.show();
+        }else{
+            this->setWindowTitle(projectName);
+            saved=true;
+            ui->actionSave->setEnabled(true);
+            interpreter->setProjectName(projectName);
+            emit sendSaved(true);
+        }
     }
 }
-
 
 /**
  * @brief normal save functionality
@@ -268,76 +229,13 @@ void MainWindow::on_actionSave_triggered()
     emit sendSaved(true);
 }
 
-
-/**
- * @brief Allows the insertion of a point map command into
- * the command editor
- */
-void MainWindow::on_actionDraw_Point_Map_triggered()
-{
-
-    tabCount++;
-    CommandEditor *editor = new CommandEditor(this->commandView->list,tabCount, EditorTabs);
-    editor->setProjectName(projectName);
-
-    //searches through and sets the default name to 1 + the largest.
-    editor->setName("PointMap_1");
-    QList<QListWidgetItem *> listOfCommands = this->commandView->list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
-    QList<QString> texts;
-    foreach(QListWidgetItem *item, listOfCommands)
-      texts.append(item->text());
-    int k = untitledCount;
-    while(texts.contains(editor->getName())){
-        editor->setName("PointMap_" + QString::number(k));
-        k++;
-    }
-
-
-    editors.push_back(editor);
-    currentEditor++;
-
-    untitledCount++;
-    EditorTabs->addTab(editor->CommandEditorWidget,"PointMap_" + QString::number(untitledCount));
-    EditorTabs->setCurrentIndex(tabCount);
-
-    //connections so that we know when something has been changed.
-    connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
-    connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
-
-    //connection so we know if addcommand button was pressed.
-    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
-
-    //connection to update drawOn.
-    connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
-
-}
-
-
-/**
- * @brief closes the indecated commandEditor tab.
- * @param index
- */
-void MainWindow::closeTab(int index) {
-    tabCount--;
-    if(tabCount <0){
-        drawOn->clearAll();
-        editors.clear();
-        currentEditor = -1;
-    }
-    EditorTabs->removeTab(index);
-}
-
 /**
  * @brief removes all project specific variables and clears away
- * tabs and lists.
+ * lists.
  */
 void MainWindow::cleanUp(){
-    EditorTabs->clear();
-    tabCount = -1;
-    untitledCount = 0;
-    currentEditor = -1;
     this->commandView->list->clear();
-    editors.clear();
+    commandView->editors.clear();
     this->fileChanged = false;
     this->saved = false;
     this->setWindowTitle("Untitled");
@@ -347,13 +245,11 @@ void MainWindow::cleanUp(){
     interpreter->clear();
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
-       QDir("ProjectFiles/Temp").removeRecursively();
+        QDir("ProjectFiles/Temp").removeRecursively();
     }
     drawOn->clearAll();
     emit sendSaved(false);
-
 }
-
 
 /**
  * @brief slot that sets fileChanged to true
@@ -361,7 +257,6 @@ void MainWindow::cleanUp(){
 void MainWindow::fileChangedTrue(){
     fileChanged = true;
 }
-
 
 /**
  * @brief slot for a new project
@@ -398,18 +293,6 @@ void MainWindow::on_actionNew_triggered()
 }
 
 /**
- * @brief slot for adding a command not shown in list
- */
-void MainWindow::on_pushButton_clicked()
-{
-
-    if(GuiLoadSave::loadExternalFile(projectName,this->commandView->list)){
-        this->fileChanged = true;
-    }
-
-}
-
-/**
  * @brief slot for starting or continuing painting.
  */
 void MainWindow::on_actionRun_triggered()
@@ -427,9 +310,6 @@ void MainWindow::on_actionRun_triggered()
         interpreter->beginPaintingCommands(this->commandView->list, 0);
 
     }
-
-
-
 }
 
 /**
@@ -441,31 +321,29 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
     //means command is over.
     if(x == -10 && y == -10){
         if(pointCount >= 3){
-           CommandEditor *temp = editors.at(currentEditor);
-           temp->add_Command_Externally();
-           return;
+            CommandEditor *temp = commandView->currentEditor;
+            temp->add_Command_Externally();
+            return;
         }else{
             drawOn->clearAll();
             return;
         }
     }
     if(pointCount == 1){
-        this->on_actionDraw_Point_Map_triggered();
+        commandView->MakeEditor();
     }
-    CommandEditor *temp = editors.at(currentEditor);
+    CommandEditor *temp = commandView->currentEditor;
     if(pointCount > 2){
         temp->Add_Point_Clicked();
     }
     temp->set_Point_At(pointCount, x, y);
-
 }
 
 void MainWindow::noticeCommandAdded(int index){
-    if(index == (tabCount+1) || index == -10){
+    if(index == -10){
         drawOn->clearAll();
     }
 }
-
 
 void MainWindow::on_actionStop_triggered()
 {
@@ -474,7 +352,6 @@ void MainWindow::on_actionStop_triggered()
     ui->actionPrevious->setDisabled(true);
     ui->actionNext->setDisabled(true);
     interpreter->stopPaintingCommands();
-
 }
 
 void MainWindow::on_actionPause_triggered()
@@ -487,31 +364,10 @@ void MainWindow::on_actionNext_triggered()
     interpreter->stepForwardCommands();
 }
 
-
-
 void MainWindow::on_actionPrevious_triggered()
 {
     interpreter->stepBackwardCommands();
 
-}
-
-void MainWindow::tabChanged(int index){
-   if(index >= 0){
-       currentEditor = index;
-       if(editors.size() > (unsigned)currentEditor){
-           CommandEditor *temp = editors.at(currentEditor);
-           temp->InfoChanged();
-       }else{
-           exit(1);
-       }
-
-   }
-
-}
-
-void MainWindow::callUpdate(QString fileName,QString *ProjectName, CommandEditor* loadedEditor) {
-    GuiLoadSave::updateCommandEditor(fileName,ProjectName,loadedEditor);
-    EditorTabs->setTabText(EditorTabs->currentIndex(),fileName);
 }
 
 /**
@@ -534,18 +390,18 @@ void MainWindow::closeEvent(QCloseEvent *event){
         case QMessageBox::Save:
 
             if(saved){
-            MainWindow::on_actionSave_triggered();
+                MainWindow::on_actionSave_triggered();
             }else{
                 MainWindow::on_actionSave_As_triggered();
             }
             if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
+                QDir("ProjectFiles/Temp").removeRecursively();
             }
             event->accept();
             break;
         case QMessageBox::Discard:
             if(QDir("ProjectFiles/Temp").exists()){
-               QDir("ProjectFiles/Temp").removeRecursively();
+                QDir("ProjectFiles/Temp").removeRecursively();
             }
             event->accept();
             break;
@@ -562,14 +418,13 @@ void MainWindow::closeEvent(QCloseEvent *event){
     commandView->close();
 }
 
-void MainWindow::on_actionColors_exe_triggered()
-{
-    QProcess::execute("colors/Release/GunnarColorRunner.exe");
+void MainWindow::ConnectEditor(CommandEditor* editor) {
+    //connection so that we know when something has been changed.
+    connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
+
+    //connection so we know if addcommand button was pressed.
+    connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
+
+    //connection to update drawOn.
+    connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
 }
-
-void MainWindow::on_actionCapture_exe_triggered()
-{
-    QProcess::execute("capture/Release/capture.exe");
-
-}
-
