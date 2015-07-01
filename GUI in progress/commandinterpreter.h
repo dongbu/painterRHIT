@@ -2,10 +2,13 @@
 #define COMMANDINTERPRETER_H
 
 #include "painter.h"
+#include "CytonController.h"
 #include <QListWidget>
 #include <QThread>
 #include <QTimer>
 #include <vector>
+
+
 
 class CommandInterpreter : public QObject
 {
@@ -29,11 +32,12 @@ private:
     Painter *picasso;
     QString projectName;
     bool continuePainting;
-    bool stopped;
+    bool stopped, connected, prevContinuous;
     QTimer updateTimer;
     std::vector<int> x1,x2,y1,y2;
     int currentPos, startPos;
     std::vector<QString> colorList, styleList;
+	CytonController *bender;
 
     void drawUntilCommand(int stopPos);
     void buildPointVectors(QListWidget* widget);

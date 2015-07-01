@@ -72,7 +72,7 @@ protected:
     void closeEvent(QCloseEvent *);
 
 signals:
-    sendSaved(bool saved);
+	void sendSaved(bool saved);
 
 };
 

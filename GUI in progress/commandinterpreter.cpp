@@ -1,7 +1,11 @@
 #include "commandinterpreter.h"
+#include <opencv2/opencv.hpp>
 #include "math.h"
 #include <QFile>
 #include <QXmlStreamWriter>
+#include "windows.h"
+#include "stdio.h"
+#include <iostream>
 
 CommandInterpreter::CommandInterpreter(QString projectName)
 {
@@ -14,7 +18,21 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 
     startPos = 0;
     currentPos = 0;
-    //painter work//
+
+	//temporary robot work//
+	bender = new CytonController();
+	connected = bender->connect();
+	prevContinuous = false;
+
+	//temporary robot work//
+
+	//temporary write things//
+	AllocConsole();
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+	printf("Debugging Window:\n");
+	//temporary write things//
 }
 
 /**
@@ -28,6 +46,9 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
 
     if(stopped){
         CommandInterpreter::buildPointVectors(widget);
+		if (connected){
+			bender->go_home(1);
+		}
         stopped = false;
     }
     if(!updateTimer.isActive()){
@@ -40,9 +61,37 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
 
 void CommandInterpreter::sendCommand(){
     if(currentPos < x1.size()){
-        picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
-        currentPos++;
+		picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
+		if (connected){
+			bool continuous = false;
+			if (currentPos < (x1.size() - 1)){
+				if (x1.at(currentPos + 1) == x2.at(currentPos) && y1.at(currentPos + 1) == y2.at(currentPos)){
+					continuous = true;
+				}
+				printf("x1: %d\n",x1.at(currentPos + 1));
+				printf("x2: %d\n", x2.at(currentPos));
+				printf("y1: %d\n", y1.at(currentPos + 1));
+				printf("y2: %d\n", y2.at(currentPos));
+				printf("if x1 and x2 match as well as y1 and y2, then continuous should be true\n");
+
+				if (continuous){
+					printf("continuous");
+				}
+				else{
+					printf("not continuous");
+				}
+
+			}
+
+			bender->traceLine(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), continuous, prevContinuous);
+			prevContinuous = continuous;
+		}
+		currentPos++;
+			
     }else{
+		if (connected){
+			bender->go_home(0);
+		}
         updateTimer.stop();
         currentPos = x1.size();
         stopped = true;
@@ -60,6 +109,9 @@ void CommandInterpreter::stopPaintingCommands(){
     currentPos = 0;
     picasso->raise();
     picasso->clearPainter();
+	if (connected){
+		bender->go_home(0);
+	}
 }
 
 /**
@@ -79,7 +131,12 @@ void CommandInterpreter::stepForwardCommands(){
     CommandInterpreter::pausePaintingCommands();
     picasso->raise();
     if(currentPos < x1.size()){
-        stopped = false;
+        
+		if (connected){
+			if (stopped){bender->go_home(1);}
+			bender->traceLine(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), false, false);
+		}
+		stopped = false;
         picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
         currentPos++;
     }
@@ -234,3 +291,4 @@ void CommandInterpreter::addPointsFromFile(QString fileName){
 void CommandInterpreter::clear(){
     picasso->clearPainter();
 }
+

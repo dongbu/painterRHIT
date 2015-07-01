@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     commandinterpreter.cpp \
     drawonwidget.cpp \
     commandviewer.cpp \
-    commandeditor.cpp
+    commandeditor.cpp \
+    CytonController.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     commandinterpreter.h \
     drawonwidget.h \
     commandviewer.h \
-    commandeditor.h
+    commandeditor.h \
+    CytonController.h
 
 FORMS    += mainwindow.ui \
     painter.ui \

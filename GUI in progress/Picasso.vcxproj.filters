@@ -46,17 +46,20 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{2bc615fc-e2a0-4977-a22b-7d43239ee134}</UniqueIdentifier>
+      <UniqueIdentifier>{167f0337-cc4f-4f88-b109-7187fb4e62d0}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{e9e449fd-c8fd-4896-abf6-c6444e072d9f}</UniqueIdentifier>
+      <UniqueIdentifier>{27377e62-b20e-48fc-b049-03ab6e791de3}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CytonController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="commandeditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,6 +125,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CytonController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <CustomBuild Include="commandeditor.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -143,8 +149,23 @@
     <CustomBuild Include="painter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <ClInclude Include="GeneratedFiles\ui_commandeditor.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_commandviewer.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_painter.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="commandeditor.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="commandviewer.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -204,17 +225,6 @@
     <None Include="Storage\stop.png">
       <Filter>Resource Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_commandviewer.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_painter.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon Storage\Circle.png">

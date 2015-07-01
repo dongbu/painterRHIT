@@ -15,7 +15,7 @@ GuiLoadSave::GuiLoadSave()
  * @param CommandList
  * @return boolean for success
  */
-boolean GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEditor, QListWidget *CommandList, boolean commandAdded){
+bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEditor, QListWidget *CommandList, bool commandAdded){
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 
@@ -277,7 +277,7 @@ QString GuiLoadSave::saveAsProject(){
  * @param newFolder
  * @return true if successful
  */
-boolean GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
+bool GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
 
     //iterator
     QDirIterator it("ProjectFiles/" + prevFolder);
@@ -309,7 +309,7 @@ boolean GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
  * @param CommandList
  * @return true if successful
  */
-boolean GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandList){
+bool GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandList){
     //file directory
     QFileDialog loadDirectory;
     loadDirectory.setDirectory("ProjectFiles");

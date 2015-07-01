@@ -13,16 +13,12 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
-#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -44,17 +40,7 @@ public:
     QAction *actionPause;
     QAction *actionNext;
     QAction *actionPrevious;
-    QAction *actionColors_exe;
-    QAction *actionCapture_exe;
     QWidget *centralWidget;
-    QWidget *verticalLayoutWidget;
-    QVBoxLayout *EditorTabLayout;
-    QLabel *Command_Editor;
-    QPushButton *pushButton;
-    QFrame *line;
-    QFrame *line_3;
-    QFrame *line_4;
-    QFrame *line_5;
     QWidget *widget;
     QStatusBar *statusBar;
     QToolBar *GeneralCommands;
@@ -64,13 +50,12 @@ public:
     QMenu *menuNew_Window;
     QMenu *menuDraw_Commands;
     QMenu *menuDebugger;
-    QMenu *menuMisc_file_exe_s;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1680, 848);
+        MainWindow->resize(964, 848);
         actionOpen = new QAction(MainWindow);
         actionOpen->setObjectName(QStringLiteral("actionOpen"));
         QIcon icon;
@@ -139,56 +124,11 @@ public:
         QIcon icon12;
         icon12.addFile(QStringLiteral(":/Icon Storage/previous.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPrevious->setIcon(icon12);
-        actionColors_exe = new QAction(MainWindow);
-        actionColors_exe->setObjectName(QStringLiteral("actionColors_exe"));
-        actionCapture_exe = new QAction(MainWindow);
-        actionCapture_exe->setObjectName(QStringLiteral("actionCapture_exe"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        verticalLayoutWidget = new QWidget(centralWidget);
-        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(10, 10, 571, 351));
-        EditorTabLayout = new QVBoxLayout(verticalLayoutWidget);
-        EditorTabLayout->setSpacing(6);
-        EditorTabLayout->setContentsMargins(11, 11, 11, 11);
-        EditorTabLayout->setObjectName(QStringLiteral("EditorTabLayout"));
-        EditorTabLayout->setContentsMargins(0, 0, 0, 0);
-        Command_Editor = new QLabel(verticalLayoutWidget);
-        Command_Editor->setObjectName(QStringLiteral("Command_Editor"));
-        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(Command_Editor->sizePolicy().hasHeightForWidth());
-        Command_Editor->setSizePolicy(sizePolicy);
-
-        EditorTabLayout->addWidget(Command_Editor);
-
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(10, 650, 131, 23));
-        line = new QFrame(centralWidget);
-        line->setObjectName(QStringLiteral("line"));
-        line->setGeometry(QRect(620, 10, 20, 751));
-        line->setFrameShape(QFrame::VLine);
-        line->setFrameShadow(QFrame::Sunken);
-        line_3 = new QFrame(centralWidget);
-        line_3->setObjectName(QStringLiteral("line_3"));
-        line_3->setGeometry(QRect(630, 0, 1001, 20));
-        line_3->setFrameShape(QFrame::HLine);
-        line_3->setFrameShadow(QFrame::Sunken);
-        line_4 = new QFrame(centralWidget);
-        line_4->setObjectName(QStringLiteral("line_4"));
-        line_4->setGeometry(QRect(1620, 10, 20, 751));
-        line_4->setFrameShape(QFrame::VLine);
-        line_4->setFrameShadow(QFrame::Sunken);
-        line_5 = new QFrame(centralWidget);
-        line_5->setObjectName(QStringLiteral("line_5"));
-        line_5->setGeometry(QRect(630, 750, 1001, 20));
-        line_5->setFrameShape(QFrame::HLine);
-        line_5->setFrameShadow(QFrame::Sunken);
         widget = new QWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(630, 10, 1000, 750));
+        widget->setGeometry(QRect(10, 10, 901, 750));
         widget->setCursor(QCursor(Qt::CrossCursor));
         MainWindow->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(MainWindow);
@@ -205,15 +145,13 @@ public:
         MainWindow->addToolBar(Qt::TopToolBarArea, DebugFunctions);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1680, 26));
+        menuBar->setGeometry(QRect(0, 0, 964, 26));
         menuNew_Window = new QMenu(menuBar);
         menuNew_Window->setObjectName(QStringLiteral("menuNew_Window"));
         menuDraw_Commands = new QMenu(menuBar);
         menuDraw_Commands->setObjectName(QStringLiteral("menuDraw_Commands"));
         menuDebugger = new QMenu(menuBar);
         menuDebugger->setObjectName(QStringLiteral("menuDebugger"));
-        menuMisc_file_exe_s = new QMenu(menuBar);
-        menuMisc_file_exe_s->setObjectName(QStringLiteral("menuMisc_file_exe_s"));
         MainWindow->setMenuBar(menuBar);
 
         GeneralCommands->addAction(actionOpen);
@@ -233,7 +171,6 @@ public:
         menuBar->addAction(menuNew_Window->menuAction());
         menuBar->addAction(menuDraw_Commands->menuAction());
         menuBar->addAction(menuDebugger->menuAction());
-        menuBar->addAction(menuMisc_file_exe_s->menuAction());
         menuNew_Window->addAction(actionOpen);
         menuNew_Window->addAction(actionSave);
         menuNew_Window->addAction(actionSave_As);
@@ -247,8 +184,6 @@ public:
         menuDebugger->addAction(actionPause);
         menuDebugger->addAction(actionNext);
         menuDebugger->addAction(actionPrevious);
-        menuMisc_file_exe_s->addAction(actionColors_exe);
-        menuMisc_file_exe_s->addAction(actionCapture_exe);
 
         retranslateUi(MainWindow);
 
@@ -291,17 +226,12 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPrevious->setToolTip(QApplication::translate("MainWindow", "undo last draw", 0));
 #endif // QT_NO_TOOLTIP
-        actionColors_exe->setText(QApplication::translate("MainWindow", "Colors.exe", 0));
-        actionCapture_exe->setText(QApplication::translate("MainWindow", "Capture.exe", 0));
-        Command_Editor->setText(QApplication::translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command Editor</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "Add External Command", 0));
         GeneralCommands->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
         DrawFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
         DebugFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));
-        menuMisc_file_exe_s->setTitle(QApplication::translate("MainWindow", "Misc. file.exe's", 0));
     } // retranslateUi
 
 };

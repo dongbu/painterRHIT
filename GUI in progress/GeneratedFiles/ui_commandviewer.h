@@ -32,6 +32,7 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QListWidget *listWidget;
     QVBoxLayout *verticalLayout_2;
+    QPushButton *pushButton;
     QPushButton *EditCommand;
     QPushButton *DeleteCommand;
     QPushButton *MoveUp;
@@ -41,10 +42,10 @@ public:
     {
         if (CommandViewer->objectName().isEmpty())
             CommandViewer->setObjectName(QStringLiteral("CommandViewer"));
-        CommandViewer->resize(592, 243);
+        CommandViewer->resize(592, 277);
         layoutWidget = new QWidget(CommandViewer);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 10, 571, 223));
+        layoutWidget->setGeometry(QRect(10, 10, 571, 258));
         CommandListLayout = new QVBoxLayout(layoutWidget);
         CommandListLayout->setObjectName(QStringLiteral("CommandListLayout"));
         CommandListLayout->setContentsMargins(0, 0, 0, 0);
@@ -67,6 +68,11 @@ public:
 
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        pushButton = new QPushButton(layoutWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+
+        verticalLayout_2->addWidget(pushButton);
+
         EditCommand = new QPushButton(layoutWidget);
         EditCommand->setObjectName(QStringLiteral("EditCommand"));
 
@@ -103,6 +109,7 @@ public:
     {
         CommandViewer->setWindowTitle(QApplication::translate("CommandViewer", "Form", 0));
         Command_List_Label->setText(QApplication::translate("CommandViewer", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
+        pushButton->setText(QApplication::translate("CommandViewer", "Add", 0));
         EditCommand->setText(QApplication::translate("CommandViewer", "Edit", 0));
         DeleteCommand->setText(QApplication::translate("CommandViewer", "Delete", 0));
         MoveUp->setText(QApplication::translate("CommandViewer", "Move Up", 0));
