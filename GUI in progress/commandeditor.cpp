@@ -18,6 +18,7 @@ CommandEditor::CommandEditor(QWidget *parent) :
     this->ConnectButtons();
     this->name = "untitled";
     this->commandAdded = false;
+    this->setWindowTitle("Command");
 
     connect(this,SIGNAL(signal_Info_Changed()),this,SLOT(InfoChanged()));
     connect(Line_Color,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
@@ -73,6 +74,8 @@ void CommandEditor::BuildEditor() {
     HolderHolder->addRow(ButtonWidg);
 
     this->CommandEditorWidget = HolderWidg;
+
+    this->move(0,0);
 }
 
 

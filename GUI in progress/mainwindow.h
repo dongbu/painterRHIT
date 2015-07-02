@@ -54,6 +54,7 @@ private slots:
     void on_actionNext_triggered();
     void on_actionPrevious_triggered();
     void ConnectEditor(CommandEditor* editor);
+	void on_actionConnect_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -73,6 +74,7 @@ protected:
 
 signals:
 	void sendSaved(bool saved);
+    void makeConnection(QString name);
 
 };
 

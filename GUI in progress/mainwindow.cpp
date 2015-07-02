@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "QDebug.h"
+#include <QRadioButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionStop->setDisabled(true);
     ui->actionNext->setDisabled(true);
     //debug button work//
+
+    //robot connection work//
+    connect(this,SIGNAL(makeConnection(QString)),interpreter,SLOT(beginConnecting(QString)));
+    //robot connection work//
+
+    this->move(700, 100);
 }
 
 /**
@@ -427,4 +434,38 @@ void MainWindow::ConnectEditor(CommandEditor* editor) {
 
     //connection to update drawOn.
     connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
+}
+
+void MainWindow::on_actionConnect_triggered()
+{
+    QMessageBox config;
+    config.setWindowTitle("Configure");
+	config.setText("Configure");
+	config.setInformativeText("ideally load config file here");
+	QLayout *lay = config.layout();
+    QRadioButton *cyton = new QRadioButton("Cyton");
+    QRadioButton *ABB = new QRadioButton("ABB");
+	lay->addWidget(cyton);
+	lay->addWidget(ABB);
+	QPushButton *connectButton = config.addButton(tr("Connect"), QMessageBox::ActionRole);
+	QPushButton *abortButton = config.addButton(QMessageBox::Abort);
+	config.setVisible(true);
+	config.exec();
+
+	if (config.clickedButton() == connectButton){
+		printf("connecting to....\n");
+		if (cyton->isChecked()){
+			printf("cyton \n");
+            emit makeConnection("cyton");
+		}
+		else if (ABB->isChecked()){
+			printf("ABB \n");
+            emit makeConnection("ABB");
+		}
+
+	}
+    else if(config.clickedButton() == abortButton){
+		printf("do nothing\n");
+	}
+
 }

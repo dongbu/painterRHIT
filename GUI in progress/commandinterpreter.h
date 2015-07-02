@@ -28,6 +28,9 @@ public:
 private slots:
     void sendCommand();
 
+public slots:
+    void beginConnecting(QString robot);
+
 private:
     Painter *picasso;
     QString projectName;

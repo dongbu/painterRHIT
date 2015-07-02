@@ -20,8 +20,6 @@ CommandInterpreter::CommandInterpreter(QString projectName)
     currentPos = 0;
 
 	//temporary robot work//
-	bender = new CytonController();
-	connected = bender->connect();
 	prevContinuous = false;
 
 	//temporary robot work//
@@ -290,5 +288,14 @@ void CommandInterpreter::addPointsFromFile(QString fileName){
  */
 void CommandInterpreter::clear(){
     picasso->clearPainter();
+}
+
+void CommandInterpreter::beginConnecting(QString robot){
+    if(robot == "cyton"){
+        bender = new CytonController();
+        connected = bender->connect();
+    }else if(robot == "ABB"){
+        printf("connect to ABB here");
+    }
 }
 

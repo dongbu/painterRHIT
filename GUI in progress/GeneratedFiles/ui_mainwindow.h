@@ -40,6 +40,7 @@ public:
     QAction *actionPause;
     QAction *actionNext;
     QAction *actionPrevious;
+    QAction *actionConnect;
     QWidget *centralWidget;
     QWidget *widget;
     QStatusBar *statusBar;
@@ -50,6 +51,7 @@ public:
     QMenu *menuNew_Window;
     QMenu *menuDraw_Commands;
     QMenu *menuDebugger;
+    QMenu *menuRobot;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -124,6 +126,8 @@ public:
         QIcon icon12;
         icon12.addFile(QStringLiteral(":/Icon Storage/previous.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPrevious->setIcon(icon12);
+        actionConnect = new QAction(MainWindow);
+        actionConnect->setObjectName(QStringLiteral("actionConnect"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         widget = new QWidget(centralWidget);
@@ -145,13 +149,15 @@ public:
         MainWindow->addToolBar(Qt::TopToolBarArea, DebugFunctions);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 964, 26));
+        menuBar->setGeometry(QRect(0, 0, 964, 21));
         menuNew_Window = new QMenu(menuBar);
         menuNew_Window->setObjectName(QStringLiteral("menuNew_Window"));
         menuDraw_Commands = new QMenu(menuBar);
         menuDraw_Commands->setObjectName(QStringLiteral("menuDraw_Commands"));
         menuDebugger = new QMenu(menuBar);
         menuDebugger->setObjectName(QStringLiteral("menuDebugger"));
+        menuRobot = new QMenu(menuBar);
+        menuRobot->setObjectName(QStringLiteral("menuRobot"));
         MainWindow->setMenuBar(menuBar);
 
         GeneralCommands->addAction(actionOpen);
@@ -171,6 +177,7 @@ public:
         menuBar->addAction(menuNew_Window->menuAction());
         menuBar->addAction(menuDraw_Commands->menuAction());
         menuBar->addAction(menuDebugger->menuAction());
+        menuBar->addAction(menuRobot->menuAction());
         menuNew_Window->addAction(actionOpen);
         menuNew_Window->addAction(actionSave);
         menuNew_Window->addAction(actionSave_As);
@@ -184,6 +191,7 @@ public:
         menuDebugger->addAction(actionPause);
         menuDebugger->addAction(actionNext);
         menuDebugger->addAction(actionPrevious);
+        menuRobot->addAction(actionConnect);
 
         retranslateUi(MainWindow);
 
@@ -226,12 +234,14 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPrevious->setToolTip(QApplication::translate("MainWindow", "undo last draw", 0));
 #endif // QT_NO_TOOLTIP
+        actionConnect->setText(QApplication::translate("MainWindow", "Connect", 0));
         GeneralCommands->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
         DrawFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
         DebugFunctions->setWindowTitle(QApplication::translate("MainWindow", "toolBar_2", 0));
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuDebugger->setTitle(QApplication::translate("MainWindow", "Debugger", 0));
+        menuRobot->setTitle(QApplication::translate("MainWindow", "Robot", 0));
     } // retranslateUi
 
 };

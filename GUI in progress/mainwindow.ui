@@ -82,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>964</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuNew_Window">
@@ -113,9 +113,16 @@
     <addaction name="actionNext"/>
     <addaction name="actionPrevious"/>
    </widget>
+   <widget class="QMenu" name="menuRobot">
+    <property name="title">
+     <string>Robot</string>
+    </property>
+    <addaction name="actionConnect"/>
+   </widget>
    <addaction name="menuNew_Window"/>
    <addaction name="menuDraw_Commands"/>
    <addaction name="menuDebugger"/>
+   <addaction name="menuRobot"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -268,6 +275,11 @@
    </property>
    <property name="toolTip">
     <string>undo last draw</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect</string>
    </property>
   </action>
  </widget>

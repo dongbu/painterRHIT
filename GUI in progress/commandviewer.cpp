@@ -16,6 +16,8 @@ CommandViewer::CommandViewer(QWidget *parent) :
 
     ui->pushButton->setEnabled(false);
     mainClosed = false;
+
+    this->move(0, 500);
 }
 
 CommandViewer::~CommandViewer()
@@ -125,6 +127,8 @@ int CommandViewer::PopulateCommandEditor(QString fileName){
 
     //Filling in editor's points
     QList<QLineEdit *> lineEdits = toPopulate->CommandEditorWidget->findChildren<QLineEdit *>();
+
+    lineEdits.first()->setDisabled(true);
 
     QString tempProjectName;
     if(projectName->isEmpty() || projectName->isNull()){
