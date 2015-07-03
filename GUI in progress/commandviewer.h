@@ -10,6 +10,7 @@
 #include <QXmlStreamReader>
 #include <QDebug.h>
 #include <QMainWindow>
+#include "commandinterpreter.h"
 
 namespace Ui {
 class CommandViewer;
@@ -24,12 +25,17 @@ public:
     ~CommandViewer();
     QListWidget *list;
     std::vector<CommandEditor*> editors;
+    void clear();
 
     int PopulateCommandEditor(QString fileName);
     void setProjectName(QString *projectName);
     void setMainClosed(bool closed);
     void MakeEditor();
     CommandEditor *currentEditor;
+    CommandInterpreter *interpreter;
+	bool *saved;
+	bool fileChanged;
+
 
 private:
     void ConnectToolBar();
@@ -60,6 +66,7 @@ signals:
     void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
     void Add_External_Command();
     void EmitConnectEditor(CommandEditor*);
+	void MustSave();
 
 protected:
     void closeEvent(QCloseEvent *);

@@ -47,6 +47,7 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void fileChangedTrue();
+	void fileChangedFalse();
     void on_actionNew_triggered();
     void noticeCommandAdded(int index);
     void ConnectEditor(CommandEditor* editor);
@@ -59,7 +60,6 @@ private:
     bool saved;
     QMessageBox alert;
     bool fileChanged;
-    CommandInterpreter *interpreter;
     drawOnWidget *drawOn;
     CommandViewer *commandView;
     QComboBox *colorBox;

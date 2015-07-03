@@ -10,6 +10,7 @@ QMainWindow(parent),
     ui->setupUi(this);
     list = ui->listWidget;
 
+    //List Set-Up
     ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
     ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
     ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
@@ -17,9 +18,14 @@ QMainWindow(parent),
     ui->AddCommand->setEnabled(false);
     mainClosed = false;
 
+    //Simulator Set-Up
+    interpreter = new CommandInterpreter("");
+    this->Stop_triggered();
     this->ConnectToolBar();
     this->move(0, 500);
     this->show();
+	this->saved = false;
+	this->fileChanged = false;
 }
 
 /**
@@ -38,11 +44,11 @@ void CommandViewer::ConnectToolBar() {
  */
 void CommandViewer::Stop_triggered()
 {
-//    ui->actionPause->setDisabled(true);
-//    ui->actionStop->setDisabled(true);
-//    ui->actionPrevious->setDisabled(true);
-//    ui->actionNext->setDisabled(true);
-//    interpreter->stopPaintingCommands();
+    ui->Pause->setDisabled(true);
+    ui->Stop->setDisabled(true);
+    ui->StepBackwards->setDisabled(true);
+    ui->StepForwards->setDisabled(true);
+    interpreter->stopPaintingCommands();
 }
 
 /**
@@ -50,7 +56,7 @@ void CommandViewer::Stop_triggered()
  */
 void CommandViewer::Pause_triggered()
 {
-//    interpreter->pausePaintingCommands();
+    interpreter->pausePaintingCommands();
 }
 
 /**
@@ -58,7 +64,7 @@ void CommandViewer::Pause_triggered()
  */
 void CommandViewer::StepForward_triggered()
 {
-//    interpreter->stepForwardCommands();
+    interpreter->stepForwardCommands();
 }
 
 /**
@@ -66,7 +72,7 @@ void CommandViewer::StepForward_triggered()
  */
 void CommandViewer::StepBackwards_triggered()
 {
-//    interpreter->stepBackwardCommands();
+    interpreter->stepBackwardCommands();
 }
 
 /**
@@ -74,19 +80,22 @@ void CommandViewer::StepBackwards_triggered()
  */
 void CommandViewer::RunFromStart_triggered()
 {
-//    if(fileChanged || !saved){
-//        MainWindow::on_actionSave_triggered();
-//    }
-//    if(saved){
-//        //currently always starts from beginning.
-//        ui->actionPause->setEnabled(true);
-//        ui->actionStop->setEnabled(true);
-//        ui->actionPrevious->setEnabled(true);
-//        ui->actionNext->setEnabled(true);
-//        interpreter->setProjectName(projectName);
-//        interpreter->beginPaintingCommands(this->commandView->list, 0);
+	printf("hit button");
+    if(fileChanged || !saved){
+		printf("saved initiated");
+		emit MustSave();
+    }
+    if(saved){
+		printf("drawing initiated");
+        //currently always starts from beginning.
+        ui->Pause->setEnabled(true);
+        ui->Stop->setEnabled(true);
+        ui->StepBackwards->setEnabled(true);
+        ui->StepForwards->setEnabled(true);
+        interpreter->setProjectName(*projectName);
+        interpreter->beginPaintingCommands(list, 0);
 
-//    }
+    }
 }
 
 CommandViewer::~CommandViewer()
@@ -138,6 +147,7 @@ void CommandViewer::MoveUp_clicked()
 
 void CommandViewer::setProjectName(QString *projectName) {
     this->projectName = projectName;
+    this->interpreter->setProjectName(*projectName);
 }
 
 
@@ -177,6 +187,7 @@ void CommandViewer::Add_Command_Clicked(){
 
 void CommandViewer::fileSaved(bool saved){
     ui->AddCommand->setEnabled(saved);
+	this->saved = &saved;
 }
 
 /**
@@ -209,7 +220,7 @@ int CommandViewer::PopulateCommandEditor(QString fileName){
 
     //load file and set up the reader.
     QFile loadFile;
-    loadFile.setFileName(QString("ProjectFiles/") + tempProjectName+ QString("/") + fileName + QString(".xml"));
+	loadFile.setFileName(QString("ProjectFiles/") + tempProjectName + QString("/") + fileName + QString(".xml"));
     loadFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadFile);
 
@@ -291,11 +302,6 @@ void CommandViewer::MakeEditor()
     editor->setList(list);
     editor->setProjectName(*projectName);
 
-    ////deleting previous editor
-    //if(list->count() > 0) {
-    //    currentEditor->close();
-    //}
-
     //searches through and sets the default name to 1 + the largest.
     editor->setName("PointMap_1");
     QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
@@ -313,4 +319,15 @@ void CommandViewer::MakeEditor()
     currentEditor = editor;
 
     emit EmitConnectEditor(editor);
+}
+
+/**
+ * @brief removes all project specific variables and clears away
+ * lists.
+ */
+void CommandViewer::clear() {
+    this->setProjectName(new QString(""));
+    list->clear();
+    editors.clear();
+    interpreter->clear();
 }

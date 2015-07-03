@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //save work//
     projectName = ""; //"garbage" value
     saved = false;
-    fileChanged = false;
+	this->fileChangedFalse();
     //creates a ProjectFiles folder if one doesn't exist
     if(!QDir(QString("ProjectFiles")).exists()){
         if(!QDir().mkdir(QString("ProjectFiles"))){
@@ -26,11 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(EmitConnectEditor(CommandEditor*)),this,SLOT(ConnectEditor(CommandEditor*)));
+	connect(commandView, (SIGNAL(MustSave())), this, SLOT(on_actionSave_As_triggered));
     //command list//
-
-    //interpreter work//
-    interpreter = new CommandInterpreter("");
-    //interpreter work//
 
     //click to draw work//
     drawOn = new drawOnWidget(ui->widget);
@@ -66,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //line options work//
 
     //robot connection work//
-    connect(this,SIGNAL(makeConnection(QString)),interpreter,SLOT(beginConnecting(QString)));
+    connect(this,SIGNAL(makeConnection(QString)),this->commandView->interpreter,SLOT(beginConnecting(QString)));
     //robot connection work//
 
     this->move(700, 100);
@@ -93,9 +90,9 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
-            interpreter->setProjectName(projectName);
+            commandView->setProjectName(&projectName);
             this->setWindowTitle(projectName);
-            interpreter->setProjectName(projectName);
+            commandView->setProjectName(&projectName);
             ui->actionSave->setEnabled(true);
             //updates the commandEditors.
             foreach(CommandEditor *edits, commandView->editors){
@@ -117,7 +114,7 @@ void MainWindow::on_actionSave_As_triggered()
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
             emit sendSaved(true);
-            fileChanged = false;
+			this->fileChangedFalse();
 
             //moves all files from temp folder into current folder if temp folder exists.  Also deletes temp folder.
             if(QDir("ProjectFiles/Temp").exists()){
@@ -137,10 +134,10 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
-            interpreter->setProjectName(projectName);
+            commandView->setProjectName(&projectName);
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
-            interpreter->setProjectName(projectName);
+            commandView->setProjectName(&projectName);
 
             //updates commandEditors
             foreach(CommandEditor *edits, commandView->editors){
@@ -166,7 +163,7 @@ void MainWindow::on_actionSave_As_triggered()
             if(!GuiLoadSave::copyAllFilesFrom(prevProjectName, projectName)){
                 std::cout << "something went wrong transfering files from " <<prevProjectName.toStdString() << " to " << projectName.toStdString() << std::endl;
             }else{
-                fileChanged = false;
+                this->fileChangedFalse();
             }
         }
     }
@@ -221,7 +218,7 @@ void MainWindow::on_actionOpen_triggered()
 
         projectName = directory.selectedFiles().at(0).split("/").last();
         projectName.chop(4);
-        interpreter->setProjectName(projectName);
+        commandView->setProjectName(&projectName);
         if(!GuiLoadSave::loadCommandListFromFolder(projectName,this->commandView->list)){
             alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
             alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
@@ -230,7 +227,7 @@ void MainWindow::on_actionOpen_triggered()
             this->setWindowTitle(projectName);
             saved=true;
             ui->actionSave->setEnabled(true);
-            interpreter->setProjectName(projectName);
+            commandView->setProjectName(&projectName);
             emit sendSaved(true);
         }
     }
@@ -250,7 +247,7 @@ void MainWindow::on_actionSave_triggered()
         alert.setInformativeText("Failed To Save " + projectName);
         alert.show();
     }
-    fileChanged = false;
+	this->fileChangedFalse();
     emit sendSaved(true);
 }
 
@@ -259,15 +256,10 @@ void MainWindow::on_actionSave_triggered()
  * lists.
  */
 void MainWindow::cleanUp(){
-    this->commandView->list->clear();
-    commandView->editors.clear();
-    this->fileChanged = false;
+	this->fileChangedFalse();
     this->saved = false;
     this->setWindowTitle("Untitled");
     this->projectName = "";
-    interpreter->setProjectName(projectName);
-    interpreter->setProjectName("");
-    interpreter->clear();
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
         QDir("ProjectFiles/Temp").removeRecursively();
@@ -281,6 +273,15 @@ void MainWindow::cleanUp(){
  */
 void MainWindow::fileChangedTrue(){
     fileChanged = true;
+	this->commandView->fileChanged = true;
+}
+
+/**
+* @brief slot that sets fileChanged to false
+*/
+void MainWindow::fileChangedFalse(){
+	fileChanged = false;
+	this->commandView->fileChanged = false;
 }
 
 /**
