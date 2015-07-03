@@ -14,9 +14,10 @@ public:
     drawOnWidget(QWidget * parent);
     ~drawOnWidget(){}
     void clearAll();
+    CommandEditor* currentEditor;
 
 private:
-    int prevX,prevY,pointCount;
+    int prevX,prevY,pointCount, penWidth;
     QString penColor, penStyle;
     QPen pen;
 

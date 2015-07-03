@@ -28,7 +28,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="GeneralCommands">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -123,6 +122,17 @@
    <addaction name="menuDraw_Commands"/>
    <addaction name="menuDebugger"/>
    <addaction name="menuRobot"/>
+  </widget>
+  <widget class="QToolBar" name="drawingToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionOpen">
    <property name="icon">

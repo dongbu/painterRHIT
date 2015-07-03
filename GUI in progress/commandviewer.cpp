@@ -152,16 +152,22 @@ int CommandViewer::PopulateCommandEditor(QString fileName){
     //get list of comboBoxes
     QList<QComboBox *> comboBoxes = toPopulate->CommandEditorWidget->findChildren<QComboBox *>();
 
+    QList<QSpinBox *> spinBoxes = toPopulate->CommandEditorWidget->findChildren<QSpinBox *>();
+
     //set text for the command name slot.
     lineEdits.at(0)->setText(fileName);
 
     //set the information for both comboboxes.
     foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+        if(i < comboBoxes.length()){
         comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
+        }else{
+            spinBoxes.at(0)->setValue(attr.value().toInt());
+        }
         i++;
     }
 
-    int k = 1;
+    int k = 2;
 
     //keep going until the document is finished.
     while(!reader.isEndDocument()){

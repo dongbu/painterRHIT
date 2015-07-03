@@ -37,7 +37,7 @@ private:
     bool stopped, connected, prevContinuous;
     QTimer updateTimer;
     std::vector<int> x1,x2,y1,y2;
-    int currentPos, startPos;
+    int currentPos, startPos, currentLineWidth;
     std::vector<QString> colorList, styleList;
 	CytonController *bender;
 

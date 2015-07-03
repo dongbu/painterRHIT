@@ -15,7 +15,7 @@ class Painter : public QWidget
 public:
     explicit Painter(QWidget *parent = 0);
     ~Painter();
-    void paintCommand(int startX, int startY, int endX, int endY, QString color, QString lineStyle);
+    void paintCommand(int startX, int startY, int endX, int endY, QString color, QString lineStyle, int lineWidth);
     void clearPainter();
 
 private:

@@ -48,6 +48,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionNext->setDisabled(true);
     //debug button work//
 
+    //line options work//
+	colorBox = new QComboBox();
+	styleBox = new QComboBox();
+	thicknessBox = new QSpinBox();
+    QStringList colors,styles;
+    colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+    styles << "solid" << "dashed" << "dashed dot";
+    colorBox->addItems(colors);
+    styleBox->addItems(styles);
+
+	thicknessBox->setFixedWidth(60);
+    thicknessBox->setMinimum(1);
+    thicknessBox->setMaximum(20);
+    thicknessBox->setSingleStep(1);
+    thicknessBox->setValue(4);
+
+    ui->drawingToolbar->addWidget(colorBox);
+    ui->drawingToolbar->addWidget(styleBox);
+    ui->drawingToolbar->addWidget(thicknessBox);
+    connect(colorBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
+    connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
+    connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
+    //line options work//
+
     //robot connection work//
     connect(this,SIGNAL(makeConnection(QString)),interpreter,SLOT(beginConnecting(QString)));
     //robot connection work//
@@ -343,7 +367,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
     if(pointCount > 2){
         temp->Add_Point_Clicked();
     }
-    temp->set_Point_At(pointCount, x, y);
+    temp->set_Point_At(pointCount + 1, x, y);
 }
 
 void MainWindow::noticeCommandAdded(int index){
@@ -468,4 +492,17 @@ void MainWindow::on_actionConnect_triggered()
 		printf("do nothing\n");
 	}
 
+}
+
+void MainWindow::on_drawing_changed(){
+    CommandEditor *editor = drawOn->currentEditor;
+    printf("-----\n");
+    printf("%i\n",(editor == NULL));
+    printf("----\n");
+    connect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
+    QString color = colorBox->currentText();
+    QString style = styleBox->currentText();
+    int width = thicknessBox->text().toInt();
+    emit sendLineStyles(color,style, width);
+    disconnect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
 }

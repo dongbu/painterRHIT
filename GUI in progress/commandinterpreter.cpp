@@ -18,20 +18,20 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 
     startPos = 0;
     currentPos = 0;
+    currentLineWidth = 0;
 
-	//temporary robot work//
+    //robot work//
 	prevContinuous = false;
 	connected = false;
+    //robot work//
 
-	//temporary robot work//
-
-	//temporary write things//
+    //temporary write things in console//
 	AllocConsole();
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
 	printf("Debugging Window:\n");
-	//temporary write things//
+    //temporary write things in console//
 }
 
 /**
@@ -67,11 +67,6 @@ void CommandInterpreter::sendCommand(){
 				if (x1.at(currentPos + 1) == x2.at(currentPos) && y1.at(currentPos + 1) == y2.at(currentPos)){
 					continuous = true;
 				}
-				printf("x1: %d\n",x1.at(currentPos + 1));
-				printf("x2: %d\n", x2.at(currentPos));
-				printf("y1: %d\n", y1.at(currentPos + 1));
-				printf("y2: %d\n", y2.at(currentPos));
-				printf("if x1 and x2 match as well as y1 and y2, then continuous should be true\n");
 
 				if (continuous){
 					printf("continuous");
@@ -86,7 +81,7 @@ void CommandInterpreter::sendCommand(){
 			prevContinuous = continuous;
 		}
 		else{
-			picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
+            picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos), currentLineWidth);
 		}
 		currentPos++;
 			
@@ -138,7 +133,7 @@ void CommandInterpreter::stepForwardCommands(){
 			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), false, false, currentPos);
 		}
 		else{
-			picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
+            picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos), currentLineWidth);
 		}
 		stopped = false;
         currentPos++;
@@ -169,7 +164,7 @@ void CommandInterpreter::stepBackwardCommands(){
 void CommandInterpreter::drawUntilCommand(int stopPos){
     picasso->clearPainter();
     for(int i = startPos; i < stopPos; i++){
-        picasso->paintCommand(x1.at(i),y1.at(i),x2.at(i),y2.at(i),colorList.at(i),styleList.at(i));
+        picasso->paintCommand(x1.at(i),y1.at(i),x2.at(i),y2.at(i),colorList.at(i),styleList.at(i), currentLineWidth);
     }
 }
 
@@ -233,8 +228,10 @@ void CommandInterpreter::addPointsFromFile(QString fileName){
                 foreach(const QXmlStreamAttribute &attr, reader.attributes()){
                     if(j == 0){
                         currentColor = attr.value().toString();
-                    }else{
+                    }else if(j == 1){
                         currentStyle = attr.value().toString();
+                    }else{
+                        currentLineWidth = attr.value().toInt();
                     }
 
                     j++;
@@ -309,6 +306,6 @@ void CommandInterpreter::beginConnecting(QString robot){
 }
 
 void CommandInterpreter::getInstructed(int current){
-	picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current));
+    picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current), currentLineWidth);
 }
 

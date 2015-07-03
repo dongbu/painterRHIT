@@ -23,6 +23,7 @@ CommandEditor::CommandEditor(QWidget *parent) :
     connect(this,SIGNAL(signal_Info_Changed()),this,SLOT(InfoChanged()));
     connect(Line_Color,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
     connect(Line_Style,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
+    connect(Line_Width,SIGNAL(valueChanged(int)),this,SLOT(InfoChanged()));
 
     ui->verticalLayout->addWidget(this->CommandEditorWidget);
     this->show();    
@@ -38,7 +39,7 @@ CommandEditor::~CommandEditor()
 }
 
 /**
- * @brief This method is designed to create the CommandEditor widget
+ * @brief creates the CommandEditor widget
  * representative of this class and assign it to the appropriate
  * class variable.
  */
@@ -73,6 +74,12 @@ void CommandEditor::BuildEditor() {
     HolderHolder->addRow(scrollArea);
     HolderHolder->addRow(ButtonWidg);
 
+    //hide yo kids, hide yo wife, hide everything
+    Line_Color->setEnabled(false);
+    Line_Width->setEnabled(false);
+    Line_Style->setEnabled(false);
+
+
     this->CommandEditorWidget = HolderWidg;
 
     this->move(0,0);
@@ -82,7 +89,7 @@ void CommandEditor::BuildEditor() {
 
 
 /**
- * @brief This method is designed to create a std. point box, add it to
+ * @brief creates a std. point box, add it to
  * the point vector, and return said point
  */
 void CommandEditor::MakePoint() {
@@ -100,7 +107,7 @@ void CommandEditor::MakePoint() {
 
 
 /**
- * @brief This method is designed to populate a provided layout with the 5
+ * @brief populates a provided layout with the 6
  * input types necessary for controlling the command editor.
  * @param ParameterHolder
  */
@@ -109,6 +116,7 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     Command_Name = new QLineEdit();
     Line_Color = new QComboBox();
     Line_Style = new QComboBox();
+    Line_Width = new QSpinBox();
 
     //forcing command name to be acceptable. Previously, entering only a number as a command name caused crash upon load.
     QRegExp rx("^[A-Za-z][A-Za-z0-9]*");
@@ -118,6 +126,7 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     Command_Name->setFixedSize(200,22);
     Line_Color->setFixedSize(200,22);
     Line_Style->setFixedSize(200,22);
+    Line_Width->setFixedSize(200,22);
 
     //ComboBox Options
     QStringList colors,styles;
@@ -126,10 +135,18 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     Line_Color->addItems(colors);
     Line_Style->addItems(styles);
 
+    //SpinBox Options
+    Line_Width->setFixedWidth(60);
+    Line_Width->setMinimum(1);
+    Line_Width->setMaximum(20);
+    Line_Width->setSingleStep(1);
+    Line_Width->setValue(4);
+
     //adding input lines
     ParameterHolder->addRow("Command Name: ",Command_Name);
     ParameterHolder->addRow("Color: ",Line_Color);
     ParameterHolder->addRow("Style: ",Line_Style);
+    ParameterHolder->addRow("Width",Line_Width);
     MakePoint(); //adding 1st default point
     MakePoint(); //adding 2nd default point
 
@@ -137,7 +154,7 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
 
 
 /**
- * @brief This method is designed to populate a provided layout with the 3
+ * @brief populates a provided layout with the 2
  * buttons necessary for controlling the command editor.
  * @param ButtonHolder
  */
@@ -201,7 +218,7 @@ void CommandEditor::removeExcessLines(){
     int i = 0;
     int linesRemoved = 0;
     foreach(QLineEdit *line, lineEdits){
-        if((line->text() == "" || line->text() == ",") && pointCount > 2 && i >= 1){
+        if((line->text() == "" || line->text() == ",") && pointCount > 2 && i >= 2){
             pointCount --;
             if(PointVec->size() > lineEdits.indexOf(line) - 1){
                 PointVec->erase(PointVec->begin() + lineEdits.indexOf(line) - 1);
@@ -211,6 +228,7 @@ void CommandEditor::removeExcessLines(){
             listToDelete.append(toDelete1);
             lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
             linesRemoved+= 2;
+            printf("hi");
         }
         i++;
     }
@@ -226,14 +244,13 @@ void CommandEditor::removeExcessLines(){
  * @brief Add_Point slot.
  */
 void CommandEditor::Add_Point_Clicked() {
-//    Remove_Point->setDisabled(false);
     MakePoint();
 }
 
 
 
 /**
- * @brief This method is designed to connect the 3 editor buttons to their slots.
+ * @brief This method is designed to connect the 2 editor buttons to their slots.
  */
 void CommandEditor::ConnectButtons() {
     //Connecting button signals/slots
@@ -305,11 +322,19 @@ void CommandEditor::add_Command_Externally(){
  */
 void CommandEditor::set_Point_At(int index, int x, int y){
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-    if(index > 0){
+    if(index > 1){
         lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
     }
 }
 
 void CommandEditor::InfoChanged(){
     emit CommandEditor::sendUpdateToDrawOn(this);
+}
+
+void CommandEditor::updateLineStyles(QString color, QString style, int width){
+    QList<QComboBox *> comboBoxes = this->CommandEditorWidget->findChildren<QComboBox *>();
+    comboBoxes.at(0)->setCurrentText(color);
+    comboBoxes.at(1)->setCurrentText(style);
+    QList<QSpinBox *> spinBoxes = this->CommandEditorWidget->findChildren<QSpinBox *>();
+    spinBoxes.at(0)->setValue(width);
 }
