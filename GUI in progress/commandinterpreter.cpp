@@ -22,6 +22,7 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 	//temporary robot work//
 	prevContinuous = false;
 	connected = false;
+
 	//temporary robot work//
 
 	//temporary write things//
