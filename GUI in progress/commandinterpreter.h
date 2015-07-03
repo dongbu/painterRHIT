@@ -4,7 +4,6 @@
 #include "painter.h"
 #include "CytonController.h"
 #include <QListWidget>
-#include <QThread>
 #include <QTimer>
 #include <vector>
 
@@ -13,7 +12,6 @@
 class CommandInterpreter : public QObject
 {
     Q_OBJECT
-    QThread workerThread;
 
 public:
     CommandInterpreter(QString projectName);
@@ -30,6 +28,7 @@ private slots:
 
 public slots:
     void beginConnecting(QString robot);
+	void getInstructed(int current);
 
 private:
     Painter *picasso;
@@ -45,6 +44,10 @@ private:
     void drawUntilCommand(int stopPos);
     void buildPointVectors(QListWidget* widget);
     void addPointsFromFile(QString fileName);
+
+signals:
+	void tell_go_home(int pos);
+	void send_Pos(double x1, double y1, double x2, double y2, bool continuous, bool prevContinuous, int currentEditor);
 };
 
 #endif // COMMANDINTERPRETER_H

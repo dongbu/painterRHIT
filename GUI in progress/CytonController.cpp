@@ -40,9 +40,8 @@ bool CytonController::connect(){
 		QMessageBox box;
 		box.setText("failed to establish connection to robot");
 		box.setInformativeText("have a nice day");
-		if (box.exec()){
-			return false;
-		}
+		box.exec();
+		return false;
 	}
 }
 
@@ -201,7 +200,7 @@ Point3d CytonController::convert(double x, double y, double z){
 /**
 * @brief tells the robot to trace the path based on pixels.
 */
-bool CytonController::traceLine(double x1, double y1, double x2, double y2, bool continuous, bool prevContinuous){
+bool CytonController::traceLine(double x1, double y1, double x2, double y2, bool continuous, bool prevContinuous, int current){
 
 	double drawHeight = 0;
 	double moveHeight = 0.1;
@@ -231,5 +230,6 @@ bool CytonController::traceLine(double x1, double y1, double x2, double y2, bool
 	if (!net_move(secondPointUp, FRAME_EE_SET)){
 		achieved = false;
 	}
+	emit finishedLine(current);
 	return achieved;
 }

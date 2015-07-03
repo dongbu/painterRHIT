@@ -123,11 +123,14 @@
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\.moc\moc_CytonController.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\.moc\moc_CytonController.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CytonController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <CustomBuild Include="commandeditor.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -161,6 +164,9 @@
     <ClInclude Include="GeneratedFiles\ui_painter.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <CustomBuild Include="CytonController.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="commandeditor.ui">

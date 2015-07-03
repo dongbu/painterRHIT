@@ -21,7 +21,7 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 
 	//temporary robot work//
 	prevContinuous = false;
-
+	connected = false;
 	//temporary robot work//
 
 	//temporary write things//
@@ -45,7 +45,7 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
     if(stopped){
         CommandInterpreter::buildPointVectors(widget);
 		if (connected){
-			bender->go_home(1);
+			emit tell_go_home(1);
 		}
         stopped = false;
     }
@@ -59,7 +59,7 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
 
 void CommandInterpreter::sendCommand(){
     if(currentPos < x1.size()){
-		picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
+		
 		if (connected){
 			bool continuous = false;
 			if (currentPos < (x1.size() - 1)){
@@ -80,22 +80,24 @@ void CommandInterpreter::sendCommand(){
 				}
 
 			}
-
-			bender->traceLine(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), continuous, prevContinuous);
+			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), continuous, prevContinuous, currentPos);
+			
 			prevContinuous = continuous;
+		}
+		else{
+			picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
 		}
 		currentPos++;
 			
     }else{
 		if (connected){
-			bender->go_home(0);
+			emit tell_go_home(0);
 		}
         updateTimer.stop();
         currentPos = x1.size();
         stopped = true;
     }
 }
-
 
 
 /**
@@ -108,7 +110,7 @@ void CommandInterpreter::stopPaintingCommands(){
     picasso->raise();
     picasso->clearPainter();
 	if (connected){
-		bender->go_home(0);
+		emit(tell_go_home(0));
 	}
 }
 
@@ -131,11 +133,13 @@ void CommandInterpreter::stepForwardCommands(){
     if(currentPos < x1.size()){
         
 		if (connected){
-			if (stopped){bender->go_home(1);}
-			bender->traceLine(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), false, false);
+			if (stopped){emit tell_go_home(1);}
+			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), false, false, currentPos);
+		}
+		else{
+			picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos));
 		}
 		stopped = false;
-        picasso->paintCommand(x1.at(currentPos),y1.at(currentPos),x2.at(currentPos),y2.at(currentPos),colorList.at(currentPos),styleList.at(currentPos));
         currentPos++;
     }
 }
@@ -294,8 +298,16 @@ void CommandInterpreter::beginConnecting(QString robot){
     if(robot == "cyton"){
         bender = new CytonController();
         connected = bender->connect();
+		connect(this, SIGNAL(tell_go_home(int)), bender, SLOT(go_home(int)));
+        connect(bender,SIGNAL(finishedLine(int)),this,SLOT(getInstructed(int)));
+        connect(this,SIGNAL(send_Pos(double,double,double,double,bool,bool,int)),bender,SLOT(traceLine(double, double, double, double, bool, bool, int)));
+		
     }else if(robot == "ABB"){
         printf("connect to ABB here");
     }
+}
+
+void CommandInterpreter::getInstructed(int current){
+	picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current));
 }
 
