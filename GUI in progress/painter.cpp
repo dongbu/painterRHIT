@@ -27,7 +27,7 @@ Painter::~Painter()
  * @param color
  * @param lineStyle
  */
-void Painter::paintCommand(int startX, int startY, int endX, int endY, QString color, QString lineStyle){
+void Painter::paintCommand(int startX, int startY, int endX, int endY, QString color, QString lineStyle, int lineWidth){
 
     //make an image to paint to.
     QImage* temp;
@@ -46,7 +46,7 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
     //setup the pen so it looks nice
     pen.setColor(color);
     pen.setStyle(getPenStyle(lineStyle));
-    pen.setWidth(5);
+    pen.setWidth(lineWidth);
     painter.setPen(pen);
 
     //do the actual drawing.

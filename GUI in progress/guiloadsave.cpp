@@ -25,6 +25,13 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEdit
     //gets all the combobox pieces and puts them into an array
     QList<QComboBox *> comboBoxes = CommandEditor->findChildren<QComboBox *>();
 
+    //gets the spinbox with lineWidth information
+    QList<QSpinBox *> spinBoxes = CommandEditor->findChildren<QSpinBox *>();
+    QString lineWidth = spinBoxes.at(0)->text();
+    if(lineWidth == ""){
+        lineWidth = "0";
+    }
+
     //the first object is the filename.  makes sure it is
     QString fileName = lineEdits.at(0)->text();
 
@@ -55,13 +62,14 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEdit
     writer.writeStartElement("Line");
     writer.writeAttribute("color",comboBoxes.at(0)->property("currentText").toString());
     writer.writeAttribute("style", comboBoxes.at(1)->property("currentText").toString());
+    writer.writeAttribute("width",lineWidth);
     writer.writeEndElement();//Line
 
     //deals with pointmap
     writer.writeComment("Point Map Information");
     writer.writeStartElement("PointMap");
     writer.writeAttribute("length",QString::number(lineEdits.count()-1));
-    for(int i = 1; i < lineEdits.count(); i++){
+    for(int i = 2; i < lineEdits.count(); i++){
         QString point = lineEdits.at(i)->text();
         QStringList xy = point.split(',');
         QString xValue = xy.value(0);

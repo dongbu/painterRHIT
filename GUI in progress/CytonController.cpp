@@ -189,7 +189,7 @@ void CytonController::go_home(int pos){
 * @brief converts pixels to actual coordinates.
 */
 Point3d CytonController::convert(double x, double y, double z){
-	const Point3d offset = Point3d(0.0468, -0.3137, 0.13);
+	const Point3d offset = Point3d(0.0468, -0.3137, 0.0625);
 	double scale = 0.0001;
 	double xCoord = x* scale;
 	double yCoord = y*scale;

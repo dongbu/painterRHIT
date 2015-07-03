@@ -11,6 +11,7 @@ drawOnWidget::drawOnWidget(QWidget * parent)
    pointCount = 0;
    penColor = "black";
    penStyle = "solid";
+   penWidth = 4;
 }
 
 /**
@@ -77,7 +78,7 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
         break;
     }
 
-    pen.setWidth(5);
+    pen.setWidth(penWidth);
     painter.setPen(pen);
 
 
@@ -129,15 +130,18 @@ void drawOnWidget::clearAll(){
     this->clear();
     this->penColor = "black";
     this->penStyle = Qt::SolidLine;
+    this->penWidth = 4;
 }
 
 void drawOnWidget::updateToEditor(CommandEditor *editor){
     clearAll();
     QList<QComboBox *> comboBoxes = editor->CommandEditorWidget->findChildren<QComboBox *>();
     QList<QLineEdit *> lineEdits = editor->CommandEditorWidget->findChildren<QLineEdit *>();
+    QList<QSpinBox *> spinBoxes = editor->CommandEditorWidget->findChildren<QSpinBox *>();
 
     penColor = comboBoxes.at(0)->currentText();
     penStyle = comboBoxes.at(1)->currentText();
+    penWidth = spinBoxes.at(0)->text().toInt();
 
     foreach(QLineEdit *line, lineEdits){
         QString s = line->text();
@@ -149,4 +153,5 @@ void drawOnWidget::updateToEditor(CommandEditor *editor){
         }
 
     }
+    this->currentEditor = editor;
 }

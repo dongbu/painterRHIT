@@ -24,6 +24,7 @@
 #include <QListWidget>
 #include <QFileDialog>
 #include <QThread>
+#include <qspinbox.h>
 
 
 namespace Ui {
@@ -50,6 +51,7 @@ private slots:
     void noticeCommandAdded(int index);
     void ConnectEditor(CommandEditor* editor);
 	void on_actionConnect_triggered();
+    void on_drawing_changed();
 
 private:
     Ui::MainWindow *ui;
@@ -60,6 +62,9 @@ private:
     CommandInterpreter *interpreter;
     drawOnWidget *drawOn;
     CommandViewer *commandView;
+    QComboBox *colorBox;
+    QComboBox *styleBox;
+    QSpinBox *thicknessBox;
 
     void cleanUp();
     void startPainting(QListWidget* widget, int index);
@@ -70,6 +75,7 @@ protected:
 signals:
 	void sendSaved(bool saved);
     void makeConnection(QString name);
+    void sendLineStyles(QString color, QString style, int width);
 
 };
 

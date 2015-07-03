@@ -1,5 +1,4 @@
-#include "commandviewer.h"
-#include "ui_commandviewer.h"
+#include "commandviewerOld.h"
 #include <QToolBar>
 #include <QAction>
 
@@ -13,11 +12,11 @@ QMainWindow(parent),
     ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
     ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
     ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
-    ui->AddCommand->connect(ui->AddCommand,SIGNAL(clicked()),this,SLOT(Add_Command_Clicked()));
-    ui->AddCommand->setEnabled(false);
+    ui->pushButton->connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(Add_Command_Clicked()));
+
+    ui->pushButton->setEnabled(false);
     mainClosed = false;
 
-    this->ConnectToolBar();
     this->move(0, 500);
     this->show();
 }
@@ -25,12 +24,21 @@ QMainWindow(parent),
 /**
  * @brief initially populate the debugging toolbar
  */
-void CommandViewer::ConnectToolBar() {
-    connect(ui->Pause,SIGNAL(triggered()),this,SLOT(Pause_triggered()));
-    connect(ui->Stop,SIGNAL(triggered()),this,SLOT(Stop_triggered()));
-    connect(ui->StepBackwards,SIGNAL(triggered()),this,SLOT(StepBackwards_triggered()));
-    connect(ui->StepForwards,SIGNAL(triggered()),this,SLOT(StepForward_triggered()));
-    connect(ui->RunFromStart,SIGNAL(triggered()),this,SLOT(RunFromStart_triggered()));
+void CommandViewer::MakeToolbar() {
+    QToolBar *debugBar = new QToolBar();
+    QAction *RunFromStart = new QAction(debugBar);
+    QAction *StepForward = new QAction(debugBar);
+    QAction *StepBackwards = new QAction(debugBar);
+    QAction *Stop = new QAction(debugBar);
+    QAction *Pause = new QAction(debugBar);
+
+    connect(Pause,SIGNAL(triggered()),this,SLOT(Pause_triggered()));
+    connect(Stop,SIGNAL(triggered()),this,SLOT(Stop_triggered()));
+    connect(StepBackwards,SIGNAL(triggered()),this,SLOT(StepBackwards_triggered()));
+    connect(StepForward,SIGNAL(triggered()),this,SLOT(StepForward_triggered()));
+    connect(RunFromStart,SIGNAL(triggered()),this,SLOT(RunFromStart_triggered()));
+
+    this->addToolBar(debugBar);
 }
 
 /**
@@ -176,7 +184,7 @@ void CommandViewer::Add_Command_Clicked(){
 }
 
 void CommandViewer::fileSaved(bool saved){
-    ui->AddCommand->setEnabled(saved);
+    ui->pushButton->setEnabled(saved);
 }
 
 /**
@@ -187,7 +195,7 @@ void CommandViewer::fileSaved(bool saved){
 int CommandViewer::PopulateCommandEditor(QString fileName){
     //Creating new editor
     CommandEditor *toPopulate = new CommandEditor();
-    toPopulate->show();
+	toPopulate->show();
     toPopulate->setList(list);
     toPopulate->setProjectName(*projectName);
     emit EmitConnectEditor(toPopulate);
@@ -222,23 +230,17 @@ int CommandViewer::PopulateCommandEditor(QString fileName){
     //get list of comboBoxes
     QList<QComboBox *> comboBoxes = toPopulate->CommandEditorWidget->findChildren<QComboBox *>();
 
-    QList<QSpinBox *> spinBoxes = toPopulate->CommandEditorWidget->findChildren<QSpinBox *>();
-
     //set text for the command name slot.
     lineEdits.at(0)->setText(fileName);
 
     //set the information for both comboboxes.
     foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-        if(i < comboBoxes.length()){
         comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
-        }else{
-            spinBoxes.at(0)->setValue(attr.value().toInt());
-        }
         i++;
     }
 
-    int k = 2;
-
+    int k = 1;
+	
     //keep going until the document is finished.
     while(!reader.isEndDocument()){
         reader.readNext();

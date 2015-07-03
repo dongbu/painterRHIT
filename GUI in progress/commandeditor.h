@@ -13,6 +13,7 @@
 #include <QScrollArea>
 #include <vector>
 #include <QListWidget>
+#include <QSpinBox>
 
 #include <QWidget>
 
@@ -41,6 +42,7 @@ public:
     std::vector<QLineEdit*> *PointVec;
     QLineEdit *Command_Name;
     QComboBox *Line_Color, *Line_Style;
+    QSpinBox *Line_Width;
     QPushButton *Add_Command, *Add_Point;
     bool commandAdded;
 
@@ -63,6 +65,7 @@ public slots:
     void Add_Command_Clicked();
     void Add_Point_Clicked();
     void InfoChanged();
+    void updateLineStyles(QString color, QString style, int width);
 
 signals:
     void fileStatusChanged();

@@ -29,7 +29,6 @@ HEADERS  += mainwindow.h \
     drawonwidget.h \
     commandeditor.h \
     CytonController.h \
-    commandviewerOld.h \
     commandviewer.h
 
 FORMS    += mainwindow.ui \

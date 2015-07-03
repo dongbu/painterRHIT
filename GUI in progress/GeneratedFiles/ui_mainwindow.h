@@ -17,7 +17,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
@@ -38,13 +37,13 @@ public:
     QAction *actionConnect;
     QWidget *centralWidget;
     QWidget *widget;
-    QStatusBar *statusBar;
     QToolBar *GeneralCommands;
     QToolBar *DrawFunctions;
     QMenuBar *menuBar;
     QMenu *menuNew_Window;
     QMenu *menuDraw_Commands;
     QMenu *menuRobot;
+    QToolBar *drawingToolbar;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -103,9 +102,6 @@ public:
         widget->setGeometry(QRect(10, 10, 901, 750));
         widget->setCursor(QCursor(Qt::CrossCursor));
         MainWindow->setCentralWidget(centralWidget);
-        statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QStringLiteral("statusBar"));
-        MainWindow->setStatusBar(statusBar);
         GeneralCommands = new QToolBar(MainWindow);
         GeneralCommands->setObjectName(QStringLiteral("GeneralCommands"));
         MainWindow->addToolBar(Qt::TopToolBarArea, GeneralCommands);
@@ -122,6 +118,9 @@ public:
         menuRobot = new QMenu(menuBar);
         menuRobot->setObjectName(QStringLiteral("menuRobot"));
         MainWindow->setMenuBar(menuBar);
+        drawingToolbar = new QToolBar(MainWindow);
+        drawingToolbar->setObjectName(QStringLiteral("drawingToolbar"));
+        MainWindow->addToolBar(Qt::TopToolBarArea, drawingToolbar);
 
         GeneralCommands->addAction(actionOpen);
         GeneralCommands->addAction(actionNew);
@@ -172,6 +171,7 @@ public:
         menuNew_Window->setTitle(QApplication::translate("MainWindow", "File", 0));
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuRobot->setTitle(QApplication::translate("MainWindow", "Robot", 0));
+        drawingToolbar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
 };
