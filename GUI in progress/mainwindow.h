@@ -47,12 +47,7 @@ private slots:
     void on_actionSave_triggered();
     void fileChangedTrue();
     void on_actionNew_triggered();
-    void on_actionRun_triggered();
     void noticeCommandAdded(int index);
-    void on_actionStop_triggered();
-    void on_actionPause_triggered();
-    void on_actionNext_triggered();
-    void on_actionPrevious_triggered();
     void ConnectEditor(CommandEditor* editor);
 	void on_actionConnect_triggered();
 

@@ -1,23 +1,92 @@
 #include "commandviewer.h"
+#include "ui_commandviewer.h"
+#include <QToolBar>
+#include <QAction>
 
 CommandViewer::CommandViewer(QWidget *parent) :
-    QWidget(parent),
+QMainWindow(parent),
     ui(new Ui::CommandViewer)
 {
     ui->setupUi(this);
     list = ui->listWidget;
-    this->show();
 
-    list->connect(list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(on_EditCommand_clicked()));
     ui->MoveUp->connect(ui->MoveUp,SIGNAL(clicked()),this,SLOT(MoveUp_clicked()));
     ui->MoveDown->connect(ui->MoveDown,SIGNAL(clicked()),this,SLOT(MoveDown_clicked()));
     ui->DeleteCommand->connect(ui->DeleteCommand,SIGNAL(clicked()),this,SLOT(DeleteCommand_clicked()));
-    ui->pushButton->connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(Add_Command_Clicked()));
-
-    ui->pushButton->setEnabled(false);
+    ui->AddCommand->connect(ui->AddCommand,SIGNAL(clicked()),this,SLOT(Add_Command_Clicked()));
+    ui->AddCommand->setEnabled(false);
     mainClosed = false;
 
+    this->ConnectToolBar();
     this->move(0, 500);
+    this->show();
+}
+
+/**
+ * @brief initially populate the debugging toolbar
+ */
+void CommandViewer::ConnectToolBar() {
+    connect(ui->Pause,SIGNAL(triggered()),this,SLOT(Pause_triggered()));
+    connect(ui->Stop,SIGNAL(triggered()),this,SLOT(Stop_triggered()));
+    connect(ui->StepBackwards,SIGNAL(triggered()),this,SLOT(StepBackwards_triggered()));
+    connect(ui->StepForwards,SIGNAL(triggered()),this,SLOT(StepForward_triggered()));
+    connect(ui->RunFromStart,SIGNAL(triggered()),this,SLOT(RunFromStart_triggered()));
+}
+
+/**
+ * @brief Stops simulation.
+ */
+void CommandViewer::Stop_triggered()
+{
+//    ui->actionPause->setDisabled(true);
+//    ui->actionStop->setDisabled(true);
+//    ui->actionPrevious->setDisabled(true);
+//    ui->actionNext->setDisabled(true);
+//    interpreter->stopPaintingCommands();
+}
+
+/**
+ * @brief Pauses simulation.
+ */
+void CommandViewer::Pause_triggered()
+{
+//    interpreter->pausePaintingCommands();
+}
+
+/**
+ * @brief steps simulation forwards.
+ */
+void CommandViewer::StepForward_triggered()
+{
+//    interpreter->stepForwardCommands();
+}
+
+/**
+ * @brief steps simulation backwards
+ */
+void CommandViewer::StepBackwards_triggered()
+{
+//    interpreter->stepBackwardCommands();
+}
+
+/**
+ * @brief Starts/continues simulation.
+ */
+void CommandViewer::RunFromStart_triggered()
+{
+//    if(fileChanged || !saved){
+//        MainWindow::on_actionSave_triggered();
+//    }
+//    if(saved){
+//        //currently always starts from beginning.
+//        ui->actionPause->setEnabled(true);
+//        ui->actionStop->setEnabled(true);
+//        ui->actionPrevious->setEnabled(true);
+//        ui->actionNext->setEnabled(true);
+//        interpreter->setProjectName(projectName);
+//        interpreter->beginPaintingCommands(this->commandView->list, 0);
+
+//    }
 }
 
 CommandViewer::~CommandViewer()
@@ -107,7 +176,7 @@ void CommandViewer::Add_Command_Clicked(){
 }
 
 void CommandViewer::fileSaved(bool saved){
-    ui->pushButton->setEnabled(saved);
+    ui->AddCommand->setEnabled(saved);
 }
 
 /**
@@ -118,6 +187,7 @@ void CommandViewer::fileSaved(bool saved){
 int CommandViewer::PopulateCommandEditor(QString fileName){
     //Creating new editor
     CommandEditor *toPopulate = new CommandEditor();
+    toPopulate->show();
     toPopulate->setList(list);
     toPopulate->setProjectName(*projectName);
     emit EmitConnectEditor(toPopulate);
@@ -215,10 +285,10 @@ void CommandViewer::MakeEditor()
     editor->setList(list);
     editor->setProjectName(*projectName);
 
-    //deleting previous editor
-    if(list->count() > 0) {
-        currentEditor->close();
-    }
+    ////deleting previous editor
+    //if(list->count() > 0) {
+    //    currentEditor->close();
+    //}
 
     //searches through and sets the default name to 1 + the largest.
     editor->setName("PointMap_1");

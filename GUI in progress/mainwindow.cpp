@@ -41,18 +41,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->DrawFunctions->setHidden(true);
     //click to draw work//
 
-    //debug button work//
-    ui->actionPause->setDisabled(true);
-    ui->actionPrevious->setDisabled(true);
-    ui->actionStop->setDisabled(true);
-    ui->actionNext->setDisabled(true);
-    //debug button work//
-
     //robot connection work//
     connect(this,SIGNAL(makeConnection(QString)),interpreter,SLOT(beginConnecting(QString)));
     //robot connection work//
 
     this->move(700, 100);
+
 }
 
 /**
@@ -300,26 +294,6 @@ void MainWindow::on_actionNew_triggered()
 }
 
 /**
- * @brief slot for starting or continuing painting.
- */
-void MainWindow::on_actionRun_triggered()
-{
-    if(fileChanged || !saved){
-        MainWindow::on_actionSave_triggered();
-    }
-    if(saved){
-        //currently always starts from beginning.
-        ui->actionPause->setEnabled(true);
-        ui->actionStop->setEnabled(true);
-        ui->actionPrevious->setEnabled(true);
-        ui->actionNext->setEnabled(true);
-        interpreter->setProjectName(projectName);
-        interpreter->beginPaintingCommands(this->commandView->list, 0);
-
-    }
-}
-
-/**
  * @brief slot for DrawOnWidget to get points that were clicked.
  * @param x
  * @param y
@@ -350,31 +324,6 @@ void MainWindow::noticeCommandAdded(int index){
     if(index == -10){
         drawOn->clearAll();
     }
-}
-
-void MainWindow::on_actionStop_triggered()
-{
-    ui->actionPause->setDisabled(true);
-    ui->actionStop->setDisabled(true);
-    ui->actionPrevious->setDisabled(true);
-    ui->actionNext->setDisabled(true);
-    interpreter->stopPaintingCommands();
-}
-
-void MainWindow::on_actionPause_triggered()
-{
-    interpreter->pausePaintingCommands();
-}
-
-void MainWindow::on_actionNext_triggered()
-{
-    interpreter->stepForwardCommands();
-}
-
-void MainWindow::on_actionPrevious_triggered()
-{
-    interpreter->stepBackwardCommands();
-
 }
 
 /**

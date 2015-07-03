@@ -9,12 +9,13 @@
 #include <iostream>
 #include <QXmlStreamReader>
 #include <QDebug.h>
+#include <QMainWindow>
 
 namespace Ui {
 class CommandViewer;
 }
 
-class CommandViewer : public QWidget
+class CommandViewer : public QMainWindow
 {
     Q_OBJECT
 
@@ -31,6 +32,8 @@ public:
     CommandEditor *currentEditor;
 
 private:
+    void ConnectToolBar();
+
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
     QString *projectName;
@@ -42,6 +45,11 @@ private slots:
     void DeleteCommand_clicked();
     void on_EditCommand_clicked();
     void Add_Command_Clicked();
+    void Stop_triggered();
+    void Pause_triggered();
+    void StepForward_triggered();
+    void StepBackwards_triggered();
+    void RunFromStart_triggered();
 
 public slots:
     void fileSaved(bool saved);

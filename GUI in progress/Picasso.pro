@@ -18,23 +18,24 @@ SOURCES += main.cpp\
     painter.cpp \
     commandinterpreter.cpp \
     drawonwidget.cpp \
-    commandviewer.cpp \
     commandeditor.cpp \
-    CytonController.cpp
+    CytonController.cpp \
+    commandviewer.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
     painter.h \
     commandinterpreter.h \
     drawonwidget.h \
-    commandviewer.h \
     commandeditor.h \
-    CytonController.h
+    CytonController.h \
+    commandviewerOld.h \
+    commandviewer.h
 
 FORMS    += mainwindow.ui \
     painter.ui \
-    commandviewer.ui \
-    commandeditor.ui
+    commandeditor.ui \
+    commandviewer.ui
 
 RESOURCES += \
     myres.qrc

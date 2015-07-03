@@ -25,7 +25,6 @@ CommandEditor::CommandEditor(QWidget *parent) :
     connect(Line_Style,SIGNAL(currentIndexChanged(int)),this,SLOT(InfoChanged()));
 
     ui->verticalLayout->addWidget(this->CommandEditorWidget);
-    this->show();    
 }
 
 void CommandEditor::setList(QListWidget *list) {
