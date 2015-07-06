@@ -172,7 +172,7 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
  * @brief Add_Command slot
  */
 
-void CommandEditor::Add_Command_Clicked() {
+void CommandEditor::Add_Command_Clicked(QString projectName) {
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
 
     //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
@@ -279,17 +279,6 @@ void CommandEditor::setName(QString newName){
     lineEdits.at(0)->setText(this->name);
 }
 
-
-
-
-/**
- * @brief This method allows this class to know what the project name is that it is within.
- * @param name
- */
-void CommandEditor::setProjectName(QString name){
-    projectName = name;
-}
-
 /**
  * @brief sets whether this commandEditor is in "add command" mode or "save" mode.
  * Part of TEMP SOLUTION
@@ -309,8 +298,8 @@ void CommandEditor::setCommandAdded(bool commandAdded){
 /**
  * @brief allows you to tell the command to add itself to the list from somewhere else.
  */
-void CommandEditor::add_Command_Externally(){
-    this->Add_Command_Clicked();
+void CommandEditor::add_Command_Externally(QString projectName){
+	this->Add_Command_Clicked(projectName);
 }
 
 /**

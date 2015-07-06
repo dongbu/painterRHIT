@@ -24,7 +24,7 @@ public:
     explicit CommandViewer(QWidget *parent = 0);
     ~CommandViewer();
     QListWidget *list;
-    std::vector<CommandEditor*> editors;
+    //std::vector<CommandEditor*> editors;
     void clear();
 
     int PopulateCommandEditor(QString fileName);
@@ -39,6 +39,8 @@ public:
 
 private:
     void ConnectToolBar();
+	int FillEditor(QString editorName);
+
 
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);

@@ -54,8 +54,6 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
         updateTimer.start(100);
     }
     picasso->raise();
-
-
 }
 
 void CommandInterpreter::sendCommand(){
@@ -74,7 +72,6 @@ void CommandInterpreter::sendCommand(){
 				else{
 					printf("not continuous");
 				}
-
 			}
 			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), continuous, prevContinuous, currentPos);
 			
@@ -213,8 +210,6 @@ void CommandInterpreter::addPointsFromFile(QString fileName){
     loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + fileName+ QString(".xml"));
     loadFile.open(QIODevice::ReadOnly);
     QXmlStreamReader reader(&loadFile);
-
-
 
     //keep going until the document is finished.
     while(!reader.isEndDocument()){
