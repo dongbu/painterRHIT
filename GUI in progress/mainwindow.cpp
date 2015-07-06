@@ -260,11 +260,17 @@ void MainWindow::cleanUp(){
     this->saved = false;
     this->setWindowTitle("Untitled");
     this->projectName = "";
+	this->colorBox->setCurrentIndex(0);
+	this->thicknessBox->setValue(4);
+	this->styleBox->setCurrentIndex(0);
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
         QDir("ProjectFiles/Temp").removeRecursively();
     }
-    drawOn->clearAll();
+    drawOn->clearAll(1);
+	this->colorBox->setCurrentIndex(0);
+	this->styleBox->setCurrentIndex(0);
+	this->thicknessBox->setValue(4);
     emit sendSaved(false);
 }
 
@@ -331,7 +337,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
             temp->add_Command_Externally();
             return;
         }else{
-            drawOn->clearAll();
+            drawOn->clearAll(2);
             return;
         }
     }
@@ -347,7 +353,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 
 void MainWindow::noticeCommandAdded(int index){
     if(index == -10){
-        drawOn->clearAll();
+        drawOn->clearAll(2);
     }
 }
 
@@ -446,9 +452,6 @@ void MainWindow::on_actionConnect_triggered()
 
 void MainWindow::on_drawing_changed(){
     CommandEditor *editor = drawOn->currentEditor;
-    printf("-----\n");
-    printf("%i\n",(editor == NULL));
-    printf("----\n");
     connect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
     QString color = colorBox->currentText();
     QString style = styleBox->currentText();

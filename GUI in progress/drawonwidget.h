@@ -13,7 +13,7 @@ class drawOnWidget : public QLabel
 public:
     drawOnWidget(QWidget * parent);
     ~drawOnWidget(){}
-    void clearAll();
+    void clearAll(int resetBackground);
     CommandEditor* currentEditor;
 
 private:

@@ -106,8 +106,8 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     bool xMatch = (prevX > currentX - 7 && prevX < currentX + 7);
     bool yMatch = (prevY > currentY - 7 && prevY < currentY + 7);
     if(xMatch && yMatch && pointCount > 2){
-        QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
-        this->setPixmap(QPixmap::fromImage(*temp2));
+        //QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
+        //this->setPixmap(QPixmap::fromImage(*temp2));
         currentX = -10;
         currentY = -10;
         emit sendPoint(currentX, currentY, pointCount);
@@ -121,20 +121,54 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     return true;
 }
 
-void drawOnWidget::clearAll(){
-    prevX = -10;
-    prevY = -10;
-    pointCount = 0;
-    QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
-    this->setPixmap(QPixmap::fromImage(*temp2));
-    this->clear();
-    this->penColor = "black";
+void drawOnWidget::clearAll(int resetBackground){
+	prevX = -10;
+	prevY = -10;
+	pointCount = 0;
+	if (resetBackground == 1){
+		printf("clear the background\n");
+		QImage *temp2 = new QImage(this->width(), this->height(), QImage::Format_ARGB32);
+		this->setPixmap(QPixmap::fromImage(*temp2));
+		this->penColor = "black";
+		this->penStyle = Qt::SolidLine;
+		this->penWidth = 4;
+	}
+	else if(resetBackground == 2){
+		printf("fade the background\n");
+		QRgb colorVal;
+		QImage *temp2 = new QImage(this->pixmap()->toImage());
+		for (int p1 = 0; p1 < temp2->width(); p1++){
+			for (int p2 = 0; p2 < temp2->height(); p2++){
+				colorVal = temp2->pixel(p1, p2);
+				QColor color(colorVal);
+				color = color.light(0);
+				QRgb newColor = color.rgb();
+				temp2->setPixel(p1, p2, newColor);
+				//int newRed = color.red() + 10;
+				//int newGreen = color.green() + 10;
+				//int newBlue = color.blue() + 10;
+				//if (newRed < 200 && newGreen < 200 && newBlue < 200){
+				//	printf("red: %i, green: %i, blue: %i", newRed, newGreen, newBlue);
+				//	temp2->setPixel(p1, p2, qRgb(newRed, newGreen, newBlue));
+				//}
+
+			}
+		}
+		temp2->create
+		this->setPixmap(QPixmap::fromImage(*temp2));
+	}
+	else{
+		printf("do nothing to background\n");
+
+	}
+    //this->clear();
+   /* this->penColor = "black";
     this->penStyle = Qt::SolidLine;
-    this->penWidth = 4;
+    this->penWidth = 4;*/
 }
 
 void drawOnWidget::updateToEditor(CommandEditor *editor){
-    clearAll();
+    clearAll(0);
     QList<QComboBox *> comboBoxes = editor->CommandEditorWidget->findChildren<QComboBox *>();
     QList<QLineEdit *> lineEdits = editor->CommandEditorWidget->findChildren<QLineEdit *>();
     QList<QSpinBox *> spinBoxes = editor->CommandEditorWidget->findChildren<QSpinBox *>();
