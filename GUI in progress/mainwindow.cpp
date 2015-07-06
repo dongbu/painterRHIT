@@ -30,13 +30,21 @@ MainWindow::MainWindow(QWidget *parent) :
     //command list//
 
     //click to draw work//
-    drawOn = new drawOnWidget(ui->widget);
+	drawOn2 = new drawOnWidget(ui->widget, 1);
+	drawOn2->setFixedWidth(1000);
+	drawOn2->setFixedHeight(750);
+	drawOn2->projectName = projectName;
+	ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
+
+
+    drawOn = new drawOnWidget(ui->widget, 0);
     drawOn->setFixedWidth(1000);
     drawOn->setFixedHeight(750);
+	drawOn->projectName = projectName;
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
-    ui->widget->setStyleSheet("background-color:white;");
+    ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
     ui->DrawFunctions->setHidden(true);
-    //click to draw work//
+	//click to draw work//
 
     //line options work//
 	colorBox = new QComboBox();
@@ -90,7 +98,8 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
-            commandView->setProjectName(&projectName);
+			drawOn->projectName = projectName;
+			drawOn2->projectName = projectName;
             this->setWindowTitle(projectName);
             commandView->setProjectName(&projectName);
             ui->actionSave->setEnabled(true);
@@ -130,10 +139,11 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
-            commandView->setProjectName(&projectName);
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
             commandView->setProjectName(&projectName);
+			drawOn->projectName = projectName;
+			drawOn2->projectName = projectName;
 
             //chunks in index.xml file
             if(!GuiLoadSave::writeCommandListToFolder(projectName, this->commandView->list)){
@@ -210,6 +220,8 @@ void MainWindow::on_actionOpen_triggered()
         projectName = directory.selectedFiles().at(0).split("/").last();
         projectName.chop(4);
         commandView->setProjectName(&projectName);
+		drawOn->projectName = projectName;
+		drawOn2->projectName = projectName;
         if(!GuiLoadSave::loadCommandListFromFolder(projectName,this->commandView->list)){
             alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
             alert.setInformativeText("Failed To Load " + projectName + "/index.xml");
@@ -219,6 +231,8 @@ void MainWindow::on_actionOpen_triggered()
             saved=true;
             ui->actionSave->setEnabled(true);
             commandView->setProjectName(&projectName);
+			drawOn->projectName = projectName;
+			drawOn2->projectName = projectName;
             emit sendSaved(true);
         }
     }
@@ -328,7 +342,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
             temp->add_Command_Externally(this->projectName);
             return;
         }else{
-            drawOn->clearAll(2);
+            drawOn->clearAll(1);
             return;
         }
     }
@@ -344,7 +358,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 
 void MainWindow::noticeCommandAdded(int index){
     if(index == -10){
-        drawOn->clearAll(2);
+        drawOn->clearAll(1);
     }
 }
 
@@ -405,6 +419,9 @@ void MainWindow::ConnectEditor(CommandEditor* editor) {
 
     //connection to update drawOn.
     connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
+	connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
+	connect(this, SIGNAL(sendListOfCommands(QListWidget*)), drawOn2, SLOT(updateToAllEditors(QListWidget*)));
+	
 }
 
 void MainWindow::on_actionConnect_triggered()
@@ -446,7 +463,13 @@ void MainWindow::on_drawing_changed(){
     connect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
     QString color = colorBox->currentText();
     QString style = styleBox->currentText();
-    int width = thicknessBox->text().toInt();
+	int width = thicknessBox->text().toInt();
     emit sendLineStyles(color,style, width);
     disconnect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
+}
+
+
+void MainWindow::drawOn2_update(){
+	Sleep(10);
+	emit sendListOfCommands(commandView->list);
 }
