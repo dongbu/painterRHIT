@@ -94,10 +94,6 @@ void MainWindow::on_actionSave_As_triggered()
             this->setWindowTitle(projectName);
             commandView->setProjectName(&projectName);
             ui->actionSave->setEnabled(true);
-            //updates the commandEditors.
-            foreach(CommandEditor *edits, commandView->editors){
-                edits->setProjectName(projectName);
-            }
 
             //chunks in index.xml file
             if(!GuiLoadSave::writeCommandListToFolder(projectName, this->commandView->list)){
@@ -138,11 +134,6 @@ void MainWindow::on_actionSave_As_triggered()
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
             commandView->setProjectName(&projectName);
-
-            //updates commandEditors
-            foreach(CommandEditor *edits, commandView->editors){
-                edits->setProjectName(projectName);
-            }
 
             //chunks in index.xml file
             if(!GuiLoadSave::writeCommandListToFolder(projectName, this->commandView->list)){
@@ -328,7 +319,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
     if(x == -10 && y == -10){
         if(pointCount >= 3){
             CommandEditor *temp = commandView->currentEditor;
-            temp->add_Command_Externally();
+            temp->add_Command_Externally(this->projectName);
             return;
         }else{
             drawOn->clearAll();

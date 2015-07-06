@@ -2,6 +2,7 @@
 #include "ui_commandviewer.h"
 #include <QToolBar>
 #include <QAction>
+#include <qlistwidget.h>
 
 CommandViewer::CommandViewer(QWidget *parent) :
 QMainWindow(parent),
@@ -91,7 +92,6 @@ void CommandViewer::RunFromStart_triggered()
         ui->StepForwards->setEnabled(true);
         interpreter->setProjectName(*projectName);
         interpreter->beginPaintingCommands(list, 0);
-
     }
 }
 
@@ -155,14 +155,17 @@ void CommandViewer::on_EditCommand_clicked()
 {
     QListWidgetItem *selectedCommand = list->currentItem();
     if(selectedCommand == NULL){
-        return;
+        return; //check that command is selected
     }
-    //sets the current editor index
-    currentEditor->close();
-    currentEditor = editors.at(list->currentIndex().row());
-
-    //makes and fills an editor from xml load file.
-    PopulateCommandEditor(list->currentItem()->text());
+	if (currentEditor != NULL) {
+		currentEditor->close(); //close old window
+	}
+	//Make new editor && populate from XML
+	MakeEditor();
+	printf("filling editor \n");
+	FillEditor(list->currentItem()->text());
+	printf("filled editor \n");
+	currentEditor->show();
 }
 
 void CommandViewer::closeEvent(QCloseEvent *event){
@@ -188,108 +191,6 @@ void CommandViewer::fileSaved(bool saved){
 }
 
 /**
- * @brief puts info from xml into command editor
- * @param toPopulate
- * @return 0 if successful
- */
-int CommandViewer::PopulateCommandEditor(QString fileName){
-    //Creating new editor
-    CommandEditor *toPopulate = new CommandEditor();
-    toPopulate->show();
-    toPopulate->setList(list);
-    toPopulate->setProjectName(*projectName);
-    emit EmitConnectEditor(toPopulate);
-    toPopulate->setName(fileName);
-    this->currentEditor = toPopulate;
-    toPopulate->commandAdded = true;
-
-    //Filling in editor's points
-    QList<QLineEdit *> lineEdits = toPopulate->CommandEditorWidget->findChildren<QLineEdit *>();
-
-    lineEdits.first()->setDisabled(true);
-
-    QString tempProjectName;
-    if(projectName->isEmpty() || projectName->isNull()){
-        tempProjectName = "Temp";
-    }else{
-        tempProjectName = *projectName;
-    }
-
-    //load file and set up the reader.
-    QFile loadFile;
-	loadFile.setFileName(QString("ProjectFiles/") + tempProjectName + QString("/") + fileName + QString(".xml"));
-    loadFile.open(QIODevice::ReadOnly);
-    QXmlStreamReader reader(&loadFile);
-
-    //skip over unimportant doc headers.
-    reader.readNextStartElement();
-    reader.readNextStartElement();
-
-    int i = 0;
-
-    //get list of comboBoxes
-    QList<QComboBox *> comboBoxes = toPopulate->CommandEditorWidget->findChildren<QComboBox *>();
-
-    QList<QSpinBox *> spinBoxes = toPopulate->CommandEditorWidget->findChildren<QSpinBox *>();
-
-    //set text for the command name slot.
-    lineEdits.at(0)->setText(fileName);
-
-    //set the information for both comboboxes.
-    foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-        if(i < comboBoxes.length()){
-        comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
-        }else{
-            spinBoxes.at(0)->setValue(attr.value().toInt());
-        }
-        i++;
-    }
-
-    int k = 2;
-
-    //keep going until the document is finished.
-    while(!reader.isEndDocument()){
-        reader.readNext();
-        if(reader.isStartElement()){
-            QString pointString = "";
-            if(reader.name().toString() == "PointMap"){
-                //find and add the correct number of points.
-                int numPoints = reader.attributes().at(0).value().toString().toInt();
-                for(int j = 0; j < (numPoints - 2); j++){
-                    toPopulate->Add_Point_Clicked();
-
-                }
-                lineEdits = toPopulate->CommandEditorWidget->findChildren<QLineEdit *>();
-            }
-            if(reader.name().toString() == "Point"){
-                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                    pointString.append(attr.value().toString());
-                    pointString.append(",");
-                }
-                pointString.chop(1);
-
-                toPopulate->CommandEditorWidget->findChildren<QLineEdit *>().at(k)->setText(pointString);
-                k++;
-
-            } else if(reader.name().toString() == "FileMalformed"){
-                if(reader.attributes().value(0).toString() == "1"){
-                    std::cout << "FILE WAS MALFORMED!" << std::endl;
-                    //potentially highlight poorly made files.
-                }
-            }
-        }
-    }
-
-    if(reader.hasError()){
-        std::cout << "there was an error in reading the file" <<std::endl;
-        //shouldn't be an issue, but put in just in case.
-    }
-
-    loadFile.close();
-    return 0;
-}
-
-/**
  * @brief Allows the insertion of a point map command into
  * the command editor
  */
@@ -297,7 +198,6 @@ void CommandViewer::MakeEditor()
 {
     CommandEditor *editor = new CommandEditor();
     editor->setList(list);
-    editor->setProjectName(*projectName);
 
     //searches through and sets the default name to 1 + the largest.
     editor->setName("PointMap_1");
@@ -312,11 +212,107 @@ void CommandViewer::MakeEditor()
         k++;
     }
 
-    editors.push_back(editor);
     currentEditor = editor;
-
     emit EmitConnectEditor(editor);
+
 }
+
+/**
+* @brief puts info from xml into command editor
+* @param toPopulate
+* @return 0 if successful
+*/
+int CommandViewer::FillEditor(QString editorName)
+{
+//Filling in editor's points
+QList<QLineEdit *> lineEdits = currentEditor->CommandEditorWidget->findChildren<QLineEdit *>();
+
+lineEdits.first()->setDisabled(true);
+
+QString tempProjectName;
+if (projectName->isEmpty() || projectName->isNull()){
+	tempProjectName = "Temp";
+}
+else{
+	tempProjectName = *projectName;
+}
+
+//load file and set up the reader.
+QFile loadFile;
+loadFile.setFileName(QString("ProjectFiles/") + tempProjectName + QString("/") + editorName + QString(".xml"));
+loadFile.open(QIODevice::ReadOnly);
+QXmlStreamReader reader(&loadFile);
+
+//skip over unimportant doc headers.
+reader.readNextStartElement();
+reader.readNextStartElement();
+
+int i = 0;
+
+//get list of comboBoxes
+QList<QComboBox *> comboBoxes = currentEditor->CommandEditorWidget->findChildren<QComboBox *>();
+
+QList<QSpinBox *> spinBoxes = currentEditor->CommandEditorWidget->findChildren<QSpinBox *>();
+
+//set text for the command name slot.
+lineEdits.at(0)->setText(editorName);
+
+//set the information for both comboboxes.
+foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+	if (i < comboBoxes.length()){
+		comboBoxes.at(i)->setCurrentIndex(comboBoxes.at(i)->findText(attr.value().toString()));
+	}
+	else{
+		spinBoxes.at(0)->setValue(attr.value().toInt());
+	}
+	i++;
+}
+
+int k = 2;
+
+//keep going until the document is finished.
+while (!reader.isEndDocument()){
+	reader.readNext();
+	if (reader.isStartElement()){
+		QString pointString = "";
+		if (reader.name().toString() == "PointMap"){
+			//find and add the correct number of points.
+			int numPoints = reader.attributes().at(0).value().toString().toInt();
+			for (int j = 0; j < (numPoints - 2); j++){
+				currentEditor->Add_Point_Clicked();
+
+			}
+			lineEdits = currentEditor->CommandEditorWidget->findChildren<QLineEdit *>();
+		}
+		if (reader.name().toString() == "Point"){
+			foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+				pointString.append(attr.value().toString());
+				pointString.append(",");
+			}
+			pointString.chop(1);
+
+			currentEditor->CommandEditorWidget->findChildren<QLineEdit *>().at(k)->setText(pointString);
+			k++;
+
+		}
+		else if (reader.name().toString() == "FileMalformed"){
+			if (reader.attributes().value(0).toString() == "1"){
+				std::cout << "FILE WAS MALFORMED!" << std::endl;
+				//potentially highlight poorly made files.
+			}
+		}
+	}
+}
+
+if (reader.hasError()){
+	std::cout << "there was an error in reading the file" << std::endl;
+	//shouldn't be an issue, but put in just in case.
+}
+
+loadFile.close();
+return 0;
+}
+
 
 /**
  * @brief removes all project specific variables and clears away
@@ -325,6 +321,5 @@ void CommandViewer::MakeEditor()
 void CommandViewer::clear() {
     this->setProjectName(new QString(""));
     list->clear();
-    editors.clear();
     interpreter->clear();
 }

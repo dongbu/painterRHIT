@@ -31,10 +31,9 @@ public:
 
     void ConnectButtons();
     void setName(QString newName);
-    void setProjectName(QString name);
     QString getName();
     void setCommandAdded(bool commandAdded);
-    void add_Command_Externally();
+	void add_Command_Externally(QString projectName);
     void set_Point_At(int index, int x, int y);
     void setList(QListWidget *list);
 
@@ -59,10 +58,9 @@ private:
     QListWidget *list;
     QFormLayout *ParameterHolder;
     QString name;
-    QString projectName;
 
 public slots:
-    void Add_Command_Clicked();
+void Add_Command_Clicked(QString projectName);
     void Add_Point_Clicked();
     void InfoChanged();
     void updateLineStyles(QString color, QString style, int width);
