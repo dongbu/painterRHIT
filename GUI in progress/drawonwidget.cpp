@@ -154,7 +154,6 @@ void drawOnWidget::clearAll(int resetBackground){
 
 			}
 		}
-		temp2->create
 		this->setPixmap(QPixmap::fromImage(*temp2));
 	}
 	else{
