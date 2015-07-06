@@ -80,13 +80,10 @@ void CommandViewer::StepBackwards_triggered()
  */
 void CommandViewer::RunFromStart_triggered()
 {
-	printf("hit button");
     if(fileChanged || !saved){
-		printf("saved initiated");
 		emit MustSave();
     }
     if(saved){
-		printf("drawing initiated");
         //currently always starts from beginning.
         ui->Pause->setEnabled(true);
         ui->Stop->setEnabled(true);

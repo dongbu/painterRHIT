@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(EmitConnectEditor(CommandEditor*)),this,SLOT(ConnectEditor(CommandEditor*)));
-	connect(commandView, (SIGNAL(MustSave())), this, SLOT(on_actionSave_As_triggered));
+	connect(commandView, (SIGNAL(MustSave())), this, SLOT(on_actionSave_triggered()));
     //command list//
 
     //click to draw work//
