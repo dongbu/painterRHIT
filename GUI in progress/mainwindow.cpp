@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(makeConnection(QString)),this->commandView->interpreter,SLOT(beginConnecting(QString)));
     //robot connection work//
 
+
     this->move(700, 100);
 
 }
@@ -265,9 +266,6 @@ void MainWindow::cleanUp(){
     this->saved = false;
     this->setWindowTitle("Untitled");
     this->projectName = "";
-	this->colorBox->setCurrentIndex(0);
-	this->thicknessBox->setValue(4);
-	this->styleBox->setCurrentIndex(0);
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
         QDir("ProjectFiles/Temp").removeRecursively();
@@ -340,15 +338,15 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
         if(pointCount >= 3){
             CommandEditor *temp = commandView->currentEditor;
             temp->add_Command_Externally(this->projectName);
+			drawOn->clearAll(1);
             return;
         }else{
             drawOn->clearAll(1);
             return;
         }
     }
-    if(pointCount == 1){
-        commandView->MakeEditor();
-    }
+    if(pointCount == 1) commandView->MakeEditor();
+	if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
     CommandEditor *temp = commandView->currentEditor;
     if(pointCount > 2){
         temp->Add_Point_Clicked();
@@ -419,8 +417,9 @@ void MainWindow::ConnectEditor(CommandEditor* editor) {
 
     //connection to update drawOn.
     connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
-	connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
-	connect(this, SIGNAL(sendListOfCommands(QListWidget*)), drawOn2, SLOT(updateToAllEditors(QListWidget*)));
+	connect(editor, SIGNAL(sendUpdateToDrawOn(CommandEditor*)), drawOn2, SLOT(updateToEditor(CommandEditor*)));
+	//connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
+	connect(this, SIGNAL(sendListOfCommands(CommandViewer*)), drawOn2, SLOT(updateToAllEditors(CommandViewer*)));
 	
 }
 
@@ -470,6 +469,5 @@ void MainWindow::on_drawing_changed(){
 
 
 void MainWindow::drawOn2_update(){
-	Sleep(10);
-	emit sendListOfCommands(commandView->list);
+	emit sendListOfCommands(commandView);
 }

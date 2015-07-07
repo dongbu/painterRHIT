@@ -18,7 +18,12 @@ drawOnWidget::drawOnWidget(QWidget * parent, int num)
 
    idNumber = num;
 
-	this->setStyleSheet("background-color:rgba(255,0,0,0);");
+   if (idNumber == 0){
+	   this->setStyleSheet("background-color:rgba(255,0,0,0);");
+   }
+   else{
+	   this->setStyleSheet("background-color:rgba(0,0,0,255");
+   }
 
 
 }
@@ -151,6 +156,7 @@ void drawOnWidget::clearAll(int resetBackground){
 
 void drawOnWidget::updateToEditor(CommandEditor *editor){
 	if (idNumber == 0) clearAll(1);
+	if (idNumber == 1) clearAll(0);
     QList<QComboBox *> comboBoxes = editor->CommandEditorWidget->findChildren<QComboBox *>();
     QList<QLineEdit *> lineEdits = editor->CommandEditorWidget->findChildren<QLineEdit *>();
     QList<QSpinBox *> spinBoxes = editor->CommandEditorWidget->findChildren<QSpinBox *>();
@@ -158,6 +164,36 @@ void drawOnWidget::updateToEditor(CommandEditor *editor){
     penColor = comboBoxes.at(0)->currentText();
     penStyle = comboBoxes.at(1)->currentText();
     penWidth = spinBoxes.at(0)->text().toInt();
+
+	if (idNumber == 1){
+		//switch for the special versions of the colors
+		QStringList colors;
+		colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+
+		switch (colors.indexOf(comboBoxes.at(0)->currentText())){
+		case (1) :
+			penColor = "#FFCD70";
+			break;
+		case(2) :
+			penColor = "#FFFFA3";
+			break;
+		case(3) :
+			penColor = "#71B871";
+			break;
+		case(4) :
+			penColor = "#FF7575";
+			break;
+		case(5) :
+			penColor = "#6E6EB8";
+			break;
+		case(6) :
+			penColor = "#AF5FAF";
+			break;
+		default:
+			penColor = "#999999";
+			break;
+		}
+	}
 
     foreach(QLineEdit *line, lineEdits){
         QString s = line->text();
@@ -173,7 +209,8 @@ void drawOnWidget::updateToEditor(CommandEditor *editor){
 }
 
 
-void drawOnWidget::updateToAllEditors(QListWidget* list){
+void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
+	QListWidget * list = commandView->list;
 	clearAll(0);
 	std::vector<int> x, y;
 	QString lineColor;

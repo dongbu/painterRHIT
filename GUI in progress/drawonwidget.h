@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPen>
 #include <qlistwidget.h>
+#include "commandviewer.h"
 
 
 class drawOnWidget : public QLabel
@@ -32,7 +33,7 @@ signals:
 
 public slots:
     void updateToEditor(CommandEditor* editor);
-	void updateToAllEditors(QListWidget* list);
+	void updateToAllEditors(CommandViewer* commandView);
 
 protected:
     void mousePressEvent(QMouseEvent* event);

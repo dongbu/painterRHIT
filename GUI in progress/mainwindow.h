@@ -63,8 +63,7 @@ private:
     bool fileChanged;
     drawOnWidget *drawOn, *drawOn2;
     CommandViewer *commandView;
-    QComboBox *colorBox;
-    QComboBox *styleBox;
+    QComboBox *colorBox, *styleBox;
     QSpinBox *thicknessBox;
 
     void cleanUp();
@@ -77,7 +76,7 @@ signals:
 	void sendSaved(bool saved);
     void makeConnection(QString name);
     void sendLineStyles(QString color, QString style, int width);
-	void sendListOfCommands(QListWidget* commandViewList);
+	void sendListOfCommands(CommandViewer *commandView);
 
 };
 
