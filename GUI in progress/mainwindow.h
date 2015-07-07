@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include <QThread>
 #include <qspinbox.h>
+#include <qaction.h>
 
 
 namespace Ui {

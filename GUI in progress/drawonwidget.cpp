@@ -47,12 +47,13 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     //setup painter and pen
     QImage* temp;
     if(this->pixmap() == 0){
-        temp = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
+		temp = new QImage(this->width(), this->height(), QImage::Format_ARGB32_Premultiplied);
     }else{
         temp = new QImage(this->pixmap()->toImage());
     }
     if(temp->isNull()){
-        std::cout<<"image is somehow bad."<<std::endl;
+        std::cout<<"image returned null.  Proabably out of space."<<std::endl;
+		return false;
     }
     QPainter painter(temp);
 
@@ -211,7 +212,7 @@ void drawOnWidget::updateToEditor(CommandEditor *editor){
 
 void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 	QListWidget * list = commandView->list;
-	clearAll(0);
+	clearAll(1);
 	std::vector<int> x, y;
 	QString lineColor;
 	QString lineStyle;

@@ -32,7 +32,7 @@ void Painter::paintCommand(int startX, int startY, int endX, int endY, QString c
     //make an image to paint to.
     QImage* temp;
     if(ui->label->pixmap() == 0){
-        temp = new QImage(ui->label->width(),ui->label->height(),QImage::Format_ARGB32);
+        temp = new QImage(ui->label->width(),ui->label->height(),QImage::Format_ARGB32_Premultiplied);
     }else{
         temp = new QImage(ui->label->pixmap()->toImage());
     }

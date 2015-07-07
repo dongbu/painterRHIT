@@ -68,12 +68,22 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(colorBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
+
+	colorBox->setDisabled(true);
+	styleBox->setDisabled(true);
+	thicknessBox->setDisabled(true);
     //line options work//
 
     //robot connection work//
     connect(this,SIGNAL(makeConnection(QString)),this->commandView->interpreter,SLOT(beginConnecting(QString)));
     //robot connection work//
 
+	//refresh work//
+	QAction *refresh = new QAction(this);
+	refresh->setText("refresh");
+	connect(refresh, SIGNAL(triggered()), this, SLOT(drawOn2_update()));
+	ui->drawingToolbar->addAction(refresh);
+	//refresh work//
 
     this->move(700, 100);
 
@@ -235,6 +245,11 @@ void MainWindow::on_actionOpen_triggered()
 			drawOn->projectName = projectName;
 			drawOn2->projectName = projectName;
             emit sendSaved(true);
+			if (commandView->list->count() > 0){
+				colorBox->setEnabled(true);
+				styleBox->setEnabled(true);
+				thicknessBox->setEnabled(true);
+			}
         }
     }
 }
@@ -274,6 +289,9 @@ void MainWindow::cleanUp(){
 	this->colorBox->setCurrentIndex(0);
 	this->styleBox->setCurrentIndex(0);
 	this->thicknessBox->setValue(4);
+	colorBox->setDisabled(true);
+	styleBox->setDisabled(true);
+	thicknessBox->setDisabled(true);
     emit sendSaved(false);
 }
 
@@ -345,7 +363,12 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
             return;
         }
     }
-    if(pointCount == 1) commandView->MakeEditor();
+	if (pointCount == 1){
+		commandView->MakeEditor();
+		colorBox->setEnabled(true);
+		styleBox->setEnabled(true);
+		thicknessBox->setEnabled(true);
+	}
 	if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
     CommandEditor *temp = commandView->currentEditor;
     if(pointCount > 2){
