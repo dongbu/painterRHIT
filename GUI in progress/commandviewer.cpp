@@ -48,7 +48,7 @@ void CommandViewer::Stop_triggered()
     ui->Pause->setDisabled(true);
     ui->Stop->setDisabled(true);
     ui->StepBackwards->setDisabled(true);
-    ui->StepForwards->setDisabled(true);
+    //ui->StepForwards->setDisabled(true);
     interpreter->stopPaintingCommands();
 }
 

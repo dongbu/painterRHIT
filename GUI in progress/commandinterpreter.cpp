@@ -6,6 +6,7 @@
 #include "windows.h"
 #include "stdio.h"
 #include <iostream>
+#include <qdebug.h>
 
 CommandInterpreter::CommandInterpreter(QString projectName)
 {
@@ -14,11 +15,11 @@ CommandInterpreter::CommandInterpreter(QString projectName)
     picasso = new Painter();
     picasso->setWindowTitle("Painter");
     stopped = true;
-    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(sendCommand()));
+	paused = false;
+	finished = false;
+	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(SendNext()));
 
-    startPos = 0;
-    currentPos = 0;
-    currentLineWidth = 0;
+	ResetIndicies();
 
     //robot work//
 	prevContinuous = false;
@@ -39,81 +40,190 @@ CommandInterpreter::CommandInterpreter(QString projectName)
  * unless told to stop or reaches the end.
  * @param widget
  */
-void CommandInterpreter::beginPaintingCommands(QListWidget* widget, int index){
-    startPos = index;
+void CommandInterpreter::beginPaintingCommands(QListWidget* list, int index){
+	//base cases
+	if (!stopped) { return; }
+	if (paused) {
+		updateTimer.start();
+		return;
+	}
+	if (connected) { emit tell_go_home(1); }
+
+	//variable setting
+    startCommandIndex = index;
+	stopped = false;
+	this->list = list;
+
+	//simulator initializing
     picasso->show();
+	picasso->raise();
 
-    if(stopped){
-        CommandInterpreter::buildPointVectors(widget);
-		if (connected){
-			emit tell_go_home(1);
-		}
-        stopped = false;
-    }
-    if(!updateTimer.isActive()){
-        updateTimer.start(100);
-    }
-    picasso->raise();
+	//Creating Commands
+	QList<QListWidgetItem *> CommandNames = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+	foreach(QListWidgetItem *name, CommandNames) {
+		MakeLine(name->text());
+		listOfCommandTypes.push_back(new QString("Line"));
+		//if (type == LINE_STRING) {
+		//	MakeLine(name->text());
+		//listOfCommandTypes.push_back(new QString("Line"));
+		//} if (type == SOLID_STRING) {
+		//	MakeSolid(name->text());
+		//listOfCommandTypes.push_back(new QString("Solid"));
+		//} if (type == PIXEL_STRING) {
+		//	MakePixel(name->text());
+		//listOfCommandTypes.push_back(new QString("Pixel"));
+		//}
+	}
+
+	//Animation timer starting
+    updateTimer.start(100);
 }
 
-void CommandInterpreter::sendCommand(){
-    if(currentPos < x1.size()){
-		
-		if (connected){
-			bool continuous = false;
-			if (currentPos < (x1.size() - 1)){
-				if (x1.at(currentPos + 1) == x2.at(currentPos) && y1.at(currentPos + 1) == y2.at(currentPos)){
-					continuous = true;
-				}
-
-				if (continuous){
-					printf("continuous");
-				}
-				else{
-					printf("not continuous");
-				}
-			}
-			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), continuous, prevContinuous, currentPos);
-			
-			prevContinuous = continuous;
-		}
-		else{
-            picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos), currentLineWidth);
-		}
-		currentPos++;
-			
-    }else{
-		if (connected){
-			emit tell_go_home(0);
-		}
-        updateTimer.stop();
-        currentPos = x1.size();
-        stopped = true;
-    }
+void CommandInterpreter::SendNext(){
+	if (CurrentCommandType == "Line") {
+		sendLine(); //Continue an old line command
+	} else if (CurrentCommandType == "Solid") {
+		sendSolid(); //Continue an old solid command
+	} else if (CurrentCommandType == "Pixel") {
+		sendPixel(); //Continue an old pixel command
+	} else if (commandIndex >= listOfCommandTypes.size()) {
+		updateTimer.stop(); //Quit!  We're done
+		finished = true;
+	} else if (listOfCommandTypes.front() == QString("Line")) {
+		CurrentCommandType = *listOfCommandTypes.front();
+		sendLine(); //Start a new line command
+	} else if (listOfCommandTypes.front() == QString("Solid")) {
+		CurrentCommandType = *listOfCommandTypes.front();
+		sendSolid(); //Start a new solid command
+	} else if (listOfCommandTypes.front() == QString("Pixel")) {
+		CurrentCommandType = *listOfCommandTypes.front();
+		sendPixel(); //Start a new pixel command
+	}
 }
 
+void CommandInterpreter::MakeLine(QString commandName) {
+	//start xml data extraction
+	QFile loadFile;
+	loadFile.setFileName(QString("ProjectFiles/") + projectName + QString("/") + commandName + QString(".xml"));
+	loadFile.open(QIODevice::ReadOnly);
+	QXmlStreamReader reader(&loadFile);
+
+	while (!reader.isEndDocument()) { //loop xml file
+		reader.readNext();
+
+		//handles color, linestyle, and thickness lines
+		if (reader.name().toString() == "Line"){
+			int j = 0;
+			foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+				if (j == 0){
+					lineColor.push_back(attr.value().toString());
+				}
+				else if (j == 1){
+					lineStyle.push_back(attr.value().toString());
+				}
+				else if (j == 2) {
+					lineWidth.push_back(attr.value().toInt());
+				}
+				j++;
+			} //end line attribute sorting
+		} //End line attribute extraction
+
+		//handles point lines
+		if (reader.name().toString() == "Point"){
+			int k = 0;
+			foreach(const QXmlStreamAttribute &attr, reader.attributes()){
+				if (k == 0) {x.push_back(attr.value().toInt());}
+				if (k == 1) {y.push_back(attr.value().toInt());}
+				k++;
+			} //end x/y extraction
+		} //end point extraction
+	} //End xml data extraction
+	loadFile.close();
+
+	//coding vectors (so I know when command is over)
+	x.push_back(-50);
+	y.push_back(-50);
+}
+
+void CommandInterpreter::MakeSolid(QString commandName) {
+	//fill this method out when solids actually exist
+}
+
+void CommandInterpreter::MakePixel(QString commandName) {
+	//fill this method out when pixels actually exist
+}
+
+void CommandInterpreter::sendLine() {
+	//if (connected) { /*Do robot stuff*/ }
+	this->picasso->paintCommand(x.at(lineIndex), y.at(lineIndex), x.at(lineIndex + 1), y.at(lineIndex + 1),
+		lineColor.at(lineAttributeIndex), lineStyle.at(lineAttributeIndex), lineWidth.at(lineAttributeIndex));
+	lineIndex++;
+	if (x.at(lineIndex + 1) == -50) {
+		list->item(commandIndex)->setBackgroundColor(Qt::green);
+		commandIndex++;
+		lineAttributeIndex++;
+		lineIndex+=2;
+		CurrentCommandType = "garbage";
+	}
+}
+
+void CommandInterpreter::sendSolid() {
+	//fill out this method when solids are actally created
+}
+
+void CommandInterpreter::sendPixel() {
+	//fill out this method when pixels are actually created
+}
 
 /**
  * @brief stops the painting animation.
  */
 void CommandInterpreter::stopPaintingCommands(){
+	//Class variable resets
     stopped=true;
+	paused = false;
     updateTimer.stop();
-    currentPos = 0;
+	listOfCommandTypes.clear();
+	CurrentCommandType = "garbage";
+
+	//Line variable resets
+	x.clear();
+	y.clear();
+	lineWidth.clear();
+	lineColor.clear();
+	lineStyle.clear();
+
+	//Index reseting
+	ResetIndicies();
+
+	//Solid variable resets
+
+	//Pixel variable resets
+
+	//Other class resets
     picasso->raise();
     picasso->clearPainter();
-	if (connected){
-		emit(tell_go_home(0));
+	if (connected){ emit(tell_go_home(0)); }
+}
+
+void CommandInterpreter::ResetIndicies() {
+	for (int i = 0; i < listOfCommandTypes.size(); i++) {
+		list->item(i)->setBackgroundColor(Qt::white);
 	}
+
+	commandIndex = 0;
+	lineIndex = 0;
+	lineAttributeIndex = 0;
+	solidIndex = 0;
+	pixelIndex = 0;
 }
 
 /**
  * @brief pauses the painting animation.
  */
 void CommandInterpreter::pausePaintingCommands(){
-    if(updateTimer.isActive()){
-        updateTimer.stop();
-    }
+	updateTimer.stop();
+	paused = true;
 }
 
 /**
@@ -123,18 +233,7 @@ void CommandInterpreter::pausePaintingCommands(){
 void CommandInterpreter::stepForwardCommands(){
     CommandInterpreter::pausePaintingCommands();
     picasso->raise();
-    if(currentPos < x1.size()){
-        
-		if (connected){
-			if (stopped){emit tell_go_home(1);}
-			emit send_Pos(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), false, false, currentPos);
-		}
-		else{
-            picasso->paintCommand(x1.at(currentPos), y1.at(currentPos), x2.at(currentPos), y2.at(currentPos), colorList.at(currentPos), styleList.at(currentPos), currentLineWidth);
-		}
-		stopped = false;
-        currentPos++;
-    }
+	CommandInterpreter::SendNext();
 }
 
 /**
@@ -143,13 +242,16 @@ void CommandInterpreter::stepForwardCommands(){
  * @param widget
  */
 void CommandInterpreter::stepBackwardCommands(){
+	picasso->raise();
     CommandInterpreter::pausePaintingCommands();
-    stopped = false;
-    picasso->raise();
-    if(currentPos > startPos){
-        currentPos--;
-        CommandInterpreter::drawUntilCommand(currentPos);
-    }
+    stopped = true;
+
+	if (finished) {
+		CommandInterpreter::drawUntilCommand(commandIndex - 2);
+		finished = false;
+	} else {
+		CommandInterpreter::drawUntilCommand(commandIndex - 1);
+	}
 }
 
 
@@ -158,11 +260,11 @@ void CommandInterpreter::stepBackwardCommands(){
  * @param widget
  * @param stopPos
  */
-void CommandInterpreter::drawUntilCommand(int stopPos){
+void CommandInterpreter::drawUntilCommand(int stopIndex){
     picasso->clearPainter();
-    for(int i = startPos; i < stopPos; i++){
-        picasso->paintCommand(x1.at(i),y1.at(i),x2.at(i),y2.at(i),colorList.at(i),styleList.at(i), currentLineWidth);
-    }
+	ResetIndicies();
+	while (commandIndex <= stopIndex) CommandInterpreter::SendNext();
+	commandIndex--;
 }
 
 /**
@@ -172,112 +274,6 @@ void CommandInterpreter::drawUntilCommand(int stopPos){
 void CommandInterpreter::setProjectName(QString name){
     this->projectName=name;
     this->stopped = true;
-}
-
-/**
- * @brief looks at the widget and pulls forth all necessary information from xml files
- * @param widget
- */
-void CommandInterpreter::buildPointVectors(QListWidget* widget){
-    if(projectName.isEmpty() || projectName.isNull()){
-        return;
-    }
-    x1.clear();
-    x2.clear();
-    y1.clear();
-    y2.clear();
-    colorList.clear();
-    styleList.clear();
-
-
-
-    QList<QListWidgetItem *> listOfCommands = widget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
-
-    //used to read each file.
-    for(int i = 0; i < listOfCommands.length(); i++){
-        addPointsFromFile(listOfCommands.at(i)->text());
-    }
-}
-
-void CommandInterpreter::addPointsFromFile(QString fileName){
-    bool firstPoint = true;
-    int prevX;
-    int prevY;
-    QString currentColor;
-    QString currentStyle;
-
-    QFile loadFile;
-    loadFile.setFileName(QString("ProjectFiles/") + projectName+ QString("/") + fileName+ QString(".xml"));
-    loadFile.open(QIODevice::ReadOnly);
-    QXmlStreamReader reader(&loadFile);
-
-    //keep going until the document is finished.
-    while(!reader.isEndDocument()){
-        reader.readNext();
-        if(reader.isStartElement()){
-
-            if(reader.name().toString() == "Line"){
-                int j = 0;
-
-                //set the color and linestyle info.
-                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                    if(j == 0){
-                        currentColor = attr.value().toString();
-                    }else if(j == 1){
-                        currentStyle = attr.value().toString();
-                    }else{
-                        currentLineWidth = attr.value().toInt();
-                    }
-
-                    j++;
-                }
-            }
-            if(reader.name().toString() == "Point"){
-                int k = 0;
-                foreach(const QXmlStreamAttribute &attr, reader.attributes()){
-                    if(firstPoint){
-                        if(k == 0){
-                            prevX = attr.value().toInt();
-                        }else{
-                            prevY = attr.value().toInt();
-                            firstPoint = false;
-                        }
-                    }else{
-                        if(k == 0){
-                            x1.push_back(prevX);
-                            x2.push_back(attr.value().toInt());
-                            prevX = attr.value().toInt();
-                        }else{
-                            y1.push_back(prevY);
-                            y2.push_back(attr.value().toInt());
-                            prevY = attr.value().toInt();
-                            colorList.push_back(currentColor);
-                            styleList.push_back(currentStyle);
-                        }
-
-                    }
-
-                    k++;
-                }
-
-
-            } else if(reader.name().toString() == "FileMalformed"){
-                if(reader.attributes().value(0).toString() == "1"){
-                    std::cout << "FILE WAS MALFORMED!" << std::endl;
-                    return;
-                    //potentially highlight poorly made files.
-                }
-            }
-        }
-
-    }
-    if(reader.hasError()){
-        std::cout << "there was an error in reading the file" <<std::endl;
-        std::cout << reader.errorString().toStdString() << std::endl;
-        //shouldn't be an issue, but put in just in case.
-    }
-
-    loadFile.close();
 }
 
 /**
@@ -301,6 +297,6 @@ void CommandInterpreter::beginConnecting(QString robot){
 }
 
 void CommandInterpreter::getInstructed(int current){
-    picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current), currentLineWidth);
+    //picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current), currentLineWidth);
 }
 

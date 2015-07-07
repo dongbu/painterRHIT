@@ -7,8 +7,6 @@
 #include <QTimer>
 #include <vector>
 
-
-
 class CommandInterpreter : public QObject
 {
     Q_OBJECT
@@ -24,26 +22,46 @@ public:
     void clear();
 
 private slots:
-    void sendCommand();
+    void SendNext();
 
 public slots:
     void beginConnecting(QString robot);
 	void getInstructed(int current);
 
 private:
+	//General Variables
     Painter *picasso;
     QString projectName;
-    bool continuePainting;
-    bool stopped, connected, prevContinuous;
-    QTimer updateTimer;
-    std::vector<int> x1,x2,y1,y2;
-    int currentPos, startPos, currentLineWidth;
-    std::vector<QString> colorList, styleList;
 	CytonController *bender;
+	QTimer updateTimer;
+	QListWidget *list;
+	//General Variables
 
-    void drawUntilCommand(int stopPos);
-    void buildPointVectors(QListWidget* widget);
-    void addPointsFromFile(QString fileName);
+
+	//CommandList Variables
+	int lineIndex, solidIndex, pixelIndex, commandIndex;
+	QList<QString *> listOfCommandTypes;
+	QString CurrentCommandType;
+
+	std::vector<int> x, y, lineWidth; //line
+	std::vector<QString> lineColor, lineStyle; //line
+	int lineAttributeIndex; //special
+	//??			//Solid vars.
+	//??			//Pixel vars.
+	//CommandList Variables
+
+
+	bool finished, paused, stopped, connected, prevContinuous, continuePainting;
+	int startCommandIndex;
+	void ResetIndicies();
+	void drawUntilCommand(int stopIndex);
+	void MakeLine(QString commandName);
+	void MakeSolid(QString commandName);
+	void MakePixel(QString commandName);
+	void sendLine();
+	void sendSolid();
+	void sendPixel();
+
 
 signals:
 	void tell_go_home(int pos);
