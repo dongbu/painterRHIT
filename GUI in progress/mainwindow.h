@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include <QThread>
 #include <qspinbox.h>
+#include <qaction.h>
 
 
 namespace Ui {
@@ -53,6 +54,7 @@ private slots:
     void ConnectEditor(CommandEditor* editor);
 	void on_actionConnect_triggered();
     void on_drawing_changed();
+	void drawOn2_update();
 
 private:
     Ui::MainWindow *ui;
@@ -60,10 +62,9 @@ private:
     bool saved;
     QMessageBox alert;
     bool fileChanged;
-    drawOnWidget *drawOn;
+    drawOnWidget *drawOn, *drawOn2;
     CommandViewer *commandView;
-    QComboBox *colorBox;
-    QComboBox *styleBox;
+    QComboBox *colorBox, *styleBox;
     QSpinBox *thicknessBox;
 
     void cleanUp();
@@ -76,6 +77,7 @@ signals:
 	void sendSaved(bool saved);
     void makeConnection(QString name);
     void sendLineStyles(QString color, QString style, int width);
+	void sendListOfCommands(CommandViewer *commandView);
 
 };
 

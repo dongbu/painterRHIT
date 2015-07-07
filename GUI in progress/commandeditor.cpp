@@ -227,7 +227,6 @@ void CommandEditor::removeExcessLines(){
             listToDelete.append(toDelete1);
             lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
             linesRemoved+= 2;
-            printf("hi");
         }
         i++;
     }
