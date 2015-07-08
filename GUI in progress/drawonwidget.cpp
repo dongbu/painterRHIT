@@ -5,7 +5,12 @@
 #include <qrgb.h>
 #include <qxmlstream.h>
 #include <QXmlStreamReader>
-
+/**
+ * @brief constructs a two-layered sketchpad to draw a simulated
+ * path for a robotic arm in.
+ * @param parent (QWidget)
+ * @param num (int)
+ */
 drawOnWidget::drawOnWidget(QWidget * parent, int num)
     :QLabel(parent)
 {
@@ -43,6 +48,12 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     }
 }
 
+/**
+ * @brief sketches a point into the workspace
+ * @param currentX (int)
+ * @param currentY (int)
+ * @return
+ */
 bool drawOnWidget::drawPoint(int currentX, int currentY){
     //setup painter and pen
     QImage* temp;
@@ -143,6 +154,10 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
     return true;
 }
 
+/**
+ * erases the sketchpad
+ * @param resetBackground (int)
+ */
 void drawOnWidget::clearAll(int resetBackground){
 	prevX = -10;
 	prevY = -10;
@@ -155,6 +170,10 @@ void drawOnWidget::clearAll(int resetBackground){
 
 }
 
+/**
+ * @brief links changes in sketchpad to given editor
+ * @param editor (Line)
+ */
 void drawOnWidget::updateToEditor(Line *editor){
 	if (idNumber == 0) clearAll(1);
 	if (idNumber == 1) clearAll(0);
@@ -209,7 +228,10 @@ void drawOnWidget::updateToEditor(Line *editor){
     this->currentEditor = editor;
 }
 
-
+/**
+ * @brief fills out the sketchpad with every command
+ * @param commandView (CommandViewer)
+ */
 void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 	QListWidget * list = commandView->list;
 	clearAll(1);
@@ -300,5 +322,4 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 		y.clear();
 
 	}
-
 }

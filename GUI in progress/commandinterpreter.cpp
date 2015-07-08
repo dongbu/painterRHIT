@@ -8,6 +8,12 @@
 #include <iostream> //hi
 #include <qdebug.h>
 
+
+/**
+ * @brief constructs a command interpreter--a class designed to handle the step-by-step
+ * logic required of the commands sent to both the simulator and the robot itself.
+ * @param QString
+ */
 CommandInterpreter::CommandInterpreter(QString projectName)
 {
     this->projectName=projectName;
@@ -63,6 +69,10 @@ void CommandInterpreter::beginPaintingCommands(int index){
     updateTimer.start(100);
 }
 
+
+/**
+ * @brief reads the class variable "list" and internally stores the resulting commands.
+ */
 void CommandInterpreter::BuildCommands() {
 	//Creating Commands
 	listOfCommandTypes.clear();
@@ -83,11 +93,17 @@ void CommandInterpreter::BuildCommands() {
 	}
 }
 
-
+/**
+ * @brief sets the class variable list
+ * @param list
+ */
 void CommandInterpreter::setList(QListWidget *list){
 	this->list = list;
 }
 
+/**
+ * @brief steps to the next action in the preset simulation sequence
+ */
 void CommandInterpreter::SendNext(){
 	if (CurrentCommandType == "Line") {
 		sendLine(); //Continue an old line command
@@ -110,6 +126,10 @@ void CommandInterpreter::SendNext(){
 	}
 }
 
+/**
+ * @brief creates a "Line" command from the given file name.
+ * @param commandName
+ */
 void CommandInterpreter::MakeLine(QString commandName) {
 	//start xml data extraction
 	QFile loadFile;
@@ -154,14 +174,26 @@ void CommandInterpreter::MakeLine(QString commandName) {
 	y.push_back(-50);
 }
 
+/**
+ * @brief creates a "Solid" command from the given file name.
+ * @param commandName
+ */
 void CommandInterpreter::MakeSolid(QString commandName) {
 	//fill this method out when solids actually exist
 }
 
+/**
+ * @brief creates a "Pixel" command from the given file name.
+ * @param commandName
+ */
 void CommandInterpreter::MakePixel(QString commandName) {
 	//fill this method out when pixels actually exist
 }
 
+/**
+ * @brief sends a single "Line paint command" to both the painter
+ * and the robot (if connected).
+ */
 void CommandInterpreter::sendLine() {
 	//if (connected) { /*Do robot stuff*/ }
 	this->picasso->paintCommand(x.at(lineIndex), y.at(lineIndex), x.at(lineIndex + 1), y.at(lineIndex + 1),
@@ -176,16 +208,24 @@ void CommandInterpreter::sendLine() {
 	}
 }
 
+/**
+ * @brief sends a single "Solid paint command" to both the painter
+ * and the robot (if connected).
+ */
 void CommandInterpreter::sendSolid() {
 	//fill out this method when solids are actally created
 }
 
+/**
+ * @brief sends a single "Pixel paint command" to both the painter
+ * and the robot (if connected).
+ */
 void CommandInterpreter::sendPixel() {
 	//fill out this method when pixels are actually created
 }
 
 /**
- * @brief stops the painting animation.
+ * @brief stops the painting animation.  Operates as a quasi-reset.
  */
 void CommandInterpreter::stopPaintingCommands(){
 	//Index reseting
@@ -215,6 +255,9 @@ void CommandInterpreter::stopPaintingCommands(){
 	if (connected){ emit(tell_go_home(0)); }
 }
 
+/**
+ * @brief resets all command indicies to 0, recolors CommandList
+ */
 void CommandInterpreter::ResetIndicies() {
 	for (int i = 0; i < (listOfCommandTypes.count()); i++) {
 		list->item(i)->setBackgroundColor(Qt::white);
@@ -250,8 +293,7 @@ void CommandInterpreter::stepForwardCommands(){
 }
 
 /**
- * @brief step back and undo painting one command.  Since there is no "unpaint" function,
- * removes all painted commands and then paints up until the previous command.
+ * @brief steps back one command (by clearing & repainting all prior)
  * @param widget
  */
 void CommandInterpreter::stepBackwardCommands(){
@@ -302,6 +344,10 @@ void CommandInterpreter::clear(){
     picasso->clearPainter();
 }
 
+/**
+ * @brief Attempts to connect to the specified robot.
+ * @param robot
+ */
 void CommandInterpreter::beginConnecting(QString robot){
     if(robot == "cyton"){
         bender = new CytonController();
@@ -314,8 +360,3 @@ void CommandInterpreter::beginConnecting(QString robot){
         printf("connect to ABB here");
     }
 }
-
-void CommandInterpreter::getInstructed(int current){
-    //picasso->paintCommand(x1.at(current), y1.at(current), x2.at(current), y2.at(current), colorList.at(current), styleList.at(current), currentLineWidth);
-}
-

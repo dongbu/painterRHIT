@@ -8,7 +8,10 @@
 
 using namespace Ec;
 using namespace cv;
-
+/**
+ * @brief constructor for cyton.
+ * initializes points for "home"
+ */
 CytonController::CytonController()
 {
 	s1 = -2;
@@ -21,13 +24,18 @@ CytonController::CytonController()
 
 }
 
-
+/**
+ * @brief virtual destructor.
+ */
 CytonController::~CytonController()
 {
 	go_home(0);
 }
 
-
+/**
+ * @brief connects to the robot.
+ * @return bool
+ */
 bool CytonController::connect(){
 	if (init()){
 		std::cout << "established connection" << std::endl;
@@ -45,7 +53,12 @@ bool CytonController::connect(){
 	}
 }
 
-
+/**
+ * @brief moves the robot to a given point using a specific endEffectorSet
+ * @param p
+ * @param endEffectorSet
+ * @return bool
+ */
 bool CytonController::net_move(Point3d p, int endEffectorSet) {
 	EcCoordinateSystemTransformation pose;
 	pose.setTranslationX(p.x);
@@ -207,7 +220,7 @@ bool CytonController::traceLine(double x1, double y1, double x2, double y2, bool
 
 	Point3d firstPointUp = convert(x1, y1, moveHeight);
 	Point3d firstPointDown = convert(x1, y1, drawHeight);
-	Point3d secondPointDown = convert(x2, y2, drawHeight);
+    Point3d secondPointDown = convert(x2, y2, drawHeight);
 	Point3d secondPointUp = secondPointDown;
 	
 	if (!continuous){

@@ -28,9 +28,6 @@ public:
     static QString saveAsProject();
     static bool copyAllFilesFrom(QString prevFolder, QString newFolder);
     static bool loadExternalFile(QString projectName, QListWidget* CommandList);
-    static std::vector<std::vector<int> > getPointVectors(QString projectName, QListWidget* CommandList);
-
-
 };
 
 #endif // GUILOADSAVE_H

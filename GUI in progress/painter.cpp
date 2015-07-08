@@ -3,6 +3,10 @@
 #include "qpainter.h"
 #include <QPixMap>
 
+/**
+ * @brief constructs the window within which the simulation runs
+ * @param parent
+ */
 Painter::Painter(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Painter)
@@ -13,6 +17,9 @@ Painter::Painter(QWidget *parent) :
     fudge = 7;//y-offset between drawing (user input) and painting (simulation).
 }
 
+/**
+ * @brief Virtual deconstructor
+ */
 Painter::~Painter()
 {
     delete ui;
@@ -80,6 +87,9 @@ Qt::PenStyle Painter::getPenStyle(QString style){
     }
 }
 
+/**
+ * @brief removes all drawings from the simulation window.
+ */
 void Painter::clearPainter(){
     QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
     ui->label->setPixmap(QPixmap::fromImage(*temp2));

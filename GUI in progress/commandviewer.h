@@ -58,6 +58,7 @@ private slots:
     void StepForward_triggered();
     void StepBackwards_triggered();
     void RunFromStart_triggered();
+	void customMenuRequested(QPoint pos);
 
 public slots:
     void fileSaved(bool saved);

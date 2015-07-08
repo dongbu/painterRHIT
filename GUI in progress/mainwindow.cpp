@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "QDebug.h"
 #include <QRadioButton>
-
+/**
+ * @brief main window that does everything.
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -434,6 +437,10 @@ void MainWindow::closeEvent(QCloseEvent *event){
     commandView->close();
 }
 
+/**
+ * @brief connects the given editor to the appropriate slots.
+ * @param editor
+ */
 void MainWindow::ConnectEditor(Line* editor) {
     //connection so that we know when something has been changed.
     connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
@@ -449,6 +456,9 @@ void MainWindow::ConnectEditor(Line* editor) {
 	
 }
 
+/**
+ * @brief connects ze robot.
+ */
 void MainWindow::on_actionConnect_triggered()
 {
     QMessageBox config;
@@ -483,6 +493,9 @@ void MainWindow::on_actionConnect_triggered()
 
 }
 
+/**
+ * @brief updates the commands whenever the drawing is changed.
+ */
 void MainWindow::on_drawing_changed(){
 	if (!editorWorks){
 		return;
@@ -497,11 +510,16 @@ void MainWindow::on_drawing_changed(){
 	disconnect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
 }
 
-
+/**
+ * @brief updates drawOn2
+ */
 void MainWindow::drawOn2_update(){
 	emit sendListOfCommands(commandView);
 }
 
+/**
+ * @brief opens le camera.
+ */
 void MainWindow::openCamera(){
     cam.openCamera(0);
 }

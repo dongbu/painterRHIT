@@ -4,6 +4,11 @@
 #include <QAction>
 #include <qlistwidget.h>
 
+
+/**
+ * @brief Displays a list of available (already created) painting commands.
+ * @param parent
+ */
 CommandViewer::CommandViewer(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::CommandViewer)
@@ -30,6 +35,10 @@ ui(new Ui::CommandViewer)
 	this->show();
 	this->saved = false;
 	this->fileChanged = false;
+
+	list->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+
 
 }
 
@@ -107,6 +116,9 @@ void CommandViewer::RunFromStart_triggered()
 	}
 }
 
+/**
+ * @brief virtual destructor.
+ */
 CommandViewer::~CommandViewer()
 {
 	delete ui;
@@ -179,7 +191,10 @@ void CommandViewer::on_EditCommand_clicked()
 	currentEditor->setCommandAdded(true);
 	currentEditor->show();
 }
-
+/**
+ * @brief closing event for commandviewer
+ * @param event
+ */
 void CommandViewer::closeEvent(QCloseEvent *event){
 	if (mainClosed){
 		event->accept();
@@ -190,14 +205,26 @@ void CommandViewer::closeEvent(QCloseEvent *event){
 	}
 }
 
+/**
+ * @brief Sets the variable mainClosed.
+ * @param closed
+ */
 void CommandViewer::setMainClosed(bool closed){
 	this->mainClosed = closed;
 }
 
+/**
+ * @brief emits a signal that the add command button
+ * was pressed.
+ */
 void CommandViewer::Add_Command_Clicked(){
 	emit Add_External_Command();
 }
 
+/**
+ * @brief changes the variable "saved."
+ * @param saved
+ */
 void CommandViewer::fileSaved(bool saved){
 	ui->AddCommand->setEnabled(saved);
 	this->saved = &saved;
@@ -337,4 +364,15 @@ void CommandViewer::clear() {
 	currentEditor = NULL;
 	list->clear();
 	interpreter->clear();
+}
+/**
+ * @brief in progress
+ * @param pos
+ */
+void CommandViewer::customMenuRequested(QPoint pos) {
+	QMenu *menu = new QMenu(this);
+	menu->addAction(new QAction("Action 1", this));
+	menu->addAction(new QAction("Action 2", this));
+	menu->addAction(new QAction("Action 3", this));
+	menu->popup(list->viewport()->mapToGlobal(pos));
 }

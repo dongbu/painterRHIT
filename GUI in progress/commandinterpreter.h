@@ -27,7 +27,6 @@ private slots:
 
 public slots:
     void beginConnecting(QString robot);
-	void getInstructed(int current);
 
 private:
 	//General Variables

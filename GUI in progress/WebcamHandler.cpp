@@ -1,16 +1,24 @@
 #include "WebcamHandler.h"
 
-
+/**
+* @brief sets up the ability of a webcam to be launched
+*/
 WebcamHandler::WebcamHandler()
 {
 	cameraActive = false;
 }
 
-
+/**
+* @brief virtual deconstructor
+*/
 WebcamHandler::~WebcamHandler()
 {
 }
 
+/**
+* @brief used to load a command into the commandlist regardless of project origin.
+* @param id (int)
+*/
 void WebcamHandler::openCamera(int id){
 	if (cameraActive) return;
 
