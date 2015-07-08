@@ -7,6 +7,7 @@
 #include "commandeditor.h"
 #include "CommandViewer.h"
 #include "drawonwidget.h"
+#include "WebcamHandler.h"
 
 #include <QtGui>
 #include <QMainWindow>
@@ -55,6 +56,7 @@ private slots:
 	void on_actionConnect_triggered();
     void on_drawing_changed();
 	void drawOn2_update();
+    void openCamera();
 
 private:
     Ui::MainWindow *ui;

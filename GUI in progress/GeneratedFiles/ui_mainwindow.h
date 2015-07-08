@@ -44,6 +44,7 @@ public:
     QMenu *menuDraw_Commands;
     QMenu *menuRobot;
     QToolBar *drawingToolbar;
+    QToolBar *miscToolbar;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -121,6 +122,9 @@ public:
         drawingToolbar = new QToolBar(MainWindow);
         drawingToolbar->setObjectName(QStringLiteral("drawingToolbar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, drawingToolbar);
+        miscToolbar = new QToolBar(MainWindow);
+        miscToolbar->setObjectName(QStringLiteral("miscToolbar"));
+        MainWindow->addToolBar(Qt::TopToolBarArea, miscToolbar);
 
         GeneralCommands->addAction(actionOpen);
         GeneralCommands->addAction(actionNew);
@@ -172,6 +176,7 @@ public:
         menuDraw_Commands->setTitle(QApplication::translate("MainWindow", "Draw Commands", 0));
         menuRobot->setTitle(QApplication::translate("MainWindow", "Robot", 0));
         drawingToolbar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
+        miscToolbar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     } // retranslateUi
 
 };

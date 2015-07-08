@@ -87,6 +87,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->drawingToolbar->addAction(refresh);
 	//refresh work//
 
+    //webcam work//
+    QAction *startWebcam = new QAction(this);
+    startWebcam->setText("camera");
+    connect(startWebcam,SIGNAL(triggered()),this,SLOT(openCamera()));
+    ui->miscToolbar->addAction(startWebcam);
+    //webcam work//
+
     this->move(700, 100);
 
 }
@@ -493,4 +500,9 @@ void MainWindow::on_drawing_changed(){
 
 void MainWindow::drawOn2_update(){
 	emit sendListOfCommands(commandView);
+}
+
+void MainWindow::openCamera(){
+    WebcamHandler web;
+    web.openCamera(0);
 }

@@ -129,6 +129,9 @@
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="WebcamHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CytonController.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_painter.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebcamHandler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
