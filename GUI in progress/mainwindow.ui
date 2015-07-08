@@ -111,7 +111,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/open.ico</normaloff>:/Icon Storage/open.ico</iconset>
+     <normaloff>:/Icon Storage/open.png</normaloff>:/Icon Storage/open.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>

@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{167f0337-cc4f-4f88-b109-7187fb4e62d0}</UniqueIdentifier>
+      <UniqueIdentifier>{db34aba7-7d92-4940-a00e-f888be7ac72d}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{27377e62-b20e-48fc-b049-03ab6e791de3}</UniqueIdentifier>
+      <UniqueIdentifier>{aed41b45-2441-46e1-bf72-20d8483684c6}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -84,6 +84,12 @@
     <ClCompile Include="painter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\.moc\moc_CytonController.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\.moc\moc_CytonController.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
     <ClCompile Include="Debug\.moc\moc_commandeditor.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -94,6 +100,12 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Release\.moc\moc_commandinterpreter.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\.moc\moc_commandviewer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\.moc\moc_commandviewer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Debug\.moc\moc_drawonwidget.cpp">
@@ -117,20 +129,11 @@
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\.moc\moc_CytonController.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\.moc\moc_CytonController.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\.moc\moc_commandviewer.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\.moc\moc_commandviewer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="CytonController.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="commandeditor.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -150,21 +153,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="painter.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <ClInclude Include="GeneratedFiles\ui_commandeditor.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_commandviewer.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_painter.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <CustomBuild Include="CytonController.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -213,7 +201,7 @@
     <None Include="Storage\next.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Storage\open.ico">
+    <None Include="Storage\open.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Storage\pause.png">
@@ -233,6 +221,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_commandeditor.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_commandviewer.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_painter.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <Image Include="Icon Storage\Circle.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -246,9 +248,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Icon Storage\next.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Icon Storage\open.ico">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Icon Storage\pause.png">
@@ -270,6 +269,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Icon Storage\stop.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\open.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include <QXmlStreamWriter>
 #include "windows.h"
 #include "stdio.h"
-#include <iostream>
+#include <iostream> //hi
 #include <qdebug.h>
 
 CommandInterpreter::CommandInterpreter(QString projectName)
@@ -179,6 +179,9 @@ void CommandInterpreter::sendPixel() {
  * @brief stops the painting animation.
  */
 void CommandInterpreter::stopPaintingCommands(){
+	//Index reseting
+	ResetIndicies();
+
 	//Class variable resets
     stopped=true;
 	paused = false;
@@ -192,9 +195,6 @@ void CommandInterpreter::stopPaintingCommands(){
 	lineWidth.clear();
 	lineColor.clear();
 	lineStyle.clear();
-
-	//Index reseting
-	ResetIndicies();
 
 	//Solid variable resets
 

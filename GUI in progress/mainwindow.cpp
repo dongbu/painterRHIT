@@ -286,12 +286,14 @@ void MainWindow::cleanUp(){
         QDir("ProjectFiles/Temp").removeRecursively();
     }
     drawOn->clearAll(1);
+	drawOn2->clearAll(1);
 	this->colorBox->setCurrentIndex(0);
 	this->styleBox->setCurrentIndex(0);
 	this->thicknessBox->setValue(4);
 	colorBox->setDisabled(true);
 	styleBox->setDisabled(true);
 	thicknessBox->setDisabled(true);
+	commandView->list->clear();
     emit sendSaved(false);
 }
 
