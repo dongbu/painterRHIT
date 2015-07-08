@@ -11,6 +11,9 @@
 
 #include "kmeansSegment.cpp"
 
+// this is a silly comment to test git checkin
+// Hello from Gunnar (as requested)
+
 using namespace cv;
 using namespace std;
 
