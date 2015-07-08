@@ -117,6 +117,7 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
     Line_Style = new QComboBox();
     Line_Width = new QSpinBox();
 
+
     //forcing command name to be acceptable. Previously, entering only a number as a command name caused crash upon load.
     QRegExp rx("^[A-Za-z][A-Za-z0-9]*");
     Command_Name->setValidator(new QRegExpValidator(rx,this));
@@ -172,8 +173,10 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
  * @brief Add_Command slot
  */
 
-void CommandEditor::Add_Command_Clicked(QString projectName) {
+void CommandEditor::Add_Command_Clicked() {
+	
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
+
 
     //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
     //these commands then crash the program.
@@ -207,6 +210,7 @@ void CommandEditor::Add_Command_Clicked(QString projectName) {
     CommandEditor::removeExcessLines();
 
     this->Add_Command->setText("Save");
+	this->close();
 }
 
 void CommandEditor::removeExcessLines(){
@@ -298,7 +302,8 @@ void CommandEditor::setCommandAdded(bool commandAdded){
  * @brief allows you to tell the command to add itself to the list from somewhere else.
  */
 void CommandEditor::add_Command_Externally(QString projectName){
-	this->Add_Command_Clicked(projectName);
+	this->setProjectName(projectName);
+	this->Add_Command_Clicked();
 }
 
 /**
@@ -324,4 +329,8 @@ void CommandEditor::updateLineStyles(QString color, QString style, int width){
     comboBoxes.at(1)->setCurrentText(style);
     QList<QSpinBox *> spinBoxes = this->CommandEditorWidget->findChildren<QSpinBox *>();
     spinBoxes.at(0)->setValue(width);
+}
+
+void CommandEditor::setProjectName(QString projectName){
+	this->projectName = projectName;
 }

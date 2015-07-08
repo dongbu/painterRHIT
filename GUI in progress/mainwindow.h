@@ -61,7 +61,7 @@ private:
     QString projectName;
     bool saved;
     QMessageBox alert;
-    bool fileChanged;
+    bool fileChanged, editorWorks;
     drawOnWidget *drawOn, *drawOn2;
     CommandViewer *commandView;
     QComboBox *colorBox, *styleBox;

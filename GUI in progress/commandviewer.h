@@ -31,7 +31,7 @@ public:
     void setProjectName(QString *projectName);
     void setMainClosed(bool closed);
     void MakeEditor();
-    CommandEditor *currentEditor;
+	CommandEditor *currentEditor;
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
@@ -45,7 +45,7 @@ private:
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
     QString *projectName;
-    bool mainClosed;
+	bool mainClosed, freshlyMade;
 
 private slots:
     void MoveUp_clicked();

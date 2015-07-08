@@ -40,7 +40,7 @@ CommandInterpreter::CommandInterpreter(QString projectName)
  * unless told to stop or reaches the end.
  * @param widget
  */
-void CommandInterpreter::beginPaintingCommands(QListWidget* list, int index){
+void CommandInterpreter::beginPaintingCommands(int index){
 	//base cases
 	if (!stopped) { return; }
 	if (paused) {
@@ -52,13 +52,20 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* list, int index){
 	//variable setting
     startCommandIndex = index;
 	stopped = false;
-	this->list = list;
 
 	//simulator initializing
     picasso->show();
 	picasso->raise();
 
+	BuildCommands();
+
+	//Animation timer starting
+    updateTimer.start(100);
+}
+
+void CommandInterpreter::BuildCommands() {
 	//Creating Commands
+	listOfCommandTypes.clear();
 	QList<QListWidgetItem *> CommandNames = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
 	foreach(QListWidgetItem *name, CommandNames) {
 		MakeLine(name->text());
@@ -74,9 +81,11 @@ void CommandInterpreter::beginPaintingCommands(QListWidget* list, int index){
 		//listOfCommandTypes.push_back(new QString("Pixel"));
 		//}
 	}
+}
 
-	//Animation timer starting
-    updateTimer.start(100);
+
+void CommandInterpreter::setList(QListWidget *list){
+	this->list = list;
 }
 
 void CommandInterpreter::SendNext(){
@@ -207,10 +216,10 @@ void CommandInterpreter::stopPaintingCommands(){
 }
 
 void CommandInterpreter::ResetIndicies() {
-	for (int i = 0; i < listOfCommandTypes.size(); i++) {
+	for (int i = 0; i < (listOfCommandTypes.count()); i++) {
 		list->item(i)->setBackgroundColor(Qt::white);
 	}
-
+	
 	commandIndex = 0;
 	lineIndex = 0;
 	lineAttributeIndex = 0;
@@ -231,7 +240,11 @@ void CommandInterpreter::pausePaintingCommands(){
  * @param widget
  */
 void CommandInterpreter::stepForwardCommands(){
-    CommandInterpreter::pausePaintingCommands();
+	if (stopped){
+		picasso->show();
+		this->BuildCommands();
+	}
+	CommandInterpreter::pausePaintingCommands();
     picasso->raise();
 	CommandInterpreter::SendNext();
 }
@@ -245,6 +258,11 @@ void CommandInterpreter::stepBackwardCommands(){
 	picasso->raise();
     CommandInterpreter::pausePaintingCommands();
     stopped = true;
+
+	if (commandIndex <= 0) {
+		stopPaintingCommands();
+		return;
+	}
 
 	if (finished) {
 		CommandInterpreter::drawUntilCommand(commandIndex - 2);
@@ -264,6 +282,7 @@ void CommandInterpreter::drawUntilCommand(int stopIndex){
     picasso->clearPainter();
 	ResetIndicies();
 	while (commandIndex <= stopIndex) CommandInterpreter::SendNext();
+
 	commandIndex--;
 }
 

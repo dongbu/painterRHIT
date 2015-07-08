@@ -7,6 +7,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+	editorWorks = false;
+
+	//window work//
+	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
+	//window work//
 
     //save work//
     projectName = ""; //"garbage" value
@@ -69,9 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
 
-	colorBox->setDisabled(true);
-	styleBox->setDisabled(true);
-	thicknessBox->setDisabled(true);
     //line options work//
 
     //robot connection work//
@@ -239,17 +241,10 @@ void MainWindow::on_actionOpen_triggered()
             alert.show();
         }else{
             this->setWindowTitle(projectName);
+
             saved=true;
             ui->actionSave->setEnabled(true);
-            commandView->setProjectName(&projectName);
-			drawOn->projectName = projectName;
-			drawOn2->projectName = projectName;
             emit sendSaved(true);
-			if (commandView->list->count() > 0){
-				colorBox->setEnabled(true);
-				styleBox->setEnabled(true);
-				thicknessBox->setEnabled(true);
-			}
         }
     }
 }
@@ -290,11 +285,8 @@ void MainWindow::cleanUp(){
 	this->colorBox->setCurrentIndex(0);
 	this->styleBox->setCurrentIndex(0);
 	this->thicknessBox->setValue(4);
-	colorBox->setDisabled(true);
-	styleBox->setDisabled(true);
-	thicknessBox->setDisabled(true);
-	commandView->list->clear();
     emit sendSaved(false);
+	commandView = new CommandViewer();
 }
 
 /**
@@ -354,6 +346,7 @@ void MainWindow::on_actionNew_triggered()
  */
 void MainWindow::recievePoint(int x, int y, int pointCount){
     //means command is over.
+	editorWorks = true;
     if(x == -10 && y == -10){
         if(pointCount >= 3){
             CommandEditor *temp = commandView->currentEditor;
@@ -382,6 +375,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 void MainWindow::noticeCommandAdded(int index){
     if(index == -10){
         drawOn->clearAll(1);
+		editorWorks = false;
     }
 }
 
@@ -483,13 +477,17 @@ void MainWindow::on_actionConnect_triggered()
 }
 
 void MainWindow::on_drawing_changed(){
-    CommandEditor *editor = drawOn->currentEditor;
-    connect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
-    QString color = colorBox->currentText();
-    QString style = styleBox->currentText();
+	if (!editorWorks){
+		return;
+	}
+
+	CommandEditor *editor = drawOn->currentEditor;
+	connect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
+	QString color = colorBox->currentText();
+	QString style = styleBox->currentText();
 	int width = thicknessBox->text().toInt();
-    emit sendLineStyles(color,style, width);
-    disconnect(this,SIGNAL(sendLineStyles(QString,QString,int)),editor,SLOT(updateLineStyles(QString,QString,int)));
+	emit sendLineStyles(color, style, width);
+	disconnect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
 }
 
 

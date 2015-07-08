@@ -13,13 +13,14 @@ class CommandInterpreter : public QObject
 
 public:
     CommandInterpreter(QString projectName);
-    void beginPaintingCommands(QListWidget* widget, int index);
+    void beginPaintingCommands(int index);
     void stopPaintingCommands();
     void stepForwardCommands();
     void stepBackwardCommands();
     void setProjectName(QString name);
     void pausePaintingCommands();
     void clear();
+	void setList(QListWidget* list);
 
 private slots:
     void SendNext();
@@ -53,6 +54,7 @@ private:
 
 	bool finished, paused, stopped, connected, prevContinuous, continuePainting;
 	int startCommandIndex;
+	void BuildCommands();
 	void ResetIndicies();
 	void drawUntilCommand(int stopIndex);
 	void MakeLine(QString commandName);

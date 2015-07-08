@@ -13,7 +13,6 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -38,11 +37,6 @@ public:
     QAction *actionConnect;
     QWidget *centralWidget;
     QWidget *widget;
-    QFrame *line_4;
-    QFrame *line;
-    QFrame *line_2;
-    QFrame *line_3;
-    QFrame *line_5;
     QToolBar *GeneralCommands;
     QToolBar *DrawFunctions;
     QMenuBar *menuBar;
@@ -107,31 +101,6 @@ public:
         widget->setObjectName(QStringLiteral("widget"));
         widget->setGeometry(QRect(10, 10, 901, 750));
         widget->setCursor(QCursor(Qt::CrossCursor));
-        line_4 = new QFrame(widget);
-        line_4->setObjectName(QStringLiteral("line_4"));
-        line_4->setGeometry(QRect(0, 740, 901, 21));
-        line_4->setFrameShape(QFrame::HLine);
-        line_4->setFrameShadow(QFrame::Sunken);
-        line = new QFrame(widget);
-        line->setObjectName(QStringLiteral("line"));
-        line->setGeometry(QRect(-10, 0, 21, 751));
-        line->setFrameShape(QFrame::VLine);
-        line->setFrameShadow(QFrame::Sunken);
-        line_2 = new QFrame(centralWidget);
-        line_2->setObjectName(QStringLiteral("line_2"));
-        line_2->setGeometry(QRect(920, 540, 21, 751));
-        line_2->setFrameShape(QFrame::VLine);
-        line_2->setFrameShadow(QFrame::Sunken);
-        line_3 = new QFrame(centralWidget);
-        line_3->setObjectName(QStringLiteral("line_3"));
-        line_3->setGeometry(QRect(900, 10, 21, 751));
-        line_3->setFrameShape(QFrame::VLine);
-        line_3->setFrameShadow(QFrame::Sunken);
-        line_5 = new QFrame(centralWidget);
-        line_5->setObjectName(QStringLiteral("line_5"));
-        line_5->setGeometry(QRect(10, 0, 901, 16));
-        line_5->setFrameShape(QFrame::HLine);
-        line_5->setFrameShadow(QFrame::Sunken);
         MainWindow->setCentralWidget(centralWidget);
         GeneralCommands = new QToolBar(MainWindow);
         GeneralCommands->setObjectName(QStringLiteral("GeneralCommands"));
