@@ -19,38 +19,38 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_CommandEditor
+class Ui_Line
 {
 public:
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
 
-    void setupUi(QWidget *CommandEditor)
+    void setupUi(QWidget *Line)
     {
-        if (CommandEditor->objectName().isEmpty())
-            CommandEditor->setObjectName(QStringLiteral("CommandEditor"));
-        CommandEditor->resize(447, 349);
-        verticalLayoutWidget = new QWidget(CommandEditor);
+        if (Line->objectName().isEmpty())
+            Line->setObjectName(QStringLiteral("Line"));
+        Line->resize(447, 349);
+        verticalLayoutWidget = new QWidget(Line);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
         verticalLayoutWidget->setGeometry(QRect(10, 10, 421, 321));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-        retranslateUi(CommandEditor);
+        retranslateUi(Line);
 
-        QMetaObject::connectSlotsByName(CommandEditor);
+        QMetaObject::connectSlotsByName(Line);
     } // setupUi
 
-    void retranslateUi(QWidget *CommandEditor)
+    void retranslateUi(QWidget *Line)
     {
-        CommandEditor->setWindowTitle(QApplication::translate("CommandEditor", "Form", 0));
+        Line->setWindowTitle(QApplication::translate("Line", "Form", 0));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class CommandEditor: public Ui_CommandEditor {};
+    class Line: public Ui_Line {};
 } // namespace Ui
 
 QT_END_NAMESPACE

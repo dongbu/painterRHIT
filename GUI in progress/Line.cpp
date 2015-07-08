@@ -1,14 +1,14 @@
-#include "commandeditor.h"
+#include "Line.h"
 #include "ui_commandeditor.h"
-#include "commandeditor.h"
+#include "Line.h"
 #include "guiloadsave.h"
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
 
-CommandEditor::CommandEditor(QWidget *parent) :
+Line::Line(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CommandEditor)
+    ui(new Ui::Line)
 {
     ui->setupUi(this);
 
@@ -28,21 +28,21 @@ CommandEditor::CommandEditor(QWidget *parent) :
     ui->verticalLayout->addWidget(this->CommandEditorWidget);
 }
 
-void CommandEditor::setList(QListWidget *list) {
+void Line::setList(QListWidget *list) {
     this->list = list;
 }
 
-CommandEditor::~CommandEditor()
+Line::~Line()
 {
     delete ui;
 }
 
 /**
- * @brief creates the CommandEditor widget
+ * @brief creates the Line widget
  * representative of this class and assign it to the appropriate
  * class variable.
  */
-void CommandEditor::BuildEditor() {
+void Line::BuildEditor() {
     //Creating forms
     ParameterHolder = new QFormLayout();
     QGridLayout *ButtonHolder = new QGridLayout();
@@ -91,7 +91,7 @@ void CommandEditor::BuildEditor() {
  * @brief creates a std. point box, add it to
  * the point vector, and return said point
  */
-void CommandEditor::MakePoint() {
+void Line::MakePoint() {
     QLineEdit *point = new QLineEdit();
     point->setPlaceholderText("0,0");
     point->setFixedSize(75,22);
@@ -110,7 +110,7 @@ void CommandEditor::MakePoint() {
  * input types necessary for controlling the command editor.
  * @param ParameterHolder
  */
-void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
+void Line::PopulateParameters(QFormLayout *ParameterHolder) {
     //creating input lines
     Command_Name = new QLineEdit();
     Line_Color = new QComboBox();
@@ -158,7 +158,7 @@ void CommandEditor::PopulateParameters(QFormLayout *ParameterHolder) {
  * buttons necessary for controlling the command editor.
  * @param ButtonHolder
  */
-void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
+void Line::PopulateButtons(QGridLayout *ButtonHolder) {
     //creating buttons
     Add_Command = new QPushButton("Add Command");
     Add_Point = new QPushButton("Add Point");
@@ -173,7 +173,7 @@ void CommandEditor::PopulateButtons(QGridLayout *ButtonHolder) {
  * @brief Add_Command slot
  */
 
-void CommandEditor::Add_Command_Clicked() {
+void Line::Add_Command_Clicked() {
 	
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
 
@@ -199,21 +199,21 @@ void CommandEditor::Add_Command_Clicked() {
     }
     lineEdits.at(0)->setDisabled(true);
 
-    CommandEditor::removeExcessLines();
-    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,list,commandAdded);
+    Line::removeExcessLines();
+    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,list,commandAdded, "Line");
     commandAdded = true;
     //sets the name and changes the tabname
-    CommandEditor::setName(lineEdits.at(0)->text());
+    Line::setName(lineEdits.at(0)->text());
     emit fileStatusChanged();
     emit tell_Command_Added(-10);
 
-    CommandEditor::removeExcessLines();
+    Line::removeExcessLines();
 
     this->Add_Command->setText("Save");
 	this->close();
 }
 
-void CommandEditor::removeExcessLines(){
+void Line::removeExcessLines(){
     //removes all empty lines
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
 
@@ -245,7 +245,7 @@ void CommandEditor::removeExcessLines(){
 /**
  * @brief Add_Point slot.
  */
-void CommandEditor::Add_Point_Clicked() {
+void Line::Add_Point_Clicked() {
     MakePoint();
 }
 
@@ -254,7 +254,7 @@ void CommandEditor::Add_Point_Clicked() {
 /**
  * @brief This method is designed to connect the 2 editor buttons to their slots.
  */
-void CommandEditor::ConnectButtons() {
+void Line::ConnectButtons() {
     //Connecting button signals/slots
     connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
     connect(Add_Point, SIGNAL(clicked()), this, SLOT(Add_Point_Clicked()));
@@ -266,7 +266,7 @@ void CommandEditor::ConnectButtons() {
  * @return name
  * @deprecated
  */
-QString CommandEditor::getName(){
+QString Line::getName(){
     return name;
 }
 
@@ -276,18 +276,18 @@ QString CommandEditor::getName(){
  * @param newName
  * @deprecated
  */
-void CommandEditor::setName(QString newName){
+void Line::setName(QString newName){
     this->name = newName;
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
     lineEdits.at(0)->setText(this->name);
 }
 
 /**
- * @brief sets whether this commandEditor is in "add command" mode or "save" mode.
+ * @brief sets whether this Line is in "add command" mode or "save" mode.
  * Part of TEMP SOLUTION
  * @param bool for toggle
  */
-void CommandEditor::setCommandAdded(bool commandAdded){
+void Line::setCommandAdded(bool commandAdded){
     this->commandAdded = commandAdded;
     if(commandAdded){
         this->Add_Command->setText("Save");
@@ -301,7 +301,7 @@ void CommandEditor::setCommandAdded(bool commandAdded){
 /**
  * @brief allows you to tell the command to add itself to the list from somewhere else.
  */
-void CommandEditor::add_Command_Externally(QString projectName){
+void Line::add_Command_Externally(QString projectName){
 	this->setProjectName(projectName);
 	this->Add_Command_Clicked();
 }
@@ -312,18 +312,18 @@ void CommandEditor::add_Command_Externally(QString projectName){
  * @param x
  * @param y
  */
-void CommandEditor::set_Point_At(int index, int x, int y){
+void Line::set_Point_At(int index, int x, int y){
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
     if(index > 1){
         lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
     }
 }
 
-void CommandEditor::InfoChanged(){
-    emit CommandEditor::sendUpdateToDrawOn(this);
+void Line::InfoChanged(){
+    emit Line::sendUpdateToDrawOn(this);
 }
 
-void CommandEditor::updateLineStyles(QString color, QString style, int width){
+void Line::updateLineStyles(QString color, QString style, int width){
     QList<QComboBox *> comboBoxes = this->CommandEditorWidget->findChildren<QComboBox *>();
     comboBoxes.at(0)->setCurrentText(color);
     comboBoxes.at(1)->setCurrentText(style);
@@ -331,6 +331,6 @@ void CommandEditor::updateLineStyles(QString color, QString style, int width){
     spinBoxes.at(0)->setValue(width);
 }
 
-void CommandEditor::setProjectName(QString projectName){
+void Line::setProjectName(QString projectName){
 	this->projectName = projectName;
 }

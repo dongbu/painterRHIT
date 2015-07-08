@@ -1,7 +1,7 @@
 #ifndef DRAWONWIDGET_H
 #define DRAWONWIDGET_H
 
-#include "commandeditor.h"
+#include "Line.h"
 #include <QMouseEvent>
 #include <QLabel>
 #include <QPen>
@@ -16,7 +16,7 @@ public:
     drawOnWidget(QWidget * parent, int num);
     ~drawOnWidget(){}
     void clearAll(int resetBackground);
-    CommandEditor* currentEditor;
+    Line* currentEditor;
 	QString projectName;
 
 private:
@@ -32,7 +32,7 @@ signals:
     void sendPoint(int x, int y, int pointCount);
 
 public slots:
-    void updateToEditor(CommandEditor* editor);
+    void updateToEditor(Line* editor);
 	void updateToAllEditors(CommandViewer* commandView);
 
 protected:

@@ -30,7 +30,7 @@ drawOnWidget::drawOnWidget(QWidget * parent, int num)
 
 /**
  * @brief gets the coordinates of clicks and draws lines between them.
- * Also sends points to commandeditor.
+ * Also sends points to Line.
  * clicking same spot twice clears area.
  * @param event
  */
@@ -155,7 +155,7 @@ void drawOnWidget::clearAll(int resetBackground){
 
 }
 
-void drawOnWidget::updateToEditor(CommandEditor *editor){
+void drawOnWidget::updateToEditor(Line *editor){
 	if (idNumber == 0) clearAll(1);
 	if (idNumber == 1) clearAll(0);
     QList<QComboBox *> comboBoxes = editor->CommandEditorWidget->findChildren<QComboBox *>();

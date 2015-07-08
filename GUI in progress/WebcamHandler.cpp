@@ -30,10 +30,10 @@ void WebcamHandler::openCamera(int id){
 		cv::Mat cameraFrame;
 		stream1.read(cameraFrame);
 		cv::imshow("cam", cameraFrame);
-		if (i == 350){
+		if (i == 3500){
 			printf("timeout pending/n");
 		}
-		if (cv::waitKey(30) >= 0 || i > 400){
+		if (cv::waitKey(30) >= 0 || i > 4000){
 			break;
 		}
 	}

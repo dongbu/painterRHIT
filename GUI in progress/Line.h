@@ -1,5 +1,5 @@
-#ifndef COMMANDEDITOR_H
-#define COMMANDEDITOR_H
+#ifndef LINE_H
+#define LINE_H
 #include <QWidget>
 #include <QGridLayout>
 #include <QFormLayout>
@@ -18,16 +18,16 @@
 #include <QWidget>
 
 namespace Ui {
-class CommandEditor;
+class Line;
 }
 
-class CommandEditor : public QWidget
+class Line : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CommandEditor(QWidget *parent = 0);
-    ~CommandEditor();
+    explicit Line(QWidget *parent = 0);
+    ~Line();
 
     void ConnectButtons();
     void setName(QString newName);
@@ -47,7 +47,7 @@ public:
     bool commandAdded;
 
 private:
-    Ui::CommandEditor *ui;
+    Ui::Line *ui;
 
     void PopulateButtons(QGridLayout *ButtonHolder);
     void PopulateParameters(QFormLayout *ParameterHolder);
@@ -72,7 +72,7 @@ signals:
     void tell_Command_Added(int index);
     void tell_Command_Added();
     void signal_Info_Changed();
-    void sendUpdateToDrawOn(CommandEditor* editor);
+    void sendUpdateToDrawOn(Line* editor);
 };
 
 #endif // COMMANDEDITOR_H

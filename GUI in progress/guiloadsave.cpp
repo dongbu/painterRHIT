@@ -11,22 +11,22 @@ GuiLoadSave::GuiLoadSave()
 /**
  * @brief properly saves command as xml and adds to list.
  * @param ProjectName
- * @param CommandEditor
+ * @param Line
  * @param CommandList
  * @return boolean for success
  */
-bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEditor, QListWidget *CommandList, bool commandAdded){
+bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *Line, QListWidget *CommandList, bool commandAdded, QString commandType){
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 
     //gets all the line edit pieces and puts them into an array
-    QList<QLineEdit *> lineEdits = CommandEditor->findChildren<QLineEdit *>();
+    QList<QLineEdit *> lineEdits = Line->findChildren<QLineEdit *>();
 
     //gets all the combobox pieces and puts them into an array
-    QList<QComboBox *> comboBoxes = CommandEditor->findChildren<QComboBox *>();
+    QList<QComboBox *> comboBoxes = Line->findChildren<QComboBox *>();
 
     //gets the spinbox with lineWidth information
-    QList<QSpinBox *> spinBoxes = CommandEditor->findChildren<QSpinBox *>();
+    QList<QSpinBox *> spinBoxes = Line->findChildren<QSpinBox *>();
     QString lineWidth = spinBoxes.at(0)->text();
     if(lineWidth == ""){
         lineWidth = "0";
@@ -56,6 +56,7 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *CommandEdit
 
     //begin writing
     writer.writeStartElement("Command");
+	writer.writeAttribute("type", commandType);
 
     //deals with line info
     writer.writeComment("Line Information");

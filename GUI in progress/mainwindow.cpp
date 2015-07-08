@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     commandView->setProjectName(&projectName);
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
-    connect(commandView,SIGNAL(EmitConnectEditor(CommandEditor*)),this,SLOT(ConnectEditor(CommandEditor*)));
+    connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
 	connect(commandView, (SIGNAL(MustSave())), this, SLOT(on_actionSave_triggered()));
     //command list//
 
@@ -356,7 +356,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 	editorWorks = true;
     if(x == -10 && y == -10){
         if(pointCount >= 3){
-            CommandEditor *temp = commandView->currentEditor;
+            Line *temp = commandView->currentEditor;
             temp->add_Command_Externally(this->projectName);
 			drawOn->clearAll(1);
             return;
@@ -372,7 +372,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 		thicknessBox->setEnabled(true);
 	}
 	if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
-    CommandEditor *temp = commandView->currentEditor;
+    Line *temp = commandView->currentEditor;
     if(pointCount > 2){
         temp->Add_Point_Clicked();
     }
@@ -434,7 +434,7 @@ void MainWindow::closeEvent(QCloseEvent *event){
     commandView->close();
 }
 
-void MainWindow::ConnectEditor(CommandEditor* editor) {
+void MainWindow::ConnectEditor(Line* editor) {
     //connection so that we know when something has been changed.
     connect(editor,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 
@@ -442,8 +442,8 @@ void MainWindow::ConnectEditor(CommandEditor* editor) {
     connect(editor,SIGNAL(tell_Command_Added(int)),this,SLOT(noticeCommandAdded(int)));
 
     //connection to update drawOn.
-    connect(editor,SIGNAL(sendUpdateToDrawOn(CommandEditor*)),drawOn,SLOT(updateToEditor(CommandEditor*)));
-	connect(editor, SIGNAL(sendUpdateToDrawOn(CommandEditor*)), drawOn2, SLOT(updateToEditor(CommandEditor*)));
+    connect(editor,SIGNAL(sendUpdateToDrawOn(Line*)),drawOn,SLOT(updateToEditor(Line*)));
+	connect(editor, SIGNAL(sendUpdateToDrawOn(Line*)), drawOn2, SLOT(updateToEditor(Line*)));
 	//connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
 	connect(this, SIGNAL(sendListOfCommands(CommandViewer*)), drawOn2, SLOT(updateToAllEditors(CommandViewer*)));
 	
@@ -488,7 +488,7 @@ void MainWindow::on_drawing_changed(){
 		return;
 	}
 
-	CommandEditor *editor = drawOn->currentEditor;
+	Line *editor = drawOn->currentEditor;
 	connect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
 	QString color = colorBox->currentText();
 	QString style = styleBox->currentText();

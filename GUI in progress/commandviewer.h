@@ -1,7 +1,7 @@
 #ifndef COMMANDVIEWER_H
 #define COMMANDVIEWER_H
 
-#include "CommandEditor.h"
+#include "Line.h"
 #include "ui_commandviewer.h"
 #include <QWidget>
 #include <QListWidget>
@@ -24,14 +24,14 @@ public:
     explicit CommandViewer(QWidget *parent = 0);
     ~CommandViewer();
     QListWidget *list;
-    //std::vector<CommandEditor*> editors;
+    //std::vector<Line*> editors;
     void clear();
 
     int PopulateCommandEditor(QString fileName);
     void setProjectName(QString *projectName);
     void setMainClosed(bool closed);
     void MakeEditor();
-	CommandEditor *currentEditor;
+	Line *currentEditor;
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
@@ -65,9 +65,9 @@ public slots:
 signals:
     void fileStatusChanged();
     void triggerPointMap();
-    void triggerCommandEditorUpdate(QString, QString*, CommandEditor*);
+    void triggerCommandEditorUpdate(QString, QString*, Line*);
     void Add_External_Command();
-    void EmitConnectEditor(CommandEditor*);
+    void EmitConnectEditor(Line*);
 	void MustSave();
 
 protected:

@@ -4,7 +4,7 @@
 #include "ui_mainwindow.h"
 #include "commandinterpreter.h"
 #include "guiloadsave.h"
-#include "commandeditor.h"
+#include "Line.h"
 #include "CommandViewer.h"
 #include "drawonwidget.h"
 #include "WebcamHandler.h"
@@ -52,7 +52,7 @@ private slots:
 	void fileChangedFalse();
     void on_actionNew_triggered();
     void noticeCommandAdded(int index);
-    void ConnectEditor(CommandEditor* editor);
+    void ConnectEditor(Line* editor);
 	void on_actionConnect_triggered();
     void on_drawing_changed();
 	void drawOn2_update();

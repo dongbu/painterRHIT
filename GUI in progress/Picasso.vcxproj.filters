@@ -60,9 +60,6 @@
     <ClCompile Include="CytonController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="commandeditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="commandinterpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,12 +85,6 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Release\.moc\moc_CytonController.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\.moc\moc_commandeditor.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\.moc\moc_commandeditor.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Debug\.moc\moc_commandinterpreter.cpp">
@@ -132,12 +123,18 @@
     <ClCompile Include="WebcamHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\.moc\moc_Line.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\.moc\moc_Line.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CytonController.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="commandeditor.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="commandinterpreter.h">
@@ -156,6 +153,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="painter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Line.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -161,7 +161,7 @@ void CommandViewer::setProjectName(QString *projectName) {
 
 
 /**
- * @brief brings up a new commandEditor with preloaded information.
+ * @brief brings up a new Line with preloaded information.
  */
 void CommandViewer::on_EditCommand_clicked()
 {
@@ -209,7 +209,7 @@ void CommandViewer::fileSaved(bool saved){
  */
 void CommandViewer::MakeEditor()
 {
-	CommandEditor *editor = new CommandEditor();
+	Line *editor = new Line();
 	editor->setList(list);
 	editor->setProjectName(*this->projectName);
 
