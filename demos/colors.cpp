@@ -10,7 +10,7 @@
 #include <Windows.h> // sleep
 #include "kmeansSegment.cpp"
 
-// silly comment #1
+// silly comment #1 #2
 
 using namespace cv;
 using namespace std;
