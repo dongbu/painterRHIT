@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WEBCAMHANDLER_H
+#define WEBCAMHANDLER_H
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
@@ -13,3 +14,4 @@ public:
 	void openCamera(int id);
 };
 
+#endif // WEBCAMHANDLER_H
