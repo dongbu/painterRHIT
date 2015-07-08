@@ -68,6 +68,7 @@ private:
     CommandViewer *commandView;
     QComboBox *colorBox, *styleBox;
     QSpinBox *thicknessBox;
+	WebcamHandler cam;
 
     void cleanUp();
     void startPainting(QListWidget* widget, int index);

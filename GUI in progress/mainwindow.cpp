@@ -503,6 +503,5 @@ void MainWindow::drawOn2_update(){
 }
 
 void MainWindow::openCamera(){
-    WebcamHandler web;
-    web.openCamera(0);
+    cam.openCamera(0);
 }
