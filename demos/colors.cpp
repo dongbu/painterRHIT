@@ -596,8 +596,8 @@ void showSingleColor(int use_kmeans=1) {
   imshow( "single_color_image_window", single_color_image );
   moveWindow("single_color_image_window",win_w(0),win_h(1)); 
 
-
-  showProjectorWindow(single_color_image);
+  ///ABC removed as not going to use a projector for now
+  ///showProjectorWindow(single_color_image);
 }
 
 
@@ -615,31 +615,34 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
 
   // get a list of valid pixels
   int n_pixels=0;
-  //go here
-  //int pixels[src.rows*src.cols][2];
 
+  //ABC: appears pixels definition was changed
+  //int pixels[src.rows*src.cols][2];
   int** pixels = new int*[src.rows*src.cols];
-  for (int i = 0; i < src.rows*src.cols; ++i)
-	  pixels[i] = new int[2];
+  for (int i = 0; i < src.rows*src.cols; ++i) { pixels[i] = new int[2]; }
 
   for (int i=0; i<src.cols; i++) {
     for (int j=0; j<src.rows; j++) {
       Vec3b color = kmeans_image.at<Vec3b>(Point(i,j));
       if (color[0] == b && color[1] == g && color[2] == r) {
-	pixels[n_pixels][0]=i;
-	pixels[n_pixels][1]=j;
-	n_pixels++;
+		pixels[n_pixels][0]=i;
+		pixels[n_pixels][1]=j;
+		n_pixels++;
       }
     }
   }
-  for (int i = 0; i < src.rows*src.cols; ++i) {
-	  delete[] pixels[i];
-  }
-  delete[] pixels;
+
+  // ABC: unknown why this was added as it breaks the rest of this function
+  //for (int i = 0; i < src.rows*src.cols; ++i) {
+	//  delete[] pixels[i];
+  //}
+  //delete[] pixels;
 
   printf("%d pixels found\n",n_pixels);
-
+  
+  // assume we're only going to test some of the
   int num_candidates=n_pixels/(thickness*line_length/15);
+  printf("%d candidates found\n", num_candidates);
 
   // test all the candiates to see how they improve things alone
   LineStroke *strokes = new LineStroke[num_candidates];
@@ -653,22 +656,23 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
     strokes[i].g = g;
     strokes[i].b = b;
     strokes[i].length = line_length;
-    strokes[i].width = thickness;    
-
-    // do quick score = count how many pixels of kmeans image in the stroke are the right color
-    int c = 0;
-    for (int n=-strokes[i].width; n<=strokes[i].width; n++) { // go along width
-      for (int m=-strokes[i].length; m<=strokes[i].length; m++) { // go along length
-	double cosine = cos(strokes[i].direction);
-	double sine = sin(strokes[i].direction);
-	int dx = floor(m * cosine - n * sine);
-	int dy = floor(m * sine + n * cosine);
-
-	Vec3b color = kmeans_image.at<Vec3b>(Point(x + dx,y + dy));
-	if (color[0] == strokes[i].b && color[1] == strokes[i].g && color[2] == strokes[i].r) {
-	  c++;
-	}
-      }
+    strokes[i].width = thickness;     
+  
+   // do quick score = count how many pixels of kmeans image in the stroke are the right color
+   int c = 0;
+   for (int n=-strokes[i].width; n<=strokes[i].width; n++) { // go along width
+	   for (int m = -strokes[i].length; m <= strokes[i].length; m++) { // go along length
+		 double cosine = cos(strokes[i].direction);
+		 double sine = sin(strokes[i].direction);
+		 int dx = floor(m * cosine - n * sine);
+		 int dy = floor(m * sine + n * cosine);
+		 int kx = x + dx;
+		 int ky = y + dy;
+   	     if (kx >= 0 && kx < src.cols && ky >= 0 && ky < src.rows) {
+		   Vec3b color = kmeans_image.at<Vec3b>(Point(x + dx, y + dy));
+		   if (color[0] == strokes[i].b && color[1] == strokes[i].g && color[2] == strokes[i].r) { c++; }
+		 }
+	  }
     }
     strokes[i].score = c;
   }
@@ -916,6 +920,7 @@ void sortColorsInImage(Mat *image, std::vector<Vec3b>& sorted_colors) {
 
 void paintByIncreasedLightnessOfColors() {
   std::vector<Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
+  
   sortColorsInImage(&kmeans_image,colors);
 
   int do_wait=1;
@@ -924,10 +929,13 @@ void paintByIncreasedLightnessOfColors() {
     //g_paint_color[0] = colors[i][0];
     //g_paint_color[1] = colors[i][1];
     //g_paint_color[2] = colors[i][2];
-    updateColorWindow(colors[i][2],colors[i][1],colors[i][0]); // sets global values
+	printf("painting %i A (%i total)\n", i, colors.size());
+	updateColorWindow(colors[i][2], colors[i][1], colors[i][0]); // sets global values
     showSingleColor();
+	printf("painting %i B\n", i);
     singlePaintColorOnCanvas(); 
-    if (do_wait) {
+	printf("painting %i C\n", i);
+	if (do_wait) {
       int k = waitKey(0);
       if (k==int('i')) { do_wait=0; } // just zip through all the colors
     }
@@ -1241,7 +1249,7 @@ int main( int argc, char** argv )
   printf("  s = paint only a single color in the canvas (choose color by clicking in any window) \n");
   printf("  c = show where single color on the kmeans image (choose color by clicking in any window) \n");
 
-  char* image="images/lena.jpg";
+  char* image = "images/eggs-512.jpg"; // lena.jpg";
   if (argv[1]) {
     image = argv[1];
   }
