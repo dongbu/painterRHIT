@@ -1,4 +1,7 @@
 #include "WebcamHandler.h"
+#include "Square.h"
+#include "Circle.h"
+#include <vector>
 
 /**
 * @brief sets up the ability of a webcam to be launched
@@ -50,4 +53,18 @@ void WebcamHandler::openCamera(int id){
 	//imwrite("C:/Pictures/colors/green.bmp", grayImage);
 	stream1.release();
 	cameraActive = false;
+	printf("camera released\n");
+
+	//square/circle/interface proof of concept.
+	Square *s = new Square();
+	Circle *c = new Circle();
+
+	std::vector<Shape *> shapes;
+	shapes.push_back(s);
+	shapes.push_back(c);
+
+	for (int i = 0; i < shapes.size();i++){
+		shapes.at(i)->draw();
+	}
+
 }
