@@ -24,8 +24,10 @@ void WebcamHandler::openCamera(int id){
 
 	cameraActive = true;
 	cv::VideoCapture stream1(id);   //0 is the id of video device.0 if you have only one camera.
-	stream1.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-	stream1.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+	//stream1.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+	//stream1.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+	stream1.set(3, 1280);
+	stream1.set(4, 720);
 	if (!stream1.isOpened()) { //check if video device has been initialised
 		printf("cannot open camera");
 	}
