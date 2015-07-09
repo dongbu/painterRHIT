@@ -40,7 +40,9 @@ public:
 private:
     void ConnectToolBar();
 	int FillEditor(QString editorName);
-
+	void runFrom();
+	void runOnly();
+	void setBreakpoint();
 
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
@@ -58,7 +60,8 @@ private slots:
     void StepForward_triggered();
     void StepBackwards_triggered();
     void RunFromStart_triggered();
-	void customMenuRequested(QPoint pos);
+	void launchRightClick(QPoint pos);
+	void menuSort(QAction *a);
 
 public slots:
     void fileSaved(bool saved);

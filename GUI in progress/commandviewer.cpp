@@ -37,7 +37,7 @@ ui(new Ui::CommandViewer)
 	this->fileChanged = false;
 
 	list->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+	connect(list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 
 
 }
@@ -61,7 +61,6 @@ void CommandViewer::Stop_triggered()
 	ui->Pause->setDisabled(true);
 	ui->Stop->setDisabled(true);
 	ui->StepBackwards->setDisabled(true);
-	//ui->StepForwards->setDisabled(true);
 	interpreter->stopPaintingCommands();
 }
 
@@ -84,7 +83,7 @@ void CommandViewer::StepForward_triggered()
 	if (saved){
 		ui->StepBackwards->setEnabled(true);
 		interpreter->setList(list);
-		interpreter->stepForwardCommands();
+		interpreter->stepForwardCommands(list->count());
 	}
 }
 
@@ -109,10 +108,9 @@ void CommandViewer::RunFromStart_triggered()
 		ui->Pause->setEnabled(true);
 		ui->Stop->setEnabled(true);
 		ui->StepBackwards->setEnabled(true);
-		ui->StepForwards->setEnabled(true);
 		interpreter->setProjectName(*projectName);
 		interpreter->setList(list);
-		interpreter->beginPaintingCommands(0);
+		interpreter->beginPaintingCommands(0,list->count());
 	}
 }
 
@@ -369,10 +367,59 @@ void CommandViewer::clear() {
  * @brief in progress
  * @param pos
  */
-void CommandViewer::customMenuRequested(QPoint pos) {
-	QMenu *menu = new QMenu(this);
-	menu->addAction(new QAction("Action 1", this));
-	menu->addAction(new QAction("Action 2", this));
-	menu->addAction(new QAction("Action 3", this));
+void CommandViewer::launchRightClick(QPoint pos) {
+	QMenu *menu = new QMenu(list);
+
+	menu->addAction(new QAction("Run from here",list));
+	menu->addAction(new QAction("Run this command", list));
+	menu->addAction(new QAction("Set Breakpoint", list));
+
+	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(menuSort(QAction*)));
+
 	menu->popup(list->viewport()->mapToGlobal(pos));
 }
+
+void CommandViewer::menuSort(QAction *a) {
+	if (a->text() == "Run from here") {
+		runFrom();
+	} else if (a->text() == "Run this command") {
+		runOnly();
+	}
+	else {
+		setBreakpoint();
+	}
+}
+
+void CommandViewer::runFrom() {
+	if (fileChanged || !saved){
+		emit MustSave();
+	}
+	if (saved){
+		ui->StepBackwards->setEnabled(true);
+		interpreter->setList(list);
+		ui->Stop->setEnabled(true);
+		ui->Pause->setEnabled(true);
+
+		interpreter->beginPaintingCommands(list->currentRow(), list->count());
+	}
+}
+
+void CommandViewer::runOnly() {
+	if (fileChanged || !saved){
+		emit MustSave();
+	}
+	if (saved){
+		ui->StepBackwards->setEnabled(true);
+		interpreter->setList(list);
+		ui->Stop->setEnabled(true);
+		ui->Pause->setEnabled(true);
+		interpreter->beginPaintingCommands(list->currentRow(), list->currentRow() + 1);
+	}
+}
+
+void CommandViewer::setBreakpoint() {
+
+	interpreter->breakPointList.push_back(list->currentRow());
+	list->currentItem()->setTextColor(Qt::red);
+}
+

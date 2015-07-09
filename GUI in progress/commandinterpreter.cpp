@@ -25,6 +25,7 @@ CommandInterpreter::CommandInterpreter(QString projectName)
 	finished = false;
 	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(SendNext()));
 
+	runFromAdjust  = 0;
 	ResetIndicies();
 
     //robot work//
@@ -46,7 +47,7 @@ CommandInterpreter::CommandInterpreter(QString projectName)
  * unless told to stop or reaches the end.
  * @param widget
  */
-void CommandInterpreter::beginPaintingCommands(int index){
+void CommandInterpreter::beginPaintingCommands(int startIndex, int finishIndex){
 	//base cases
 	if (!stopped) { return; }
 	if (paused) {
@@ -56,7 +57,8 @@ void CommandInterpreter::beginPaintingCommands(int index){
 	if (connected) { emit tell_go_home(1); }
 
 	//variable setting
-    startCommandIndex = index;
+	commandIndex = startIndex;
+	this->finishIndex = finishIndex;
 	stopped = false;
 
 	//simulator initializing
@@ -77,20 +79,31 @@ void CommandInterpreter::BuildCommands() {
 	//Creating Commands
 	listOfCommandTypes.clear();
 	QList<QListWidgetItem *> CommandNames = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
-	foreach(QListWidgetItem *name, CommandNames) {
-		MakeLine(name->text());
+
+	for (int i = commandIndex; i < finishIndex; i++) {
+		MakeLine(CommandNames.at(i)->text());
 		listOfCommandTypes.push_back(new QString("Line"));
-		//if (type == LINE_STRING) {
-		//	MakeLine(name->text());
-		//listOfCommandTypes.push_back(new QString("Line"));
-		//} if (type == SOLID_STRING) {
-		//	MakeSolid(name->text());
-		//listOfCommandTypes.push_back(new QString("Solid"));
-		//} if (type == PIXEL_STRING) {
-		//	MakePixel(name->text());
-		//listOfCommandTypes.push_back(new QString("Pixel"));
-		//}
 	}
+	runFromAdjust = commandIndex;
+	finishIndex -= commandIndex;
+	commandIndex = 0;
+
+	//foreach(QListWidgetItem *name, CommandNames) {
+
+	//		MakeLine(name->text());
+	//		listOfCommandTypes.push_back(new QString("Line"));
+
+	//	//if (type == LINE_STRING) {
+	//	//	MakeLine(name->text());
+	//	//listOfCommandTypes.push_back(new QString("Line"));
+	//	//} if (type == SOLID_STRING) {
+	//	//	MakeSolid(name->text());
+	//	//listOfCommandTypes.push_back(new QString("Solid"));
+	//	//} if (type == PIXEL_STRING) {
+	//	//	MakePixel(name->text());
+	//	//listOfCommandTypes.push_back(new QString("Pixel"));
+	//	//}
+	//}
 }
 
 /**
@@ -105,14 +118,25 @@ void CommandInterpreter::setList(QListWidget *list){
  * @brief steps to the next action in the preset simulation sequence
  */
 void CommandInterpreter::SendNext(){
+	for (int i = 0; i < breakPointList.size(); i++){
+		if ((commandIndex + runFromAdjust) == breakPointList[i]){
+			CommandInterpreter::pausePaintingCommands();
+			breakPointList[i] = -50;
+			list->item(commandIndex + runFromAdjust)->setTextColor(Qt::black);
+			return;
+		}
+	}
+
 	if (CurrentCommandType == "Line") {
 		sendLine(); //Continue an old line command
 	} else if (CurrentCommandType == "Solid") {
 		sendSolid(); //Continue an old solid command
 	} else if (CurrentCommandType == "Pixel") {
 		sendPixel(); //Continue an old pixel command
-	} else if (commandIndex >= listOfCommandTypes.size()) {
+	} else if (commandIndex >= finishIndex) {
 		updateTimer.stop(); //Quit!  We're done
+		paused = false;
+		stopped = true;
 		finished = true;
 	} else if (listOfCommandTypes.front() == QString("Line")) {
 		CurrentCommandType = *listOfCommandTypes.front();
@@ -200,7 +224,7 @@ void CommandInterpreter::sendLine() {
 		lineColor.at(lineAttributeIndex), lineStyle.at(lineAttributeIndex), lineWidth.at(lineAttributeIndex));
 	lineIndex++;
 	if (x.at(lineIndex + 1) == -50) {
-		list->item(commandIndex)->setBackgroundColor(Qt::green);
+		list->item(commandIndex + runFromAdjust)->setBackgroundColor(Qt::green);
 		commandIndex++;
 		lineAttributeIndex++;
 		lineIndex+=2;
@@ -259,10 +283,11 @@ void CommandInterpreter::stopPaintingCommands(){
  * @brief resets all command indicies to 0, recolors CommandList
  */
 void CommandInterpreter::ResetIndicies() {
-	for (int i = 0; i < (listOfCommandTypes.count()); i++) {
+	for (int i = 0; i < (listOfCommandTypes.size() + runFromAdjust); i++) {
 		list->item(i)->setBackgroundColor(Qt::white);
 	}
-	
+
+	runFromAdjust = 0;
 	commandIndex = 0;
 	lineIndex = 0;
 	lineAttributeIndex = 0;
@@ -282,10 +307,13 @@ void CommandInterpreter::pausePaintingCommands(){
  * @brief step forward and paint one command.
  * @param widget
  */
-void CommandInterpreter::stepForwardCommands(){
+void CommandInterpreter::stepForwardCommands(int finishIndex){
 	if (stopped){
+		printf("we were stopped.  we shall rise again with a vengeance \n");
 		picasso->show();
+		this->finishIndex = finishIndex;
 		this->BuildCommands();
+		stopped = false;
 	}
 	CommandInterpreter::pausePaintingCommands();
     picasso->raise();

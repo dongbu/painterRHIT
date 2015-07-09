@@ -12,10 +12,12 @@ class CommandInterpreter : public QObject
     Q_OBJECT
 
 public:
+	std::vector<int> breakPointList;
+
     CommandInterpreter(QString projectName);
-    void beginPaintingCommands(int index);
+	void beginPaintingCommands(int startIndex, int finishIndex);
     void stopPaintingCommands();
-    void stepForwardCommands();
+	void stepForwardCommands(int finishIndex);
     void stepBackwardCommands();
     void setProjectName(QString name);
     void pausePaintingCommands();
@@ -50,9 +52,8 @@ private:
 	//??			//Pixel vars.
 	//CommandList Variables
 
-
 	bool finished, paused, stopped, connected, prevContinuous, continuePainting;
-	int startCommandIndex;
+	int finishIndex, runFromAdjust;
 	void BuildCommands();
 	void ResetIndicies();
 	void drawUntilCommand(int stopIndex);
