@@ -43,6 +43,7 @@ public:
 
 public slots:
     void recievePoint(int x, int y, int pointCount);
+	void saveTempIndex();
 
 private slots:
     void on_actionSave_As_triggered();

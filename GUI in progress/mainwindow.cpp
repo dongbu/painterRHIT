@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
-	connect(commandView, (SIGNAL(MustSave())), this, SLOT(on_actionSave_triggered()));
+	connect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
     //command list//
 
     //click to draw work//
@@ -536,4 +536,23 @@ void MainWindow::drawOn2_update(){
  */
 void MainWindow::openCamera(){
     cam.openCamera(0);
+}
+
+void MainWindow::saveTempIndex(){
+	if (!saved){
+		projectName = "Temp";
+		drawOn->projectName = projectName;
+		drawOn2->projectName = projectName;
+		commandView->setProjectName(&projectName);
+		if (!GuiLoadSave::writeCommandListToFolder("ProjectFiles/Temp", this->commandView->list)){
+			alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
+			alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
+			if (alert.exec()){
+				return;
+			}
+		}
+	}
+	else{
+		MainWindow::on_actionSave_triggered();
+	}
 }

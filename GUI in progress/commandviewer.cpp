@@ -80,11 +80,9 @@ void CommandViewer::StepForward_triggered()
 	if (fileChanged || !saved){
 		emit MustSave();
 	}
-	if (saved){
-		ui->StepBackwards->setEnabled(true);
-		interpreter->setList(list);
-		interpreter->stepForwardCommands(list->count());
-	}
+	ui->StepBackwards->setEnabled(true);
+	interpreter->setList(list);
+	interpreter->stepForwardCommands(list->count());
 }
 
 /**
@@ -103,15 +101,13 @@ void CommandViewer::RunFromStart_triggered()
 	if (fileChanged || !saved){
 		emit MustSave();
 	}
-	if (saved){
-		//currently always starts from beginning.
-		ui->Pause->setEnabled(true);
-		ui->Stop->setEnabled(true);
-		ui->StepBackwards->setEnabled(true);
-		interpreter->setProjectName(*projectName);
-		interpreter->setList(list);
-		interpreter->beginPaintingCommands(0,list->count());
-	}
+	//currently always starts from beginning.
+	ui->Pause->setEnabled(true);
+	ui->Stop->setEnabled(true);
+	ui->StepBackwards->setEnabled(true);
+	interpreter->setProjectName(*projectName);
+	interpreter->setList(list);
+	interpreter->beginPaintingCommands(0, list->count());
 }
 
 /**
