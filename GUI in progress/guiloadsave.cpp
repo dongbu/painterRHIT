@@ -15,7 +15,11 @@ GuiLoadSave::GuiLoadSave()
  * @param CommandList
  * @return boolean for success
  */
-bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *Line, QListWidget *CommandList, bool commandAdded, QString commandType){
+bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QListWidget *CommandList, bool commandAdded, QString commandType){
+	QString extension = fileLocation.split('.').last();
+	if (extension == "xml" || extension == "txt"){
+		fileLocation.chop(4);
+	}
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 
@@ -36,15 +40,17 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *Line, QList
     QString fileName = lineEdits.at(0)->text();
 
     //adds file stuff to the commandlist. Only if it wasn't added before.
-    ///TEMP SOLUTION///
     if(!commandAdded){
         CommandList->addItem(fileName);
     }
-    ///TEMP SOLUTION///
 
     //sets up a save file to put the information into.  Should overwrite any previous file with same name in directory.
-    QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/") + fileName + QString(".xml");
+    QString fileLoc = fileLocation + QString("/") + fileName + QString(".xml");
+	if (fileLocation == ""){
+		fileLoc = QString("ProjectFiles/Temp/") + fileName + QString(".xml");
+	}
     QFile saveFile;
+
     saveFile.setFileName(fileLoc);
     saveFile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
     QXmlStreamWriter writer(&saveFile);
@@ -98,11 +104,14 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *Line, QList
     writer.writeEndElement();//Command
     writer.writeEndDocument();//end
 
+	if (writer.hasError()){
+		printf("writer in writeCommandToFolder has error\n");
+	}
+
     //always close files when done.
     saveFile.close();
 
     return !fileMalformed;
-    qDebug() <<"Wrote command to folder";
 }
 
 
@@ -111,14 +120,18 @@ bool GuiLoadSave::writeCommandToFolder(QString ProjectName, QWidget *Line, QList
  * @param projectName
  * @return 0 if successful
  */
-int GuiLoadSave::createProjectDirectory(QString projectName){
+int GuiLoadSave::createProjectDirectory(QString saveLocation){
     //check if the project already exists.  return code 2 if exists.
-    if(QDir(QString("ProjectFiles/") + (projectName)).exists()){
+	QString extension = saveLocation.split('.').last();
+	if (extension == "xml" || extension == "txt"){
+		saveLocation.chop(4);
+	}
+    if(QDir(saveLocation).exists()){
         return 2;
 
     }else{
         //create new folder and return 0 if successful.
-        if(QDir().mkdir(QString("ProjectFiles/")+(projectName))){
+        if(QDir().mkdir(saveLocation)){
             return 0;
         }else{
             return 1;
@@ -132,9 +145,14 @@ int GuiLoadSave::createProjectDirectory(QString projectName){
  * @param CommandList
  * @return 1 if successful
  */
-int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *CommandList){
+int GuiLoadSave::writeCommandListToFolder(QString fileLocation, QListWidget *CommandList){
     //set up writer
-    QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
+	QString extension = fileLocation.split('.').last();
+	if (extension == "xml" || extension == "txt"){
+		fileLocation.chop(4);
+	}
+    QString fileLoc = fileLocation + QString("/index.xml");
+	printf("%s\n", fileLocation);
     QFile saveIndexFile;
     saveIndexFile.setFileName(fileLoc);
     saveIndexFile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
@@ -175,9 +193,16 @@ int GuiLoadSave::writeCommandListToFolder(QString ProjectName, QListWidget *Comm
  * @param CommandList
  * @return 1 if successful
  */
-int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *CommandList){
+int GuiLoadSave::loadCommandListFromFolder(QString fileLocation, QListWidget *CommandList){
+	QString extension = fileLocation.split('.').last();
+	if (extension == "xml" || extension == "txt"){
+		fileLocation.chop(4);
+	}
+	int difference = fileLocation.split("/").last().length();
+	fileLocation.chop(difference + 1);
     //setup reader
-    QString fileLoc = QString("ProjectFiles/") + ProjectName + QString("/index.xml");
+    QString fileLoc = fileLocation + QString("/index.xml");
+	printf("loadCommandListFromFolder fileLoc: %s\n", fileLoc.toStdString().c_str());
     QFile loadIndexFile;
     loadIndexFile.setFileName(fileLoc);
     if(!loadIndexFile.exists()){
@@ -208,13 +233,20 @@ int GuiLoadSave::loadCommandListFromFolder(QString ProjectName, QListWidget *Com
 
 /**
  * @brief calls up a fileDialog box with which to choose and save as a filename.
- * @return projectName
+ * @return project location
  */
-QString GuiLoadSave::saveAsProject(){
+QString GuiLoadSave::saveAsProject(QString saveLocation){
     QMessageBox alert;
 
     QFileDialog saveDirectory;
-    saveDirectory.setDirectory("ProjectFiles");
+	if (saveLocation == ""){
+		saveDirectory.setDirectory("ProjectFiles");
+	}
+	else{
+		int difference = saveLocation.split("/").last().length();
+		QString temp = saveLocation.mid(0, saveLocation.length() - difference);
+		saveDirectory.setDirectory(temp);
+	}
     saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
     QStringList filters;
     filters << "Text files (*.txt)";
@@ -223,6 +255,7 @@ QString GuiLoadSave::saveAsProject(){
     if(saveDirectory.exec()){
         QString name = saveDirectory.selectedFiles().at(0).split("/").last();
         name.chop(4);
+		QString saveLoc = saveDirectory.selectedFiles().at(0);
         //makes sure temp is not used as a folder name.
         if(name.toLower() == "temp"){
             QMessageBox alert;
@@ -234,7 +267,7 @@ QString GuiLoadSave::saveAsProject(){
         }
         if (!name.isEmpty() && name.isSimpleText() && !name.contains(QRegExp("[" + QRegExp::escape("\\/:*?\"<>|") + "]"))){
             //creates proper folders
-            int loadReturnCode = GuiLoadSave::createProjectDirectory(name);
+            int loadReturnCode = GuiLoadSave::createProjectDirectory(saveLoc);
             //return code 0 means it worked.
             if(loadReturnCode != 0){
                 //ProjectFiles folder could not be created
@@ -252,9 +285,9 @@ QString GuiLoadSave::saveAsProject(){
                             std::cout << "failed to remove previous folder" <<std::endl;
                             return 0;
                         }
-                        GuiLoadSave::createProjectDirectory(name);
+                        GuiLoadSave::createProjectDirectory(saveLoc);
 
-                        return name;
+                        return saveDirectory.selectedFiles().at(0);
 
                     }else{
                         std::cout << name.toStdString() << " does not exist!" << std::endl;
@@ -263,7 +296,7 @@ QString GuiLoadSave::saveAsProject(){
                 }
 
             } else{
-                return name;
+                return saveLoc;
             }
 
 
@@ -286,18 +319,26 @@ QString GuiLoadSave::saveAsProject(){
  * @param newFolder
  * @return true if successful
  */
-bool GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
+bool GuiLoadSave::copyAllFilesFrom(QString prevLocation, QString newLocation){
+	QString extension1 = prevLocation.split('.').last();
+	if (extension1 == "xml" || extension1 == "txt"){
+		prevLocation.chop(4);
+	}
+	QString extension2 = newLocation.split('.').last();
+	if (extension2 == "xml" || extension2 == "txt"){
+		newLocation.chop(4);
+	}
 
     //iterator
-    QDirIterator it("ProjectFiles/" + prevFolder);
+    QDirIterator it(prevLocation);
 
     while(it.hasNext()){
         QFile temp;
         it.next();
         QString extension = it.fileName().split(".").last();
-        temp.setFileName("ProjectFiles/" + prevFolder + "/" + it.fileName());
+        temp.setFileName(prevLocation + "/" + it.fileName());
         if(temp.exists() && it.fileName() != "." && it.fileName() != ".." && it.fileName() != "index.xml" && extension != "txt"){
-            if(!temp.copy(temp.fileName(),"ProjectFiles/" + newFolder + "/" + temp.fileName().split("/").last()) && extension == "xml"){
+            if(!temp.copy(temp.fileName(),newLocation + "/" + temp.fileName().split("/").last()) && extension == "xml"){
                 //problem with copying.
                 return false;
             }
@@ -318,10 +359,12 @@ bool GuiLoadSave::copyAllFilesFrom(QString prevFolder, QString newFolder){
  * @param CommandList
  * @return true if successful
  */
-bool GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandList){
+bool GuiLoadSave::loadExternalFile(QString fileLocation, QListWidget *CommandList){
     //file directory
     QFileDialog loadDirectory;
-    loadDirectory.setDirectory("ProjectFiles");
+	int difference = fileLocation.split("/").last().length();
+	QString temp = fileLocation.mid(0, fileLocation.length() - difference);
+	loadDirectory.setDirectory(temp);
     loadDirectory.setAcceptMode(QFileDialog::AcceptOpen);
     QStringList filters;
     filters << "XML files (*.xml)";
@@ -339,18 +382,18 @@ bool GuiLoadSave::loadExternalFile(QString projectName, QListWidget *CommandList
             alert.show();
             return false;
         }
-        QString prevFolder = loadDirectory.selectedFiles().at(0).split("ProjectFiles/").last();
+		QString prevFolder = loadDirectory.selectedFiles().at(0);
 
 
         //file is in same project.  just add filename to list.
-        if(prevFolder.split("/").first() == projectName){
+        if(prevFolder == fileLocation){
             CommandList->addItem(name);
             return true;
         }else{
             //must copy file from prevFolder to new folder.
             QFile temp;
-            temp.setFileName("ProjectFiles/" + prevFolder);
-            if(temp.copy(temp.fileName(),"ProjectFiles/" + projectName + "/" + name + ".xml")){
+            temp.setFileName(prevFolder);
+            if(temp.copy(temp.fileName(),fileLocation + "/" + name + ".xml")){
                 CommandList->addItem(name);
                 return true;
             }

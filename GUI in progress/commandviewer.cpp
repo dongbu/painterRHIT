@@ -237,6 +237,7 @@ void CommandViewer::MakeEditor()
 	Line *editor = new Line();
 	editor->setList(list);
 	editor->setProjectName(*this->projectName);
+	editor->setProjectLocation(*this->projectLocation);
 
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
@@ -359,6 +360,7 @@ int CommandViewer::FillEditor(QString editorName)
  */
 void CommandViewer::clear() {
 	this->setProjectName(new QString(""));
+	this->setProjectLocation(new QString("ProjectFiles/Temp"));
 	currentEditor = NULL;
 	list->clear();
 	interpreter->clear();
@@ -423,3 +425,6 @@ void CommandViewer::setBreakpoint() {
 	list->currentItem()->setTextColor(Qt::red);
 }
 
+void CommandViewer::setProjectLocation(QString *loc){
+	this->projectLocation = loc;
+}

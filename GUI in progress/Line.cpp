@@ -11,6 +11,7 @@ Line::Line(QWidget *parent) :
     ui(new Ui::Line)
 {
     ui->setupUi(this);
+	projectLocation = "ProjectFiles/Temp";
 
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
@@ -200,7 +201,7 @@ void Line::Add_Command_Clicked() {
     lineEdits.at(0)->setDisabled(true);
 
     Line::removeExcessLines();
-    GuiLoadSave::writeCommandToFolder(projectName,this->CommandEditorWidget,list,commandAdded, "Line");
+    GuiLoadSave::writeCommandToFolder(projectLocation,this->CommandEditorWidget,list,commandAdded, "Line");
     commandAdded = true;
     //sets the name and changes the tabname
     Line::setName(lineEdits.at(0)->text());
@@ -280,6 +281,11 @@ void Line::setName(QString newName){
     this->name = newName;
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
     lineEdits.at(0)->setText(this->name);
+}
+
+
+void Line::setProjectLocation(QString newLocation){
+	this->projectLocation = newLocation;
 }
 
 /**

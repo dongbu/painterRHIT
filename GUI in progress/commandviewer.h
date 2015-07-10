@@ -29,6 +29,7 @@ public:
 
     int PopulateCommandEditor(QString fileName);
     void setProjectName(QString *projectName);
+	void setProjectLocation(QString *projectLocation);
     void setMainClosed(bool closed);
     void MakeEditor();
 	Line *currentEditor;
@@ -46,7 +47,7 @@ private:
 
     Ui::CommandViewer *ui;
     void PassFileChange(bool *val);
-    QString *projectName;
+    QString *projectName, *projectLocation;
 	bool mainClosed, freshlyMade;
 
 private slots:

@@ -318,6 +318,7 @@ void CommandInterpreter::stepForwardCommands(int finishIndex){
 	CommandInterpreter::pausePaintingCommands();
     picasso->raise();
 	CommandInterpreter::SendNext();
+	
 }
 
 /**
@@ -327,9 +328,9 @@ void CommandInterpreter::stepForwardCommands(int finishIndex){
 void CommandInterpreter::stepBackwardCommands(){
 	picasso->raise();
     CommandInterpreter::pausePaintingCommands();
-    stopped = true;
 
 	if (commandIndex <= 0) {
+		printf("commandIndex <= 0\n");
 		stopPaintingCommands();
 		return;
 	}

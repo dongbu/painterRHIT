@@ -60,7 +60,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString projectName;
+    QString projectName, saveLocation;
     bool saved;
     QMessageBox alert;
     bool fileChanged, editorWorks;

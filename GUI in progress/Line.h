@@ -37,6 +37,7 @@ public:
     void set_Point_At(int index, int x, int y);
     void setList(QListWidget *list);
 	void setProjectName(QString projectName);
+	void setProjectLocation(QString newLocation);
 
     QWidget *CommandEditorWidget;
     std::vector<QLineEdit*> *PointVec;
@@ -58,8 +59,7 @@ private:
     int pointCount;
     QListWidget *list;
     QFormLayout *ParameterHolder;
-    QString name;
-	QString projectName;
+    QString name, projectName, projectLocation;
 
 public slots:
 void Add_Command_Clicked();

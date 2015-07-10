@@ -25,7 +25,7 @@ public:
     static int createProjectDirectory(QString ProjectName);
     static int writeCommandListToFolder(QString ProjectName, QListWidget* CommandList);
     static int loadCommandListFromFolder(QString ProjectName, QListWidget* CommandList);
-    static QString saveAsProject();
+    static QString saveAsProject(QString saveLocation);
     static bool copyAllFilesFrom(QString prevFolder, QString newFolder);
     static bool loadExternalFile(QString projectName, QListWidget* CommandList);
 };
