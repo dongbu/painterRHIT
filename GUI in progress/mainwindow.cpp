@@ -310,6 +310,8 @@ void MainWindow::cleanUp(){
 	this->styleBox->setCurrentIndex(0);
 	this->thicknessBox->setValue(4);
     emit sendSaved(false);
+	commandView->setMainClosed(true);
+	commandView->close();
 	commandView = new CommandViewer();
 }
 
@@ -427,15 +429,10 @@ void MainWindow::closeEvent(QCloseEvent *event){
             }else{
                 MainWindow::on_actionSave_As_triggered();
             }
-            if(QDir("ProjectFiles/Temp").exists()){
-                QDir("ProjectFiles/Temp").removeRecursively();
-            }
             event->accept();
             break;
         case QMessageBox::Discard:
-            if(QDir("ProjectFiles/Temp").exists()){
-                QDir("ProjectFiles/Temp").removeRecursively();
-            }
+            
             event->accept();
             break;
         case QMessageBox::Cancel:
@@ -449,6 +446,9 @@ void MainWindow::closeEvent(QCloseEvent *event){
     }
     commandView->setMainClosed(true);
     commandView->close();
+	if (QDir("ProjectFiles/Temp").exists()){
+		QDir("ProjectFiles/Temp").removeRecursively();
+	}
 }
 
 /**
