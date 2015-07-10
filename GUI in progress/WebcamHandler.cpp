@@ -1,7 +1,4 @@
 #include "WebcamHandler.h"
-#include "Square.h"
-#include "Circle.h"
-#include <vector>
 
 /**
 * @brief sets up the ability of a webcam to be launched
@@ -35,7 +32,7 @@ void WebcamHandler::openCamera(int id){
 		printf("cannot open camera");
 	}
 	printf("press a key with camera selected to capture image\n");
-	printf("image will be captured after a certain time regardless\n");
+	printf("image will be captured after about 2 and a half minutes\n");
 	cv::Mat grayImage;
 	int i = 0;
 	while (true) {
@@ -43,10 +40,10 @@ void WebcamHandler::openCamera(int id){
 		cv::Mat cameraFrame;
 		stream1.read(cameraFrame);
 		cv::imshow("cam", cameraFrame);
-		if (i == 3500){
-			printf("timeout pending/n");
+		if (i == 750){
+			printf("timeout pending\n");
 		}
-		if (cv::waitKey(30) >= 0 || i > 4000){
+		if (cv::waitKey(30) >= 0 || i > 1000){
 			break;
 		}
 	}
@@ -54,17 +51,4 @@ void WebcamHandler::openCamera(int id){
 	stream1.release();
 	cameraActive = false;
 	printf("camera released\n");
-
-	//square/circle/interface proof of concept.
-	Square *s = new Square();
-	Circle *c = new Circle();
-
-	std::vector<Shape *> shapes;
-	shapes.push_back(s);
-	shapes.push_back(c);
-
-	for (int i = 0; i < shapes.size();i++){
-		shapes.at(i)->draw();
-	}
-
 }

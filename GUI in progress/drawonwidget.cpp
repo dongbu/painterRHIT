@@ -232,7 +232,7 @@ void drawOnWidget::updateToEditor(Line *editor){
  * @brief fills out the sketchpad with every command
  * @param commandView (CommandViewer)
  */
-void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
+void drawOnWidget::updateToAllEditors(CommandViewer* commandView, QString projectLocation){
 	QListWidget * list = commandView->list;
 	clearAll(1);
 	std::vector<int> x, y;
@@ -252,7 +252,7 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 		if (projectName == NULL){
 			projectName = "Temp";
 		}
-		loadFile.setFileName(QString("ProjectFiles/") + QString(projectName) + QString("/") + names.at(i) + QString(".xml"));
+		loadFile.setFileName(QString(projectLocation) + QString("/") + names.at(i) + QString(".xml"));
 		loadFile.open(QIODevice::ReadOnly);
 		QXmlStreamReader reader(&loadFile);
 

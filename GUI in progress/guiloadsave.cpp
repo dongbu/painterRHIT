@@ -20,6 +20,8 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
 	if (extension == "xml" || extension == "txt"){
 		fileLocation.chop(4);
 	}
+
+	printf("fileLocation for writing command: %s\n", fileLocation.toStdString().c_str());
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 

@@ -13,6 +13,7 @@ public:
 	virtual ~WebcamHandler();
 	void openCamera(int id);
 	bool cameraActive;
+
 };
 
 #endif // WEBCAMHANDLER_H

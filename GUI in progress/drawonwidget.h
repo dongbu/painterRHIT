@@ -33,7 +33,7 @@ signals:
 
 public slots:
     void updateToEditor(Line* editor);
-	void updateToAllEditors(CommandViewer* commandView);
+	void updateToAllEditors(CommandViewer* commandView, QString projectLocation);
 
 protected:
     void mousePressEvent(QMouseEvent* event);

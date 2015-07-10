@@ -81,7 +81,7 @@ signals:
 	void sendSaved(bool saved);
     void makeConnection(QString name);
     void sendLineStyles(QString color, QString style, int width);
-	void sendListOfCommands(CommandViewer *commandView);
+	void sendListOfCommands(CommandViewer *commandView, QString projectLocation);
 
 };
 

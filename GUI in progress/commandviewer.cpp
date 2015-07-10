@@ -181,8 +181,11 @@ void CommandViewer::on_EditCommand_clicked()
 	freshlyMade = false;
 	//Make new editor && populate from XML
 	MakeEditor();
+	printf("list's current item: %s\n", list->currentItem()->text());
 	FillEditor(list->currentItem()->text());
+	printf("checkpoint 4\n");
 	currentEditor->setCommandAdded(true);
+	printf("checkpoint 5\n");
 	currentEditor->show();
 }
 /**
@@ -212,6 +215,7 @@ void CommandViewer::setMainClosed(bool closed){
  * was pressed.
  */
 void CommandViewer::Add_Command_Clicked(){
+	printf("should let you try to add an external command now\n");
 	emit Add_External_Command();
 }
 
@@ -234,23 +238,21 @@ void CommandViewer::MakeEditor()
 	editor->setList(list);
 	editor->setProjectName(*this->projectName);
 	editor->setProjectLocation(*this->projectLocation);
-
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
 	QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
 	QList<QString> texts;
-	foreach(QListWidgetItem *item, listOfCommands)
+	foreach(QListWidgetItem *item, listOfCommands){
 		texts.append(item->text());
+	}
 
 	int k = 1;
 	while (texts.contains(editor->getName())){
 		editor->setName("PointMap_" + QString::number(k));
 		k++;
 	}
-
 	currentEditor = editor;
 	emit EmitConnectEditor(editor);
-
 }
 
 /**
@@ -275,7 +277,7 @@ int CommandViewer::FillEditor(QString editorName)
 
 	//load file and set up the reader.
 	QFile loadFile;
-	loadFile.setFileName(QString("ProjectFiles/") + tempProjectName + QString("/") + editorName + QString(".xml"));
+	loadFile.setFileName(QString(*projectLocation) + QString("/") + editorName + QString(".xml"));
 	loadFile.open(QIODevice::ReadOnly);
 	QXmlStreamReader reader(&loadFile);
 

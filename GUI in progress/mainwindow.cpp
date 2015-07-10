@@ -254,18 +254,20 @@ void MainWindow::on_actionOpen_triggered()
 		saveLocation = directory.selectedFiles().at(0);
 		saveLocation.chop(4);
         projectName = saveLocation.split("/").last();
+
+		saveLocation.chop(projectName.length());
 		
 		printf("opening at location: %s\n", saveLocation.toStdString().c_str());
         commandView->setProjectName(&projectName);
 		drawOn->projectName = projectName;
 		drawOn2->projectName = projectName;
+		commandView->setProjectLocation(&saveLocation);
         if(!GuiLoadSave::loadCommandListFromFolder(saveLocation,this->commandView->list)){
             alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
             alert.setInformativeText("Failed To Load " + saveLocation + "/index.xml");
             alert.show();
         }else{
             this->setWindowTitle(projectName);
-
             saved=true;
             ui->actionSave->setEnabled(true);
             emit sendSaved(true);
@@ -310,9 +312,26 @@ void MainWindow::cleanUp(){
 	this->styleBox->setCurrentIndex(0);
 	this->thicknessBox->setValue(4);
     emit sendSaved(false);
+
+	//unconnect and destroy old commandView.
+	disconnect(this, SIGNAL(sendSaved(bool)), commandView, SLOT(fileSaved(bool)));
+	disconnect(commandView, SIGNAL(fileStatusChanged()), this, SLOT(fileChangedTrue()));
+	disconnect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
+	disconnect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
+	disconnect(this, SIGNAL(makeConnection(QString)), this->commandView->interpreter, SLOT(beginConnecting(QString)));
 	commandView->setMainClosed(true);
 	commandView->close();
+
+	//create and reconnect new commandView
 	commandView = new CommandViewer();
+	commandView->setProjectName(&projectName);
+	commandView->setProjectLocation(&saveLocation);
+	connect(this, SIGNAL(sendSaved(bool)), commandView, SLOT(fileSaved(bool)));
+	connect(commandView, SIGNAL(fileStatusChanged()), this, SLOT(fileChangedTrue()));
+	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
+	connect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
+	connect(this, SIGNAL(makeConnection(QString)), this->commandView->interpreter, SLOT(beginConnecting(QString)));
+	
 }
 
 /**
@@ -466,7 +485,7 @@ void MainWindow::ConnectEditor(Line* editor) {
     connect(editor,SIGNAL(sendUpdateToDrawOn(Line*)),drawOn,SLOT(updateToEditor(Line*)));
 	connect(editor, SIGNAL(sendUpdateToDrawOn(Line*)), drawOn2, SLOT(updateToEditor(Line*)));
 	//connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
-	connect(this, SIGNAL(sendListOfCommands(CommandViewer*)), drawOn2, SLOT(updateToAllEditors(CommandViewer*)));
+	connect(this, SIGNAL(sendListOfCommands(CommandViewer*, QString)), drawOn2, SLOT(updateToAllEditors(CommandViewer*, QString)));
 	
 }
 
@@ -528,7 +547,7 @@ void MainWindow::on_drawing_changed(){
  * @brief updates drawOn2
  */
 void MainWindow::drawOn2_update(){
-	emit sendListOfCommands(commandView);
+	emit sendListOfCommands(commandView, saveLocation);
 }
 
 /**
@@ -547,9 +566,6 @@ void MainWindow::saveTempIndex(){
 		if (!GuiLoadSave::writeCommandListToFolder("ProjectFiles/Temp", this->commandView->list)){
 			alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
 			alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
-			if (alert.exec()){
-				return;
-			}
 		}
 	}
 	else{
