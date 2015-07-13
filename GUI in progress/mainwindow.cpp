@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	saveLocation = "";
 
 	//Robot work//
-	this->robot = new Robot();
+	this->workSpace = new workSpace();
 	//Robot work//
 
 	//window work//

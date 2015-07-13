@@ -7,7 +7,7 @@
 #include <QPen>
 #include <qlistwidget.h>
 #include "commandviewer.h"
-#include "Robot.h"
+#include "WorkSpace.h"
 
 
 class drawOnWidget : public QLabel
@@ -19,7 +19,7 @@ public:
     void clearAll(int resetBackground);
     Line* currentEditor;
 	QString projectName;
-	void setRobot(Robot *robot);
+	void setWorkSpace(WorkSpace *workSpace);
 
 
 private:
@@ -27,7 +27,7 @@ private:
     QString penColor, penStyle;
     QPen pen;
 	QLabel frontLabel;
-	Robot *robot;
+	WorkSpace *workSpace;
 
 
     bool drawPoint(int currentX, int currentY);

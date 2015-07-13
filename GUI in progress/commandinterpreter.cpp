@@ -363,6 +363,6 @@ void CommandInterpreter::beginConnecting(QString robot){
     }
 }
 
-void CommandInterpreter::setRobot(Robot *robot){
-	this->robot = robot;
+void CommandInterpreter::setWorkSpace(WorkSpace *workSpace){
+	this->workSpace = workSpace;
 }

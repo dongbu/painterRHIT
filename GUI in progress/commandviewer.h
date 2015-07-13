@@ -3,7 +3,7 @@
 
 #include "Line.h"
 #include "ui_commandviewer.h"
-#include "Robot.h"
+#include "WorkSpace.h"
 
 #include <QWidget>
 #include <QListWidget>
@@ -38,7 +38,7 @@ public:
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
-	void setRobot(Robot *robot);
+	void setWorkSpace(WorkSpace *workSpace);
 
 
 private:
@@ -51,7 +51,7 @@ private:
     Ui::CommandViewer *ui;
     QString *projectName, *projectLocation;
 	bool mainClosed, freshlyMade;
-	Robot *robot;
+	WorkSpace *workSpace;
 
 private slots:
     void MoveUp_clicked();

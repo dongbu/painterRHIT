@@ -1,7 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "Robot.h"
+#include "WorkSpace.h"
 
 #include <QWidget>
 #include <QGridLayout>
@@ -41,7 +41,7 @@ public:
     void setList(QListWidget *list);
 	void setProjectName(QString projectName);
 	void setProjectLocation(QString newLocation);
-	void setRobot(Robot *robot);
+	void setWorkSpace(WorkSpace *workSpace);
 
     QWidget *CommandEditorWidget;
     std::vector<QLineEdit*> *PointVec;
@@ -64,7 +64,7 @@ private:
     QListWidget *list;
     QFormLayout *ParameterHolder;
     QString name, projectName, projectLocation;
-	Robot *robot;
+	WorkSpace *workSpace;
 
 public slots:
 void Add_Command_Clicked();

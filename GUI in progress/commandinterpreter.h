@@ -3,7 +3,7 @@
 
 #include "painter.h"
 #include "CytonController.h"
-#include "Robot.h"
+#include "WorkSpace.h"
 
 #include <QListWidget>
 #include <QTimer>
@@ -25,7 +25,7 @@ public:
     void pausePaintingCommands();
     void clear();
 	void setList(QListWidget* list);
-	void setRobot(Robot *robot);
+	void setWorkSpace(WorkSpace *workSpace);
 
 private slots:
     void SendNext();
@@ -40,7 +40,7 @@ private:
 	CytonController *bender;
 	QTimer updateTimer;
 	QListWidget *list;
-	Robot *robot;
+	WorkSpace *workSpace;
 	//General Variables
 
 

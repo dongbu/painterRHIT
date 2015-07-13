@@ -341,6 +341,7 @@ void Line::setProjectName(QString projectName){
 	this->projectName = projectName;
 }
 
-void Line::setRobot(Robot *robot){
-	//this->robot = robot;
+void Line::setWorkSpace(WorkSpace *workSpace){
+	//this->workSpace = workSpace;
+	
 }

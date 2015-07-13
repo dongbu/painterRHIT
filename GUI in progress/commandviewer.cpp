@@ -425,7 +425,7 @@ void CommandViewer::setProjectLocation(QString *loc){
 	this->projectLocation = loc;
 }
 
-void CommandViewer::setRobot(Robot *robot){
-	this->robot = robot;
+void CommandViewer::setWorkSpace(WorkSpace *workSpace){
+	this->workSpace = workSpace;
 	this->interpreter->setRobot(robot);
 }
