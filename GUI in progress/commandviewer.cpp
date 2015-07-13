@@ -238,6 +238,7 @@ void CommandViewer::MakeEditor()
 	editor->setList(list);
 	editor->setProjectName(*this->projectName);
 	editor->setProjectLocation(*this->projectLocation);
+	editor->setRobot(this->robot);
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
 	QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
@@ -252,6 +253,7 @@ void CommandViewer::MakeEditor()
 		k++;
 	}
 	currentEditor = editor;
+	this->currentEditor->setRobot(robot);
 	emit EmitConnectEditor(editor);
 }
 
@@ -394,27 +396,23 @@ void CommandViewer::runFrom() {
 	if (fileChanged || !saved){
 		emit MustSave();
 	}
-	if (saved){
 		ui->StepBackwards->setEnabled(true);
 		interpreter->setList(list);
 		ui->Stop->setEnabled(true);
 		ui->Pause->setEnabled(true);
 
 		interpreter->beginPaintingCommands(list->currentRow(), list->count());
-	}
 }
 
 void CommandViewer::runOnly() {
 	if (fileChanged || !saved){
 		emit MustSave();
 	}
-	if (saved){
 		ui->StepBackwards->setEnabled(true);
 		interpreter->setList(list);
 		ui->Stop->setEnabled(true);
 		ui->Pause->setEnabled(true);
 		interpreter->beginPaintingCommands(list->currentRow(), list->currentRow() + 1);
-	}
 }
 
 void CommandViewer::setBreakpoint() {
@@ -425,4 +423,9 @@ void CommandViewer::setBreakpoint() {
 
 void CommandViewer::setProjectLocation(QString *loc){
 	this->projectLocation = loc;
+}
+
+void CommandViewer::setRobot(Robot *robot){
+	this->robot = robot;
+	this->interpreter->setRobot(robot);
 }

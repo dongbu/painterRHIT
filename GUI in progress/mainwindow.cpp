@@ -13,6 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	editorWorks = false;
 	saveLocation = "";
 
+	//Robot work//
+	this->robot = new Robot();
+	//Robot work//
+
 	//window work//
 	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
 	//window work//
@@ -33,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     commandView = new CommandViewer();
     commandView->setProjectName(&projectName);
 	commandView->setProjectLocation(&saveLocation);
+	commandView->setRobot(this->robot);
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
@@ -54,6 +59,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
     ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
     ui->DrawFunctions->setHidden(true);
+
+	drawOn->setRobot(this->robot);
+	drawOn2->setRobot(this->robot);
 	//click to draw work//
 
     //line options work//
@@ -78,7 +86,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(colorBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
-
     //line options work//
 
     //robot connection work//

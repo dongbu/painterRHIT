@@ -3,6 +3,8 @@
 
 #include "Line.h"
 #include "ui_commandviewer.h"
+#include "Robot.h"
+
 #include <QWidget>
 #include <QListWidget>
 #include <QCloseEvent>
@@ -36,6 +38,7 @@ public:
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
+	void setRobot(Robot *robot);
 
 
 private:
@@ -46,9 +49,9 @@ private:
 	void setBreakpoint();
 
     Ui::CommandViewer *ui;
-    void PassFileChange(bool *val);
     QString *projectName, *projectLocation;
 	bool mainClosed, freshlyMade;
+	Robot *robot;
 
 private slots:
     void MoveUp_clicked();
@@ -69,8 +72,6 @@ public slots:
 
 signals:
     void fileStatusChanged();
-    void triggerPointMap();
-    void triggerCommandEditorUpdate(QString, QString*, Line*);
     void Add_External_Command();
     void EmitConnectEditor(Line*);
 	void MustSave();

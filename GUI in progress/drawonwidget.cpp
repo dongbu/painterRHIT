@@ -323,3 +323,7 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView, QString projec
 
 	}
 }
+
+void drawOnWidget::setRobot(Robot *robot){
+	this->robot = robot;
+}

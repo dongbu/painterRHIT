@@ -99,10 +99,6 @@ void CommandInterpreter::BuildCommands() {
 	//	//} if (type == SOLID_STRING) {
 	//	//	MakeSolid(name->text());
 	//	//listOfCommandTypes.push_back(new QString("Solid"));
-	//	//} if (type == PIXEL_STRING) {
-	//	//	MakePixel(name->text());
-	//	//listOfCommandTypes.push_back(new QString("Pixel"));
-	//	//}
 	//}
 }
 
@@ -131,8 +127,6 @@ void CommandInterpreter::SendNext(){
 		sendLine(); //Continue an old line command
 	} else if (CurrentCommandType == "Solid") {
 		sendSolid(); //Continue an old solid command
-	} else if (CurrentCommandType == "Pixel") {
-		sendPixel(); //Continue an old pixel command
 	} else if (commandIndex >= finishIndex) {
 		updateTimer.stop(); //Quit!  We're done
 		paused = false;
@@ -144,9 +138,6 @@ void CommandInterpreter::SendNext(){
 	} else if (listOfCommandTypes.front() == QString("Solid")) {
 		CurrentCommandType = *listOfCommandTypes.front();
 		sendSolid(); //Start a new solid command
-	} else if (listOfCommandTypes.front() == QString("Pixel")) {
-		CurrentCommandType = *listOfCommandTypes.front();
-		sendPixel(); //Start a new pixel command
 	}
 }
 
@@ -207,14 +198,6 @@ void CommandInterpreter::MakeSolid(QString commandName) {
 }
 
 /**
- * @brief creates a "Pixel" command from the given file name.
- * @param commandName
- */
-void CommandInterpreter::MakePixel(QString commandName) {
-	//fill this method out when pixels actually exist
-}
-
-/**
  * @brief sends a single "Line paint command" to both the painter
  * and the robot (if connected).
  */
@@ -240,13 +223,6 @@ void CommandInterpreter::sendSolid() {
 	//fill out this method when solids are actally created
 }
 
-/**
- * @brief sends a single "Pixel paint command" to both the painter
- * and the robot (if connected).
- */
-void CommandInterpreter::sendPixel() {
-	//fill out this method when pixels are actually created
-}
 
 /**
  * @brief stops the painting animation.  Operates as a quasi-reset.
@@ -271,8 +247,6 @@ void CommandInterpreter::stopPaintingCommands(){
 
 	//Solid variable resets
 
-	//Pixel variable resets
-
 	//Other class resets
     picasso->raise();
     picasso->clearPainter();
@@ -292,7 +266,6 @@ void CommandInterpreter::ResetIndicies() {
 	lineIndex = 0;
 	lineAttributeIndex = 0;
 	solidIndex = 0;
-	pixelIndex = 0;
 }
 
 /**
@@ -388,4 +361,8 @@ void CommandInterpreter::beginConnecting(QString robot){
     }else if(robot == "ABB"){
         printf("connect to ABB here");
     }
+}
+
+void CommandInterpreter::setRobot(Robot *robot){
+	this->robot = robot;
 }

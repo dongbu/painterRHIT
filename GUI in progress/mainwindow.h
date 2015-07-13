@@ -8,6 +8,7 @@
 #include "CommandViewer.h"
 #include "drawonwidget.h"
 #include "WebcamHandler.h"
+#include "Robot.h"
 
 #include <QtGui>
 #include <QMainWindow>
@@ -66,10 +67,12 @@ private:
     QMessageBox alert;
     bool fileChanged, editorWorks;
     drawOnWidget *drawOn, *drawOn2;
+	Robot *robot;
     CommandViewer *commandView;
     QComboBox *colorBox, *styleBox;
     QSpinBox *thicknessBox;
 	WebcamHandler cam;
+	
 
     void cleanUp();
     void startPainting(QListWidget* widget, int index);

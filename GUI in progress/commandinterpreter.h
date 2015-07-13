@@ -3,6 +3,8 @@
 
 #include "painter.h"
 #include "CytonController.h"
+#include "Robot.h"
+
 #include <QListWidget>
 #include <QTimer>
 #include <vector>
@@ -23,6 +25,7 @@ public:
     void pausePaintingCommands();
     void clear();
 	void setList(QListWidget* list);
+	void setRobot(Robot *robot);
 
 private slots:
     void SendNext();
@@ -37,11 +40,12 @@ private:
 	CytonController *bender;
 	QTimer updateTimer;
 	QListWidget *list;
+	Robot *robot;
 	//General Variables
 
 
 	//CommandList Variables
-	int lineIndex, solidIndex, pixelIndex, commandIndex;
+	int lineIndex, solidIndex, commandIndex;
 	QList<QString *> listOfCommandTypes;
 	QString CurrentCommandType;
 
@@ -59,10 +63,8 @@ private:
 	void drawUntilCommand(int stopIndex);
 	void MakeLine(QString commandName);
 	void MakeSolid(QString commandName);
-	void MakePixel(QString commandName);
 	void sendLine();
 	void sendSolid();
-	void sendPixel();
 
 
 signals:
