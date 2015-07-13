@@ -14,6 +14,7 @@
 drawOnWidget::drawOnWidget(QWidget * parent, int num)
     :QLabel(parent)
 {
+	printf("drawOnWidget loading\n");
    prevX = -10;
    prevY = -10;
    pointCount = 0;
@@ -232,7 +233,7 @@ void drawOnWidget::updateToEditor(Line *editor){
  * @brief fills out the sketchpad with every command
  * @param commandView (CommandViewer)
  */
-void drawOnWidget::updateToAllEditors(CommandViewer* commandView, QString projectLocation){
+void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 	QListWidget * list = commandView->list;
 	clearAll(1);
 	std::vector<int> x, y;
@@ -249,10 +250,10 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView, QString projec
 		clearAll(0);
 		//start xml data extraction
 		QFile loadFile;
-		if (projectName == NULL){
-			projectName = "Temp";
+		if (workSpace->projectName == NULL){
+			workSpace->projectName = "Temp";
 		}
-		loadFile.setFileName(QString(projectLocation) + QString("/") + names.at(i) + QString(".xml"));
+		loadFile.setFileName(QString(workSpace->projectLocation) + QString("/") + names.at(i) + QString(".xml"));
 		loadFile.open(QIODevice::ReadOnly);
 		QXmlStreamReader reader(&loadFile);
 

@@ -29,9 +29,6 @@ public:
     //std::vector<Line*> editors;
     void clear();
 
-    int PopulateCommandEditor(QString fileName);
-    void setProjectName(QString *projectName);
-	void setProjectLocation(QString *projectLocation);
     void setMainClosed(bool closed);
     void MakeEditor();
 	Line *currentEditor;
@@ -49,7 +46,6 @@ private:
 	void setBreakpoint();
 
     Ui::CommandViewer *ui;
-    QString *projectName, *projectLocation;
 	bool mainClosed, freshlyMade;
 	WorkSpace *workSpace;
 

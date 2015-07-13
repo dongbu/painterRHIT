@@ -13,10 +13,12 @@ CommandViewer::CommandViewer(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::CommandViewer)
 {
+	printf("commandViewer loading\n");
 	//window setup
 	ui->setupUi(this);
 	list = ui->listWidget;
 	this->setWindowTitle("Command List");
+	
 
 	//List Set-Up
 	ui->MoveUp->connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(MoveUp_clicked()));
@@ -28,8 +30,7 @@ ui(new Ui::CommandViewer)
 	freshlyMade = true;
 
 	//Simulator Set-Up
-	interpreter = new CommandInterpreter("");
-	this->Stop_triggered();
+	interpreter = new CommandInterpreter();
 	this->ConnectToolBar();
 	this->move(0, 500);
 	this->show();
@@ -81,7 +82,6 @@ void CommandViewer::StepForward_triggered()
 		emit MustSave();
 	}
 	ui->StepBackwards->setEnabled(true);
-	interpreter->setList(list);
 	interpreter->stepForwardCommands(list->count());
 }
 
@@ -105,8 +105,6 @@ void CommandViewer::RunFromStart_triggered()
 	ui->Pause->setEnabled(true);
 	ui->Stop->setEnabled(true);
 	ui->StepBackwards->setEnabled(true);
-	interpreter->setProjectName(*projectName);
-	interpreter->setList(list);
 	interpreter->beginPaintingCommands(0, list->count());
 }
 
@@ -160,12 +158,6 @@ void CommandViewer::MoveUp_clicked()
 	emit fileStatusChanged();
 }
 
-void CommandViewer::setProjectName(QString *projectName) {
-	this->projectName = projectName;
-	this->interpreter->setProjectName(*projectName);
-}
-
-
 /**
  * @brief brings up a new Line with preloaded information.
  */
@@ -181,11 +173,8 @@ void CommandViewer::on_EditCommand_clicked()
 	freshlyMade = false;
 	//Make new editor && populate from XML
 	MakeEditor();
-	printf("list's current item: %s\n", list->currentItem()->text());
 	FillEditor(list->currentItem()->text());
-	printf("checkpoint 4\n");
 	currentEditor->setCommandAdded(true);
-	printf("checkpoint 5\n");
 	currentEditor->show();
 }
 /**
@@ -235,10 +224,8 @@ void CommandViewer::fileSaved(bool saved){
 void CommandViewer::MakeEditor()
 {
 	Line *editor = new Line();
-	editor->setList(list);
-	editor->setProjectName(*this->projectName);
-	editor->setProjectLocation(*this->projectLocation);
 	editor->setWorkSpace(this->workSpace);
+	workSpace->list = list;
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
 	QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
@@ -270,16 +257,16 @@ int CommandViewer::FillEditor(QString editorName)
 	lineEdits.first()->setDisabled(true);
 
 	QString tempProjectName;
-	if (projectName->isEmpty() || projectName->isNull()){
+	if (workSpace->projectName.isEmpty() || workSpace->projectName.isNull()){
 		tempProjectName = "Temp";
 	}
 	else{
-		tempProjectName = *projectName;
+		tempProjectName = workSpace->projectName;
 	}
 
 	//load file and set up the reader.
 	QFile loadFile;
-	loadFile.setFileName(QString(*projectLocation) + QString("/") + editorName + QString(".xml"));
+	loadFile.setFileName(QString(workSpace->projectLocation) + QString("/") + editorName + QString(".xml"));
 	loadFile.open(QIODevice::ReadOnly);
 	QXmlStreamReader reader(&loadFile);
 
@@ -359,8 +346,8 @@ int CommandViewer::FillEditor(QString editorName)
  * lists.
  */
 void CommandViewer::clear() {
-	this->setProjectName(new QString(""));
-	this->setProjectLocation(new QString("ProjectFiles/Temp"));
+	workSpace->projectName = "";
+	workSpace->projectLocation = "ProjectFiles/Temp";
 	currentEditor = NULL;
 	list->clear();
 	interpreter->clear();
@@ -397,7 +384,6 @@ void CommandViewer::runFrom() {
 		emit MustSave();
 	}
 		ui->StepBackwards->setEnabled(true);
-		interpreter->setList(list);
 		ui->Stop->setEnabled(true);
 		ui->Pause->setEnabled(true);
 
@@ -409,7 +395,6 @@ void CommandViewer::runOnly() {
 		emit MustSave();
 	}
 		ui->StepBackwards->setEnabled(true);
-		interpreter->setList(list);
 		ui->Stop->setEnabled(true);
 		ui->Pause->setEnabled(true);
 		interpreter->beginPaintingCommands(list->currentRow(), list->currentRow() + 1);
@@ -419,10 +404,6 @@ void CommandViewer::setBreakpoint() {
 
 	interpreter->breakPointList.push_back(list->currentRow());
 	list->currentItem()->setTextColor(Qt::red);
-}
-
-void CommandViewer::setProjectLocation(QString *loc){
-	this->projectLocation = loc;
 }
 
 void CommandViewer::setWorkSpace(WorkSpace *workSpace){

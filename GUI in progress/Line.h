@@ -39,9 +39,6 @@ public:
     void setCommandAdded(bool commandAdded);
 	void add_Command_Externally(QString projectName);
     void set_Point_At(int index, int x, int y);
-    void setList(QListWidget *list);
-	void setProjectName(QString projectName);
-	void setProjectLocation(QString newLocation);
 	void setWorkSpace(WorkSpace *workSpace);
 
     QWidget *CommandEditorWidget;
@@ -62,9 +59,8 @@ private:
     void removeExcessLines();
 
     int pointCount;
-    QListWidget *list;
     QFormLayout *ParameterHolder;
-    QString name, projectName, projectLocation;
+	QString name;
 	WorkSpace *workSpace;
 
 public slots:

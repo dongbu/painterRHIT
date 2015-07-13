@@ -16,15 +16,13 @@ class CommandInterpreter : public QObject
 public:
 	std::vector<int> breakPointList;
 
-    CommandInterpreter(QString projectName);
+    CommandInterpreter();
 	void beginPaintingCommands(int startIndex, int finishIndex);
     void stopPaintingCommands();
 	void stepForwardCommands(int finishIndex);
     void stepBackwardCommands();
-    void setProjectName(QString name);
     void pausePaintingCommands();
     void clear();
-	void setList(QListWidget* list);
 	void setWorkSpace(WorkSpace *workSpace);
 
 private slots:
@@ -36,28 +34,23 @@ public slots:
 private:
 	//General Variables
     Painter *picasso;
-    QString projectName;
 	CytonController *bender;
 	QTimer updateTimer;
-	QListWidget *list;
 	WorkSpace *workSpace;
 	//General Variables
 
 
 	//CommandList Variables
-	int lineIndex, solidIndex, commandIndex;
 	QList<QString *> listOfCommandTypes;
 	QString CurrentCommandType;
 
 	std::vector<int> x, y, lineWidth; //line
 	std::vector<QString> lineColor, lineStyle; //line
-	int lineAttributeIndex; //special
 	//??			//Solid vars.
 	//??			//Pixel vars.
 	//CommandList Variables
 
 	bool finished, paused, stopped, connected, prevContinuous, continuePainting;
-	int finishIndex, runFromAdjust;
 	void BuildCommands();
 	void ResetIndicies();
 	void drawUntilCommand(int stopIndex);

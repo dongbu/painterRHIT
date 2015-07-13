@@ -5,6 +5,7 @@
 */
 WebcamHandler::WebcamHandler()
 {
+	printf("WebcamHandler loading\n");
 	cameraActive = false;
 }
 

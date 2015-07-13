@@ -18,7 +18,6 @@ public:
     ~drawOnWidget(){}
     void clearAll(int resetBackground);
     Line* currentEditor;
-	QString projectName;
 	void setWorkSpace(WorkSpace *workSpace);
 
 
@@ -37,7 +36,7 @@ signals:
 
 public slots:
     void updateToEditor(Line* editor);
-	void updateToAllEditors(CommandViewer* commandView, QString projectLocation);
+	void updateToAllEditors(CommandViewer* commandView);
 
 protected:
     void mousePressEvent(QMouseEvent* event);

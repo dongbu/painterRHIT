@@ -8,8 +8,8 @@ Line::Line(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Line)
 {
-    ui->setupUi(this);
-	projectLocation = "ProjectFiles/Temp";
+	printf("Line loading\n");
+	ui->setupUi(this);
 
     PointVec = new std::vector<QLineEdit*>();
     pointCount = 0;
@@ -25,10 +25,6 @@ Line::Line(QWidget *parent) :
     connect(Line_Width,SIGNAL(valueChanged(int)),this,SLOT(InfoChanged()));
 
     ui->verticalLayout->addWidget(this->CommandEditorWidget);
-}
-
-void Line::setList(QListWidget *list) {
-    this->list = list;
 }
 
 Line::~Line()
@@ -189,17 +185,17 @@ void Line::Add_Command_Clicked() {
     }
 
     //make sure everything else is acceptable.
-    if(projectName.isEmpty() || projectName.isNull()){
+    if(workSpace->projectName.isEmpty() || workSpace->projectName.isNull()){
         //creates a "Temp" folder to put things into until saved.
         if(!QDir("ProjectFiles/Temp").exists()){
            QDir().mkdir("ProjectFiles/Temp");
         }
-        projectName = "Temp";
+        workSpace->projectName = "Temp";
     }
     lineEdits.at(0)->setDisabled(true);
 
     Line::removeExcessLines();
-    GuiLoadSave::writeCommandToFolder(projectLocation,this->CommandEditorWidget,list,commandAdded, "Line");
+    GuiLoadSave::writeCommandToFolder(workSpace->projectLocation,this->CommandEditorWidget,workSpace->list,commandAdded, "Line");
     commandAdded = true;
     //sets the name and changes the tabname
     Line::setName(lineEdits.at(0)->text());
@@ -281,11 +277,6 @@ void Line::setName(QString newName){
     lineEdits.at(0)->setText(this->name);
 }
 
-
-void Line::setProjectLocation(QString newLocation){
-	this->projectLocation = newLocation;
-}
-
 /**
  * @brief sets whether this Line is in "add command" mode or "save" mode.
  * Part of TEMP SOLUTION
@@ -306,7 +297,7 @@ void Line::setCommandAdded(bool commandAdded){
  * @brief allows you to tell the command to add itself to the list from somewhere else.
  */
 void Line::add_Command_Externally(QString projectName){
-	this->setProjectName(projectName);
+	workSpace->projectName = projectName;
 	this->Add_Command_Clicked();
 }
 
@@ -335,11 +326,7 @@ void Line::updateLineStyles(QString color, QString style, int width){
     spinBoxes.at(0)->setValue(width);
 }
 
-void Line::setProjectName(QString projectName){
-	this->projectName = projectName;
-}
-
 void Line::setWorkSpace(WorkSpace *workSpace){
-	//this->workSpace = workSpace;
+	this->workSpace = workSpace;
 	
 }

@@ -11,6 +11,7 @@ Painter::Painter(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Painter)
 {
+	printf("Painter loading\n");
     ui->setupUi(this);
     setFixedSize(this->width(),this->height());
     ui->label->setStyleSheet("background-color:white;");

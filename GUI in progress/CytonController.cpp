@@ -14,6 +14,7 @@ using namespace cv;
  */
 CytonController::CytonController()
 {
+	printf("CytonController loading\n");
 	s1 = -2;
 	s2 = -1;
 	s3 = 0;

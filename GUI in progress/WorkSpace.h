@@ -16,7 +16,7 @@ public:
 	QListWidget *list;
 	int lineIndex, commandIndex, solidIndex, lineAttributeIndex, runFromAdjust, finishIndex;
 	std::vector<Shape *> commandStack;
-	QSize canvasSize;
+	QSize *canvasSize;
 	int pixelToCm;
 	QString fillMethod;
 

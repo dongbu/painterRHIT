@@ -62,7 +62,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString projectName, saveLocation;
     bool saved;
     QMessageBox alert;
     bool fileChanged, editorWorks;
@@ -84,7 +83,7 @@ signals:
 	void sendSaved(bool saved);
     void makeConnection(QString name);
     void sendLineStyles(QString color, QString style, int width);
-	void sendListOfCommands(CommandViewer *commandView, QString projectLocation);
+	void sendListOfCommands(CommandViewer *commandView);
 
 };
 
