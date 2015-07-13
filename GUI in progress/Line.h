@@ -50,14 +50,12 @@ public:
     bool commandAdded;
 
 private:
-    Ui::Line *ui;
-
-    void PopulateButtons(QGridLayout *ButtonHolder);
-    void PopulateParameters(QFormLayout *ParameterHolder);
-    void BuildEditor();
+	void PopulateButtons(QGridLayout *ButtonHolder);
+	void PopulateParameters(QFormLayout *ParameterHolder);
+	Ui::Line *ui;
+	void BuildEditor();
     void MakePoint();
     void removeExcessLines();
-
     int pointCount;
     QFormLayout *ParameterHolder;
 	QString name;

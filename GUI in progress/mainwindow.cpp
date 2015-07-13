@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "QDebug.h"
+#include "Solid.h"
+
 #include <QRadioButton>
 /**
  * @brief main window that does everything.
@@ -16,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	freopen("conout$", "w", stderr);
 	printf("Main Window loading\n");
 	//temporary write things in console//
+
+	Solid *hi = new Solid();
+
 
     ui->setupUi(this);
 	editorWorks = false;

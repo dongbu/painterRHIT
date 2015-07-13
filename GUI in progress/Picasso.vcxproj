@@ -78,7 +78,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>qtmain.lib;shell32.lib;Qt5Core.lib;Qt5Widgets.lib;Qt5Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Qt\5.4\msvc2013\lib\qtmain.lib;shell32.lib;C:\Qt\5.4\msvc2013\lib\Qt5Core.lib;C:\Qt\5.4\msvc2013\lib\Qt5Widgets.lib;C:\Qt\5.4\msvc2013\lib\Qt5Gui.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Qt\5.4\msvc2013\lib;C:\Qt\5.4\msvc2013\lib;C:\Qt\5.4\msvc2013\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -214,14 +214,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CytonController.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CytonController.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -234,14 +234,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Line.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Line.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -366,14 +366,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing commandinterpreter.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing commandinterpreter.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -386,14 +386,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing commandviewer.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing commandviewer.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -406,14 +406,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing drawonwidget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing drawonwidget.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -442,14 +442,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing mainwindow.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing mainwindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -462,14 +462,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing painter.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing painter.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
@@ -482,14 +482,14 @@ if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\release\.moc" "-I.\release\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing solid.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
 
 if errorlevel 1 goto VCEnd
 endlocal
-"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-I$(NOINHERIT)\."</Command>
+"C:\Qt\5.4\msvc2013\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\.moc\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-IC:\Qt\5.4\msvc2013\include" "-IC:\Qt\5.4\msvc2013\include\QtWidgets" "-IC:\Qt\5.4\msvc2013\include\QtGui" "-IC:\Qt\5.4\msvc2013\include\QtANGLE" "-IC:\Qt\5.4\msvc2013\include\QtCore" "-I.\debug\.moc" "-I.\debug\.ui" "-IC:\Qt\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing solid.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\.moc\moc_%(Filename).cpp</Outputs>
