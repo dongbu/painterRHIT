@@ -55,9 +55,9 @@
    </attribute>
    <addaction name="actionDraw_Square"/>
    <addaction name="actionDraw_Circle"/>
-   <addaction name="actionDraw_Line"/>
+   <!--<addaction name="actionDraw_Line"/>-->
    <addaction name="actionDraw_Point_Map"/>
-   <addaction name="actionDraw_Function"/>
+   <!--<addaction name="actionDraw_Function"/>-->
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

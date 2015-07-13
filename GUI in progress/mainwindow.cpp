@@ -28,17 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
 	//window work//
 
-    //save work//
-    saved = false;
-	this->fileChangedFalse();
-    //creates a ProjectFiles folder if one doesn't exist
-    if(!QDir(QString("ProjectFiles")).exists()){
-        if(!QDir().mkdir(QString("ProjectFiles"))){
-            std::cout << "failed to create ProjectFiles folder" <<std::endl;
-        }
-    }
-    //save work//
-
     //command list//
     commandView = new CommandViewer();
 	commandView->setWorkSpace(this->workSpace);
@@ -47,6 +36,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
 	connect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
     //command list//
+
+	//save work//
+	saved = false;
+	this->fileChangedFalse();
+	//creates a ProjectFiles folder if one doesn't exist
+	if (!QDir(QString("ProjectFiles")).exists()){
+		if (!QDir().mkdir(QString("ProjectFiles"))){
+			printf("failed to create ProjectFiles folder\n");
+		}
+	}
+	//save work//
 
     //click to draw work//
 	drawOn2 = new drawOnWidget(ui->widget, 1);
@@ -62,30 +62,44 @@ MainWindow::MainWindow(QWidget *parent) :
     drawOn->setFixedHeight(750);
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
     ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
-    ui->DrawFunctions->setHidden(true);
+	QActionGroup *actionGroup = new QActionGroup(this);
+	ui->actionDraw_Circle->setActionGroup(actionGroup);
+	ui->actionDraw_Point_Map->setActionGroup(actionGroup);
+	ui->actionDraw_Square->setActionGroup(actionGroup);
+	ui->actionDraw_Point_Map->setCheckable(true);
+	ui->actionDraw_Point_Map->setChecked(true);
+	ui->actionDraw_Circle->setCheckable(true);
+	ui->actionDraw_Square->setCheckable(true);
+	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeCommandType()));
+	currentCommand = 2;
 	//click to draw work//
 
     //line options work//
 	colorBox = new QComboBox();
 	styleBox = new QComboBox();
+	fillBox = new QComboBox();
 	thicknessBox = new QSpinBox();
-    QStringList colors,styles;
+    QStringList colors, styles, fillTypes;
     colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
     styles << "solid" << "dashed" << "dashed dot";
+	fillTypes << "line" << "solid";
     colorBox->addItems(colors);
     styleBox->addItems(styles);
+	fillBox->addItems(fillTypes);
 
 	thicknessBox->setFixedWidth(60);
     thicknessBox->setMinimum(1);
-    thicknessBox->setMaximum(20);
+    thicknessBox->setMaximum(25);
     thicknessBox->setSingleStep(1);
     thicknessBox->setValue(4);
 
     ui->drawingToolbar->addWidget(colorBox);
     ui->drawingToolbar->addWidget(styleBox);
+	ui->drawingToolbar->addWidget(fillBox);
     ui->drawingToolbar->addWidget(thicknessBox);
     connect(colorBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
     connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
+	connect(fillBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_drawing_changed()));
     connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
     //line options work//
 
@@ -137,7 +151,7 @@ void MainWindow::on_actionSave_As_triggered()
             ui->actionSave->setEnabled(true);
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, this->commandView->list)){
+            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, workSpace->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
                 alert.setInformativeText("Failed To Create " + workSpace->projectName + "/index.xml");
                 if(alert.exec()){
@@ -177,7 +191,7 @@ void MainWindow::on_actionSave_As_triggered()
             ui->actionSave->setEnabled(true);
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, this->commandView->list)){
+            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, this->workSpace->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
                 alert.setInformativeText("Failed To Create " + workSpace->projectLocation + "/index.xml");
                 if(alert.exec()){
@@ -260,7 +274,7 @@ void MainWindow::on_actionOpen_triggered()
 		workSpace->projectLocation.chop(workSpace->projectName.length());
 		
 		printf("opening at location: %s\n", workSpace->projectLocation.toStdString().c_str());
-        if(!GuiLoadSave::loadCommandListFromFolder(workSpace->projectLocation,this->commandView->list)){
+        if(!GuiLoadSave::loadCommandListFromFolder(workSpace->projectLocation,workSpace->list)){
             alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
             alert.setInformativeText("Failed To Load " + workSpace->projectLocation + "/index.xml");
             alert.show();
@@ -282,7 +296,7 @@ void MainWindow::on_actionSave_triggered()
         MainWindow::on_actionSave_As_triggered();
         return;
     }
-    if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation,this->commandView->list)){
+    if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation,workSpace->list)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
         alert.setInformativeText("Failed To Save " + workSpace->projectName);
         alert.show();
@@ -388,22 +402,34 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::recievePoint(int x, int y, int pointCount){
     //means command is over.
 	editorWorks = true;
-    if(x == -10 && y == -10){
-        if(pointCount >= 3){
-            Line *temp = commandView->currentEditor;
-            temp->add_Command_Externally(workSpace->projectName);
-			drawOn->clearAll(1);
-            return;
-        }else{
-            drawOn->clearAll(1);
-            return;
-        }
-    }
+	if (currentCommand == 2){
+		if (x == -10 && y == -10){
+			if (pointCount >= 3){
+				Line *temp = commandView->currentEditor;
+				temp->add_Command_Externally(workSpace->projectName);
+				drawOn->clearAll(1);
+				return;
+			}
+			else{
+				drawOn->clearAll(1);
+				return;
+			}
+		}
+	}
+	else{
+		if (pointCount >= 2){
+			if (currentCommand == 0){
+				//Square
+				drawOn->clearAll(1);
+			}
+			else{
+				//Circle
+				drawOn->clearAll(1);
+			}
+		}
+	}
 	if (pointCount == 1){
 		commandView->MakeEditor();
-		colorBox->setEnabled(true);
-		styleBox->setEnabled(true);
-		thicknessBox->setEnabled(true);
 	}
 	if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
     Line *temp = commandView->currentEditor;
@@ -564,4 +590,18 @@ void MainWindow::saveTempIndex(){
 	else{
 		MainWindow::on_actionSave_triggered();
 	}
+}
+
+void MainWindow::changeCommandType(){
+	if (ui->actionDraw_Square->isChecked()){
+		currentCommand = 0;
+	}
+	else if (ui->actionDraw_Circle->isChecked()){
+		currentCommand = 1;
+	}
+	else{
+		currentCommand = 2;
+	}
+	this->drawOn->currentCommandType = currentCommand;
+	this->drawOn2->currentCommandType = currentCommand;
 }

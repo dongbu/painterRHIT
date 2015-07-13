@@ -59,6 +59,7 @@ private slots:
     void on_drawing_changed();
 	void drawOn2_update();
     void openCamera();
+	void changeCommandType();
 
 private:
     Ui::MainWindow *ui;
@@ -68,9 +69,10 @@ private:
     drawOnWidget *drawOn, *drawOn2;
 	WorkSpace *workSpace;
     CommandViewer *commandView;
-    QComboBox *colorBox, *styleBox;
+    QComboBox *colorBox, *styleBox, *fillBox;
     QSpinBox *thicknessBox;
 	WebcamHandler cam;
+	int currentCommand;
 	
 
     void cleanUp();

@@ -18,6 +18,7 @@ public:
     ~drawOnWidget(){}
     void clearAll(int resetBackground);
     Line* currentEditor;
+	int currentCommandType;
 	void setWorkSpace(WorkSpace *workSpace);
 
 
@@ -27,9 +28,12 @@ private:
     QPen pen;
 	QLabel frontLabel;
 	WorkSpace *workSpace;
+	
 
 
     bool drawPoint(int currentX, int currentY);
+	bool drawSquare(int currentX, int currentY);
+	bool drawCircle(int currentX, int currentY);
 
 signals:
     void sendPoint(int x, int y, int pointCount);

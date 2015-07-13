@@ -132,9 +132,7 @@ public:
         GeneralCommands->addSeparator();
         DrawFunctions->addAction(actionDraw_Square);
         DrawFunctions->addAction(actionDraw_Circle);
-        DrawFunctions->addAction(actionDraw_Line);
         DrawFunctions->addAction(actionDraw_Point_Map);
-        DrawFunctions->addAction(actionDraw_Function);
         menuBar->addAction(menuNew_Window->menuAction());
         menuBar->addAction(menuDraw_Commands->menuAction());
         menuBar->addAction(menuRobot->menuAction());

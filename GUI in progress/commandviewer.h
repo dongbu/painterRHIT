@@ -4,6 +4,7 @@
 #include "Line.h"
 #include "ui_commandviewer.h"
 #include "WorkSpace.h"
+#include "Shape.h"
 
 #include <QWidget>
 #include <QListWidget>

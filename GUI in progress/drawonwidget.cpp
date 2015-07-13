@@ -21,6 +21,7 @@ drawOnWidget::drawOnWidget(QWidget * parent, int num)
    penColor = "black";
    penStyle = "solid";
    penWidth = 4;
+   currentCommandType = 2;
 
    idNumber = num;
 
@@ -44,9 +45,31 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
     //get mouse coordinates
     int currentX = event->localPos().x();
     int currentY = event->localPos().y();
-    if(drawPoint(currentX,currentY)){
-        emit sendPoint(currentX, currentY, pointCount);
-    }
+	switch (currentCommandType){
+	case(0) :
+		if (drawSquare(currentX, currentY)){
+			emit sendPoint(currentX, currentY, pointCount);
+		}
+
+		break;
+	case(1) :
+		if (drawCircle(currentX, currentY)){
+			emit sendPoint(currentX, currentY, pointCount);
+		}
+		break;
+
+	case(2) :
+		if (drawPoint(currentX, currentY)){
+			emit sendPoint(currentX, currentY, pointCount);
+		}
+		break;
+	default:
+		if (drawPoint(currentX, currentY)){
+			emit sendPoint(currentX, currentY, pointCount);
+		}
+		break;
+	}
+    
 }
 
 /**
@@ -153,6 +176,119 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
 	prevX = currentX;
 	prevY = currentY;
     return true;
+}
+
+/**
+ *
+ *
+ */
+bool drawOnWidget::drawSquare(int currentX, int currentY){
+	//setup painter and pen
+	QImage* temp;
+	if (this->pixmap() == 0){
+		temp = new QImage(this->width(), this->height(), QImage::Format_ARGB32_Premultiplied);
+	}
+	else{
+		temp = new QImage(this->pixmap()->toImage());
+	}
+	if (temp->isNull()){
+		std::cout << "image returned null.  Proabably out of space." << std::endl;
+		return false;
+	}
+	QPainter painter(temp);
+
+
+	pointCount++;
+	if (prevX == -10 && prevY == -10){
+		prevX = currentX;
+		prevY = currentY;
+
+		if (idNumber == 0){
+			//draw elipse for first point
+			pen.setWidth(2);
+			pen.setColor(Qt::blue);
+			painter.setPen(pen);
+			painter.drawEllipse(QPoint(currentX, currentY), 5, 5);
+		}
+
+		//make elipse show up
+		this->setPixmap(QPixmap::fromImage(*temp));
+		return true;
+	}
+
+	QColor color(penColor);
+	pen.setColor(color);
+
+
+	QStringList styles;
+	styles << "solid" << "dashed" << "dashed dot";
+	switch (styles.indexOf(penStyle)){
+	case 0:
+		pen.setStyle(Qt::SolidLine);
+		break;
+	case 1:
+		pen.setStyle(Qt::DashLine);
+		break;
+	case 2:
+		pen.setStyle(Qt::DashDotLine);
+		break;
+	default:
+		pen.setStyle(Qt::SolidLine);
+		break;
+	}
+
+	pen.setWidth(penWidth);
+	painter.setPen(pen);
+
+
+	//actual drawing//
+	painter.drawLine(QPointF(prevX, prevY), QPointF(currentX, prevY));//top of square
+	painter.drawLine(QPointF(prevX, prevY), QPointF(prevX, currentY));//left of square
+	painter.drawLine(QPointF(currentX, currentY), QPointF(currentX, prevY));//right of square
+	painter.drawLine(QPointF(currentX, currentY), QPointF(prevX, currentY));//bottom of square
+
+	if (idNumber == 0){
+		if (penColor != "blue"){
+			pen.setColor(Qt::blue);
+		}
+		else{
+			pen.setColor("black");
+		}
+		pen.setWidth(2);
+		painter.setPen(pen);
+		painter.drawEllipse(QPoint(currentX, currentY), 6, 6); //circle
+	}
+	//actual drawing//
+
+	//have the label show what is in the image.
+	this->setPixmap(QPixmap::fromImage(*temp));
+
+	painter.end();
+
+	delete temp;
+
+	////clicked in roughly same spot twice.
+	//bool xMatch = (prevX > currentX - 7 && prevX < currentX + 7);
+	//bool yMatch = (prevY > currentY - 7 && prevY < currentY + 7);
+	//if (xMatch && yMatch && pointCount > 2){
+	//	//QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
+	//	//this->setPixmap(QPixmap::fromImage(*temp2));
+	//	currentX = -10;
+	//	currentY = -10;
+	//	emit sendPoint(currentX, currentY, pointCount);
+	//	pointCount = 0;
+	//	prevX = currentX;
+	//	prevY = currentY;
+	//	return false;
+	//}
+	prevX = currentX;
+	prevY = currentY;
+	return true;
+}
+
+bool drawOnWidget::drawCircle(int currentX, int currentY){
+	printf("TODO: make it draw a circle!\n");
+	return true;
 }
 
 /**
