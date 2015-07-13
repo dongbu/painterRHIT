@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -21,12 +22,20 @@ QT_BEGIN_NAMESPACE
 class Ui_Solid
 {
 public:
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *verticalLayout;
 
     void setupUi(QWidget *Solid)
     {
         if (Solid->objectName().isEmpty())
             Solid->setObjectName(QStringLiteral("Solid"));
-        Solid->resize(400, 300);
+        Solid->resize(441, 342);
+        verticalLayoutWidget = new QWidget(Solid);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(10, 10, 421, 321));
+        verticalLayout = new QVBoxLayout(verticalLayoutWidget);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
 
         retranslateUi(Solid);
 

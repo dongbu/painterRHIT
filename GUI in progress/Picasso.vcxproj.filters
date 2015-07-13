@@ -46,12 +46,12 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{eaec6d17-661c-43b7-ba5b-8aaf232eecf2}</UniqueIdentifier>
+      <UniqueIdentifier>{eba68e47-cac5-47e8-8b6c-3a225c15eb20}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{8b3ee3b5-e5a6-4166-84f9-6df59af228f2}</UniqueIdentifier>
+      <UniqueIdentifier>{f1246c11-a63a-4d12-9397-2d6b32c49961}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -170,8 +170,11 @@
     <CustomBuild Include="solid.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_commandviewer.h">
-      <Filter>Generated Files</Filter>
+    <CustomBuild Include="Icon Storage\function.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\Circle.png">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_Line.h">
       <Filter>Generated Files</Filter>
@@ -179,26 +182,14 @@
     <CustomBuild Include="GeneratedFiles\ui_MainWindow.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\ui_commandviewer.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_painter.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_solid.h">
       <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="WebcamHandler.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="WorkSpace.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="guiloadsave.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\Circle.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\function.png">
-      <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Icon Storage\line.png">
       <Filter>Resource Files</Filter>
@@ -209,29 +200,20 @@
     <CustomBuild Include="Icon Storage\next.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Icon Storage\open.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Icon Storage\pause.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Icon Storage\play.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Icon Storage\Point Map.png">
-      <Filter>Resource Files</Filter>
+    <CustomBuild Include="WebcamHandler.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Icon Storage\previous.png">
-      <Filter>Resource Files</Filter>
+    <CustomBuild Include="WorkSpace.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Icon Storage\save.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\Square.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\stop.png">
-      <Filter>Resource Files</Filter>
+    <CustomBuild Include="guiloadsave.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Storage\Circle.png">
       <Filter>Resource Files</Filter>
@@ -276,6 +258,24 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Storage\stop.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\Point Map.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\previous.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\save.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\Square.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\stop.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\open.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>

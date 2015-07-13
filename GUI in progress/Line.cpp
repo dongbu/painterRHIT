@@ -79,9 +79,6 @@ void Line::BuildEditor() {
     this->move(0,0);
 }
 
-
-
-
 /**
  * @brief creates a std. point box, add it to
  * the point vector, and return said point
@@ -96,9 +93,6 @@ void Line::MakePoint() {
     ParameterHolder->addRow(new QLabel(label),point);
     connect(point,SIGNAL(textChanged(QString)),this,SLOT(InfoChanged()));
 }
-
-
-
 
 /**
  * @brief populates a provided layout with the 6
