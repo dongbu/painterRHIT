@@ -425,23 +425,25 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 		if (pointCount >= 2){
 			if (currentCommand == 0){
 				//Square
-				drawOn->clearAll(1);
+				//drawOn->clearAll(1);
 			}
 			else{
 				//Circle
-				drawOn->clearAll(1);
+				//drawOn->clearAll(1);
 			}
 		}
 	}
-	if (pointCount == 1){
-		commandView->MakeEditor();
+	if (currentCommand == 2){
+		if (pointCount == 1){
+			commandView->MakeEditor();
+		}
+		if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
+		Line *temp = commandView->currentEditor;
+		if (pointCount > 2){
+			temp->Add_Point_Clicked();
+		}
+		temp->set_Point_At(pointCount + 1, x, y);
 	}
-	if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
-    Line *temp = commandView->currentEditor;
-    if(pointCount > 2){
-        temp->Add_Point_Clicked();
-    }
-    temp->set_Point_At(pointCount + 1, x, y);
 }
 
 void MainWindow::noticeCommandAdded(int index){

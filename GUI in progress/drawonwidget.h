@@ -8,6 +8,7 @@
 #include <qlistwidget.h>
 #include "commandviewer.h"
 #include "WorkSpace.h"
+#include <QPainterPath>
 
 
 class drawOnWidget : public QLabel
