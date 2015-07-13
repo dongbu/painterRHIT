@@ -147,7 +147,7 @@
     <ClCompile Include="Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Robot.cpp">
+    <ClCompile Include="WorkSpace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,7 +272,7 @@
     <ClInclude Include="FreeForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Robot.h">
+    <ClInclude Include="WorkSpace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

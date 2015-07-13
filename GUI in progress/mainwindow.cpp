@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	saveLocation = "";
 
 	//Robot work//
-	this->workSpace = new workSpace();
+	this->workSpace = new WorkSpace();
 	//Robot work//
 
 	//window work//
@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     commandView = new CommandViewer();
     commandView->setProjectName(&projectName);
 	commandView->setProjectLocation(&saveLocation);
-	commandView->setRobot(this->robot);
+	commandView->setWorkSpace(this->workSpace);
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
     connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
     ui->DrawFunctions->setHidden(true);
 
-	drawOn->setRobot(this->robot);
-	drawOn2->setRobot(this->robot);
+	drawOn->setWorkSpace(this->workSpace);
+	drawOn2->setWorkSpace(this->workSpace);
 	//click to draw work//
 
     //line options work//

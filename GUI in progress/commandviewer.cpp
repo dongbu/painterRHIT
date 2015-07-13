@@ -238,7 +238,7 @@ void CommandViewer::MakeEditor()
 	editor->setList(list);
 	editor->setProjectName(*this->projectName);
 	editor->setProjectLocation(*this->projectLocation);
-	editor->setRobot(this->robot);
+	editor->setWorkSpace(this->workSpace);
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
 	QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
@@ -253,7 +253,7 @@ void CommandViewer::MakeEditor()
 		k++;
 	}
 	currentEditor = editor;
-	this->currentEditor->setRobot(robot);
+	this->currentEditor->setWorkSpace(workSpace);
 	emit EmitConnectEditor(editor);
 }
 
@@ -427,5 +427,5 @@ void CommandViewer::setProjectLocation(QString *loc){
 
 void CommandViewer::setWorkSpace(WorkSpace *workSpace){
 	this->workSpace = workSpace;
-	this->interpreter->setRobot(robot);
+	this->interpreter->setWorkSpace(workSpace);
 }
