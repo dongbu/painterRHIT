@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'commandeditor.ui'
+** Form generated from reading UI file 'Line.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.4.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_COMMANDEDITOR_H
-#define UI_COMMANDEDITOR_H
+#ifndef UI_LINE_H
+#define UI_LINE_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -55,4 +55,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_COMMANDEDITOR_H
+#endif // UI_LINE_H

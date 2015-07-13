@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = FirstAttempt
+TARGET = Picasso
 TEMPLATE = app
 
 
@@ -18,23 +18,30 @@ SOURCES += main.cpp\
     painter.cpp \
     commandinterpreter.cpp \
     drawonwidget.cpp \
-    commandeditor.cpp \
+    Line.cpp \
     CytonController.cpp \
-    commandviewer.cpp
+    commandviewer.cpp \
+    WebcamHandler.cpp \
+    WorkSpace.cpp \
+    solid.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
     painter.h \
     commandinterpreter.h \
     drawonwidget.h \
-    commandeditor.h \
+    Line.h \
     CytonController.h \
-    commandviewer.h
+    commandviewer.h \
+    WebcamHandler.h \
+    WorkSpace.h \
+    solid.h
 
-FORMS    += mainwindow.ui \
+FORMS    += MainWindow.ui \
     painter.ui \
-    commandeditor.ui \
-    commandviewer.ui
+    Line.ui \
+    commandviewer.ui \
+    solid.ui
 
 RESOURCES += \
     myres.qrc

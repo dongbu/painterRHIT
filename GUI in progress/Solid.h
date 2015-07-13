@@ -1,12 +1,23 @@
 #ifndef SOLID_H
 #define SOLID_H
-class Solid
-{
-public:
-	Solid();
-	virtual ~Solid();
 
-	
+#include "ui_Solid.h"
+#include <QWidget>
+
+namespace Ui {
+class Solid;
+}
+
+class Solid : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit Solid(QWidget *parent = 0);
+    ~Solid();
+
+private:
+    Ui::Solid *ui;
 };
 
-#endif //Solid
+#endif // SOLID_H

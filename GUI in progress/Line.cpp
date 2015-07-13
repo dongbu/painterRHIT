@@ -1,6 +1,4 @@
 #include "Line.h"
-#include "ui_commandeditor.h"
-#include "Line.h"
 #include "guiloadsave.h"
 #include <QTextStream>
 #include <QMessageBox>

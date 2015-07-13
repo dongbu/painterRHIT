@@ -2,6 +2,7 @@
 #define LINE_H
 
 #include "WorkSpace.h"
+#include "ui_Line.h"
 
 #include <QWidget>
 #include <QGridLayout>
