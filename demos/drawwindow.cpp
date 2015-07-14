@@ -19,7 +19,7 @@ protected:
 
   int pen_thickness;
   int line_type;
-  char window_name[50];
+  std::string window_name;
 
 public:
   cv::Mat grid; 
@@ -136,6 +136,10 @@ public:
       } 
   }
     
+ void defineMouseCallback (cv::MouseCallback onMouse) {
+   cv::setMouseCallback(window_name, onMouse, NULL);
+ }
+
   void moveWindow(int x, int y) {
     cv::moveWindow(window_name,x,y); 
   }
@@ -144,10 +148,10 @@ public:
     cv::imshow(window_name, grid);
   }
 
-  DrawWindow(int w, int h) { // constructor
+  DrawWindow(int w, int h, std::string name) { // constructor
     width=w;
     height=h;
-    sprintf(window_name,"Simulator");
+    window_name = name;
     cv::namedWindow(window_name, CV_WINDOW_AUTOSIZE );
 
     grid = cv::Mat( height, width, CV_8UC3 ); // 3 channel color
