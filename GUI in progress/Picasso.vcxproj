@@ -165,6 +165,7 @@
     <ClCompile Include="Debug\.moc\moc_solid.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="drawwindow.cpp" />
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -196,6 +197,7 @@
     <ClCompile Include="Release\.moc\moc_solid.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="WebcamHandler.cpp" />
     <ClCompile Include="WorkSpace.cpp" />
     <ClCompile Include="commandinterpreter.cpp" />
@@ -1042,6 +1044,9 @@ endlocal
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </AdditionalInputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shape.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

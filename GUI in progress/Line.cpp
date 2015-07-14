@@ -8,6 +8,8 @@ Line::Line(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Line)
 {
+	check = QString("initialized");
+
 	printf("Line loading\n");
 	ui->setupUi(this);
 
@@ -83,9 +85,11 @@ void Line::BuildEditor() {
  * @brief creates a std. point box, add it to
  * the point vector, and return said point
  */
-void Line::MakePoint() {
+void Line::AddPoint(int x, int y) {
     QLineEdit *point = new QLineEdit();
-    point->setPlaceholderText("0,0");
+
+	point->setText(QString::number(x) + QString(",") + QString::number(y));
+
     point->setFixedSize(75,22);
     PointVec->push_back(point);
     pointCount++;
@@ -95,7 +99,7 @@ void Line::MakePoint() {
 }
 
 /**
- * @brief populates a provided layout with the 6
+ * @brief populates a provided layout with the 6 default
  * input types necessary for controlling the command editor.
  * @param ParameterHolder
  */
@@ -136,8 +140,9 @@ void Line::PopulateParameters(QFormLayout *ParameterHolder) {
     ParameterHolder->addRow("Color: ",Line_Color);
     ParameterHolder->addRow("Style: ",Line_Style);
     ParameterHolder->addRow("Width",Line_Width);
-    MakePoint(); //adding 1st default point
-    MakePoint(); //adding 2nd default point
+
+	/*AddPoint(-10, -10);
+	AddPoint(-10, -10);*/
 
 }
 
@@ -163,9 +168,7 @@ void Line::PopulateButtons(QGridLayout *ButtonHolder) {
  */
 
 void Line::Add_Command_Clicked() {
-	
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-
 
     //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
     //these commands then crash the program.
@@ -177,7 +180,6 @@ void Line::Add_Command_Clicked() {
             return;
         }
     }
-
     //make sure everything else is acceptable.
     if(workSpace->projectName.isEmpty() || workSpace->projectName.isNull()){
         //creates a "Temp" folder to put things into until saved.
@@ -187,7 +189,6 @@ void Line::Add_Command_Clicked() {
         workSpace->projectName = "Temp";
     }
     lineEdits.at(0)->setDisabled(true);
-
     Line::removeExcessLines();
     GuiLoadSave::writeCommandToFolder(workSpace->projectLocation,this->CommandEditorWidget,workSpace->list,commandAdded, "Line");
     commandAdded = true;
@@ -196,7 +197,7 @@ void Line::Add_Command_Clicked() {
     emit fileStatusChanged();
     emit tell_Command_Added(-10);
 
-    Line::removeExcessLines();
+	Line::removeExcessLines();
 
     this->Add_Command->setText("Save");
 	this->close();
@@ -235,7 +236,7 @@ void Line::removeExcessLines(){
  * @brief Add_Point slot.
  */
 void Line::Add_Point_Clicked() {
-    MakePoint();
+	AddPoint(0, 0);
 }
 
 
@@ -247,16 +248,6 @@ void Line::ConnectButtons() {
     //Connecting button signals/slots
     connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
     connect(Add_Point, SIGNAL(clicked()), this, SLOT(Add_Point_Clicked()));
-}
-
-
-/**
- * @brief get the name of this editor.
- * @return name
- * @deprecated
- */
-QString Line::getName(){
-    return name;
 }
 
 
@@ -287,40 +278,24 @@ void Line::setCommandAdded(bool commandAdded){
     }
 }
 
-/**
- * @brief allows you to tell the command to add itself to the list from somewhere else.
- */
-void Line::add_Command_Externally(QString projectName){
-	workSpace->projectName = projectName;
-	this->Add_Command_Clicked();
-}
-
-/**
- * @brief sets the point at the given index to the given coordinates.
- * @param index
- * @param x
- * @param y
- */
-void Line::set_Point_At(int index, int x, int y){
-    QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
-    if(index > 1){
-        lineEdits.at(index)->setText(QString::number(x) + "," + QString::number(y));
-    }
-}
-
 void Line::InfoChanged(){
     emit Line::sendUpdateToDrawOn(this);
 }
 
 void Line::updateLineStyles(QString color, QString style, int width){
+	printf("checkpoint A \n");
     QList<QComboBox *> comboBoxes = this->CommandEditorWidget->findChildren<QComboBox *>();
+	printf("checkpoint B \n");
     comboBoxes.at(0)->setCurrentText(color);
+	printf("checkpoint C \n");
     comboBoxes.at(1)->setCurrentText(style);
+	printf("checkpoint D \n");
     QList<QSpinBox *> spinBoxes = this->CommandEditorWidget->findChildren<QSpinBox *>();
+	printf("checkpoint E \n");
     spinBoxes.at(0)->setValue(width);
+	printf("checkpoint F \n");
 }
 
 void Line::setWorkSpace(WorkSpace *workSpace){
 	this->workSpace = workSpace;
-	
 }

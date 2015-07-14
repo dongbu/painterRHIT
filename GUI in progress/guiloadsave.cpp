@@ -21,7 +21,6 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
 		fileLocation.chop(4);
 	}
 
-	printf("fileLocation for writing command: %s\n", fileLocation.toStdString().c_str());
     //boolean checker to make sure the file inputs are correct.
     bool fileMalformed = false;
 
@@ -37,22 +36,18 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
     if(lineWidth == ""){
         lineWidth = "0";
     }
-
     //the first object is the filename.  makes sure it is
     QString fileName = lineEdits.at(0)->text();
-
     //adds file stuff to the commandlist. Only if it wasn't added before.
     if(!commandAdded){
         CommandList->addItem(fileName);
     }
-
     //sets up a save file to put the information into.  Should overwrite any previous file with same name in directory.
     QString fileLoc = fileLocation + QString("/") + fileName + QString(".xml");
 	if (fileLocation == ""){
 		fileLoc = QString("ProjectFiles/Temp/") + fileName + QString(".xml");
 	}
     QFile saveFile;
-
     saveFile.setFileName(fileLoc);
     saveFile.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text);
     QXmlStreamWriter writer(&saveFile);
@@ -88,6 +83,9 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
         bool okValue2;
         xValue.toDouble(&okValue1);
         yValue.toDouble(&okValue2);
+		/*if (xValue.toInt() = -10 || yValue.toInt() == -10){
+			okValue1 = false;
+		}*/
 
         if(okValue1 && okValue2){
             //only writes the input into the file if it is valid.
@@ -95,11 +93,10 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
             writer.writeAttribute("x",xValue);
             writer.writeAttribute("y",yValue);
             writer.writeEndElement();//Point
-
         }
     }
     writer.writeEndElement();//PointMap
-
+	
     writer.writeStartElement("FileMalformed");
     writer.writeAttribute("bool",QString::number(fileMalformed));
     writer.writeEndElement();//FileMalformed
@@ -112,7 +109,7 @@ bool GuiLoadSave::writeCommandToFolder(QString fileLocation, QWidget *Line, QLis
 
     //always close files when done.
     saveFile.close();
-
+	
     return !fileMalformed;
 }
 

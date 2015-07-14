@@ -27,17 +27,15 @@ public:
     explicit CommandViewer(QWidget *parent = 0);
     ~CommandViewer();
     QListWidget *list;
-    //std::vector<Line*> editors;
     void clear();
+	void MakeEditor();
 
     void setMainClosed(bool closed);
-    void MakeEditor();
-	Line *currentEditor;
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
 	void setWorkSpace(WorkSpace *workSpace);
-
+	Line *currentEditor;
 
 private:
     void ConnectToolBar();
@@ -70,8 +68,8 @@ public slots:
 signals:
     void fileStatusChanged();
     void Add_External_Command();
-    void EmitConnectEditor(Line*);
 	void MustSave();
+	void EmitConnectEditor(Line* currentEditor);
 
 protected:
     void closeEvent(QCloseEvent *);

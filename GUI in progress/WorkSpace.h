@@ -11,6 +11,17 @@ class WorkSpace
 {
 public:
 	WorkSpace();
+	//void AddToList(Line toAdd);
+	//void LaunchSim();
+
+	//void AddPoints(std::vector<Line> points); method for line
+	//void setColor(Color col); method for line
+	//void setWidth(void int)
+	//save thing?
+
+
+
+
 
 	QString projectName, projectLocation;
 	QListWidget *list;
@@ -19,10 +30,6 @@ public:
 	QSize *canvasSize;
 	int pixelToCm;
 	QString fillMethod;
-
-
-
 };
-
 
 #endif

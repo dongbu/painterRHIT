@@ -22,7 +22,6 @@ CytonController::CytonController()
 	s5 = -1.1;
 	s6 = -1.2;
 	s7 = 0.02;
-
 }
 
 /**

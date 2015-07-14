@@ -19,15 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	printf("Main Window loading\n");
 	//temporary write things in console//
 
-	Solid *hi = new Solid();
-
-
     ui->setupUi(this);
 	editorWorks = false;
 	
-	//Robot work//
-	this->workSpace = new WorkSpace();
-	//Robot work//
+	//WorkSpace Initialization//
+	workSpace = new WorkSpace();
+	//WorkSpace Initialization//
 
 	//window work//
 	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
@@ -38,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	commandView->setWorkSpace(this->workSpace);
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
-    connect(commandView,SIGNAL(EmitConnectEditor(Line*)),this,SLOT(ConnectEditor(Line*)));
+	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
 	connect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
     //command list//
 
@@ -407,42 +404,41 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::recievePoint(int x, int y, int pointCount){
     //means command is over.
 	editorWorks = true;
-	if (currentCommand == 2){
-		if (x == -10 && y == -10){
-			if (pointCount >= 3){
+	if (currentCommand == 2){ // We're dealing with a line.
+		if (x == -10 && y == -10){ // (exit code recieved)
+			if (pointCount >= 3){ // big enough for a command
 				Line *temp = commandView->currentEditor;
-				temp->add_Command_Externally(workSpace->projectName);
+				temp->setWorkSpace(this->workSpace);
+				temp->Add_Command_Clicked();
 				drawOn->clearAll(1);
 				return;
 			}
-			else{
+			else{ //throwing out data
 				drawOn->clearAll(1);
 				return;
-			}
-		}
-	}
-	else{
+			} //saved command
+		} else if (pointCount == 2) {
+			emit colorBox->currentIndexChanged(colorBox->currentIndex());
+		} else if (pointCount == 1){
+			commandView->MakeEditor();
+		} //extended command
+		Line *temp = commandView->currentEditor;
+
+		temp->AddPoint(x, y);
+	} //not a line
+
+
+	else{ //We're dealing with a Circle/Square
 		if (pointCount >= 2){
 			if (currentCommand == 0){
 				//Square
-				//drawOn->clearAll(1);
+				drawOn->clearAll(1);
 			}
 			else{
 				//Circle
-				//drawOn->clearAll(1);
+				drawOn->clearAll(1);
 			}
 		}
-	}
-	if (currentCommand == 2){
-		if (pointCount == 1){
-			commandView->MakeEditor();
-		}
-		if (pointCount == 2) emit colorBox->currentIndexChanged(colorBox->currentIndex());
-		Line *temp = commandView->currentEditor;
-		if (pointCount > 2){
-			temp->Add_Point_Clicked();
-		}
-		temp->set_Point_At(pointCount + 1, x, y);
 	}
 }
 
@@ -562,13 +558,8 @@ void MainWindow::on_drawing_changed(){
 	if (!editorWorks){
 		return;
 	}
-
-	Line *editor = drawOn->currentEditor;
-	connect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
-	QString color = colorBox->currentText();
-	QString style = styleBox->currentText();
-	int width = thicknessBox->text().toInt();
-	emit sendLineStyles(color, style, width);
+	Line *editor = this->commandView->currentEditor;
+	emit sendLineStyles(colorBox->currentText(), styleBox->currentText(), thicknessBox->text().toInt());
 	disconnect(this, SIGNAL(sendLineStyles(QString, QString, int)), editor, SLOT(updateLineStyles(QString, QString, int)));
 }
 

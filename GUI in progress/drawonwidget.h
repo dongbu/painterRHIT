@@ -8,7 +8,6 @@
 #include <qlistwidget.h>
 #include "commandviewer.h"
 #include "WorkSpace.h"
-#include <QPainterPath>
 
 
 class drawOnWidget : public QLabel
@@ -29,8 +28,6 @@ private:
     QPen pen;
 	QLabel frontLabel;
 	WorkSpace *workSpace;
-	
-
 
     bool drawPoint(int currentX, int currentY);
 	bool drawSquare(int currentX, int currentY);

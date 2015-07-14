@@ -4,6 +4,7 @@
 #include "painter.h"
 #include "CytonController.h"
 #include "WorkSpace.h"
+#include "DrawWindow.cpp"
 
 #include <QListWidget>
 #include <QTimer>
@@ -33,7 +34,7 @@ public slots:
 
 private:
 	//General Variables
-    Painter *picasso;
+    DrawWindow *picasso;
 	CytonController *bender;
 	QTimer updateTimer;
 	WorkSpace *workSpace;
@@ -58,7 +59,7 @@ private:
 	void MakeSolid(QString commandName);
 	void sendLine();
 	void sendSolid();
-
+	void setPaintbrush(QString colorHex);
 
 signals:
 	void tell_go_home(int pos);

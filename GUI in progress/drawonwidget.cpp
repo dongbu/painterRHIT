@@ -50,9 +50,6 @@ void drawOnWidget::mousePressEvent(QMouseEvent * event){
 		if (drawSquare(currentX, currentY)){
 			emit sendPoint(currentX, currentY, pointCount);
 		}
-		else{
-			clearAll(1);
-		}
 
 		break;
 	case(1) :
@@ -187,10 +184,6 @@ bool drawOnWidget::drawPoint(int currentX, int currentY){
  */
 bool drawOnWidget::drawSquare(int currentX, int currentY){
 	//setup painter and pen
-	printf("drawing a square\n");
-	if (pointCount >= 2){
-		return false;
-	}
 	QImage* temp;
 	if (this->pixmap() == 0){
 		temp = new QImage(this->width(), this->height(), QImage::Format_ARGB32_Premultiplied);
@@ -247,10 +240,12 @@ bool drawOnWidget::drawSquare(int currentX, int currentY){
 	pen.setWidth(penWidth);
 	painter.setPen(pen);
 
+
 	//actual drawing//
-	printf("drawing a rectangle with points: (%i,%i) and (%i,%i)", prevX, prevY, currentX, currentY);
-	painter.fillRect(QRectF(QPointF(prevX, prevY), QPointF(currentX, currentY)),Qt::BDiagPattern);
-	//painter.drawRect(QRectF(QPointF(prevX, prevY), QPointF(currentX, currentY)));
+	painter.drawLine(QPointF(prevX, prevY), QPointF(currentX, prevY));//top of square
+	painter.drawLine(QPointF(prevX, prevY), QPointF(prevX, currentY));//left of square
+	painter.drawLine(QPointF(currentX, currentY), QPointF(currentX, prevY));//right of square
+	painter.drawLine(QPointF(currentX, currentY), QPointF(prevX, currentY));//bottom of square
 
 	if (idNumber == 0){
 		if (penColor != "blue"){
@@ -267,10 +262,25 @@ bool drawOnWidget::drawSquare(int currentX, int currentY){
 
 	//have the label show what is in the image.
 	this->setPixmap(QPixmap::fromImage(*temp));
+
 	painter.end();
 
 	delete temp;
 
+	////clicked in roughly same spot twice.
+	//bool xMatch = (prevX > currentX - 7 && prevX < currentX + 7);
+	//bool yMatch = (prevY > currentY - 7 && prevY < currentY + 7);
+	//if (xMatch && yMatch && pointCount > 2){
+	//	//QImage *temp2 = new QImage(this->width(),this->height(),QImage::Format_ARGB32);
+	//	//this->setPixmap(QPixmap::fromImage(*temp2));
+	//	currentX = -10;
+	//	currentY = -10;
+	//	emit sendPoint(currentX, currentY, pointCount);
+	//	pointCount = 0;
+	//	prevX = currentX;
+	//	prevY = currentY;
+	//	return false;
+	//}
 	prevX = currentX;
 	prevY = currentY;
 	return true;
@@ -293,8 +303,6 @@ void drawOnWidget::clearAll(int resetBackground){
 		QImage *temp2 = new QImage(this->width(), this->height(), QImage::Format_ARGB32);
 		this->setPixmap(QPixmap::fromImage(*temp2));
 	}
-
-
 }
 
 /**
@@ -450,7 +458,6 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 
 	}
 }
-
 
 void drawOnWidget::setWorkSpace(WorkSpace *workSpace){
 	this->workSpace = workSpace;

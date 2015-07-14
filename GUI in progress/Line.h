@@ -30,39 +30,39 @@ class Line : public QWidget
     Q_OBJECT
 
 public:
+	QString check;
     explicit Line(QWidget *parent = 0);
     ~Line();
 
-    void ConnectButtons();
     void setName(QString newName);
-    QString getName();
-    void setCommandAdded(bool commandAdded);
-	void add_Command_Externally(QString projectName);
-    void set_Point_At(int index, int x, int y);
 	void setWorkSpace(WorkSpace *workSpace);
+    void setCommandAdded(bool commandAdded);
 
-    QWidget *CommandEditorWidget;
-    std::vector<QLineEdit*> *PointVec;
-    QLineEdit *Command_Name;
-    QComboBox *Line_Color, *Line_Style;
-    QSpinBox *Line_Width;
-    QPushButton *Add_Command, *Add_Point;
+	QWidget *CommandEditorWidget;
     bool commandAdded;
+	void AddPoint(int x, int y);
 
 private:
 	void PopulateButtons(QGridLayout *ButtonHolder);
 	void PopulateParameters(QFormLayout *ParameterHolder);
-	Ui::Line *ui;
+	void ConnectButtons();
 	void BuildEditor();
-    void MakePoint();
     void removeExcessLines();
+
+	Ui::Line *ui;
     int pointCount;
     QFormLayout *ParameterHolder;
 	QString name;
+
 	WorkSpace *workSpace;
+	std::vector<QLineEdit*> *PointVec;
+	QLineEdit *Command_Name;
+	QComboBox *Line_Color, *Line_Style;
+	QSpinBox *Line_Width;
+	QPushButton *Add_Command, *Add_Point;
 
 public slots:
-void Add_Command_Clicked();
+    void Add_Command_Clicked();
     void Add_Point_Clicked();
     void InfoChanged();
     void updateLineStyles(QString color, QString style, int width);

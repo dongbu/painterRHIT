@@ -1,11 +1,9 @@
 #include "WorkSpace.h"
 
-
 WorkSpace::WorkSpace(){
 	printf("WorkSpace loading\n");
 	projectName = "";
 	projectLocation = "ProjectFiles/Temp";
-	//list = ????
 	lineIndex = 0;
 	commandIndex = 0;
 	solidIndex = 0;
