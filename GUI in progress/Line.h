@@ -1,7 +1,6 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "WorkSpace.h"
 #include "ui_Line.h"
 
 #include <QWidget>
@@ -35,7 +34,6 @@ public:
     ~Line();
 
     void setName(QString newName);
-	void setWorkSpace(WorkSpace *workSpace);
     void setCommandAdded(bool commandAdded);
 
 	QWidget *CommandEditorWidget;
@@ -54,7 +52,6 @@ private:
     QFormLayout *ParameterHolder;
 	QString name;
 
-	WorkSpace *workSpace;
 	std::vector<QLineEdit*> *PointVec;
 	QLineEdit *Command_Name;
 	QComboBox *Line_Color, *Line_Style;
@@ -62,7 +59,7 @@ private:
 	QPushButton *Add_Command, *Add_Point;
 
 public slots:
-    void Add_Command_Clicked();
+    void Add_Command_Clicked(QString projectLocation, QListWidget *list);
     void Add_Point_Clicked();
     void InfoChanged();
     void updateLineStyles(QString color, QString style, int width);

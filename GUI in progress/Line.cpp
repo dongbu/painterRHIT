@@ -167,9 +167,11 @@ void Line::PopulateButtons(QGridLayout *ButtonHolder) {
  * @brief Add_Command slot
  */
 
-void Line::Add_Command_Clicked() {
+void Line::Add_Command_Clicked(QString projectLocation, QListWidget* list) {
     QList<QLineEdit *> lineEdits = this->CommandEditorWidget->findChildren<QLineEdit *>();
 
+	QString projectName = projectLocation.split('/').last();
+	projectName.chop(4);
     //very bad if we let the user overwrite the index file.  In fact, if this occurs, it will load non-existant commands.
     //these commands then crash the program.
     if(lineEdits.at(0)->text().toLower() == "index"){
@@ -181,16 +183,16 @@ void Line::Add_Command_Clicked() {
         }
     }
     //make sure everything else is acceptable.
-    if(workSpace->projectName.isEmpty() || workSpace->projectName.isNull()){
+    if(projectName.isEmpty() || projectName.isNull()){
         //creates a "Temp" folder to put things into until saved.
         if(!QDir("ProjectFiles/Temp").exists()){
            QDir().mkdir("ProjectFiles/Temp");
         }
-        workSpace->projectName = "Temp";
+        projectName = "Temp";
     }
     lineEdits.at(0)->setDisabled(true);
     Line::removeExcessLines();
-    GuiLoadSave::writeCommandToFolder(workSpace->projectLocation,this->CommandEditorWidget,workSpace->list,commandAdded, "Line");
+    GuiLoadSave::writeCommandToFolder(projectLocation,this->CommandEditorWidget,list,commandAdded, "Line");
     commandAdded = true;
     //sets the name and changes the tabname
     Line::setName(lineEdits.at(0)->text());
@@ -296,6 +298,3 @@ void Line::updateLineStyles(QString color, QString style, int width){
 	printf("checkpoint F \n");
 }
 
-void Line::setWorkSpace(WorkSpace *workSpace){
-	this->workSpace = workSpace;
-}

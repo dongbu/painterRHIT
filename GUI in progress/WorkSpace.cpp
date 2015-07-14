@@ -15,3 +15,13 @@ WorkSpace::WorkSpace(){
 	pixelToCm = 0;
 	fillMethod = "random";
 }
+
+void WorkSpace::AddToList(Line toAdd){
+
+}
+void WorkSpace::LaunchSim(){
+	
+}
+void WorkSpace::setDimensions(int height, int width){
+
+}

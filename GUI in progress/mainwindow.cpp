@@ -408,8 +408,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 		if (x == -10 && y == -10){ // (exit code recieved)
 			if (pointCount >= 3){ // big enough for a command
 				Line *temp = commandView->currentEditor;
-				temp->setWorkSpace(this->workSpace);
-				temp->Add_Command_Clicked();
+				temp->Add_Command_Clicked(this->workSpace->projectLocation,this->workSpace->list);
 				drawOn->clearAll(1);
 				return;
 			}
