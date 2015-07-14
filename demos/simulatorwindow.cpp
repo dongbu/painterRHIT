@@ -4,7 +4,7 @@ int main(void)
 {
   cv::RNG rng(12345); // random number generator object
 
-  DrawWindow W = DrawWindow(300,500); // w,h
+  DrawWindow W = DrawWindow(300,500,"Simulator Window"); // w,h
   W.clearWindow(230,230,230); // default background is white
   W.setLineThickness(3);
   W.drawLine(10,10,50,100);
