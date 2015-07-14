@@ -1,10 +1,23 @@
 #include "drawwindow.cpp"
 
+// handle mouse clicks in a opencv window
+void mouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+  if  ( event == cv::EVENT_LBUTTONDOWN ) {
+    printf("User clicked at %i, %i\n", x, y);
+  } else if  ( event == cv::EVENT_LBUTTONUP ) {
+    printf("User unclicked at %i, %i\n", x, y);
+  } else if  ( event == cv::EVENT_MOUSEMOVE ) {
+    printf("User moved mouse to %i, %i\n", x, y);
+  } 
+}
+
 int main(void)
 {
   cv::RNG rng(12345); // random number generator object
 
-  DrawWindow W = DrawWindow(300,500,"Simulator Window"); // w,h
+  DrawWindow W = DrawWindow(300,500,"howdy simulator"); // w,h
+  W.defineMouseCallback(mouseCallBackFunc);
   W.clearWindow(230,230,230); // default background is white
   W.setLineThickness(3);
   W.drawLine(10,10,50,100);
