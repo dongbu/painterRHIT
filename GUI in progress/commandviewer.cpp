@@ -182,7 +182,6 @@ void CommandViewer::on_EditCommand_clicked()
 void CommandViewer::MakeEditor()
 {
 	Line *editor = new Line();
-	editor->setWorkSpace(this->workSpace);
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
 	QList<QListWidgetItem *> listOfCommands = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
