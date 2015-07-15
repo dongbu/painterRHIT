@@ -162,6 +162,9 @@ void Line::PopulateButtons(QGridLayout *ButtonHolder) {
     ButtonHolder->addWidget(Add_Point,0,1);
 }
 
+void Line::Add_Command_Clicked() {
+	Add_Command_Clicked(*externallySetProjectLocation, externallySetList);
+}
 
 /**
  * @brief Add_Command slot
@@ -248,8 +251,16 @@ void Line::Add_Point_Clicked() {
  */
 void Line::ConnectButtons() {
     //Connecting button signals/slots
-    connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
+	connect(Add_Command, SIGNAL(clicked()), this, SLOT(Add_Command_Clicked()));
     connect(Add_Point, SIGNAL(clicked()), this, SLOT(Add_Point_Clicked()));
+}
+
+void Line::setList(QListWidget *list) {
+	externallySetList = list;
+}
+
+void Line::setProjectLocation(QString *location) {
+	externallySetProjectLocation = location;
 }
 
 

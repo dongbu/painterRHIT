@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
 	l->AddPoint(10, 710);
 	l->AddPoint(710, 10);
 	p.addLine(l);
+
 	p.setGuiEditable(true);
     //MainWindow w;
     //w.show();
