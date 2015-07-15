@@ -37,7 +37,6 @@ ui(new Ui::CommandViewer)
 	interpreter->setProjectName(projectName);
 	this->ConnectToolBar();
 	this->move(0, 500);
-	this->show();
 	this->saved = false;
 	this->fileChanged = false;
 

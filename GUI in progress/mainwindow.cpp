@@ -10,13 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-	//temporary write things in console//
-	AllocConsole();
-	freopen("conin$", "r", stdin);
-	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
-	printf("Main Window loading\n");
-	//temporary write things in console//
 
     ui->setupUi(this);
 	editorWorks = false;

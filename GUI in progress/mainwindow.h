@@ -40,12 +40,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+	CommandViewer *commandView;
 
 public slots:
     void recievePoint(int x, int y, int pointCount);
 	void saveTempIndex();
 
-private slots:
     void on_actionSave_As_triggered();
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
@@ -66,7 +66,6 @@ private:
     QMessageBox alert;
     bool fileChanged, editorWorks;
     drawOnWidget *drawOn, *drawOn2;
-    CommandViewer *commandView;
     QComboBox *colorBox, *styleBox, *fillBox;
     QSpinBox *thicknessBox;
 	WebcamHandler cam;

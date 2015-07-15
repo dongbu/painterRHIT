@@ -20,8 +20,37 @@ void painter::AddToList(Line toAdd){
 
 }
 void painter::LaunchSim(){
-	
+	mainWin.commandView->show();
+	mainWin.commandView->RunFromStart_triggered();
 }
 void painter::setDimensions(int height, int width){
+	canvasSize = new QSize(width, height);
+}
+
+void painter::launchRobot(){
+
+}
+void painter::setGuiEditable(bool state){
+	if (state){
+		mainWin.show();
+		mainWin.commandView->show();
+	}
+	else{
+		mainWin.hide();
+		mainWin.commandView->hide();
+	}
+}
+void painter::save(){
+	mainWin.on_actionSave_triggered();
+}
+void painter::load(std::string path){
+	mainWin.on_actionOpen_triggered();
+}
+
+void painter::newProject(){
+	mainWin.on_actionNew_triggered();
+}
+
+void painter::addLine(Line toAdd){
 
 }

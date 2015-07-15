@@ -56,12 +56,12 @@ private slots:
     void Pause_triggered();
     void StepForward_triggered();
     void StepBackwards_triggered();
-    void RunFromStart_triggered();
 	void launchRightClick(QPoint pos);
 	void menuSort(QAction *a);
 
 public slots:
     void fileSaved(bool saved);
+	void RunFromStart_triggered();
 
 signals:
     void fileStatusChanged();
