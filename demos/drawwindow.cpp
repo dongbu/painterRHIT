@@ -1,13 +1,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <cv.h>
 #include <highgui.h>
 
-//using namespace std;
 
 // Packages simple drawing commands for the simulator display window
 class DrawWindow {
