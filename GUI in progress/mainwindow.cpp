@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "QDebug.h"
-#include "Solid.h"
 
 #include <QRadioButton>
 /**
@@ -21,10 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 	editorWorks = false;
-	
-	//WorkSpace Initialization//
-	workSpace = new WorkSpace();
-	//WorkSpace Initialization//
 
 	//window work//
 	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
@@ -32,7 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //command list//
     commandView = new CommandViewer();
-	commandView->setWorkSpace(this->workSpace);
+	commandView->projectName = this->projectName;
+	commandView->projectLocation = this->projectLocation;
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
@@ -52,14 +48,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //click to draw work//
 	drawOn2 = new drawOnWidget(ui->widget, 1);
-	drawOn2->setWorkSpace(this->workSpace);
 	drawOn2->setFixedWidth(1000);
 	drawOn2->setFixedHeight(750);
 	ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 
 
     drawOn = new drawOnWidget(ui->widget, 0);
-	drawOn->setWorkSpace(this->workSpace);
     drawOn->setFixedWidth(1000);
     drawOn->setFixedHeight(750);
     connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
@@ -143,19 +137,19 @@ void MainWindow::on_actionSave_As_triggered()
     //make sure ProjectFiles folder exists
     if(!saved){
         //saveAsProject() returns the name that was chosen to save the project under.
-        workSpace->projectLocation = GuiLoadSave::saveAsProject(workSpace->projectLocation);
-		workSpace->projectLocation.chop(4);
-		QString name = workSpace->projectLocation.split("/").last();
+        projectLocation = GuiLoadSave::saveAsProject(projectLocation);
+		projectLocation.chop(4);
+		QString name = projectLocation.split("/").last();
         if(!name.isEmpty()){
             saved = true;
-            workSpace->projectName = name;
-            this->setWindowTitle(workSpace->projectName);
+            projectName = name;
+            this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, workSpace->list)){
+            if(!GuiLoadSave::writeCommandListToFolder(projectLocation, this->commandView->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                alert.setInformativeText("Failed To Create " + workSpace->projectName + "/index.xml");
+                alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
                 if(alert.exec()){
                     return;
                 }
@@ -163,7 +157,7 @@ void MainWindow::on_actionSave_As_triggered()
 
             //creates the "dummy" file that is used for clicking.
             QFile dummy;
-            dummy.setFileName(workSpace->projectLocation + QString("/") + name + QString(".txt"));
+            dummy.setFileName(projectLocation + QString("/") + name + QString(".txt"));
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
             emit sendSaved(true);
@@ -171,7 +165,7 @@ void MainWindow::on_actionSave_As_triggered()
 
             //moves all files from temp folder into current folder if temp folder exists.  Also deletes temp folder.
             if(QDir("ProjectFiles/Temp").exists()){
-                if(!GuiLoadSave::copyAllFilesFrom("ProjectFiles/Temp",workSpace->projectLocation)){
+                if(!GuiLoadSave::copyAllFilesFrom("ProjectFiles/Temp",projectLocation)){
                     std::cout << "Problem with Temp" << std::endl;
                 }else{
                     QDir("ProjectFiles/Temp").removeRecursively();
@@ -180,36 +174,36 @@ void MainWindow::on_actionSave_As_triggered()
         }
     }else{
         //has been saved before.
-        QString prevProjectLocation = workSpace->projectLocation;
+        QString prevProjectLocation = projectLocation;
         //same as above.
-		workSpace->projectLocation = GuiLoadSave::saveAsProject(workSpace->projectLocation);
-		workSpace->projectLocation.chop(4);
-		QString name = workSpace->projectLocation.split("/").last();
+		projectLocation = GuiLoadSave::saveAsProject(projectLocation);
+		projectLocation.chop(4);
+		QString name = projectLocation.split("/").last();
 
         if(!name.isEmpty()){
             saved = true;
-            workSpace->projectName = name;
-            this->setWindowTitle(workSpace->projectName);
+            projectName = name;
+            this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
 
             //chunks in index.xml file
-            if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation, this->workSpace->list)){
+            if(!GuiLoadSave::writeCommandListToFolder(projectLocation, commandView->list)){
                 alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-                alert.setInformativeText("Failed To Create " + workSpace->projectLocation + "/index.xml");
+                alert.setInformativeText("Failed To Create " + projectLocation + "/index.xml");
                 if(alert.exec()){
                     return;
                 }
             }
             //creates the "dummy" file that is used for clicking.
             QFile dummy;
-            dummy.setFileName(workSpace->projectLocation + QString("/") + name + QString(".txt"));
+            dummy.setFileName(projectLocation + QString("/") + name + QString(".txt"));
             dummy.open(QIODevice::WriteOnly);
             dummy.close();
             emit sendSaved(true);
 
             //transfers all files over from the previous location to the new location.
-            if(!GuiLoadSave::copyAllFilesFrom(prevProjectLocation, workSpace->projectLocation)){
-                std::cout << "something went wrong transfering files from " <<prevProjectLocation.toStdString() << " to " << workSpace->projectLocation.toStdString() << std::endl;
+            if(!GuiLoadSave::copyAllFilesFrom(prevProjectLocation, projectLocation)){
+                std::cout << "something went wrong transfering files from " <<prevProjectLocation.toStdString() << " to " << projectLocation.toStdString() << std::endl;
             }else{
                 this->fileChangedFalse();
             }
@@ -257,11 +251,11 @@ void MainWindow::on_actionOpen_triggered()
 
     //opens up a directory viewer that only shows folders and .txt files.
     QFileDialog directory;
-	if (workSpace->projectLocation == ""){
+	if (projectLocation == ""){
 		directory.setDirectory("ProjectFiles");
 	}
 	else{
-		directory.setDirectory(workSpace->projectLocation);
+		directory.setDirectory(projectLocation);
 	}
     QStringList filters;
     filters << "Text files (*.txt)";
@@ -269,19 +263,19 @@ void MainWindow::on_actionOpen_triggered()
     if(directory.exec()){
         MainWindow::cleanUp();
 
-		workSpace->projectLocation = directory.selectedFiles().at(0);
-		workSpace->projectLocation.chop(4);
-        workSpace->projectName = workSpace->projectLocation.split("/").last();
+		projectLocation = directory.selectedFiles().at(0);
+		projectLocation.chop(4);
+        projectName = projectLocation.split("/").last();
 
-		workSpace->projectLocation.chop(workSpace->projectName.length());
+		projectLocation.chop(projectName.length());
 		
-		printf("opening at location: %s\n", workSpace->projectLocation.toStdString().c_str());
-        if(!GuiLoadSave::loadCommandListFromFolder(workSpace->projectLocation,workSpace->list)){
+		printf("opening at location: %s\n", projectLocation.toStdString().c_str());
+        if(!GuiLoadSave::loadCommandListFromFolder(projectLocation,this->commandView->list)){
             alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-            alert.setInformativeText("Failed To Load " + workSpace->projectLocation + "/index.xml");
+            alert.setInformativeText("Failed To Load " + projectLocation + "/index.xml");
             alert.show();
         }else{
-            this->setWindowTitle(workSpace->projectName);
+            this->setWindowTitle(projectName);
             saved=true;
             ui->actionSave->setEnabled(true);
             emit sendSaved(true);
@@ -298,9 +292,9 @@ void MainWindow::on_actionSave_triggered()
         MainWindow::on_actionSave_As_triggered();
         return;
     }
-    if(!GuiLoadSave::writeCommandListToFolder(workSpace->projectLocation,workSpace->list)){
+    if(!GuiLoadSave::writeCommandListToFolder(projectLocation,this->commandView->list)){
         alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-        alert.setInformativeText("Failed To Save " + workSpace->projectName);
+        alert.setInformativeText("Failed To Save " + projectName);
         alert.show();
     }
 	this->fileChangedFalse();
@@ -315,7 +309,7 @@ void MainWindow::cleanUp(){
 	this->fileChangedFalse();
     this->saved = false;
     this->setWindowTitle("Untitled");
-    workSpace->projectName = "";
+    projectName = "";
     ui->actionSave->setDisabled(true);
     if(QDir("ProjectFiles/Temp").exists()){
         QDir("ProjectFiles/Temp").removeRecursively();
@@ -338,6 +332,8 @@ void MainWindow::cleanUp(){
 
 	//create and reconnect new commandView
 	commandView = new CommandViewer();
+	commandView->projectName = this->projectName;
+	commandView->projectLocation = this->projectLocation;
 	connect(this, SIGNAL(sendSaved(bool)), commandView, SLOT(fileSaved(bool)));
 	connect(commandView, SIGNAL(fileStatusChanged()), this, SLOT(fileChangedTrue()));
 	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
@@ -408,7 +404,7 @@ void MainWindow::recievePoint(int x, int y, int pointCount){
 		if (x == -10 && y == -10){ // (exit code recieved)
 			if (pointCount >= 3){ // big enough for a command
 				Line *temp = commandView->currentEditor;
-				temp->Add_Command_Clicked(this->workSpace->projectLocation,this->workSpace->list);
+				temp->Add_Command_Clicked(projectLocation,this->commandView->list);
 				drawOn->clearAll(1);
 				return;
 			}
@@ -510,7 +506,6 @@ void MainWindow::ConnectEditor(Line* editor) {
 	connect(editor, SIGNAL(sendUpdateToDrawOn(Line*)), drawOn2, SLOT(updateToEditor(Line*)));
 	//connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
 	connect(this, SIGNAL(sendListOfCommands(CommandViewer*)), drawOn2, SLOT(updateToAllEditors(CommandViewer*)));
-	
 }
 
 /**
@@ -578,10 +573,10 @@ void MainWindow::openCamera(){
 
 void MainWindow::saveTempIndex(){
 	if (!saved){
-		workSpace->projectName = "Temp";
+		projectName = "Temp";
 		if (!GuiLoadSave::writeCommandListToFolder("ProjectFiles/Temp", this->commandView->list)){
 			alert.setText("<html><strong style=\"color:red\">ERROR:</strong></html>");
-			alert.setInformativeText("Failed To Create " + workSpace->projectName + "/index.xml");
+			alert.setInformativeText("Failed To Create " + projectName + "/index.xml");
 		}
 	}
 	else{

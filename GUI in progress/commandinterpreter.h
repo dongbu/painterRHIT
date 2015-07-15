@@ -1,9 +1,7 @@
 #ifndef COMMANDINTERPRETER_H
 #define COMMANDINTERPRETER_H
 
-#include "painter.h"
 #include "CytonController.h"
-#include "WorkSpace.h"
 #include "DrawWindow.cpp"
 
 #include <QListWidget>
@@ -24,7 +22,10 @@ public:
     void stepBackwardCommands();
     void pausePaintingCommands();
     void clear();
-	void setWorkSpace(WorkSpace *workSpace);
+	void setList(QListWidget *list);
+	void setProjectName(QString projName);
+
+	int commandIndex, finishIndex, runFromAdjust, lineAttributeIndex, lineIndex, solidIndex;
 
 private slots:
     void SendNext();
@@ -37,9 +38,9 @@ private:
     DrawWindow *picasso;
 	CytonController *bender;
 	QTimer updateTimer;
-	WorkSpace *workSpace;
+	QListWidget *list;
+	QString projName;
 	//General Variables
-
 
 	//CommandList Variables
 	QList<QString *> listOfCommandTypes;

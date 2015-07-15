@@ -384,10 +384,10 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 		clearAll(0);
 		//start xml data extraction
 		QFile loadFile;
-		if (workSpace->projectName == NULL){
-			workSpace->projectName = "Temp";
+		if (commandView->projectName == NULL){
+			commandView->projectName = QString("Temp");
 		}
-		loadFile.setFileName(QString(workSpace->projectLocation) + QString("/") + names.at(i) + QString(".xml"));
+		loadFile.setFileName(QString(commandView->projectLocation) + QString("/") + names.at(i) + QString(".xml"));
 		loadFile.open(QIODevice::ReadOnly);
 		QXmlStreamReader reader(&loadFile);
 
@@ -455,10 +455,5 @@ void drawOnWidget::updateToAllEditors(CommandViewer* commandView){
 		}
 		x.clear();
 		y.clear();
-
 	}
-}
-
-void drawOnWidget::setWorkSpace(WorkSpace *workSpace){
-	this->workSpace = workSpace;
 }

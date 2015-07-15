@@ -66,9 +66,6 @@
     <ClCompile Include="WebcamHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WorkSpace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="commandinterpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -88,9 +85,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="painter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="solid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug\.moc\moc_CytonController.cpp">
@@ -135,12 +129,6 @@
     <ClCompile Include="Release\.moc\moc_painter.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\.moc\moc_solid.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\.moc\moc_solid.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
@@ -149,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="drawwindow.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="painter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="painter.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +167,6 @@
     <CustomBuild Include="painter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="solid.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Icon Storage\function.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -189,12 +180,6 @@
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_commandviewer.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_painter.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_solid.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Icon Storage\line.png">
@@ -213,9 +198,6 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="WebcamHandler.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="WorkSpace.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="guiloadsave.h">
@@ -284,6 +266,18 @@
     <CustomBuild Include="Icon Storage\open.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="painter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="painter.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\ui_painter.h">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\ui_solid.h">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Line.ui">
@@ -293,12 +287,6 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="commandviewer.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="painter.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="solid.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>

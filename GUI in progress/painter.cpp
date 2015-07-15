@@ -1,6 +1,6 @@
-#include "WorkSpace.h"
+#include "painter.h"
 
-WorkSpace::WorkSpace(){
+painter::painter(){
 	printf("WorkSpace loading\n");
 	projectName = "";
 	projectLocation = "ProjectFiles/Temp";
@@ -16,12 +16,12 @@ WorkSpace::WorkSpace(){
 	fillMethod = "random";
 }
 
-void WorkSpace::AddToList(Line toAdd){
+void painter::AddToList(Line toAdd){
 
 }
-void WorkSpace::LaunchSim(){
+void painter::LaunchSim(){
 	
 }
-void WorkSpace::setDimensions(int height, int width){
+void painter::setDimensions(int height, int width){
 
 }

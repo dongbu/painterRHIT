@@ -38,8 +38,8 @@ CommandInterpreter::CommandInterpreter()
  * @param widget
  */
 void CommandInterpreter::beginPaintingCommands(int startIndex, int finishIndex){
-	this->workSpace->commandIndex = startIndex;
-	this->workSpace->finishIndex = finishIndex;
+	this->commandIndex = startIndex;
+	this->finishIndex = finishIndex;
 
 	//base cases
 	if (!stopped) { return; }
@@ -70,15 +70,15 @@ void CommandInterpreter::BuildCommands() {
 	//Creating Commands
 	listOfCommandTypes.clear();
 
-	QList<QListWidgetItem *> CommandNames = workSpace->list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+	QList<QListWidgetItem *> CommandNames = list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
 
-	for (int i = workSpace->commandIndex; i < workSpace->finishIndex; i++) {
+	for (int i = commandIndex; i < finishIndex; i++) {
 		MakeLine(CommandNames.at(i)->text());
 		listOfCommandTypes.push_back(new QString("Line"));
 	}
-	workSpace->runFromAdjust = workSpace->commandIndex;
-	workSpace->finishIndex -= workSpace->commandIndex;
-	workSpace->commandIndex = 0;
+	runFromAdjust = commandIndex;
+	finishIndex -= commandIndex;
+	commandIndex = 0;
 
 	//foreach(QListWidgetItem *name, CommandNames) {
 
@@ -100,10 +100,10 @@ void CommandInterpreter::BuildCommands() {
 void CommandInterpreter::SendNext(){
 	//checking for breakpoints
 	for (int i = 0; i < breakPointList.size(); i++){
-		if ((workSpace->commandIndex + workSpace->runFromAdjust) == breakPointList[i]){
+		if ((commandIndex + runFromAdjust) == breakPointList[i]){
 			CommandInterpreter::pausePaintingCommands();
 			breakPointList[i] = -50;
-			workSpace->list->item(workSpace->commandIndex + workSpace->runFromAdjust)->setTextColor(Qt::black);
+			list->item(commandIndex + runFromAdjust)->setTextColor(Qt::black);
 			return;
 		}
 	}
@@ -112,7 +112,7 @@ void CommandInterpreter::SendNext(){
 		sendLine(); //Continue an old line command
 	} else if (CurrentCommandType == "Solid") {
 		sendSolid(); //Continue an old solid command
-	} else if (workSpace->commandIndex >= workSpace->finishIndex) {
+	} else if (commandIndex >= finishIndex) {
 		updateTimer.stop(); //Quit!  We're done
 		paused = false;
 		stopped = true;
@@ -133,7 +133,7 @@ void CommandInterpreter::SendNext(){
 void CommandInterpreter::MakeLine(QString commandName) {
 	//start xml data extraction
 	QFile loadFile;
-	loadFile.setFileName(QString("ProjectFiles/") + workSpace->projectName + QString("/") + commandName + QString(".xml"));
+	loadFile.setFileName(QString("ProjectFiles/") + projName + QString("/") + commandName + QString(".xml"));
 	loadFile.open(QIODevice::ReadOnly);
 	QXmlStreamReader reader(&loadFile);
 
@@ -190,27 +190,27 @@ void CommandInterpreter::sendLine() {
 	//if (connected) { /*Do robot stuff*/ }
 
 	//color setting
-	this->setPaintbrush(QColor(lineColor.at(workSpace->lineAttributeIndex)).name());
+	this->setPaintbrush(QColor(lineColor.at(lineAttributeIndex)).name());
 
 	//Thickness setting
-	picasso->setLineThickness(lineWidth.at(workSpace->lineAttributeIndex));
+	picasso->setLineThickness(lineWidth.at(lineAttributeIndex));
 
 	//style setting (TODO:  implement more styles than just "solid"
 	picasso->setLineType("solid");
-	//lineStyle.at(workSpace->lineAttributeIndex);
+	//lineStyle.at(lineAttributeIndex);
 
 	//line drawing
-	picasso->drawLine(x.at(workSpace->lineIndex), y.at(workSpace->lineIndex),x.at(workSpace->lineIndex + 1), y.at(workSpace->lineIndex + 1));
+	picasso->drawLine(x.at(lineIndex), y.at(lineIndex),x.at(lineIndex + 1), y.at(lineIndex + 1));
 	picasso->show();
 
 	//updating index
-	workSpace->lineIndex++;
+	lineIndex++;
 
-	if (x.at(workSpace->lineIndex + 1) == -50) {  //escape sequence detected (change commands)
-		workSpace->list->item(workSpace->commandIndex + workSpace->runFromAdjust)->setBackgroundColor(Qt::green);
-		workSpace->commandIndex++;
-		workSpace->lineAttributeIndex++;
-		workSpace->lineIndex+=2;
+	if (x.at(lineIndex + 1) == -50) {  //escape sequence detected (change commands)
+		list->item(commandIndex + runFromAdjust)->setBackgroundColor(Qt::green);
+		commandIndex++;
+		lineAttributeIndex++;
+		lineIndex+=2;
 		CurrentCommandType = "garbage";
 	}
 }
@@ -272,7 +272,7 @@ void CommandInterpreter::stopPaintingCommands(){
 	//Solid variable resets
 
 	//Other class resets
-	this->clear();
+	picasso->clearWindow(255, 255, 255);
 	if (connected){ emit(tell_go_home(0)); }
 }
 
@@ -280,15 +280,15 @@ void CommandInterpreter::stopPaintingCommands(){
  * @brief resets all command indicies to 0, recolors CommandList
  */
 void CommandInterpreter::ResetIndicies() {
-	for (int i = 0; i < (listOfCommandTypes.size() + workSpace->runFromAdjust); i++) {
-		workSpace->list->item(i)->setBackgroundColor(Qt::white);
+	for (int i = 0; i < (listOfCommandTypes.size() + runFromAdjust); i++) {
+		list->item(i)->setBackgroundColor(Qt::white);
 	}
 
-	workSpace->runFromAdjust = 0;
-	workSpace->commandIndex = 0;
-	workSpace->lineIndex = 0;
-	workSpace->lineAttributeIndex = 0;
-	workSpace->solidIndex = 0;
+	runFromAdjust = 0;
+	commandIndex = 0;
+	lineIndex = 0;
+	lineAttributeIndex = 0;
+	solidIndex = 0;
 }
 
 /**
@@ -306,7 +306,7 @@ void CommandInterpreter::pausePaintingCommands(){
 void CommandInterpreter::stepForwardCommands(int finishIndex){
 	if (stopped){
 		picasso->show();
-		workSpace->finishIndex = finishIndex;
+		finishIndex = finishIndex;
 		this->BuildCommands();
 		stopped = false;
 	}
@@ -322,16 +322,16 @@ void CommandInterpreter::stepForwardCommands(int finishIndex){
 void CommandInterpreter::stepBackwardCommands(){
     CommandInterpreter::pausePaintingCommands();
 
-	if (workSpace->commandIndex <= 0) {
+	if (commandIndex <= 0) {
 		stopPaintingCommands();
 		return;
 	}
 
 	if (finished) {
-		CommandInterpreter::drawUntilCommand(workSpace->commandIndex - 2);
+		CommandInterpreter::drawUntilCommand(commandIndex - 2);
 		finished = false;
 	} else {
-		CommandInterpreter::drawUntilCommand(workSpace->commandIndex - 1);
+		CommandInterpreter::drawUntilCommand(commandIndex - 1);
 	}
 }
 
@@ -342,18 +342,11 @@ void CommandInterpreter::stepBackwardCommands(){
  * @param stopPos
  */
 void CommandInterpreter::drawUntilCommand(int stopIndex){
-	this->clear();
+	picasso->clearWindow(255, 255, 255);
 	ResetIndicies();
-	while (workSpace->commandIndex <= stopIndex) CommandInterpreter::SendNext();
+	while (commandIndex <= stopIndex) CommandInterpreter::SendNext();
 
-	workSpace->commandIndex--;
-}
-
-/**
- * @brief clears the painter
- */
-void CommandInterpreter::clear(){
-    picasso->clearWindow(255,255,255);
+	commandIndex--;
 }
 
 /**
@@ -373,7 +366,10 @@ void CommandInterpreter::beginConnecting(QString robot){
     }
 }
 
-void CommandInterpreter::setWorkSpace(WorkSpace *workSpace){
-	this->workSpace = workSpace;
-	this->stopped = true;
+void CommandInterpreter::setList(QListWidget *list) {
+	this->list = list;
+}
+
+void CommandInterpreter::setProjectName(QString projName) {
+	this->projName = projName;
 }

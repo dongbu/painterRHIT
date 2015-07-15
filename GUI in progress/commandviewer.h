@@ -3,7 +3,6 @@
 
 #include "Line.h"
 #include "ui_commandviewer.h"
-#include "WorkSpace.h"
 #include "Shape.h"
 
 #include <QWidget>
@@ -34,8 +33,8 @@ public:
     CommandInterpreter *interpreter;
 	bool *saved;
 	bool fileChanged;
-	void setWorkSpace(WorkSpace *workSpace);
 	Line *currentEditor;
+	QString projectName, projectLocation;
 
 private:
     void ConnectToolBar();
@@ -46,7 +45,6 @@ private:
 
     Ui::CommandViewer *ui;
 	bool mainClosed, freshlyMade;
-	WorkSpace *workSpace;
 
 private slots:
     void MoveUp_clicked();

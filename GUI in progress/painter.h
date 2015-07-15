@@ -1,5 +1,5 @@
-#ifndef WorkSpace_H
-#define WorkSpace_H
+#ifndef painter_H
+#define painter_H
 
 #include <qstring.h>
 #include <qlistwidget.h>
@@ -9,10 +9,10 @@
 #include <Line.h>
 
 
-class WorkSpace
+class painter
 {
 public:
-	WorkSpace();
+	painter();
 	void AddToList(Line toAdd);
 	void LaunchSim();
 	void setDimensions(int height, int width);

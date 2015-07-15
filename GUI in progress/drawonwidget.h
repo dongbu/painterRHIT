@@ -7,7 +7,6 @@
 #include <QPen>
 #include <qlistwidget.h>
 #include "commandviewer.h"
-#include "WorkSpace.h"
 
 
 class drawOnWidget : public QLabel
@@ -19,15 +18,12 @@ public:
     void clearAll(int resetBackground);
     Line* currentEditor;
 	int currentCommandType;
-	void setWorkSpace(WorkSpace *workSpace);
-
 
 private:
     int prevX,prevY,pointCount, penWidth, idNumber;
     QString penColor, penStyle;
     QPen pen;
 	QLabel frontLabel;
-	WorkSpace *workSpace;
 
     bool drawPoint(int currentX, int currentY);
 	bool drawSquare(int currentX, int currentY);

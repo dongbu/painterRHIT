@@ -18,6 +18,9 @@ ui(new Ui::CommandViewer)
 	ui->setupUi(this);
 	list = ui->listWidget;
 	this->setWindowTitle("Command List");
+
+	//Project name scheme set-up
+	clear();
 	
 	//List Set-Up
 	ui->MoveUp->connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(MoveUp_clicked()));
@@ -30,6 +33,8 @@ ui(new Ui::CommandViewer)
 
 	//Simulator Set-Up
 	interpreter = new CommandInterpreter();
+	interpreter->setList(this->list);
+	interpreter->setProjectName(projectName);
 	this->ConnectToolBar();
 	this->move(0, 500);
 	this->show();
@@ -252,15 +257,15 @@ int CommandViewer::FillEditor(QString editorName)
 	QList<QLineEdit *> lineEdits = currentEditor->CommandEditorWidget->findChildren<QLineEdit *>();
 	lineEdits.first()->setDisabled(true);
 	QString tempProjectName;
-	if (workSpace->projectName.isEmpty() || workSpace->projectName.isNull()){
+	if (projectName.isEmpty() || projectName.isNull()){
 		tempProjectName = "Temp";
 	}
 	else{
-		tempProjectName = workSpace->projectName;
+		tempProjectName = projectName;
 	}
 	//load file and set up the reader.
 	QFile loadFile;
-	loadFile.setFileName(QString(workSpace->projectLocation) + QString("/") + editorName + QString(".xml"));
+	loadFile.setFileName(QString(projectLocation) + QString("/") + editorName + QString(".xml"));
 	loadFile.open(QIODevice::ReadOnly);
 	QXmlStreamReader reader(&loadFile);
 	//skip over unimportant doc headers.
@@ -323,10 +328,9 @@ int CommandViewer::FillEditor(QString editorName)
  * lists.
  */
 void CommandViewer::clear() {
-	workSpace->projectName = "";
-	workSpace->projectLocation = "ProjectFiles/Temp";
+	projectName = "Temp";
+	projectLocation = "ProjectFiles/Temp";
 	list->clear();
-	interpreter->clear();
 }
 /**
  * @brief in progress
@@ -380,10 +384,4 @@ void CommandViewer::setBreakpoint() {
 
 	interpreter->breakPointList.push_back(list->currentRow());
 	list->currentItem()->setTextColor(Qt::red);
-}
-
-void CommandViewer::setWorkSpace(WorkSpace *workSpace){
-	this->workSpace = workSpace;
-	this->interpreter->setWorkSpace(workSpace);
-	this->workSpace->list = this->list;
 }

@@ -8,7 +8,6 @@
 #include "CommandViewer.h"
 #include "drawonwidget.h"
 #include "WebcamHandler.h"
-#include "WorkSpace.h"
 
 #include <QtGui>
 #include <QMainWindow>
@@ -67,13 +66,12 @@ private:
     QMessageBox alert;
     bool fileChanged, editorWorks;
     drawOnWidget *drawOn, *drawOn2;
-	WorkSpace *workSpace;
     CommandViewer *commandView;
     QComboBox *colorBox, *styleBox, *fillBox;
     QSpinBox *thicknessBox;
 	WebcamHandler cam;
 	int currentCommand;
-	
+	QString projectName, projectLocation;
 
     void cleanUp();
     void startPainting(QListWidget* widget, int index);
