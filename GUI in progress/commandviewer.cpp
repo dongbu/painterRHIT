@@ -201,7 +201,7 @@ void CommandViewer::MakeEditor()
 		currentName = QString("PointMap_") + QString::number(k);
 	}
 
-	editor->setName("PointMap_" + QString::number(k));
+	editor->setName(currentName);
 	currentEditor = editor;
 	emit EmitConnectEditor(editor);
 }

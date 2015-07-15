@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "painter.h"
+#include "Line.h"
 #include <QApplication>
 
 /**
@@ -19,9 +20,14 @@ int main(int argc, char *argv[])
 	freopen("conout$", "w", stderr);
 	//temporary write things in console//
 	painter p;
-	std::string var;
-	//p.setGuiEditable(true);
-	printf("toggling ");
+	p.setGuiEditable(true);
+	p.load();
+	Line *l = new Line();
+	l->AddPoint(110, 110);
+	l->AddPoint(10, 710);
+	l->AddPoint(710, 10);
+	p.addLine(l);
+	p.setGuiEditable(true);
     //MainWindow w;
     //w.show();
 

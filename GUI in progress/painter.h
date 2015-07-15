@@ -9,6 +9,7 @@
 #include <qsize.h>
 #include <Line.h>
 #include "mainwindow.h"
+#include "guiloadsave.h"
 
 
 
@@ -20,13 +21,12 @@ public:
 	void LaunchSim();
 	void setDimensions(int height, int width);
 	void save();
-	void load(std::string path);
+	void load();
 	//void setRobot(robot Eliza);
 	void launchRobot();
-	void launchSim();
 	void setGuiEditable(bool state);
 	void newProject();
-	void addLine(Line toAdd);
+	void addLine(Line *toAdd);
 
 	//void AddPoints(std::vector<Line> points); //method for line
 	//void setColor(Color col); //method for line

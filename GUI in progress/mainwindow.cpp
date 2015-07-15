@@ -495,7 +495,7 @@ void MainWindow::ConnectEditor(Line* editor) {
     //connection to update drawOn.
     connect(editor,SIGNAL(sendUpdateToDrawOn(Line*)),drawOn,SLOT(updateToEditor(Line*)));
 	connect(editor, SIGNAL(sendUpdateToDrawOn(Line*)), drawOn2, SLOT(updateToEditor(Line*)));
-	//connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
+	connect(editor, SIGNAL(tell_Command_Added(int)), this, SLOT(drawOn2_update()));
 	connect(this, SIGNAL(sendListOfCommands(CommandViewer*)), drawOn2, SLOT(updateToAllEditors(CommandViewer*)));
 }
 
