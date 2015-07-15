@@ -140,13 +140,17 @@ public:
    cv::setMouseCallback(window_name, onMouse, NULL);
  }
 
-  void moveWindow(int x, int y) {
-    cv::moveWindow(window_name,x,y); 
+  void moveWindow(int x, int y) { cv::moveWindow(window_name,x,y); }
+
+  void hideWindow() { cv::moveWindow(window_name,5000,5000); }
+
+  void showWindow() { cv::moveWindow(window_name,winx,winy); }
+
+  void popWindow() { 
+    // BringWindowToTop(cv::getWindowHandle(window_name));
   }
 
-  void show() {
-    cv::imshow(window_name, grid);
-  }
+  void show() { cv::imshow(window_name, grid); }
 
   DrawWindow(int w, int h, std::string name) { // constructor
     width=w;
