@@ -174,6 +174,8 @@ void MainWindow::on_actionSave_As_triggered()
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
+			commandView->setProjectName(projectName);
+			commandView->setProjectLocation(projectLocation);
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
 
@@ -255,9 +257,11 @@ void MainWindow::on_actionOpen_triggered()
         MainWindow::cleanUp();
 
 		projectLocation = directory.selectedFiles().at(0);
+		commandView->setProjectName(projectName);
+		commandView->setProjectLocation(projectLocation);
+		
 		projectLocation.chop(4);
         projectName = projectLocation.split("/").last();
-
 		projectLocation.chop(projectName.length());
 		
 		printf("opening at location: %s\n", projectLocation.toStdString().c_str());
@@ -324,7 +328,7 @@ void MainWindow::cleanUp(){
 	//create and reconnect new commandView
 	commandView = new CommandViewer();
 	commandView->projectName = this->projectName;
-	commandView->projectLocation = this->projectLocation;
+	commandView->setProjectLocation(this->projectLocation);
 	connect(this, SIGNAL(sendSaved(bool)), commandView, SLOT(fileSaved(bool)));
 	connect(commandView, SIGNAL(fileStatusChanged()), this, SLOT(fileChangedTrue()));
 	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));

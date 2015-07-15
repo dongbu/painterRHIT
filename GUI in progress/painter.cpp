@@ -69,5 +69,6 @@ void painter::addLine(Line *toAdd){
 
 	toAdd->setName(currentName);
 	mainWin.commandView->list->setCurrentRow(mainWin.commandView->list->count());
-	toAdd->Add_Command_Clicked(projectLocation, mainWin.commandView->list);
+	toAdd->Add_Command_Clicked(mainWin.projectLocation, mainWin.commandView->list);
+	GuiLoadSave::writeCommandListToFolder(mainWin.projectLocation, mainWin.commandView->list);
 }

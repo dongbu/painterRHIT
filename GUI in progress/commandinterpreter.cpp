@@ -132,8 +132,12 @@ void CommandInterpreter::SendNext(){
  */
 void CommandInterpreter::MakeLine(QString commandName) {
 	//start xml data extraction
+	QStringList l = projectLocation.split("/");
+	if (l.last().right(4) == ".txt"){
+		projectLocation.chop(l.last().length() + 1);
+	}
 	QFile loadFile;
-	loadFile.setFileName(QString("ProjectFiles/") + projName + QString("/") + commandName + QString(".xml"));
+	loadFile.setFileName(projectLocation + QString("/") + commandName + QString(".xml"));
 	loadFile.open(QIODevice::ReadOnly);
 	QXmlStreamReader reader(&loadFile);
 
@@ -158,7 +162,7 @@ void CommandInterpreter::MakeLine(QString commandName) {
 		} //End line attribute extraction
 
 		//handles point lines
-		if (reader.name().toString() == "Point"){
+		else if (reader.name().toString() == "Point"){
 			int k = 0;
 			foreach(const QXmlStreamAttribute &attr, reader.attributes()){
 				if (k == 0) {x.push_back(attr.value().toInt());}
@@ -166,6 +170,9 @@ void CommandInterpreter::MakeLine(QString commandName) {
 				k++;
 			} //end x/y extraction
 		} //end point extraction
+		else if (reader.name().toString() == "FileMalformed"){
+			break;
+		}
 	} //End xml data extraction
 	loadFile.close();
 
@@ -370,6 +377,10 @@ void CommandInterpreter::setList(QListWidget *list) {
 	this->list = list;
 }
 
-void CommandInterpreter::setProjectName(QString projName) {
-	this->projName = projName;
+void CommandInterpreter::setProjectLocation(QString projectLocation) {
+	this->projectLocation = projectLocation;
+	QStringList l = projectLocation.split("/");
+	projectLocation.chop(l.last().length());
+	printf("chopped off %i\n", l.last().length());
+
 }

@@ -34,7 +34,6 @@ ui(new Ui::CommandViewer)
 	//Simulator Set-Up
 	interpreter = new CommandInterpreter();
 	interpreter->setList(this->list);
-	interpreter->setProjectName(projectName);
 	this->ConnectToolBar();
 	this->move(0, 500);
 	this->saved = false;
@@ -186,8 +185,8 @@ void CommandViewer::on_EditCommand_clicked()
 void CommandViewer::MakeEditor()
 {
 	Line *editor = new Line();
-	editor->setProjectLocation(&projectLocation);
-	editor->setList(list);
+	//editor->setProjectLocation(&projectLocation);
+	//editor->setList(list);
 
 	//searches through and sets the default name to 1 + the largest.
 	editor->setName("PointMap_1");
@@ -390,9 +389,9 @@ void CommandViewer::setBreakpoint() {
 
 void CommandViewer::setProjectName(QString name) {
 	this->projectName = name;
-	this->interpreter->projName = name;
 }
 
 void CommandViewer::setProjectLocation(QString loc) {
 	this->projectLocation = loc;
+	this->interpreter->setProjectLocation(loc);
 }

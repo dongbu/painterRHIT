@@ -41,6 +41,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 	CommandViewer *commandView;
+	QString projectName, projectLocation;
 
 public slots:
     void recievePoint(int x, int y, int pointCount);
@@ -70,7 +71,7 @@ private:
     QSpinBox *thicknessBox;
 	WebcamHandler cam;
 	int currentCommand;
-	QString projectName, projectLocation;
+	
 
     void cleanUp();
     void startPainting(QListWidget* widget, int index);

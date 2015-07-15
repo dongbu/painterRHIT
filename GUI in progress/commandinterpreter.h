@@ -23,10 +23,10 @@ public:
     void pausePaintingCommands();
     void clear();
 	void setList(QListWidget *list);
-	void setProjectName(QString projName);
+	void setProjectLocation(QString projectLocation);
 
 	int commandIndex, finishIndex, runFromAdjust, lineAttributeIndex, lineIndex, solidIndex;
-	QString projName;
+	QString projectLocation;
 
 
 private slots:
