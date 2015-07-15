@@ -20,6 +20,8 @@ protected:
   int pen_thickness;
   int line_type;
   std::string window_name;
+  int winx;
+  int winy;
 
 public:
   cv::Mat grid; 
@@ -140,7 +142,17 @@ public:
    cv::setMouseCallback(window_name, onMouse, NULL);
  }
 
-  void moveWindow(int x, int y) { cv::moveWindow(window_name,x,y); }
+  void moveWindow(int x, int y) {
+    cv::moveWindow(window_name,x,y); 
+    winx = x;
+    winy = y;
+  }
+
+  void moveWindowDelta(int dx, int dy) {
+    winx += dx;
+    winy += dy;
+    cv::moveWindow(window_name,winx,winy); 
+  }
 
   void hideWindow() { cv::moveWindow(window_name,5000,5000); }
 
@@ -157,6 +169,8 @@ public:
     height=h;
     window_name = name;
     cv::namedWindow(window_name, CV_WINDOW_AUTOSIZE );
+    winx=0;
+    winy=0;
 
     grid = cv::Mat( height, width, CV_8UC3 ); // 3 channel color
     setLineType("solid");
