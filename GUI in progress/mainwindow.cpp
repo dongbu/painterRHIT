@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //command list//
     commandView = new CommandViewer();
-	commandView->projectName = this->projectName;
-	commandView->projectLocation = this->projectLocation;
     connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
     connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
 	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
@@ -116,9 +114,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(startWebcam,SIGNAL(triggered()),this,SLOT(openCamera()));
     ui->miscToolbar->addAction(startWebcam);
     //webcam work//
-
-    this->move(700, 100);
-
 }
 
 /**
@@ -138,11 +133,14 @@ void MainWindow::on_actionSave_As_triggered()
     if(!saved){
         //saveAsProject() returns the name that was chosen to save the project under.
         projectLocation = GuiLoadSave::saveAsProject(projectLocation);
+		commandView->setProjectLocation(projectLocation);
 		projectLocation.chop(4);
 		QString name = projectLocation.split("/").last();
         if(!name.isEmpty()){
             saved = true;
             projectName = name;
+			commandView->setProjectName(projectName);
+			commandView->setProjectLocation(projectLocation);
             this->setWindowTitle(projectName);
             ui->actionSave->setEnabled(true);
 
