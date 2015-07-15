@@ -35,6 +35,8 @@ public:
 
     void setName(QString newName);
     void setCommandAdded(bool commandAdded);
+	void setList(QListWidget *list);
+	void setProjectLocation(QString *location);
 
 	QWidget *CommandEditorWidget;
     bool commandAdded;
@@ -57,9 +59,12 @@ private:
 	QComboBox *Line_Color, *Line_Style;
 	QSpinBox *Line_Width;
 	QPushButton *Add_Command, *Add_Point;
+	QString *externallySetProjectLocation;
+	QListWidget *externallySetList;
 
 public slots:
     void Add_Command_Clicked(QString projectLocation, QListWidget *list);
+	void Add_Command_Clicked();
     void Add_Point_Clicked();
     void InfoChanged();
     void updateLineStyles(QString color, QString style, int width);

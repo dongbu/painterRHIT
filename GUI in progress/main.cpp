@@ -20,8 +20,7 @@ int main(int argc, char *argv[])
 	//temporary write things in console//
 	painter p;
 	std::string var;
-	//p.setGuiEditable(true);
-	printf("toggling ");
+	p.setGuiEditable(true);
     //MainWindow w;
     //w.show();
 
