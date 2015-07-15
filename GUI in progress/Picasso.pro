@@ -22,8 +22,8 @@ SOURCES += main.cpp\
     CytonController.cpp \
     commandviewer.cpp \
     WebcamHandler.cpp \
-    WorkSpace.cpp \
-    solid.cpp
+    DrawWindow.cpp \
+    CVImageWidget.cpp
 
 HEADERS  += mainwindow.h \
     guiloadsave.h \
@@ -34,14 +34,12 @@ HEADERS  += mainwindow.h \
     CytonController.h \
     commandviewer.h \
     WebcamHandler.h \
-    WorkSpace.h \
-    solid.h
+    DrawWindow.h \
+    CVImageWidget.h
 
 FORMS    += MainWindow.ui \
-    painter.ui \
     Line.ui \
     commandviewer.ui \
-    solid.ui
 
 RESOURCES += \
     myres.qrc

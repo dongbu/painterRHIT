@@ -46,17 +46,20 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{eba68e47-cac5-47e8-8b6c-3a225c15eb20}</UniqueIdentifier>
+      <UniqueIdentifier>{d43b0f8f-9ef4-4d37-ac4e-56780429e158}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
     <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{f1246c11-a63a-4d12-9397-2d6b32c49961}</UniqueIdentifier>
+      <UniqueIdentifier>{272a5530-90a6-4d87-a9a1-2bb7faca99b6}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CVImageWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CytonController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -86,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="painter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\.moc\moc_CVImageWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\.moc\moc_CVImageWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Debug\.moc\moc_CytonController.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -123,29 +132,14 @@
     <ClCompile Include="Release\.moc\moc_mainwindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\.moc\moc_painter.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\.moc\moc_painter.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="drawwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="painter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="painter.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="CVImageWidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="CytonController.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -162,9 +156,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="mainwindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="painter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Icon Storage\function.png">
@@ -191,16 +182,16 @@
     <CustomBuild Include="Icon Storage\next.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Icon Storage\pause.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\play.png">
-      <Filter>Resource Files</Filter>
+    <CustomBuild Include="DrawWindow.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="WebcamHandler.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="guiloadsave.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="painter.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Storage\Circle.png">
@@ -248,6 +239,12 @@
     <CustomBuild Include="Storage\stop.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Icon Storage\pause.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Icon Storage\play.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="Icon Storage\Point Map.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -266,18 +263,6 @@
     <CustomBuild Include="Icon Storage\open.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="painter.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="painter.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_painter.h">
-      <Filter>Generated Files\Release</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_solid.h">
-      <Filter>Generated Files\Release</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Line.ui">
@@ -294,10 +279,5 @@
     <CustomBuild Include="myres.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Shape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

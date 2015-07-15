@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "QDebug.h"
+#include "CVImageWidget.h"
 
 #include <QRadioButton>
 /**
@@ -7,24 +8,24 @@
  * @param parent
  */
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+QMainWindow(parent),
+ui(new Ui::MainWindow)
 {
 
-    ui->setupUi(this);
+	ui->setupUi(this);
 	editorWorks = false;
 
 	//window work//
 	this->setWindowTitle("Robot Artist 3000 Deluxe Gold Extreme Edition");
 	//window work//
 
-    //command list//
-    commandView = new CommandViewer();
-    connect(this,SIGNAL(sendSaved(bool)),commandView,SLOT(fileSaved(bool)));
-    connect(commandView,SIGNAL(fileStatusChanged()),this,SLOT(fileChangedTrue()));
+	//command list//
+	commandView = new CommandViewer();
+	connect(this, SIGNAL(sendSaved(bool)), commandView, SLOT(fileSaved(bool)));
+	connect(commandView, SIGNAL(fileStatusChanged()), this, SLOT(fileChangedTrue()));
 	connect(commandView, SIGNAL(EmitConnectEditor(Line*)), this, SLOT(ConnectEditor(Line*)));
 	connect(commandView, (SIGNAL(MustSave())), this, SLOT(saveTempIndex()));
-    //command list//
+	//command list//
 
 	//save work//
 	saved = false;
@@ -37,18 +38,24 @@ MainWindow::MainWindow(QWidget *parent) :
 	}
 	//save work//
 
-    //click to draw work//
-	drawOn2 = new drawOnWidget(ui->widget, 1);
+	CVImageWidget *imWidg = new CVImageWidget();
+	imWidg->setParent(ui->widget);
+	cv::Mat image = cv::imread("C:/Users/horvegc/Pictures/Backgrounds/screamy.jpg", true);
+	imWidg->showImage(image);
+
+	//click to draw work//
+	//drawOn2 = new drawOnWidget(ui->widget, 1);
+	drawOn2 = new drawOnWidget(NULL, 1);
 	drawOn2->setFixedWidth(1000);
 	drawOn2->setFixedHeight(750);
 	ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 
-
-    drawOn = new drawOnWidget(ui->widget, 0);
-    drawOn->setFixedWidth(1000);
-    drawOn->setFixedHeight(750);
-    connect(drawOn,SIGNAL(sendPoint(int, int, int)),this,SLOT(recievePoint(int, int, int)));
-    ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
+	//drawOn = new drawOnWidget(ui->widget, 0);
+	drawOn = new drawOnWidget(NULL, 0);
+	drawOn->setFixedWidth(1000);
+	drawOn->setFixedHeight(750);
+	connect(drawOn, SIGNAL(sendPoint(int, int, int)), this, SLOT(recievePoint(int, int, int)));
+	ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 	QActionGroup *actionGroup = new QActionGroup(this);
 	ui->actionDraw_Circle->setActionGroup(actionGroup);
 	ui->actionDraw_Point_Map->setActionGroup(actionGroup);
@@ -61,38 +68,38 @@ MainWindow::MainWindow(QWidget *parent) :
 	currentCommand = 2;
 	//click to draw work//
 
-    //line options work//
+	//line options work//
 	colorBox = new QComboBox();
 	styleBox = new QComboBox();
 	fillBox = new QComboBox();
 	thicknessBox = new QSpinBox();
-    QStringList colors, styles, fillTypes;
-    colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
-    styles << "solid" << "dashed" << "dashed dot";
+	QStringList colors, styles, fillTypes;
+	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	styles << "solid" << "dashed" << "dashed dot";
 	fillTypes << "line" << "solid";
-    colorBox->addItems(colors);
-    styleBox->addItems(styles);
+	colorBox->addItems(colors);
+	styleBox->addItems(styles);
 	fillBox->addItems(fillTypes);
 
 	thicknessBox->setFixedWidth(60);
-    thicknessBox->setMinimum(1);
-    thicknessBox->setMaximum(25);
-    thicknessBox->setSingleStep(1);
-    thicknessBox->setValue(4);
+	thicknessBox->setMinimum(1);
+	thicknessBox->setMaximum(25);
+	thicknessBox->setSingleStep(1);
+	thicknessBox->setValue(4);
 
-    ui->drawingToolbar->addWidget(colorBox);
-    ui->drawingToolbar->addWidget(styleBox);
+	ui->drawingToolbar->addWidget(colorBox);
+	ui->drawingToolbar->addWidget(styleBox);
 	ui->drawingToolbar->addWidget(fillBox);
-    ui->drawingToolbar->addWidget(thicknessBox);
-    connect(colorBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
-    connect(styleBox,SIGNAL(currentIndexChanged(int)),this,SLOT(on_drawing_changed()));
+	ui->drawingToolbar->addWidget(thicknessBox);
+	connect(colorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_drawing_changed()));
+	connect(styleBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_drawing_changed()));
 	connect(fillBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_drawing_changed()));
-    connect(thicknessBox,SIGNAL(valueChanged(int)),this,SLOT(on_drawing_changed()));
-    //line options work//
+	connect(thicknessBox, SIGNAL(valueChanged(int)), this, SLOT(on_drawing_changed()));
+	//line options work//
 
-    //robot connection work//
-    connect(this,SIGNAL(makeConnection(QString)),this->commandView->interpreter,SLOT(beginConnecting(QString)));
-    //robot connection work//
+	//robot connection work//
+	connect(this, SIGNAL(makeConnection(QString)), this->commandView->interpreter, SLOT(beginConnecting(QString)));
+	//robot connection work//
 
 	//refresh work//
 	QAction *refresh = new QAction(this);
@@ -101,13 +108,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->drawingToolbar->addAction(refresh);
 	//refresh work//
 
-    //webcam work//
-    QAction *startWebcam = new QAction(this);
-    startWebcam->setText("camera");
-    connect(startWebcam,SIGNAL(triggered()),this,SLOT(openCamera()));
-    ui->miscToolbar->addAction(startWebcam);
-    //webcam work//
+	//webcam work//
+	QAction *startWebcam = new QAction(this);
+	startWebcam->setText("camera");
+	connect(startWebcam, SIGNAL(triggered()), this, SLOT(openCamera()));
+	ui->miscToolbar->addAction(startWebcam);
+	//webcam work//
 }
+
 
 /**
  * @brief Default after close all functions (when you press "X").
