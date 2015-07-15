@@ -384,3 +384,12 @@ void CommandViewer::setBreakpoint() {
 	interpreter->breakPointList.push_back(list->currentRow());
 	list->currentItem()->setTextColor(Qt::red);
 }
+
+void CommandViewer::setProjectName(QString name) {
+	this->projectName = name;
+	this->interpreter->projName = name;
+}
+
+void CommandViewer::setProjectLocation(QString loc) {
+	this->projectLocation = loc;
+}

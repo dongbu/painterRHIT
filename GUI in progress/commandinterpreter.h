@@ -26,6 +26,8 @@ public:
 	void setProjectName(QString projName);
 
 	int commandIndex, finishIndex, runFromAdjust, lineAttributeIndex, lineIndex, solidIndex;
+	QString projName;
+
 
 private slots:
     void SendNext();
@@ -39,7 +41,6 @@ private:
 	CytonController *bender;
 	QTimer updateTimer;
 	QListWidget *list;
-	QString projName;
 	//General Variables
 
 	//CommandList Variables

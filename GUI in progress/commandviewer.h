@@ -28,6 +28,8 @@ public:
     QListWidget *list;
     void clear();
 	void MakeEditor();
+	void setProjectName(QString name);
+	void setProjectLocation(QString loc);
 
     void setMainClosed(bool closed);
     CommandInterpreter *interpreter;
