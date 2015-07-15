@@ -1,5 +1,6 @@
 #include "painter.h"
 #include <qstring.h>
+#include "commandinterpreter.h"
 
 painter::painter(){
 	printf("WorkSpace loading\n");
@@ -26,6 +27,25 @@ void painter::LaunchSim(){
 }
 void painter::setDimensions(int height, int width){
 	canvasSize = new QSize(width, height);
+	mainWin.drawOn->setFixedSize(*canvasSize);
+	if (height > 80){
+		mainWin.setFixedHeight(height + 50);
+	}
+	else{
+		mainWin.setFixedHeight(130);
+	}
+	if (width > 120){
+		mainWin.setFixedWidth(width + 50);
+	}
+	else{
+		mainWin.setFixedWidth(170);
+	}
+	mainWin.drawOn2->setFixedSize(*canvasSize);
+	//mainWin.commandView->interpreter->picasso->clearWindow();
+	//mainWin.commandView->interpreter = new CommandInterpreter(width,height);
+
+	
+
 }
 
 void painter::launchRobot(){
@@ -43,17 +63,25 @@ void painter::setGuiEditable(bool state){
 }
 void painter::save(){
 	mainWin.on_actionSave_triggered();
+	this->projectLocation = mainWin.projectLocation;
+	this->projectName = mainWin.projectName;
 	
 }
 void painter::load(){
 	mainWin.on_actionOpen_triggered();
+	this->projectLocation = mainWin.projectLocation;
+	this->projectName = mainWin.projectName;
 }
 
 void painter::newProject(){
 	mainWin.on_actionNew_triggered();
+	this->projectLocation = mainWin.projectLocation;
+	this->projectName = mainWin.projectName;
 }
 
 void painter::addLine(Line *toAdd){
+	projectLocation = mainWin.projectLocation;
+	projectName = mainWin.projectName;
 	//searches through and sets the default name to 1 + the largest.
 	QList<QListWidgetItem *> listOfCommands = mainWin.commandView->list->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
 	QList<QString> texts;
@@ -69,6 +97,6 @@ void painter::addLine(Line *toAdd){
 
 	toAdd->setName(currentName);
 	mainWin.commandView->list->setCurrentRow(mainWin.commandView->list->count());
-	toAdd->Add_Command_Clicked(mainWin.projectLocation, mainWin.commandView->list);
-	GuiLoadSave::writeCommandListToFolder(mainWin.projectLocation, mainWin.commandView->list);
+	toAdd->Add_Command_Clicked(projectLocation, mainWin.commandView->list);
+	GuiLoadSave::writeCommandListToFolder(projectLocation, mainWin.commandView->list);
 }

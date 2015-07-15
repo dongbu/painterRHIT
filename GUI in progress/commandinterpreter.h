@@ -15,7 +15,7 @@ class CommandInterpreter : public QObject
 public:
 	std::vector<int> breakPointList;
 
-    CommandInterpreter();
+    CommandInterpreter(int width, int height);
 	void beginPaintingCommands(int startIndex, int finishIndex);
     void stopPaintingCommands();
 	void stepForwardCommands(int finishIndex);
@@ -24,6 +24,9 @@ public:
     void clear();
 	void setList(QListWidget *list);
 	void setProjectLocation(QString projectLocation);
+	void closeAllWindows();
+	
+	DrawWindow *picasso;
 
 	int commandIndex, finishIndex, runFromAdjust, lineAttributeIndex, lineIndex, solidIndex;
 	QString projectLocation;
@@ -37,7 +40,6 @@ public slots:
 
 private:
 	//General Variables
-    DrawWindow *picasso;
 	CytonController *bender;
 	QTimer updateTimer;
 	QListWidget *list;

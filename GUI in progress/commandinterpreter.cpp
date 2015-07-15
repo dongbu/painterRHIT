@@ -15,17 +15,17 @@
  * logic required of the commands sent to both the simulator and the robot itself.
  * @param QString
  */
-CommandInterpreter::CommandInterpreter()
+CommandInterpreter::CommandInterpreter(int width, int height)
 {
 	printf("CommandInterpreter loading\n");
     //painter work//
-	picasso = new DrawWindow(1000 , 800 , "Painter");
+	picasso = new DrawWindow(width , height, "Painter");
 
     stopped = true;
 	paused = false;
 	finished = false;
 	connect(&updateTimer, SIGNAL(timeout()), this, SLOT(SendNext()));
-
+	projectLocation = "ProjectFiles/Temp";
     //robot work//
 	prevContinuous = false;
 	connected = false;
@@ -60,6 +60,10 @@ void CommandInterpreter::beginPaintingCommands(int startIndex, int finishIndex){
 	//Animation timer starting
     updateTimer.start(100);
 
+}
+
+void CommandInterpreter::closeAllWindows(){
+	printf("useless as of right now/n");
 }
 
 

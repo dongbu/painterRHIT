@@ -21,14 +21,7 @@ int main(int argc, char *argv[])
 	//temporary write things in console//
 	painter p;
 	p.setGuiEditable(true);
-	p.load();
-	//Line *l = new Line();
-	//l->AddPoint(110, 110);
-	//l->AddPoint(10, 710);
-	//l->AddPoint(710, 10);
-	//p.addLine(l);
 
-	p.setGuiEditable(true);
     //MainWindow w;
     //w.show();
 

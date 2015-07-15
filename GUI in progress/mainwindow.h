@@ -42,6 +42,7 @@ public:
     ~MainWindow();
 	CommandViewer *commandView;
 	QString projectName, projectLocation;
+	drawOnWidget *drawOn, *drawOn2;
 
 public slots:
     void recievePoint(int x, int y, int pointCount);
@@ -66,7 +67,6 @@ private:
     bool saved;
     QMessageBox alert;
     bool fileChanged, editorWorks;
-    drawOnWidget *drawOn, *drawOn2;
     QComboBox *colorBox, *styleBox, *fillBox;
     QSpinBox *thicknessBox;
 	WebcamHandler cam;

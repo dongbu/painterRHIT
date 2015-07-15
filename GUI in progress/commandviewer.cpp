@@ -32,7 +32,7 @@ ui(new Ui::CommandViewer)
 	freshlyMade = true;
 
 	//Simulator Set-Up
-	interpreter = new CommandInterpreter();
+	interpreter = new CommandInterpreter(1000, 800);
 	interpreter->setList(this->list);
 	this->ConnectToolBar();
 	this->move(0, 500);
