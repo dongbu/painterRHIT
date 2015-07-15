@@ -89,9 +89,14 @@ int main(void)
 
   while (1) {
     int k = cv::waitKey(33);
-    if (k==27) { // Esc key to stop
-      return(0);
-    }
+    //if (k>0) { printf("key = %d\n",k); }
+    if (k==27) { return(0); }  // Esc key to stop
+    if (k==63232) { W.moveWindowDelta(0,-10); } // up arrow
+    if (k==63233) { W.moveWindowDelta(0,10); } // down arrow
+    if (k==63234) { W.moveWindowDelta(-10,0); } // left arrow
+    if (k==63235) { W.moveWindowDelta(10,0); } // right arrow
+    if (k==104) { W.hideWindow(); } // h
+    if (k==115) { W.showWindow(); } // s
   }
 
 }
