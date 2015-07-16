@@ -3,6 +3,7 @@
 #include "Line.h"
 #include <QApplication>
 
+
 /**
  * @brief launches the application
  * @param argc

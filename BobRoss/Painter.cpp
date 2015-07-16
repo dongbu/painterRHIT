@@ -36,6 +36,7 @@ Painter::Painter(std::string name, Shapes shapes) {
 
 }
 void Painter::addShape(Shape *shape) {
+	printf("adding a shape to shapes\n");
 	this->shapes.addShape(shape);
 }
 void Painter::setDimensions(int width, int height) {
@@ -65,7 +66,9 @@ void Painter::showGUI(bool toggle){
 	}
 }
 void Painter::launchSimulatorWindow(){
-	simWin->show();
+	this->simWin->show();
+	this->shapes.drawAll(this->simWin);
+	printf("drawing a shape of some kind");
 }
 void Painter::launchCommandWindow(){
 	commandWin.show();
