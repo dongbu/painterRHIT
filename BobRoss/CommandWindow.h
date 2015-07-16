@@ -29,10 +29,11 @@ private:
     void runFrom(int index);
     void runOnly(int index);
     void setBreakPoint(int index);
+	void populate();
 
     Ui::CommandWindow *ui;
     Shapes *shapes;
-    EditorWindow currentEditor;
+    EditorWindow *currentEditor;
 
 private slots:
     void moveUpClicked();

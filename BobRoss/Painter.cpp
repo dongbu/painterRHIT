@@ -7,6 +7,8 @@ Painter::Painter() {
 	height = 800;
 
 	simWin = new DrawWindow(width,height,ProjectName);
+	commandWin.setShapes(&shapes);
+	sketch.setShapes(shapes);
 }
 Painter::Painter(std::string name) {
 	ProjectName = name;
@@ -15,6 +17,8 @@ Painter::Painter(std::string name) {
 	height = 800;
 
 	simWin = new DrawWindow(width, height, ProjectName);
+	commandWin.setShapes(&shapes);
+	sketch.setShapes(shapes);
 }
 Painter::Painter(Shapes shapes) {
 	this->shapes = shapes;
@@ -24,6 +28,8 @@ Painter::Painter(Shapes shapes) {
 	height = 800;
 
 	simWin = new DrawWindow(width, height, ProjectName);
+	commandWin.setShapes(&shapes);
+	sketch.setShapes(shapes);
 }
 Painter::Painter(std::string name, Shapes shapes) {
 	this->shapes = shapes;
@@ -33,6 +39,8 @@ Painter::Painter(std::string name, Shapes shapes) {
 	height = 800;
 
 	simWin = new DrawWindow(width, height, ProjectName);
+	commandWin.setShapes(&shapes);
+	sketch.setShapes(shapes);
 
 }
 void Painter::addShape(Shape *shape) {
@@ -61,6 +69,8 @@ void Painter::load(std::string projectName, std::string projectLocation) {
 	pugi::xml_parse_result result = doc.load_file((ProjectLocation + "/" + ProjectName + ".xml").c_str());
 	pugi::xml_node listOfShapes = doc.child("shapes");
 	shapes.parseXML(&listOfShapes);
+	commandWin.setShapes(&shapes);
+	sketch.setShapes(shapes);
 }
 void Painter::setName(std::string ProjectName){
 	this->ProjectName = ProjectName;

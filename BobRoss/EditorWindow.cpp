@@ -16,12 +16,15 @@ EditorWindow::~EditorWindow()
     delete ui;
 }
 
+void EditorWindow::setShapeToEdit(Shape s){
+	this->toEdit = s;
+}
 //private methods below here
 void EditorWindow::build() {
-
+	printf("TODO: build editor\n");
 }
 
 //slots below here
 void EditorWindow::updateSketchPadClicked() {
-
+	printf("TODO: update sketch pad\n");
 }

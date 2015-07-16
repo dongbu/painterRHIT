@@ -424,6 +424,22 @@ public:
     }
   }
 
+  Shape* at(int position){
+	  return shapes.at(position);
+  }
+
+  Shape* getById(int id){
+	  for (int i = 0; i < shapes.size(); i++){
+		  if (shapes[i]->getID() == id){
+			  return shapes.at(i);
+		  }
+	  }
+  }
+
+  int length(){
+	  return shapes.size();
+  }
+
   Shapes() { max_id=0; }
   ~Shapes() { }
 };
