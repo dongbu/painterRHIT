@@ -39,3 +39,7 @@ void CVImageWidget::paintEvent(QPaintEvent* /*event*/) {
 	painter.drawImage(QPoint(0, 0), _qimage);
 	painter.end();
 }
+
+void CVImageWidget::mousePressEvent(QMouseEvent * event){
+	emit emitRefresh(event->localPos().x(), event->localPos().y());
+}

@@ -196,7 +196,7 @@ public:
     cv::Scalar color = getPenColor();
     W->setPenColor(color[0],color[1],color[2]);
     for (int i=0; i<points.size()-1; i++) {
-      W->drawPixel(points[i].x,points[i].y);
+    W->drawPixel(points[i].x,points[i].y);
     }
   }
   

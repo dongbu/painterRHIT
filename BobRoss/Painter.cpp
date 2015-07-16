@@ -6,6 +6,7 @@ Painter::Painter() {
 	width = 1000;
 	height = 800;
 
+	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width,height,ProjectName);
 }
 Painter::Painter(std::string name) {
@@ -14,6 +15,7 @@ Painter::Painter(std::string name) {
 	width = 1000;
 	height = 800;
 
+	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
 }
 Painter::Painter(Shapes shapes) {
@@ -23,6 +25,7 @@ Painter::Painter(Shapes shapes) {
 	width = 1000;
 	height = 800;
 
+	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
 }
 Painter::Painter(std::string name, Shapes shapes) {
@@ -57,11 +60,11 @@ void Painter::setLocation(std::string ProjectLocation){
 }
 void Painter::showGUI(bool toggle){
 	if (toggle){
-		sketch.show();
+		sketch->show();
 		commandWin.show();
 	}
 	else{
-		sketch.hide();
+		sketch->hide();
 		commandWin.hide();
 	}
 }

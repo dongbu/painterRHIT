@@ -3,6 +3,7 @@
 
 #include "shapes.cpp"
 #include "CVImageWidget.h"
+#include "DrawWindow.cpp"
 
 #include <QObject>
 #include <QMainWindow>
@@ -20,26 +21,28 @@ class Sketchpad : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Sketchpad(QWidget *parent = 0);
+    explicit Sketchpad(int width, int height, QWidget *parent = 0);
     ~Sketchpad();
     void setShapes(Shapes shapes);
 
 private:
     Ui::Sketchpad *ui;
-    CVImageWidget translator;
+    CVImageWidget *translator;
+	DrawWindow *cvWindow;
     DrawWindow *display;
     QComboBox *color;
     QSpinBox *Thickness;
     Shapes shapes;
+	Shape *currentShape;
 
 private slots:
     void saveAsClicked();
     void saveClicked();
     void openClicked();
     void newClicked();
+	void refresh(int x, int y);
 
-protected:
-	void mousePressEvent(QMouseEvent* event);
+
 };
 
 #endif // SKETCHPAD_H

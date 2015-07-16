@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QPainter>
 #include <opencv2/opencv.hpp>
+#include <QMouseEvent>
 
 class CVImageWidget : public QWidget
 {
@@ -18,7 +19,11 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent* /*event*/);
+	void mousePressEvent(QMouseEvent * event);
 
 	QImage _qimage;
 	cv::Mat _tmp;
+
+signals:
+	void emitRefresh(int currentX, int currentY);
 };

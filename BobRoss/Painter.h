@@ -33,7 +33,7 @@ private:
 	int width, height;
 
 	CommandWindow commandWin;
-	Sketchpad sketch;
+	Sketchpad *sketch;
 	DrawWindow *simWin;
 };
 

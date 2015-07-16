@@ -153,6 +153,7 @@
     <ClCompile Include="Debug\moc_Sketchpad.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="drawwindow.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

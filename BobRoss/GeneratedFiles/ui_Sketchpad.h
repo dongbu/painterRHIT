@@ -37,6 +37,7 @@ public:
     QAction *actionSave_As;
     QAction *actionSave;
     QWidget *centralwidget;
+    QWidget *widget;
     QMenuBar *menubar;
     QMenu *menuFile;
     QStatusBar *statusbar;
@@ -47,7 +48,7 @@ public:
     {
         if (Sketchpad->objectName().isEmpty())
             Sketchpad->setObjectName(QStringLiteral("Sketchpad"));
-        Sketchpad->resize(800, 600);
+        Sketchpad->resize(960, 852);
         actionOpen = new QAction(Sketchpad);
         actionOpen->setObjectName(QStringLiteral("actionOpen"));
         QIcon icon;
@@ -95,10 +96,14 @@ public:
         actionSave->setIcon(icon7);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
+        widget = new QWidget(centralwidget);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 10, 901, 750));
+        widget->setCursor(QCursor(Qt::CrossCursor));
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 26));
+        menubar->setGeometry(QRect(0, 0, 960, 26));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         Sketchpad->setMenuBar(menubar);
