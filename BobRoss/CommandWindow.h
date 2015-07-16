@@ -2,14 +2,7 @@
 #define COMMANDWINDOW_H
 
 #include "ui_commandwindow.h"
-//#include "shapes.cpp"
 #include "EditorWindow.h"
-
-//#include <vector>
-//#include <QtGui>
-//#include <QObject>
-//#include <QMainWindow>
-
 
 namespace Ui {
 class CommandWindow;
@@ -39,22 +32,30 @@ private slots:
     void moveUpClicked();
     void moveDownClicked();
     void deleteCommandClicked();
+
+	void launchRightClick(); //Zach has refused to do this
+
+	//waiting for sim. to take time
     void stopClicked();
     void pauseClicked();
     void forwardClicked();
     void backwardClicked();
-    void launchRightClick();
     void runClicked();
+	//waiting for sim. to take time
+
 
 public slots:
-    void addCommand(Shape s);
+    void addCommand();
 
 signals:
-    void pause();
+	//waiting for sim. to take time
+    void pause(); 
     void stop();
     void forward();
     void backward();
     void run();
+	//waiting for sim. to take time
+
 };
 
 #endif // COMMANDWINDOW_H

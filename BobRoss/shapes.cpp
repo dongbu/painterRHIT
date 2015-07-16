@@ -424,6 +424,10 @@ public:
     }
   }
 
+  void removeShapeAt(int index){
+	  shapes.erase(shapes.begin() + index);
+  }
+
   Shape* at(int position){
 	  return shapes.at(position);
   }

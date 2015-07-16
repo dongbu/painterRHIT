@@ -41,6 +41,7 @@ Painter::Painter(std::string name, Shapes shapes) {
 	width = 1000;
 	height = 800;
 
+	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
 	commandWin.setShapes(&shapes);
 	sketch->setShapes(shapes);
@@ -52,7 +53,6 @@ void Painter::setShapes(Shapes shapes){
 	sketch->setShapes(shapes);
 }
 void Painter::addShape(Shape *shape) {
-	printf("adding a shape to shapes\n");
 	this->shapes.addShape(shape);
 	commandWin.setShapes(&shapes);
 	sketch->setShapes(shapes);

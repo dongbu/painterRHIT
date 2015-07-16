@@ -40,8 +40,7 @@ void CommandWindow::setBreakPoint(int index) {
 }
 
 ///Slots below here///
-void CommandWindow::addCommand(Shape s) {
-	this->shapes->addShape(&s);
+void CommandWindow::addCommand() {
 	populate();
 }
 
@@ -63,7 +62,9 @@ void CommandWindow::moveDownClicked() {
 
 }
 void CommandWindow::deleteCommandClicked() {
-
+	int currentIndex = ui->listWidget->currentIndex().row();
+	shapes->removeShapeAt(currentIndex);
+	populate();
 }
 void CommandWindow::stopClicked() {
 

@@ -36,11 +36,12 @@ private:
 	Shape *currentShape;
 
 private slots:
+	void refresh(int x, int y);
+
     void saveAsClicked();
     void saveClicked();
     void openClicked();
     void newClicked();
-	void refresh(int x, int y);
 
 
 };

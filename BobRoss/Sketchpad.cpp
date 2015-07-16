@@ -28,14 +28,14 @@ void Sketchpad::setShapes(Shapes shapes) {
 	this->shapes = shapes;
 }
 
-///private methods below here
+///private methods below here///
 void Sketchpad::refresh(int x, int y) {
 	cvWindow->setPenColor(200, 200, 200);
 	cvWindow->drawCircle(cvPoint(x, y), 5);
 	translator->showImage(cvWindow->grid);
 };
 
-///slots below here
+///slots below here///
 void Sketchpad::saveAsClicked() {
 }
 void Sketchpad::saveClicked() {
