@@ -224,6 +224,43 @@ public:
   Rectangle() : Shape() { type = "rectangle"; fill = 0; }
 };
 
+class Ellipse : public Shape {
+protected:
+  cv::Point pt;
+  cv::Size axes;
+  int fill;
+
+public:
+  void setData(int x, int y, double r) { // circle
+    pt = cv::Point(x,y);
+    axes = cv::Size(r,r);
+  }
+
+  void setData(int x, int y, double width, double height) { // ellipse
+    pt = cv::Point(x,y);
+    axes = cv::Size(width,height);
+  }
+
+  virtual void setFill(int f=1) { fill=f; }
+
+  virtual std::string getXML() {
+    std::string line;
+    line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\">",
+			      getID(),fill,pt.x,pt.y,axes.width,axes.height));
+    line.append(getColorXML());
+    line.append("</shape>");
+    return line;
+  }
+
+  virtual void draw(DrawWindow *W) {
+    cv::Scalar color = getPenColor();
+    W->setPenColor(color[0],color[1],color[2]);
+    W->drawEllipse(pt.x,pt.y,axes.width,axes.height,0,fill);
+  }
+
+  Ellipse() : Shape() { type = "ellipse"; fill = 0; }
+};
+
 /*******  SHAPES ********/
 
 class Shapes {
@@ -232,33 +269,13 @@ protected:
   int max_id;
 
 public:
-  void addPolyLine(PolyLine *shape) {
-    int id=shape->getID(max_id); 
-    if (id==max_id) { max_id++; }
-    shapes.push_back(shape);
-  }
-
-  void addPolyPoints(PolyPoints *shape) {
-    int id=shape->getID(max_id); 
-    if (id==max_id) { max_id++; }
-    shapes.push_back(shape);
-  }
-
-  void addPixelRegion(PixelRegion *shape) {
-    int id=shape->getID(max_id); 
-    if (id==max_id) { max_id++; }
-    shapes.push_back(shape);
-  }
-
-  void addRectangle(Rectangle *shape) {
-    int id=shape->getID(max_id); 
-    if (id==max_id) { max_id++; }
-    shapes.push_back(shape);
-  }
-
-  void addShape(Shape *shape) { // test to see if need and add* for each
-    int id=shape->getID(max_id); 
-    if (id==max_id) { max_id++; }
+  void addShape(Shape *shape) { 
+    int id=shape->getID(); 
+    if (id<0) {
+      max_id++;
+      shape->setID(max_id);
+    }
+    if (id>max_id) { max_id=id; }
     shapes.push_back(shape);
   }
 
@@ -270,6 +287,99 @@ public:
     }
     line.append("</shapes>\n");
     return line;
+  }
+
+  void parseXML(pugi::xml_node *shapes) {
+    int debug=0;
+
+    for (pugi::xml_node shape = shapes->first_child(); shape; shape = shape.next_sibling()) {
+      string type = shape.attribute("type").value();
+      int id=shape.attribute("id").as_int();
+      int r=shape.child("color").attribute("r").as_int();
+      int g=shape.child("color").attribute("g").as_int();
+      int b=shape.child("color").attribute("b").as_int();
+      if (debug) cout << type;
+      if (debug) printf(" shape ID:%i\n",id);
+      if (debug) printf(" RGB %d %d %d\n",r,g,b);
+
+      if (type.compare("polyline")==0) {
+	PolyLine *PL = new PolyLine();
+	PL->setPenColor(r,g,b);
+	PL->setID(id);
+
+	pugi::xml_node points = shape.child("points");
+	for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
+	  int x=point.attribute("x").as_int();
+	  int y=point.attribute("y").as_int();
+	  if (debug) printf(" - point %i %i\n",x,y);
+	  PL->addPoint(x,y);
+	}
+	addShape(PL);
+      }
+
+      if (type.compare("polypoints")==0) {
+	PolyPoints *PP = new PolyPoints();
+	PP->setPenColor(r,g,b);
+	PP->setID(id);
+
+	pugi::xml_node points = shape.child("points");
+	for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
+	  int x=point.attribute("x").as_int();
+	  int y=point.attribute("y").as_int();
+	  if (debug) printf(" - point %i %i\n",x,y);
+	  PP->addPoint(x,y);
+	}
+	addShape(PP);
+      }
+
+      if (type.compare("pixelregion")==0) {
+	PixelRegion *PR = new PixelRegion();
+	PR->setPenColor(r,g,b);
+	PR->setID(id);
+
+	pugi::xml_node points = shape.child("points");
+	for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
+	  int x=point.attribute("x").as_int();
+	  int y=point.attribute("y").as_int();
+	  if (debug) printf(" - point %i %i\n",x,y);
+	  PR->addPoint(x,y);
+	}
+	addShape(PR);
+      }
+
+      if (type.compare("rectangle")==0) {
+	Rectangle *R = new Rectangle();
+	R->setPenColor(r,g,b);
+	R->setID(id);
+
+	pugi::xml_node corners = shape.child("corners");
+	int pt1x=corners.attribute("pt1x").as_int();
+	int pt1y=corners.attribute("pt1y").as_int();
+	int pt2x=corners.attribute("pt2x").as_int();
+	int pt2y=corners.attribute("pt2y").as_int();
+	if (debug) printf(" - corners %i %i %i %i\n",pt1x,pt1y,pt2x,pt2y);
+	R->setCorners(pt1x,pt1y,pt2x,pt2y);
+	int fill=shape.attribute("fill").as_int();
+	R->setFill(fill);
+	addShape(R);
+      }
+
+      if (type.compare("ellipse")==0) {
+	Ellipse *E = new Ellipse();
+	E->setPenColor(r,g,b);
+	E->setID(id);
+
+	int x=shape.attribute("x").as_int();
+	int y=shape.attribute("y").as_int();
+	int w=shape.attribute("w").as_int();
+	int h=shape.attribute("h").as_int();
+	if (debug) printf(" - corners %i %i %d %d\n",x,y,w,h);
+	E->setData(x,y,w,h);
+	int fill=shape.attribute("fill").as_int();
+	E->setFill(fill);
+	addShape(E);
+      }
+    }
   }
 
   void drawAll(DrawWindow *W) {
@@ -285,187 +395,16 @@ public:
     }
   }
 
+  void removeShape(int id) {
+    for (int i=0; i<shapes.size(); i++) {
+      if (shapes[i]->getID() == id) {
+	shapes.erase(shapes.begin() + i);
+	i=shapes.size()+1;
+      }
+    }
+  }
+
   Shapes() { max_id=0; }
   ~Shapes() { }
 };
 
-int main(void)
-{
-  int debug=0;
-  cv::RNG rng(12345);
-
-  Shapes S;
-
-  // add some lines
-  int w=400;
-  int h=500;
-  PolyLine *PL;
-  for (int i=0; i<5; i++) {
-    PL = new PolyLine();
-    PL->setPenColor(rng.uniform(50,250),rng.uniform(50,250),rng.uniform(50,250));
-    for (int p=0; p<10; p++) {
-      PL->addPoint(rng.uniform(100,w-100),rng.uniform(100,h-100));
-    }
-    S.addPolyLine(PL);
-  }
-  
-  // add a poly point region
-  PolyPoints *PP = new PolyPoints();
-  int ww=100;
-  int delx=20;
-  int dely=200;
-  PP->setPenColor(255,255,0);
-  PP->addPoint( ww/4.0 + delx, 7*ww/8.0 + dely );
-  PP->addPoint( 3*ww/4.0 + delx, 7*ww/8.0 + dely );
-  PP->addPoint( 3*ww/4.0 + delx, 13*ww/16.0 + dely );
-  PP->addPoint( 11*ww/16.0 + delx, 13*ww/16.0 + dely );
-  PP->addPoint( 19*ww/32.0 + delx, 3*ww/8.0 + dely );
-  PP->addPoint( 3*ww/4.0 + delx, 3*ww/8.0 + dely );
-  PP->addPoint( 3*ww/4.0 + delx, ww/8.0 + dely );
-  PP->addPoint( 26*ww/40.0 + delx, ww/8.0 + dely );
-  PP->addPoint( 26*ww/40.0 + delx, ww/4.0 + dely );
-  PP->addPoint( 22*ww/40.0 + delx, ww/4.0 + dely );
-  PP->addPoint( 22*ww/40.0 + delx, ww/8.0 + dely );
-  PP->addPoint( 18*ww/40.0 + delx, ww/8.0 + dely );
-  PP->addPoint( 18*ww/40.0 + delx, ww/4.0 + dely );
-  PP->addPoint( 14*ww/40.0 + delx, ww/4.0 + dely );
-  PP->addPoint( 14*ww/40.0 + delx, ww/8.0 + dely );
-  PP->addPoint( ww/4.0 + delx, ww/8.0 + dely );
-  PP->addPoint( ww/4.0 + delx, 3*ww/8.0 + dely );
-  PP->addPoint( 13*ww/32.0 + delx, 3*ww/8.0 + dely );
-  PP->addPoint( 5*ww/16.0 + delx, 13*ww/16.0 + dely );
-  PP->addPoint( ww/4.0 + delx, 13*ww/16.0 + dely );
-  S.addPolyPoints(PP);
-  
-  // add pixel region
-  PixelRegion *PR = new PixelRegion();
-  PR->setPenColor(0,0,rng.uniform(0,244));
-  for (int i=0; i<100; i++) {
-    PR->addPoint(rng.uniform(0,w),rng.uniform(h-100,h));
-  }
-  S.addPixelRegion(PR);
-
-  // add rectangle
-  Rectangle *R = new Rectangle();
-  R->setCorners(20,20,50,60);
-  R->setPenColor(200,0,0);
-  S.addRectangle(R);
-
-  R = new Rectangle();
-  R->setCorners(w-100,20,w-50,260);
-  R->setPenColor(200,0,220);
-  R->setFill(1);
-  S.addRectangle(R);
-
-  // draw the shapes
-  DrawWindow W = DrawWindow(w,h,"Generated Shapes"); // w,h
-  W.clearWindow(230,230,230); // default background is white
-  S.drawAll(&W);
-  W.show();
-
-  // save to XML
-  std::string xml = "<?xml version=\"1.0\"?>\n";
-  xml.append(S.getXML());
-  ofstream myfile;
-  myfile.open ("shapes.xml");
-  myfile << xml;
-  myfile.close();
-  cout << xml;
-
-  // load up a drawing from XML
-
-  Shapes SS;
-  
-  pugi::xml_document doc;
-  pugi::xml_parse_result result = doc.load_file("shapes.xml");
-
-  cout << "Load result: " << result.description() << endl;
-
-  pugi::xml_node shapes = doc.child("shapes");
-
-  for (pugi::xml_node shape = shapes.first_child(); shape; shape = shape.next_sibling()) {
-    string type = shape.attribute("type").value();
-    int id=shape.attribute("id").as_int();
-    int r=shape.child("color").attribute("r").as_int();
-    int g=shape.child("color").attribute("g").as_int();
-    int b=shape.child("color").attribute("b").as_int();
-    if (debug) cout << type;
-    if (debug) printf(" shape ID:%i\n",id);
-    if (debug) printf(" RGB %d %d %d\n",r,g,b);
-
-    if (type.compare("polyline")==0) {
-      PL = new PolyLine();
-      PL->setPenColor(r,g,b);
-
-      pugi::xml_node points = shape.child("points");
-      for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
-	int x=point.attribute("x").as_int();
-	int y=point.attribute("y").as_int();
-	if (debug) printf(" - point %i %i\n",x,y);
-	PL->addPoint(x,y);
-      }
-      SS.addShape(PL);
-    }
-
-    if (type.compare("polypoints")==0) {
-      PP = new PolyPoints();
-      PP->setPenColor(r,g,b);
-
-      pugi::xml_node points = shape.child("points");
-      for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
-	int x=point.attribute("x").as_int();
-	int y=point.attribute("y").as_int();
-	if (debug) printf(" - point %i %i\n",x,y);
-	PP->addPoint(x,y);
-      }
-      SS.addShape(PP);
-    }
-
-    if (type.compare("pixelregion")==0) {
-      PR = new PixelRegion();
-      PR->setPenColor(r,g,b);
-
-      pugi::xml_node points = shape.child("points");
-      for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
-	int x=point.attribute("x").as_int();
-	int y=point.attribute("y").as_int();
-	if (debug) printf(" - point %i %i\n",x,y);
-	PR->addPoint(x,y);
-      }
-      SS.addShape(PR);
-    }
-
-    if (type.compare("rectangle")==0) {
-      Rectangle *R = new Rectangle();
-      R->setPenColor(r,g,b);
-
-      pugi::xml_node corners = shape.child("corners");
-      int pt1x=corners.attribute("pt1x").as_int();
-      int pt1y=corners.attribute("pt1y").as_int();
-      int pt2x=corners.attribute("pt2x").as_int();
-      int pt2y=corners.attribute("pt2y").as_int();
-      if (debug) printf(" - corners %i %i %i %i\n",pt1x,pt1y,pt2x,pt2y);
-      R->setCorners(pt1x,pt1y,pt2x,pt2y);
-      int fill=shape.attribute("fill").as_int();
-      R->setFill(fill);
-
-      SS.addShape(R);
-    }
-  }
-
-  xml = "<?xml version=\"1.0\"?>\n";
-  xml.append(SS.getXML());
-  cout << xml;
-
-  DrawWindow WW = DrawWindow(w,h,"Shapes Loaded via XML"); // w,h
-  WW.clearWindow(230,230,230); // default background is white
-  SS.drawAll(&WW);
-  WW.show();
-
-  while (1) {
-    int k = cv::waitKey(33);
-    //if (k>0) { printf("key = %d\n",k); }
-    if (k==27) { return(0); }  // Esc key to stop
-  }
-
-}
