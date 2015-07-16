@@ -37,6 +37,9 @@ private slots:
     void saveClicked();
     void openClicked();
     void newClicked();
+
+protected:
+	void mousePressEvent(QMouseEvent* event);
 };
 
 #endif // SKETCHPAD_H
