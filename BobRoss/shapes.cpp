@@ -440,6 +440,10 @@ public:
 	  return shapes.size();
   }
 
+  void swap(int pos1, int pos2){
+	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
+  }
+
   Shapes() { max_id=0; }
   ~Shapes() { }
 };

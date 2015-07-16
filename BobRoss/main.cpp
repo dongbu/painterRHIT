@@ -1,7 +1,7 @@
 //#include <QApplication>
 #include <iostream>
 #include "Painter.h"
-#include "shapes.cpp"
+#include "Shapes.cpp"
 #include <windows.h>
 
 int main(int argc, char *argv[])
@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
+
 
     return a.exec();
 }
