@@ -17,7 +17,7 @@ public:
 	Painter(Shapes shapes);
 	Painter(std::string name, Shapes shapes);
 
-	void addShape(Shape shape);
+	void addShape(Shape *shape);
 	void setDimensions(int width, int height);
 	void save();
 	void load(std::string projectName, std::string projectLocation);
