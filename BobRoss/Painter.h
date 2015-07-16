@@ -26,6 +26,7 @@ public:
 	void showGUI(bool toggle);
 	void launchSimulatorWindow();
 	void launchCommandWindow();
+	void setShapes(Shapes shapes);
 
 private:
 	Shapes shapes, completedShapes;

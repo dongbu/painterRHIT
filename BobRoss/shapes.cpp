@@ -424,6 +424,26 @@ public:
     }
   }
 
+  Shape* at(int position){
+	  return shapes.at(position);
+  }
+
+  Shape* getById(int id){
+	  for (int i = 0; i < shapes.size(); i++){
+		  if (shapes[i]->getID() == id){
+			  return shapes.at(i);
+		  }
+	  }
+  }
+
+  int length(){
+	  return shapes.size();
+  }
+
+  void swap(int pos1, int pos2){
+	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
+  }
+
   Shapes() { max_id=0; }
   ~Shapes() { }
 };
