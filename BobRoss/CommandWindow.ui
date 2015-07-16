@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CommandWindow</class>
+ <widget class="QMainWindow" name="CommandWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>593</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>571</width>
+      <height>258</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="CommandListLayout">
+     <item>
+      <widget class="QLabel" name="Command_List_Label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Command List&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="EditCommand">
+           <property name="text">
+            <string>Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="DeleteCommand">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="MoveUp">
+           <property name="text">
+            <string>Move Up</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="MoveDown">
+           <property name="text">
+            <string>Move Down</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>593</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSimulator">
+    <property name="title">
+     <string>simulator</string>
+    </property>
+    <addaction name="actionPlay"/>
+    <addaction name="actionStop"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionForward"/>
+    <addaction name="actionBackward"/>
+   </widget>
+   <addaction name="menuSimulator"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPlay"/>
+   <addaction name="actionStop"/>
+   <addaction name="actionBackward"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionForward"/>
+  </widget>
+  <action name="actionPlay">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/play.png</normaloff>:/Icon Storage/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play</string>
+   </property>
+   <property name="toolTip">
+    <string>Runs the simulation</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/stop.png</normaloff>:/Icon Storage/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>stops the simulation</string>
+   </property>
+  </action>
+  <action name="actionForward">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/next.png</normaloff>:/Icon Storage/next.png</iconset>
+   </property>
+   <property name="text">
+    <string>forward</string>
+   </property>
+   <property name="toolTip">
+    <string>steps forward</string>
+   </property>
+  </action>
+  <action name="actionBackward">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/previous.png</normaloff>:/Icon Storage/previous.png</iconset>
+   </property>
+   <property name="text">
+    <string>backward</string>
+   </property>
+   <property name="toolTip">
+    <string>step backward</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/pause.png</normaloff>:/Icon Storage/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>pause</string>
+   </property>
+   <property name="toolTip">
+    <string>pause simulation</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="myres.qrc"/>
+ </resources>
+ <connections/>
+</ui>

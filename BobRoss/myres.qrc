@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icon Storage/Circle.png</file>
+        <file>Icon Storage/function.png</file>
+        <file>Icon Storage/line.png</file>
+        <file>Icon Storage/new.png</file>
+        <file>Icon Storage/next.png</file>
+        <file>Icon Storage/open.png</file>
+        <file>Icon Storage/pause.png</file>
+        <file>Icon Storage/play.png</file>
+        <file>Icon Storage/Point Map.png</file>
+        <file>Icon Storage/previous.png</file>
+        <file>Icon Storage/save.png</file>
+        <file>Icon Storage/Square.png</file>
+        <file>Icon Storage/stop.png</file>
+    </qresource>
+</RCC>
