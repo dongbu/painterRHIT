@@ -15,6 +15,10 @@
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
     </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -40,6 +44,16 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{c047a0ed-2c91-430b-ad37-2c0bbe57434e}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{b70157d8-8c17-4942-8c7b-88caa0d2caa7}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,13 +75,37 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="drawwindow.cpp">
+    <ClCompile Include="pugixml.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_CVImageWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_CVImageWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_CommandWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_CommandWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_EditorWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_EditorWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_Sketchpad.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_Sketchpad.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="shapes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pugixml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,102 +119,18 @@
     <CustomBuild Include="EditorWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <ClInclude Include="Painter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <CustomBuild Include="Sketchpad.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="Painter.h">
+    <ClInclude Include="pugiconfig.hpp">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="pugiconfig.hpp">
+    </ClInclude>
+    <ClInclude Include="pugixml.hpp">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="pugixml.hpp">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\Circle.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\function.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\line.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\new.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\next.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\open.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\pause.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\play.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\Point Map.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\previous.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\save.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\Square.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon Storage\stop.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\Circle.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Icon">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Map.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\Point">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\Square.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\function.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\line.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\new.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\next.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\open.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\pause.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\play.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\previous.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\save.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Storage\stop.png">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -190,8 +144,105 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Storage\Circle.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Icon">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Map.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\Point">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\Square.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\function.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\line.png">
+      <Filter>Resource Files</Filter>
+    </None>
     <CustomBuild Include="myres.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <None Include="Storage\new.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\next.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\open.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\pause.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\play.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\previous.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\save.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Storage\stop.png">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_CommandWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_EditorWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_Sketchpad.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icon Storage\Circle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\function.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\line.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\next.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\open.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\pause.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\play.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\Point Map.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\previous.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\save.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\Square.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\stop.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

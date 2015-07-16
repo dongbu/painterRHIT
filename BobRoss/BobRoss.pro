@@ -28,6 +28,7 @@ HEADERS  += \
     EditorWindow.h \
     Painter.h \
     pugixml.hpp \
+    pugiconfig.hpp \
     CVImageWidget.h
 
 FORMS    += \

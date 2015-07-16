@@ -1,10 +1,10 @@
 #include <QApplication>
+#include "CommandWindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //BobRoss w;
-    //w.show();
-
+	CommandWindow *w = new CommandWindow();
+	w->show();
     return a.exec();
 }
