@@ -32,21 +32,14 @@ void CommandWindow::setSimWindow(DrawWindow *sim){
 }
 
 ///Private methods below herelaunchCommandWindow
-
-void CommandWindow::launchEditorWin(int index) {
-	delete currentEditor;
-	currentEditor = new EditorWindow();
-	currentEditor->setShapeToEdit(*this->shapes.at(index));
-
-}
 void CommandWindow::runFrom(int index) {
-
+	printf("TODO: implement runFrom\n");
 }
 void CommandWindow::runOnly(int index) {
-
+	printf("TODO: implement runOnly\n");
 }
 void CommandWindow::setBreakPoint(int index) {
-
+	printf("TODO: implement setBreakPoint\n");
 }
 
 ///Slots below here///
@@ -75,6 +68,7 @@ void CommandWindow::deleteCommandClicked() {
 	populate();
 }
 void CommandWindow::stopClicked() {
+	printf("TODO: reset position and toggles\n");
 	this->shapes.setRunning(false);
 	this->simWin->clearWindow(255, 255, 255);
 }
@@ -82,15 +76,18 @@ void CommandWindow::pauseClicked() {
 	this->shapes.setRunning(false);
 }
 void CommandWindow::forwardClicked() {
-	printf("forward clicked!\n");
+	printf("TODO: implement forwardClicked\n");
 }
 void CommandWindow::backwardClicked() {
-	printf("backward clicked!\n");
+	printf("TODO: implement backwardClicked\n");
 }
 void CommandWindow::launchRightClick() {
-	printf("right clicked!\n");
+	printf("TODO: implement launchRightClick\n");
 }
 void CommandWindow::runClicked() {
+	printf("TODO: keep track of position\n");
+	printf("TODO: change colors\n");
+	printf("TODO: deal with breakpoints and toggles\n");
 	this->shapes.drawAll(this->simWin);
 }
 

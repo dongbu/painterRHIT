@@ -63,9 +63,6 @@
     <ClCompile Include="CommandWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditorWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Painter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,12 +87,6 @@
     <ClCompile Include="Release\moc_CommandWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_EditorWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_EditorWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="Debug\moc_Sketchpad.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -117,9 +108,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CommandWindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="EditorWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <ClInclude Include="Painter.h">

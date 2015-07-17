@@ -21,7 +21,6 @@ public:
 	Shapes shapes;
 
 private:
-    void launchEditorWin(int index);
     void runFrom(int index);
     void runOnly(int index);
     void setBreakPoint(int index);
@@ -29,7 +28,6 @@ private:
 
     Ui::CommandWindow *ui;
 	DrawWindow *simWin;
-    EditorWindow *currentEditor;
 
 private slots:
     void moveUpClicked();
