@@ -33,7 +33,7 @@ private:
 	std::string ProjectName, ProjectLocation;
 	int width, height;
 
-	CommandWindow commandWin;
+	CommandWindow *commandWin;
 	Sketchpad *sketch;
 	DrawWindow *simWin;
 };

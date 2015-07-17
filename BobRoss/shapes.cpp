@@ -8,6 +8,8 @@
 #include "pugixml.hpp"
 //#include "pugixml.cpp"
 #include "drawwindow.cpp"
+#include <Future>
+#include <cstdlib>
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
 using namespace std;
@@ -116,6 +118,7 @@ public:
     for (int i=0; i<points.size()-1; i++) {
       W->drawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y);
     }
+	 
   }
 
   PolyLine() : Shape() { type = "polyline"; thickness = 1; }
@@ -159,6 +162,7 @@ public:
       W->addPolyPoint(points[i].x,points[i].y);
     }
     W->drawPolyPoints();
+	 
   }
   
   PolyPoints() : Shape() { type = "polyline"; thickness = 1; }
@@ -198,6 +202,7 @@ public:
     W->setPenColor(color[0],color[1],color[2]);
     for (int i=0; i<points.size()-1; i++) {
     W->drawPixel(points[i].x,points[i].y);
+	 
     }
   }
   
@@ -235,6 +240,7 @@ public:
     cv::Scalar color = getPenColor();
     W->setPenColor(color[0],color[1],color[2]);
     W->drawRectangle(pt1.x,pt1.y,pt2.x,pt2.y,fill);
+	 
   }
 
   Rectangle() : Shape() { type = "rectangle"; fill = 0; }
@@ -275,6 +281,7 @@ public:
     cv::Scalar color = getPenColor();
     W->setPenColor(color[0],color[1],color[2]);
     W->drawEllipse(pt.x,pt.y,axes.width,axes.height,0,fill);
+	 
   }
 
   Ellipse() : Shape() { type = "ellipse"; fill = 0; }
@@ -288,6 +295,7 @@ class Shapes {
 protected:
   std::vector<Shape*> shapes;
   int max_id;
+  //thread *drawingThread;
 
 public:
   void addShape(Shape *shape) {
@@ -312,7 +320,7 @@ public:
 
   void parseXML(pugi::xml_node *shapes) {
     int debug=0;
-
+	printf("parsing xml\n");
     for (pugi::xml_node shape = shapes->first_child(); shape; shape = shape.next_sibling()) {
       string type = shape.attribute("type").value();
       int id=shape.attribute("id").as_int();
@@ -404,9 +412,16 @@ public:
   }
 
   void drawAll(DrawWindow *W) {
-    for (int i=0; i<shapes.size(); i++) {
-      shapes[i]->draw(W);
-    }
+	  auto d1 = std::async(&Shapes::drawAllHelper, this, W);
+  }
+
+  void drawAllHelper(DrawWindow *W){
+	  for (int i = 0; i<shapes.size(); i++) {
+		  W->show();
+		  shapes[i]->draw(W);
+		  _sleep(1000);
+	  }
+	  
   }
 
   // draw only one command by its shape id
@@ -446,7 +461,9 @@ public:
   }
 
   void swap(int pos1, int pos2){
+	  printf("check 1\n");
 	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
+	  printf("check 2\n");
   }
 
   Shapes() { max_id=0; }
