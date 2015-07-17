@@ -25,12 +25,15 @@ public:
     ~Sketchpad();
 
 private:
+	void getColor();
+	void setupQt();
+
     Ui::Sketchpad *ui;
     CVImageWidget *translator;
 	DrawWindow *cvWindow;
     DrawWindow *display;
     QComboBox *color;
-    QSpinBox *Thickness;
+    QSpinBox *thickness;
     Shapes *shapes;
 
 	Shape *currentShape;
@@ -38,6 +41,7 @@ private:
 	Ellipse *curCircle;
 	Rectangle *curRectangle;
 	int prevX, prevY;
+	std::vector<int> rgbColor;
 
 private slots:
 	void refresh(int x, int y);

@@ -12,15 +12,33 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
+	//setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
+	setupQt();
 
+	//Linking opencv to Qt.
 	shapes = ss;
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
 	this->cvWindow = new DrawWindow(height,width,"garbage name");
 	this->cvWindow->hideWindow();
-	redraw();
-	
+
+
+	//Drawing set-up logic
+	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
+	getColor(); //sets class's color
+	cvWindow->clearWindow(); //clear the window
+	shapes->stdDrawAll(cvWindow); //redraw the window
+	translator->showImage(cvWindow->grid); //actually redraw the window
+	this->startNewCommand(); //prep for initial command
+}
+
+Sketchpad::~Sketchpad()
+{
+    delete ui;
+}
+
+void Sketchpad::setupQt() {
 	QActionGroup *actionGroup = new QActionGroup(this);
 	actionGroup->addAction(ui->actionDraw_Square);
 	actionGroup->addAction(ui->actionDraw_Circle);
@@ -36,14 +54,23 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 	ui->actionDraw_Filled_Polygon->setCheckable(true);
 	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
 
-	ui->actionDraw_Line->setChecked(true);
-	this->startNewCommand();
+	color = new QComboBox();
+	QStringList colors;
+	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	color->addItems(colors);
 
-}
+	thickness = new QSpinBox();
+	thickness->setFixedWidth(60);
+	thickness->setMinimum(1);
+	thickness->setMaximum(25);
+	thickness->setSingleStep(1);
+	thickness->setValue(4);
 
-Sketchpad::~Sketchpad()
-{
-    delete ui;
+	ui->toolBar->addWidget(color);
+	ui->toolBar->addWidget(thickness);
+
+	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
+	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
 }
 
 ///private methods below here///
@@ -127,27 +154,67 @@ void Sketchpad::startNewCommand() {
 
 	if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
 		curPolyLine = new PolyLine();
-		curPolyLine->setThickness(4);
-		curPolyLine->setPenColor(200, 200, 200);
+		curPolyLine->setThickness(thickness->text().toInt());
+		curPolyLine->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 		this->currentShape = curPolyLine;
 	}
+
 	else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
 		curCircle = new Ellipse();
 		if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
-		curCircle->setPenColor(200, 200, 200);
+		curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 		this->currentShape = curCircle;
 	}
 	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
 		curRectangle = new Rectangle();
 		if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
-		curRectangle->setPenColor(200, 200, 200);
+		curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 		this->currentShape = curRectangle;
 	}
 }
 void Sketchpad::redraw() {
+	getColor();
+	startNewCommand();
+
 	cvWindow->clearWindow(); //clear the window
 	shapes->stdDrawAll(cvWindow); //redraw the window
 	translator->showImage(cvWindow->grid); //actually redraw the window
+}
+
+void Sketchpad::getColor() {
+	QString col = this->color->currentText();
+	std::vector<int> toReplace;
+	if (col == "black") {
+		toReplace.push_back(0);
+		toReplace.push_back(0);
+		toReplace.push_back(0);
+	} else if (col == "orange") {
+		toReplace.push_back(30);
+		toReplace.push_back(144);
+		toReplace.push_back(255);
+	} else if (col == "yellow") {
+		toReplace.push_back(0);
+		toReplace.push_back(255);
+		toReplace.push_back(255);
+	} else if (col == "green") {
+		toReplace.push_back(34);
+		toReplace.push_back(139);
+		toReplace.push_back(34);
+	} else if (col == "red") {
+		toReplace.push_back(34);
+		toReplace.push_back(34);
+		toReplace.push_back(178);
+	} else if (col == "blue") {
+		toReplace.push_back(255);
+		toReplace.push_back(144);
+		toReplace.push_back(30);
+	} else if (col == "purple") {
+		toReplace.push_back(240);
+		toReplace.push_back(32);
+		toReplace.push_back(160);
+
+	}
+	this->rgbColor = toReplace;
 }
 
 void Sketchpad::saveAsClicked() {
