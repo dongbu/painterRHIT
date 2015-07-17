@@ -19,9 +19,7 @@ CommandWindow::~CommandWindow()
 
 void CommandWindow::setShapes(Shapes shapes) {
 	this->shapes = shapes;
-	printf("number of shapes: %i\n", shapes.length());
 	populate();
-	printf("number of shapes: %i\n", this->shapes.length());
 }
 
 ///Private methods below herelaunchCommandWindow
@@ -48,17 +46,9 @@ void CommandWindow::addCommand() {
 }
 
 void CommandWindow::moveUpClicked() {
-	printf("number of s: %i\n", shapes.length());
-
-	printf("moving up clicked\n");
 	int currentIndex = ui->listWidget->currentIndex().row();
-	printf("current index:  %i\n", currentIndex);
 	if (currentIndex > 0){ 
-		printf("current index is above zero\n");
-		printf("swapping %i with %i\n", currentIndex, currentIndex - 1);
 		shapes.swap(currentIndex, currentIndex - 1);
-		printf("finished swapping\n");
-		printf("number of shapes: %i\n", shapes.length());
 		populate();
 	}
 }
@@ -91,17 +81,13 @@ void CommandWindow::launchRightClick() {
 
 }
 void CommandWindow::runClicked() {
-
+	//this->shapes.drawAll(this->simWin);
 }
 
 void CommandWindow::populate(){
-	printf("populating\n");
-	printf("number of shapes: %i\n", this->shapes.length());
-
 	ui->listWidget->clear();
 	for (int i = 0; i < shapes.length(); i++){
-		QString name = QString::number(i) + QString::fromStdString(": " + shapes.at(i)->type);
-		printf("name: %s\n", name.toStdString().c_str());
+		QString name = QString::fromStdString(shapes.at(i)->type) + QString::number(shapes.at(i)->getID());
 		ui->listWidget->addItem(new QListWidgetItem(name));
 	}
 }

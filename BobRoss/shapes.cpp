@@ -294,7 +294,7 @@ class Shapes {
 protected:
   std::vector<Shape*> shapes;
   int max_id;
-  //thread *drawingThread;
+  std::atomic<bool> running;
 
 public:
   void addShape(Shape *shape) {
@@ -411,16 +411,22 @@ public:
   }
 
   void drawAll(DrawWindow *W) {
+	  running = true;
 	  auto d1 = std::async(&Shapes::drawAllHelper, this, W);
   }
 
   void drawAllHelper(DrawWindow *W){
 	  for (int i = 0; i<shapes.size(); i++) {
+		  if (!running) { return; }
 		  W->show();
 		  shapes[i]->draw(W);
 		  _sleep(1000);
 	  }
 	  
+  }
+
+  void setRunning(bool toggle){
+	  running = toggle;
   }
 
   // draw only one command by its shape id
