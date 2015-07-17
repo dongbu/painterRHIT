@@ -77,8 +77,11 @@ void Painter::load(std::string projectName, std::string projectLocation) {
 	this->ProjectName = projectName;
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file((ProjectLocation + "/" + ProjectName + ".xml").c_str());
+	printf("loading file: %s\n", (ProjectLocation + "/" + ProjectName + ".xml").c_str());
 	pugi::xml_node listOfShapes = doc.child("shapes");
 	shapes.parseXML(&listOfShapes);
+	printf("%s\n",result.description());
+	printf("shapes length: %i\n", shapes.length());
 	commandWin.setShapes(&shapes);
 	sketch->setShapes(shapes);
 }
@@ -102,8 +105,8 @@ void Painter::showGUI(bool toggle){
 	}
 }
 void Painter::launchSimulatorWindow(){
-	//this->shapes.drawAll(this->simWin);
-	printf("drawing a shape of some kind");
+	this->simWin->show();
+	this->shapes.drawAll(this->simWin);
 	this->simWin->show();
 }
 void Painter::launchCommandWindow(){

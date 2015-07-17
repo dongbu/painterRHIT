@@ -9,6 +9,7 @@ CommandWindow::CommandWindow(QWidget *parent) :
     ui->setupUi(this);
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
+	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
 }
 
 CommandWindow::~CommandWindow()
@@ -45,7 +46,6 @@ void CommandWindow::addCommand() {
 }
 
 void CommandWindow::moveUpClicked() {
-	printf("moving up\n");
 	int currentIndex = ui->listWidget->currentIndex().row();
 	if (currentIndex > 0){ 
 		shapes->swap(currentIndex, currentIndex - 1);
@@ -53,7 +53,6 @@ void CommandWindow::moveUpClicked() {
 	}
 }
 void CommandWindow::moveDownClicked() {
-	printf("moving down\n");
 	int currentIndex = ui->listWidget->currentIndex().row();
 	if (currentIndex < ui->listWidget->count()){ 
 		shapes->swap(currentIndex, currentIndex + 1);
