@@ -1,3 +1,5 @@
+#pragma once
+
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
@@ -17,6 +19,7 @@ protected:
   int webcam_corner;
   cv::Point2f webcamQuad[4]; // Input Quadilateral or Image plane coordinates
   cv::Point2f canvasCornersQuad[4]; // Output Quadilateral or World plane coordinates
+  cv::Point2f zoomQuad[4]; // Output Quadilateral or World plane coordinates
 
 public:
 
@@ -39,6 +42,7 @@ public:
     canvasCornersQuad[1] = cv::Point2f( map_width,0);
     canvasCornersQuad[2] = cv::Point2f( map_width,map_height);
     canvasCornersQuad[3] = cv::Point2f( 0,map_height );
+    for (int i=0; i<4; i++) { zoomQuad[i] = cv::Point2f( 0,0 ); }
   }
 
   void setMapping(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
@@ -61,19 +65,30 @@ public:
     return map;
   }
 
+  static void zoomMouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
+    Webcam *self = static_cast<Webcam*>(userdata);
+    if  ( event == cv::EVENT_LBUTTONDOWN ) {
+      printf("Setting zoom corner %d to %i,%i\n",x,y,self->webcam_corner);
+      self->zoomQuad[self->webcam_corner].x=x;
+      self->zoomQuad[self->webcam_corner].y=y;
+    }
+  }
+
   void calibrateWebcam () {
     cv::Mat webcam;
-    cv::Mat mapped_webcam; // this is the "canvas"
+    cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
+    cv::Mat canvas; // this is the "canvas"
     char window_name[] = "Mapped Webcam";
-    int debug = 0;
+    int debug = 1;
 
     cv::namedWindow(window_name,1);
-    cv::moveWindow(window_name,100,300);
 
-    //void (Webcam::*func)(int,int,int,int,void*);
-    //func = &Webcam::mouseCallbackFunc;
-    //cv::setMouseCallback("webcam0", (this->func), NULL);
-    //cv::setMouseCallback("webcam map", (this->mouseCallbackFunc), NULL);
+    cv::namedWindow("Canvas",1);
+
+    //cv::moveWindow(window_name,100,300);
+
+    cv::namedWindow("webcam",1);
+    cv::setMouseCallback("webcam", zoomMouseCallBackFunc, this);
 
     resetMapping();
 
@@ -84,6 +99,7 @@ public:
 	// blend a few webcam images together
 	getFrame(&webcam,3); // get a new frame from camera (blend 3 frames for better clarity)
 	// imshow("webcam0", webcam);
+	cv::imshow("webcam", webcam);
 
 	getMappedFrame(&mapped_webcam);
 	cv::imshow(window_name, mapped_webcam);
@@ -106,17 +122,20 @@ public:
 
 	} else if (k == 63235) { // right arrow
 	  if (debug) printf("Moving %i.x to right by %.3f\n",webcam_corner,delta);
-	  canvasCornersQuad[webcam_corner].x += delta;
+	  webcamQuad[webcam_corner].x += delta;
+	  //canvasCornersQuad[webcam_corner].x += delta;
 	} else if (k == 63234) { // left arrow
 	  if (debug) printf("Moving %i.x to left by %.3f\n",webcam_corner,delta);
-	  canvasCornersQuad[webcam_corner].x += -delta;
+	  webcamQuad[webcam_corner].x += -delta;
+	  //canvasCornersQuad[webcam_corner].x += -delta;
 	} else if (k == 63232) { // up arrow
 	  if (debug) printf("Moving %i.y up by %.3f\n",webcam_corner,delta);
-	  canvasCornersQuad[webcam_corner].y += -delta;
+	  webcamQuad[webcam_corner].y += -delta;
+	  //canvasCornersQuad[webcam_corner].y += -delta;
 	} else if (k == 63233) { // down arrow
 	  if (debug) printf("Moving %i.y down by %.3f\n",webcam_corner,delta);
-	  canvasCornersQuad[webcam_corner].y += delta;
-	  
+	  webcamQuad[webcam_corner].y += delta;
+	  //canvasCornersQuad[webcam_corner].y += delta;
 	} else if (k == 43) { // +
 	  delta = delta * 2;
 	  if (debug) printf("Changed delta to %.1f\n",delta);
@@ -151,6 +170,18 @@ public:
     cv::Mat webcam;
     getFrame(&webcam); // get a new frame from camera
 
+    // zoom into the webcam to where ever the canvas corners are
+    if (1) {
+      cv::Mat zoom_lambda( 2, 4, CV_32FC1 );
+      // Set the lambda matrix the same type and size as webcam
+      zoom_lambda = cv::Mat::zeros( webcam.rows, webcam.cols, webcam.type() );
+      // Get the Perspective Transform Matrix i.e. lambda
+      zoom_lambda = cv::getPerspectiveTransform( zoomQuad,webcamQuad );
+      // Apply the Perspective Transform just found to the src image
+      //cv::warpPerspective(canvas,mapped_webcam,zoom_lambda,mapped_webcam.size() );
+      cv::warpPerspective(webcam,webcam,zoom_lambda,webcam.size() );
+    }
+    
     // create the mapped_frame 
     *mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type() );
 
