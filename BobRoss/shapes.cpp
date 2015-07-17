@@ -10,6 +10,7 @@
 #include "drawwindow.cpp"
 #include <Future>
 #include <cstdlib>
+#include <atomic>
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
 using namespace std;
@@ -295,7 +296,7 @@ class Shapes {
 protected:
   std::vector<Shape*> shapes;
   int max_id;
-  std::atomic<bool> running;
+  volatile bool running = false;
 
 public:
   void addShape(Shape *shape) {
@@ -412,7 +413,7 @@ public:
   }
 
   void drawAll(DrawWindow *W) {
-	  running = true;
+	  running = 1;
 	  auto d1 = std::async(&Shapes::drawAllHelper, this, W);
   }
 

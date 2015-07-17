@@ -3,6 +3,7 @@
 
 #include "ui_commandwindow.h"
 #include "EditorWindow.h"
+#include "DrawWindow.cpp"
 
 namespace Ui {
 class CommandWindow;
@@ -16,6 +17,7 @@ public:
     explicit CommandWindow(QWidget *parent = 0);
     ~CommandWindow();
     void setShapes(Shapes shapes);
+	void setSimWindow(DrawWindow *sim);
 	Shapes shapes;
 
 private:
@@ -26,7 +28,7 @@ private:
 	void populate();
 
     Ui::CommandWindow *ui;
-
+	DrawWindow *simWin;
     EditorWindow *currentEditor;
 
 private slots:

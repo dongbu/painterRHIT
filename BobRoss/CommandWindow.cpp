@@ -10,6 +10,11 @@ CommandWindow::CommandWindow(QWidget *parent) :
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
 	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
+	connect(ui->actionBackward, SIGNAL(triggered()), this, SLOT(backwardClicked()));
+	connect(ui->actionForward, SIGNAL(triggered()), this, SLOT(forwardClicked()));
+	connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(pauseClicked()));
+	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(runClicked()));
+	connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(stopClicked()));
 }
 
 CommandWindow::~CommandWindow()
@@ -20,6 +25,10 @@ CommandWindow::~CommandWindow()
 void CommandWindow::setShapes(Shapes shapes) {
 	this->shapes = shapes;
 	populate();
+}
+
+void CommandWindow::setSimWindow(DrawWindow *sim){
+	this->simWin = sim;
 }
 
 ///Private methods below herelaunchCommandWindow
@@ -66,22 +75,25 @@ void CommandWindow::deleteCommandClicked() {
 	populate();
 }
 void CommandWindow::stopClicked() {
-
+	printf("stop clicked!\n");
+	this->shapes.setRunning(0);
 }
 void CommandWindow::pauseClicked() {
-
+	printf("pause clicked!\n");
+	this->shapes.setRunning(0);
 }
 void CommandWindow::forwardClicked() {
-
+	printf("forward clicked!\n");
 }
 void CommandWindow::backwardClicked() {
-
+	printf("backward clicked!\n");
 }
 void CommandWindow::launchRightClick() {
-
+	printf("right clicked!\n");
 }
 void CommandWindow::runClicked() {
-	//this->shapes.drawAll(this->simWin);
+	printf("run clicked!\n");
+	this->shapes.drawAll(this->simWin);
 }
 
 void CommandWindow::populate(){

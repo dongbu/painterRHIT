@@ -10,6 +10,7 @@ Painter::Painter() {
 	simWin = new DrawWindow(width,height,ProjectName);
 	commandWin = new CommandWindow();
 	commandWin->setShapes(shapes);
+	commandWin->setSimWindow(simWin);
 	sketch->setShapes(shapes);
 }
 Painter::Painter(std::string name) {
@@ -22,6 +23,7 @@ Painter::Painter(std::string name) {
 	simWin = new DrawWindow(width, height, ProjectName);
 	commandWin = new CommandWindow();
 	commandWin->setShapes(shapes);
+	commandWin->setSimWindow(simWin);
 	sketch->setShapes(shapes);
 }
 Painter::Painter(Shapes shapes) {
@@ -35,7 +37,7 @@ Painter::Painter(Shapes shapes) {
 	simWin = new DrawWindow(width, height, ProjectName);
 	commandWin = new CommandWindow();
 	commandWin->setShapes(shapes);
-	printf("constructor says that command window has: %i\n", commandWin->shapes.length());
+	commandWin->setSimWindow(simWin);
 	sketch->setShapes(shapes);
 }
 Painter::Painter(std::string name, Shapes shapes) {
@@ -49,6 +51,7 @@ Painter::Painter(std::string name, Shapes shapes) {
 	simWin = new DrawWindow(width, height, ProjectName);
 	commandWin = new CommandWindow();
 	commandWin->setShapes(shapes);
+	commandWin->setSimWindow(simWin);
 	sketch->setShapes(shapes);
 
 }
