@@ -75,12 +75,11 @@ void CommandWindow::deleteCommandClicked() {
 	populate();
 }
 void CommandWindow::stopClicked() {
-	printf("stop clicked!\n");
-	this->shapes.setRunning(0);
+	this->shapes.setRunning(false);
+	this->simWin->clearWindow(255, 255, 255);
 }
 void CommandWindow::pauseClicked() {
-	printf("pause clicked!\n");
-	this->shapes.setRunning(0);
+	this->shapes.setRunning(false);
 }
 void CommandWindow::forwardClicked() {
 	printf("forward clicked!\n");
@@ -92,7 +91,6 @@ void CommandWindow::launchRightClick() {
 	printf("right clicked!\n");
 }
 void CommandWindow::runClicked() {
-	printf("run clicked!\n");
 	this->shapes.drawAll(this->simWin);
 }
 

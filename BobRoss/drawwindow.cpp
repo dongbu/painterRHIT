@@ -27,7 +27,7 @@ public:
     canvas_color = cv::Scalar(b,g,r); // yah, in this order
   }
 
-  void clearWindow() { grid.setTo(canvas_color); }
+  void clearWindow() { grid.setTo(canvas_color); show(); }
 
   // clears window and set pixels to r g b
   void clearWindow(int r, int g, int b) {
