@@ -14,8 +14,8 @@ class Painter
 public:
 	Painter();
 	Painter(std::string name);
-	Painter(Shapes shapes);
-	Painter(std::string name, Shapes shapes);
+	Painter(Shapes *shapes);
+	Painter(std::string name, Shapes *shapes);
 
 	void addShape(Shape *shape);
 	void setDimensions(int width, int height);
@@ -26,10 +26,10 @@ public:
 	void showGUI(bool toggle);
 	void launchSimulatorWindow();
 	void launchCommandWindow();
-	void setShapes(Shapes shapes);
+	void setShapes(Shapes *shapes);
 
 private:
-	Shapes shapes, completedShapes;
+	Shapes *shapes, completedShapes;
 	std::string ProjectName, ProjectLocation;
 	int width, height;
 

@@ -21,9 +21,8 @@ class Sketchpad : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Sketchpad(int width, int height, QWidget *parent = 0);
+    explicit Sketchpad(int width, int height, Shapes *ss, QWidget *parent = 0);
     ~Sketchpad();
-    void setShapes(Shapes shapes);
 
 private:
     Ui::Sketchpad *ui;
@@ -32,8 +31,7 @@ private:
     DrawWindow *display;
     QComboBox *color;
     QSpinBox *Thickness;
-    Shapes shapes;
-
+    Shapes *shapes;
 
 	Shape *currentShape;
 	PolyLine *curPolyLine;
@@ -45,12 +43,16 @@ private slots:
 	void refresh(int x, int y);
 	void startNewCommand();
 
-
     void saveAsClicked();
     void saveClicked();
     void openClicked();
     void newClicked();
 
+public slots:
+	void redraw();
+
+signals:
+	void shapeAdded();
 
 };
 

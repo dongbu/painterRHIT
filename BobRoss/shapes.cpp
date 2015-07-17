@@ -119,7 +119,6 @@ public:
     for (int i=0; i<points.size()-1; i++) {
       W->drawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y);
     }
-	 
   }
 
   PolyLine() : Shape() { type = "polyline"; thickness = 1; }
@@ -412,6 +411,14 @@ public:
     }
   }
 
+  void stdDrawAll(DrawWindow *W) {
+	  int j = shapes.size();
+	  for (int i = 0; i<shapes.size(); i++) {
+		  shapes.at(i);
+		  shapes.at(i)->draw(W);
+	  }
+  }
+
   void drawAll(DrawWindow *W) {
 	  running = 1;
 	  auto d1 = std::async(&Shapes::drawAllHelper, this, W);
@@ -468,9 +475,7 @@ public:
   }
 
   void swap(int pos1, int pos2){
-	  printf("check 1\n");
 	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
-	  printf("check 2\n");
   }
 
   Shapes() { max_id=0; }

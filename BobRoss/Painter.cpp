@@ -6,12 +6,13 @@ Painter::Painter() {
 	width = 1000;
 	height = 800;
 
-	sketch = new Sketchpad(width, height);
+	sketch = new Sketchpad(width, height,shapes);
 	simWin = new DrawWindow(width,height,ProjectName);
-	commandWin = new CommandWindow();
-	commandWin->setShapes(shapes);
+	commandWin = new CommandWindow(shapes);
 	commandWin->setSimWindow(simWin);
-	sketch->setShapes(shapes);
+
+	QObject::connect(sketch, SIGNAL(shapeAdded()), commandWin, SLOT(addCommand()));
+	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 }
 Painter::Painter(std::string name) {
 	ProjectName = name;
@@ -19,51 +20,50 @@ Painter::Painter(std::string name) {
 	width = 1000;
 	height = 800;
 
-	sketch = new Sketchpad(width, height);
+	sketch = new Sketchpad(width, height, shapes);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin = new CommandWindow();
-	commandWin->setShapes(shapes);
+	commandWin = new CommandWindow(shapes);
 	commandWin->setSimWindow(simWin);
-	sketch->setShapes(shapes);
+
+	QObject::connect(sketch, SIGNAL(shapeAdded()), commandWin, SLOT(addCommand()));
+	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 }
-Painter::Painter(Shapes shapes) {
+Painter::Painter(Shapes *shapes) {
 	this->shapes = shapes;
 	ProjectName = "Temp";
 	ProjectLocation = "";
 	width = 1000;
 	height = 800;
 
-	sketch = new Sketchpad(width, height);
+	sketch = new Sketchpad(width, height, shapes);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin = new CommandWindow();
-	commandWin->setShapes(shapes);
+	commandWin = new CommandWindow(shapes);
 	commandWin->setSimWindow(simWin);
-	sketch->setShapes(shapes);
+
+	QObject::connect(sketch, SIGNAL(shapeAdded()), commandWin, SLOT(addCommand()));
+	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 }
-Painter::Painter(std::string name, Shapes shapes) {
+
+Painter::Painter(std::string name, Shapes *shapes) {
 	this->shapes = shapes;
 	ProjectName = name;
 	ProjectLocation = "";
 	width = 1000;
 	height = 800;
 
-	sketch = new Sketchpad(width, height);
+	sketch = new Sketchpad(width, height, shapes);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin = new CommandWindow();
-	commandWin->setShapes(shapes);
+	commandWin = new CommandWindow(shapes);
 	commandWin->setSimWindow(simWin);
-	sketch->setShapes(shapes);
 
+	QObject::connect(sketch, SIGNAL(shapeAdded()), commandWin, SLOT(addCommand()));
+	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 }
-void Painter::setShapes(Shapes shapes){
+void Painter::setShapes(Shapes *shapes){
 	this->shapes = shapes;
-	commandWin->setShapes(shapes);
-	sketch->setShapes(shapes);
 }
 void Painter::addShape(Shape *shape) {
-	this->shapes.addShape(shape);
-	commandWin->setShapes(shapes);
-	sketch->setShapes(shapes);
+	this->shapes->addShape(shape);
 }
 void Painter::setDimensions(int width, int height) {
 	this->width = width;
@@ -74,7 +74,7 @@ void Painter::setDimensions(int width, int height) {
 }
 void Painter::save() {
 	std::string xml = "<?xml version=\"1.0\"?>\n";
-	xml.append(shapes.getXML());
+	xml.append(shapes->getXML());
 	ofstream myfile;
 	myfile.open(ProjectLocation + "/" + ProjectName + ".xml");
 	myfile << xml;
@@ -87,10 +87,8 @@ void Painter::load(std::string projectName, std::string projectLocation) {
 	pugi::xml_parse_result result = doc.load_file((ProjectLocation + "/" + ProjectName + ".xml").c_str());
 	printf("loading file: %s\n", (ProjectLocation + "/" + ProjectName + ".xml").c_str());
 	pugi::xml_node listOfShapes = doc.child("shapes");
-	shapes.parseXML(&listOfShapes);
+	shapes->parseXML(&listOfShapes);
 	printf("%s\n",result.description());
-	commandWin->setShapes(shapes);
-	sketch->setShapes(shapes);
 }
 void Painter::setName(std::string ProjectName){
 	this->ProjectName = ProjectName;

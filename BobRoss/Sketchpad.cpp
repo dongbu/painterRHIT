@@ -8,17 +8,18 @@
 #include <cmath>
 
 ///Public methods below here
-Sketchpad::Sketchpad(int width, int height, QWidget *parent) :
+Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
     ui->setupUi(this);
+
+	shapes = ss;
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
 	this->cvWindow = new DrawWindow(height,width,"garbage name");
-	cvWindow->clearWindow(255, 255, 255);
 	this->cvWindow->hideWindow();
-	translator->showImage(cvWindow->grid);
+	redraw();
 	
 	QActionGroup *actionGroup = new QActionGroup(this);
 	actionGroup->addAction(ui->actionDraw_Square);
@@ -43,10 +44,6 @@ Sketchpad::Sketchpad(int width, int height, QWidget *parent) :
 Sketchpad::~Sketchpad()
 {
     delete ui;
-}
-
-void Sketchpad::setShapes(Shapes shapes) {
-	this->shapes = shapes;
 }
 
 ///private methods below here///
@@ -106,10 +103,11 @@ void Sketchpad::refresh(int x, int y) {
 
 	//DELETE CLICK CIRCLES
 	if (reset) {
-		this->shapes.addShape(currentShape);
+		shapes->addShape(currentShape);
 		startNewCommand();
 		cvWindow->clearWindow();
-		this->shapes.drawAll(cvWindow); //redraw window
+		shapes->stdDrawAll(cvWindow); //redraw window
+		emit shapeAdded();
 	}
 	else {
 		currentShape->draw(cvWindow);
@@ -145,6 +143,11 @@ void Sketchpad::startNewCommand() {
 		curRectangle->setPenColor(200, 200, 200);
 		this->currentShape = curRectangle;
 	}
+}
+void Sketchpad::redraw() {
+	cvWindow->clearWindow(); //clear the window
+	shapes->stdDrawAll(cvWindow); //redraw the window
+	translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
 void Sketchpad::saveAsClicked() {

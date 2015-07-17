@@ -14,11 +14,10 @@ class CommandWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit CommandWindow(QWidget *parent = 0);
+    explicit CommandWindow(Shapes *ss, QWidget *parent = 0);
     ~CommandWindow();
-    void setShapes(Shapes shapes);
 	void setSimWindow(DrawWindow *sim);
-	Shapes shapes;
+	Shapes *shapes;
 
 private:
     void runFrom(int index);
@@ -56,6 +55,8 @@ signals:
     void backward();
     void run();
 	//waiting for sim. to take time
+
+	void modifiedCommand();
 
 };
 
