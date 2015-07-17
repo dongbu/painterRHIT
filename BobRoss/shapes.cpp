@@ -86,9 +86,10 @@ public:
 class PolyLine: public Shape {
 protected:
   int thickness;
-  std::vector<cv::Point> points;
 
 public:
+	std::vector<cv::Point> points;
+
   void addPoint(int i, int j) {
     points.push_back(cv::Point(i,j));
   }

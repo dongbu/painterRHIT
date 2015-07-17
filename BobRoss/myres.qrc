@@ -13,5 +13,8 @@
         <file>Icon Storage/save.png</file>
         <file>Icon Storage/Square.png</file>
         <file>Icon Storage/stop.png</file>
+        <file>Icon Storage/FilledCircle.png</file>
+        <file>Icon Storage/FreeForm.png</file>
+        <file>Icon Storage/FilledSquare.png</file>
     </qresource>
 </RCC>

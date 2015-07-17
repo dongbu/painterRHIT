@@ -33,10 +33,18 @@ private:
     QComboBox *color;
     QSpinBox *Thickness;
     Shapes shapes;
+
+
 	Shape *currentShape;
+	PolyLine *curPolyLine;
+	Ellipse *curCircle;
+	Rectangle *curRectangle;
+	int prevX, prevY;
 
 private slots:
 	void refresh(int x, int y);
+	void startNewCommand();
+
 
     void saveAsClicked();
     void saveClicked();

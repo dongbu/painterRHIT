@@ -15,5 +15,8 @@ int main(int argc, char *argv[])
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
 
+	Sketchpad *s = new Sketchpad(1000, 1000);
+	s->show();
+
     return a.exec();
 }

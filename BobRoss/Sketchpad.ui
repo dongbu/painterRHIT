@@ -76,7 +76,9 @@
    <addaction name="actionDraw_Square"/>
    <addaction name="actionDraw_Circle"/>
    <addaction name="actionDraw_Line"/>
-   <addaction name="actionDraw_Point_Map"/>
+   <addaction name="actionDraw_Filled_Circle"/>
+   <addaction name="actionDraw_Filled_Rectangle"/>
+   <addaction name="actionDraw_Filled_Polygon"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -138,15 +140,6 @@
     <string>Draw Function</string>
    </property>
   </action>
-  <action name="actionDraw_Point_Map">
-   <property name="icon">
-    <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/Point Map.png</normaloff>:/Icon Storage/Point Map.png</iconset>
-   </property>
-   <property name="text">
-    <string>Draw Point Map</string>
-   </property>
-  </action>
   <action name="actionConnect">
    <property name="text">
     <string>Connect</string>
@@ -171,6 +164,33 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionDraw_Filled_Circle">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/FilledCircle.png</normaloff>:/Icon Storage/FilledCircle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Filled Circle</string>
+   </property>
+  </action>
+  <action name="actionDraw_Filled_Rectangle">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/FilledSquare.png</normaloff>:/Icon Storage/FilledSquare.png</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Filled Rectangle</string>
+   </property>
+  </action>
+  <action name="actionDraw_Filled_Polygon">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/FreeForm.png</normaloff>:/Icon Storage/FreeForm.png</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Filled Polygon</string>
    </property>
   </action>
  </widget>
