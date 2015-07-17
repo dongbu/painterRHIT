@@ -86,7 +86,6 @@ void Painter::load(std::string projectName, std::string projectLocation) {
 	pugi::xml_node listOfShapes = doc.child("shapes");
 	shapes.parseXML(&listOfShapes);
 	printf("%s\n",result.description());
-	printf("shapes length: %i\n", shapes.length());
 	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
