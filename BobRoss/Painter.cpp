@@ -8,7 +8,8 @@ Painter::Painter() {
 
 	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width,height,ProjectName);
-	commandWin.setShapes(&shapes);
+	commandWin = new CommandWindow();
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
 Painter::Painter(std::string name) {
@@ -19,7 +20,8 @@ Painter::Painter(std::string name) {
 
 	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin.setShapes(&shapes);
+	commandWin = new CommandWindow();
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
 Painter::Painter(Shapes shapes) {
@@ -31,7 +33,9 @@ Painter::Painter(Shapes shapes) {
 
 	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin.setShapes(&shapes);
+	commandWin = new CommandWindow();
+	commandWin->setShapes(shapes);
+	printf("constructor says that command window has: %i\n", commandWin->shapes.length());
 	sketch->setShapes(shapes);
 }
 Painter::Painter(std::string name, Shapes shapes) {
@@ -43,18 +47,19 @@ Painter::Painter(std::string name, Shapes shapes) {
 
 	sketch = new Sketchpad(width, height);
 	simWin = new DrawWindow(width, height, ProjectName);
-	commandWin.setShapes(&shapes);
+	commandWin = new CommandWindow();
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 
 }
 void Painter::setShapes(Shapes shapes){
 	this->shapes = shapes;
-	commandWin.setShapes(&shapes);
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
 void Painter::addShape(Shape *shape) {
 	this->shapes.addShape(shape);
-	commandWin.setShapes(&shapes);
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
 void Painter::setDimensions(int width, int height) {
@@ -82,7 +87,7 @@ void Painter::load(std::string projectName, std::string projectLocation) {
 	shapes.parseXML(&listOfShapes);
 	printf("%s\n",result.description());
 	printf("shapes length: %i\n", shapes.length());
-	commandWin.setShapes(&shapes);
+	commandWin->setShapes(shapes);
 	sketch->setShapes(shapes);
 }
 void Painter::setName(std::string ProjectName){
@@ -97,18 +102,17 @@ void Painter::setLocation(std::string ProjectLocation){
 void Painter::showGUI(bool toggle){
 	if (toggle){
 		sketch->show();
-		commandWin.show();
+		commandWin->show();
 	}
 	else{
 		sketch->hide();
-		commandWin.hide();
+		commandWin->hide();
 	}
 }
 void Painter::launchSimulatorWindow(){
 	this->simWin->show();
-	this->shapes.drawAll(this->simWin);
-	this->simWin->show();
+	//this->shapes.drawAll(this->simWin);
 }
 void Painter::launchCommandWindow(){
-	commandWin.show();
+	commandWin->show();
 }

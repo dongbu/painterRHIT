@@ -412,7 +412,6 @@ public:
 
   void drawAll(DrawWindow *W) {
 	  auto d1 = std::async(&Shapes::drawAllHelper, this, W);
-
   }
 
   void drawAllHelper(DrawWindow *W){
@@ -461,7 +460,9 @@ public:
   }
 
   void swap(int pos1, int pos2){
+	  printf("check 1\n");
 	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
+	  printf("check 2\n");
   }
 
   Shapes() { max_id=0; }

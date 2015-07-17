@@ -15,7 +15,8 @@ class CommandWindow : public QMainWindow
 public:
     explicit CommandWindow(QWidget *parent = 0);
     ~CommandWindow();
-    void setShapes(Shapes *shapes);
+    void setShapes(Shapes shapes);
+	Shapes shapes;
 
 private:
     void launchEditorWin(int index);
@@ -25,7 +26,7 @@ private:
 	void populate();
 
     Ui::CommandWindow *ui;
-    Shapes *shapes;
+
     EditorWindow *currentEditor;
 
 private slots:
