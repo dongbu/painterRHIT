@@ -43,14 +43,11 @@ void Painter::load(std::string projectLocation) {
 
 void Painter::showGUI(bool toggle){
 	sketch = new Sketchpad(width, height, shapes);
-	simWin = new DrawWindow(width, height, "Simulator");
-	commandWin = new CommandWindow(shapes);
-	commandWin->setSimWindow(simWin);
-	simWin->hideWindow();
+	launchSimulation();
 
 	QObject::connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	QObject::connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
-	QObject::connect(sketch, SIGNAL(prodCommandWindow()), commandWin, SLOT(addCommand()));
+	QObject::connect(sketch, SIGNAL(prodCommandWindow()), commandWin, SLOT(populate()));
 	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
 	if (toggle){
@@ -62,17 +59,21 @@ void Painter::showGUI(bool toggle){
 		commandWin->hide();
 	}
 }
-void Painter::launchSimulatorWindow(){
-	simWin = new DrawWindow(width, height, "Simulator");
-	this->simWin->show();
-	//this->shapes.drawAll(this->simWin);
-}
-void Painter::launchCommandWindow(){
+void Painter::launchSimulation(){
 	commandWin = new CommandWindow(shapes);
-	commandWin->show();
+	logic = new RunLogic(width,height,shapes);
+
+	connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
+	connect(commandWin->ui->actionForward, SIGNAL(triggered()), logic, SLOT(forwardClicked()));
+	connect(commandWin->ui->actionPause, SIGNAL(triggered()), logic, SLOT(pauseClicked()));
+	connect(commandWin->ui->actionPlay, SIGNAL(triggered()), logic, SLOT(runClicked()));
+	connect(commandWin->ui->actionStop, SIGNAL(triggered()), logic, SLOT(stopClicked()));
+	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
+	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
+	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(setBreakPoint(int)));
 }
 
-//Antiquated functions below here (should consult with Zach before deleting)
+//Antiquated functions below here (should consult with Zach before deleting)//
 
 //void Painter::load(std::string projectName, std::string projectLocation) {
 //	this->ProjectLocation = projectLocation;
@@ -110,12 +111,14 @@ void Painter::launchCommandWindow(){
 //	width = 1000;
 //	height = 800;
 //}
+
 //Painter::Painter(std::string name) {
 //	ProjectName = name;
 //	ProjectLocation = "";
 //	width = 1000;
 //	height = 800;
 //}
+
 //Painter::Painter(Shapes *shapes) {
 //	this->shapes = shapes;
 //	ProjectName = "Temp";
@@ -123,7 +126,7 @@ void Painter::launchCommandWindow(){
 //	width = 1000;
 //	height = 800;
 //}
-//
+
 //Painter::Painter(std::string name, Shapes *shapes) {
 //	this->shapes = shapes;
 //	ProjectName = name;
@@ -134,4 +137,15 @@ void Painter::launchCommandWindow(){
 
 //void Painter::setShapes(Shapes *shapes){
 //	this->shapes = shapes;
+//}
+
+//void Painter::launchSimulatorWindow(){
+//	simWin = new DrawWindow(width, height, "Simulator");
+//	this->simWin->show();
+//	//this->shapes.drawAll(this->simWin);
+//}
+
+//void Painter::launchCommandWindow(){
+//	commandWin = new CommandWindow(shapes);
+//	commandWin->show();
 //}

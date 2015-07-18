@@ -3,7 +3,7 @@
 
 #include "CommandWindow.h"
 #include "SketchPad.h"
-#include "DrawWindow.cpp"
+#include "RunLogic.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -24,8 +24,7 @@ public:
 	void setName(std::string ProjectName);
 	void setLocation(std::string ProjectLocation);
 	void showGUI(bool toggle);
-	void launchSimulatorWindow();
-	void launchCommandWindow();
+	void launchSimulation();
 
 	//Ask about deleting the following commented out things:
 	//void load(std::string projectName, std::string projectLocation);
@@ -34,6 +33,8 @@ public:
 	//Painter(std::string name, Shapes *shapes);
 	//Painter(std::string name);
 	//void setShapes(Shapes *shapes);
+	//void launchSimulatorWindow();
+	//void launchCommandWindow();
 
 private:
 	Shapes *shapes;
@@ -41,7 +42,7 @@ private:
 
 	CommandWindow *commandWin;
 	Sketchpad *sketch;
-	DrawWindow *simWin;
+	RunLogic *logic;
 
 public slots:
 	void save(std::string projectLocation);

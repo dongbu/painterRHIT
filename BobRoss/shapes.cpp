@@ -429,8 +429,7 @@ public:
 		  W->show();
 		  shapes[i]->draw(W);
 		  _sleep(1000);
-	  }
-	  
+	  }  
   }
 
   void setRunning(bool toggle){

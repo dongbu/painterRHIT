@@ -14,11 +14,6 @@ ui(new Ui::CommandWindow)
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
 	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
-	connect(ui->actionBackward, SIGNAL(triggered()), this, SLOT(backwardClicked()));
-	connect(ui->actionForward, SIGNAL(triggered()), this, SLOT(forwardClicked()));
-	connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(pauseClicked()));
-	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(runClicked()));
-	connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(stopClicked()));
 
 	populate();
 }
@@ -28,25 +23,7 @@ CommandWindow::~CommandWindow()
     delete ui;
 }
 
-void CommandWindow::setSimWindow(DrawWindow *sim){
-	this->simWin = sim;
-}
-
-///Private methods below herelaunchCommandWindow
-void CommandWindow::runFrom(int index) {
-	printf("TODO: implement runFrom\n");
-}
-void CommandWindow::runOnly(int index) {
-	printf("TODO: implement runOnly\n");
-}
-void CommandWindow::setBreakPoint(int index) {
-	printf("TODO: implement setBreakPoint\n");
-}
-
 ///Slots below here///
-void CommandWindow::addCommand() {
-	populate();
-}
 
 void CommandWindow::moveUpClicked() {
 	int currentIndex = ui->listWidget->currentIndex().row();
@@ -69,27 +46,7 @@ void CommandWindow::deleteCommandClicked() {
 	populate();
 	emit modifiedCommand();
 }
-void CommandWindow::stopClicked() {
-	printf("TODO: reset position and toggles\n");
-	this->shapes->setRunning(false);
-	this->simWin->clearWindow(255, 255, 255);
-}
-void CommandWindow::pauseClicked() {
-	this->shapes->setRunning(false);
-}
-void CommandWindow::forwardClicked() {
-	printf("TODO: implement forwardClicked\n");
-}
-void CommandWindow::backwardClicked() {
-	printf("TODO: implement backwardClicked\n");
-}
-void CommandWindow::runClicked() {
-	printf("TODO: keep track of position\n");
-	printf("TODO: change colors\n");
-	printf("TODO: deal with breakpoints and toggles\n");
-	this->simWin->showWindow();
-	this->shapes->drawAll(this->simWin);
-}
+
 void CommandWindow::populate(){
 	ui->listWidget->clear();
 	for (int i = 0; i < shapes->length(); i++){
@@ -108,7 +65,7 @@ void CommandWindow::launchRightClick(QPoint pos) {
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(menuSort(QAction*)));
 }
 void CommandWindow::menuSort(QAction *a) {
-	if (a->text() == "Run from here") runFrom(ui->listWidget->currentRow());
-	else if (a->text() == "Run this command") runOnly(ui->listWidget->currentRow());
-	else setBreakPoint(ui->listWidget->currentRow());
+	if (a->text() == "Run from here") emit runFrom(ui->listWidget->currentRow());
+	else if (a->text() == "Run this command") emit runOnly(ui->listWidget->currentRow());
+	else emit setBreakPoint(ui->listWidget->currentRow());
 }
