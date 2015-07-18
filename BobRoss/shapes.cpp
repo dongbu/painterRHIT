@@ -412,8 +412,7 @@ public:
   }
 
   void stdDrawAll(DrawWindow *W) {
-	  int j = shapes.size();
-	  for (int i = 0; i<shapes.size(); i++) {
+	  for (int i = 0; i < shapes.size(); i++) {
 		  shapes.at(i);
 		  shapes.at(i)->draw(W);
 	  }
@@ -472,6 +471,10 @@ public:
 
   int length(){
 	  return shapes.size();
+  }
+
+  void clear(){
+	  shapes.clear();
   }
 
   void swap(int pos1, int pos2){

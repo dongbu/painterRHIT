@@ -6,6 +6,7 @@
 #include <qvBoxLayout>
 #include <QActionGroup>
 #include <cmath>
+#include <QFileDialog>
 
 ///Public methods below here
 Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
@@ -15,6 +16,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 	//setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
 	setupQt();
+	this->paintingName = "unnamed";
 
 	//Linking opencv to Qt.
 	shapes = ss;
@@ -22,7 +24,6 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
 	this->cvWindow = new DrawWindow(height,width,"garbage name");
 	this->cvWindow->hideWindow();
-
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -38,42 +39,40 @@ Sketchpad::~Sketchpad()
     delete ui;
 }
 
-void Sketchpad::setupQt() {
-	QActionGroup *actionGroup = new QActionGroup(this);
-	actionGroup->addAction(ui->actionDraw_Square);
-	actionGroup->addAction(ui->actionDraw_Circle);
-	actionGroup->addAction(ui->actionDraw_Line);
-	actionGroup->addAction(ui->actionDraw_Filled_Circle);
-	actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
-	actionGroup->addAction(ui->actionDraw_Filled_Polygon);
-	ui->actionDraw_Square->setCheckable(true);
-	ui->actionDraw_Circle->setCheckable(true);
-	ui->actionDraw_Line->setCheckable(true);
-	ui->actionDraw_Filled_Rectangle->setCheckable(true);
-	ui->actionDraw_Filled_Circle->setCheckable(true);
-	ui->actionDraw_Filled_Polygon->setCheckable(true);
-	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
+void Sketchpad::redraw() {
+	getColor();
+	startNewCommand();
 
-	color = new QComboBox();
-	QStringList colors;
-	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
-	color->addItems(colors);
-
-	thickness = new QSpinBox();
-	thickness->setFixedWidth(60);
-	thickness->setMinimum(1);
-	thickness->setMaximum(25);
-	thickness->setSingleStep(1);
-	thickness->setValue(4);
-
-	ui->toolBar->addWidget(color);
-	ui->toolBar->addWidget(thickness);
-
-	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
-	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
+	cvWindow->clearWindow(); //clear the window
+	shapes->stdDrawAll(cvWindow); //redraw the window
+	translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
-///private methods below here///
+void Sketchpad::startNewCommand() {
+	prevX = -10;
+	prevY = -10;
+
+	if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
+		curPolyLine = new PolyLine();
+		curPolyLine->setThickness(thickness->text().toInt());
+		curPolyLine->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curPolyLine;
+	}
+
+	else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
+		curCircle = new Ellipse();
+		if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
+		curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curCircle;
+	}
+	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
+		curRectangle = new Rectangle();
+		if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
+		curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curRectangle;
+	}
+}
+
 void Sketchpad::refresh(int x, int y) {
 	//DRAW CLICK CIRCLE//
 	cvWindow->setPenColor(200, 200, 200);
@@ -88,7 +87,7 @@ void Sketchpad::refresh(int x, int y) {
 			//actually, we were drawing a polyshape
 			if (ui->actionDraw_Filled_Polygon->isChecked()) {
 				PolyPoints *pp = new PolyPoints();
-				pp->setPenColor(200, 200, 200);
+				pp->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 				pp->setThickness(4);
 				for (int i = 0; i < curPolyLine->points.size(); i++) {
 					pp->addPoint(curPolyLine->points.at(i).x,curPolyLine->points.at(i).y);
@@ -134,7 +133,7 @@ void Sketchpad::refresh(int x, int y) {
 		startNewCommand();
 		cvWindow->clearWindow();
 		shapes->stdDrawAll(cvWindow); //redraw window
-		emit shapeAdded();
+		emit prodCommandWindow();
 	}
 	else {
 		currentShape->draw(cvWindow);
@@ -146,39 +145,44 @@ void Sketchpad::refresh(int x, int y) {
 
 }
 
-///slots below here///
+//Tedious functions below here
+void Sketchpad::setupQt() {
+	QActionGroup *actionGroup = new QActionGroup(this);
+	actionGroup->addAction(ui->actionDraw_Square);
+	actionGroup->addAction(ui->actionDraw_Circle);
+	actionGroup->addAction(ui->actionDraw_Line);
+	actionGroup->addAction(ui->actionDraw_Filled_Circle);
+	actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
+	actionGroup->addAction(ui->actionDraw_Filled_Polygon);
+	ui->actionDraw_Square->setCheckable(true);
+	ui->actionDraw_Circle->setCheckable(true);
+	ui->actionDraw_Line->setCheckable(true);
+	ui->actionDraw_Filled_Rectangle->setCheckable(true);
+	ui->actionDraw_Filled_Circle->setCheckable(true);
+	ui->actionDraw_Filled_Polygon->setCheckable(true);
+	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
 
-void Sketchpad::startNewCommand() {
-	prevX = -10;
-	prevY = -10;
+	color = new QComboBox();
+	QStringList colors;
+	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	color->addItems(colors);
 
-	if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
-		curPolyLine = new PolyLine();
-		curPolyLine->setThickness(thickness->text().toInt());
-		curPolyLine->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-		this->currentShape = curPolyLine;
-	}
+	thickness = new QSpinBox();
+	thickness->setFixedWidth(60);
+	thickness->setMinimum(1);
+	thickness->setMaximum(25);
+	thickness->setSingleStep(1);
+	thickness->setValue(4);
 
-	else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
-		curCircle = new Ellipse();
-		if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
-		curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-		this->currentShape = curCircle;
-	}
-	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
-		curRectangle = new Rectangle();
-		if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
-		curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-		this->currentShape = curRectangle;
-	}
-}
-void Sketchpad::redraw() {
-	getColor();
-	startNewCommand();
+	ui->toolBar->addWidget(color);
+	ui->toolBar->addWidget(thickness);
 
-	cvWindow->clearWindow(); //clear the window
-	shapes->stdDrawAll(cvWindow); //redraw the window
-	translator->showImage(cvWindow->grid); //actually redraw the window
+	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
+	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
+	connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
+	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
+	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
+	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
 }
 
 void Sketchpad::getColor() {
@@ -212,16 +216,41 @@ void Sketchpad::getColor() {
 		toReplace.push_back(240);
 		toReplace.push_back(32);
 		toReplace.push_back(160);
-
 	}
 	this->rgbColor = toReplace;
 }
 
+//Functions primarily relating to other classes are below here
 void Sketchpad::saveAsClicked() {
+	QFileDialog saveDirectory;
+	QStringList filters;
+	saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
+	filters << "Text files (*.xml)";
+	saveDirectory.setNameFilters(filters);
+	if (saveDirectory.exec()) {
+		paintingName = saveDirectory.selectedFiles().at(0).toStdString();
+		emit save(paintingName);
+	}
 }
 void Sketchpad::saveClicked() {
+	if (paintingName == "unnamed") saveAsClicked();
+	else emit save(paintingName);
 }
 void Sketchpad::openClicked() {
+	newClicked();
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		emit load(directory.selectedFiles().at(0).toStdString());
+		emit prodCommandWindow();
+	}
 }
 void Sketchpad::newClicked() {
+	printf("new clicked");
+	this->shapes->clear();
+	this->paintingName = "unnamed";
+	this->redraw();
+	emit prodCommandWindow();
 }

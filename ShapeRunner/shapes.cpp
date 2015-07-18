@@ -9,7 +9,7 @@
 #include <opencv/highgui.h> // WINDOW_AUTOSIZE
 using namespace std;
 
-std::string sstring_format(const std::string fmt, ...) {
+std::string string_format(const std::string fmt, ...) {
     int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
     std::string str;
     va_list ap;
@@ -59,7 +59,7 @@ public:
 
   std::string getColorXML() {
     std::string line;
-	line.append(sstring_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", pen_color_vec[2], pen_color_vec[1], pen_color_vec[0]));
+	line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", pen_color_vec[2], pen_color_vec[1], pen_color_vec[0]));
     return line;
   }
   
@@ -88,11 +88,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(sstring_format("<shape type=\"polyline\" id=\"%i\">", getID()));
+	line.append(string_format("<shape type=\"polyline\" id=\"%i\">", getID()));
     line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<points.size(); i++) {
-		line.append(sstring_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+		line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -127,11 +127,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(sstring_format("<shape type=\"polypoints\" id=\"%i\">", getID()));
+	line.append(string_format("<shape type=\"polypoints\" id=\"%i\">", getID()));
     line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<points.size(); i++) {
-		line.append(sstring_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+		line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -168,11 +168,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(sstring_format("<shape type=\"pixelregion\" id=\"%i\">", getID()));
+	line.append(string_format("<shape type=\"pixelregion\" id=\"%i\">", getID()));
     line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<points.size(); i++) {
-		line.append(sstring_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+		line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -207,9 +207,9 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(sstring_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\">", getID(), fill));
+	line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\">", getID(), fill));
     line.append(getColorXML());
-	line.append(sstring_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
+	line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			      pt1.x,pt1.y,pt2.x,pt2.y));
     line.append("</shape>");
     return line;
@@ -245,7 +245,7 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(sstring_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\">",
+	line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\">",
 			      getID(),fill,pt.x,pt.y,axes.width,axes.height));
     line.append(getColorXML());
     line.append("</shape>");

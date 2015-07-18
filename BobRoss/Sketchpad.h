@@ -31,17 +31,16 @@ private:
     Ui::Sketchpad *ui;
     CVImageWidget *translator;
 	DrawWindow *cvWindow;
-    DrawWindow *display;
     QComboBox *color;
     QSpinBox *thickness;
     Shapes *shapes;
-
 	Shape *currentShape;
 	PolyLine *curPolyLine;
 	Ellipse *curCircle;
 	Rectangle *curRectangle;
 	int prevX, prevY;
 	std::vector<int> rgbColor;
+	std::string paintingName;
 
 private slots:
 	void refresh(int x, int y);
@@ -56,7 +55,9 @@ public slots:
 	void redraw();
 
 signals:
-	void shapeAdded();
+	void prodCommandWindow();
+	void load(std::string);
+	void save(std::string);
 
 };
 

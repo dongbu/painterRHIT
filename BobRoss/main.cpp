@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
     ss->addShape(p1);
     ss->addShape(p2);
     ss->addShape(p3);
-    Painter *p = new Painter(ss);
-    p->showGUI(true);
+    Painter *painter = new Painter(ss);
+	painter->showGUI(true);
 
 	return a.exec();
 }

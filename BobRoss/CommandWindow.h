@@ -32,8 +32,8 @@ private slots:
     void moveUpClicked();
     void moveDownClicked();
     void deleteCommandClicked();
-
-	void launchRightClick(); //Zach has refused to do this
+	void launchRightClick(QPoint p);
+	void menuSort(QAction *a);
 
 	//waiting for sim. to take time
     void stopClicked();

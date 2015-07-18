@@ -38,19 +38,19 @@ ui(new Ui::MainWindow)
 	}
 	//save work//
 
-	CVImageWidget *imWidg = new CVImageWidget();
+	/*CVImageWidget *imWidg = new CVImageWidget();
 	imWidg->setParent(ui->widget);
 	cv::Mat image = cv::imread("C:/Users/horvegc/Pictures/Backgrounds/screamy.jpg", true);
 	imWidg->showImage(image);
-
+*/
 	//click to draw work//
-	//drawOn2 = new drawOnWidget(ui->widget, 1);
+	drawOn2 = new drawOnWidget(ui->widget, 1);
 	drawOn2 = new drawOnWidget(NULL, 1);
 	drawOn2->setFixedWidth(1000);
 	drawOn2->setFixedHeight(750);
 	ui->widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 
-	//drawOn = new drawOnWidget(ui->widget, 0);
+	drawOn = new drawOnWidget(ui->widget, 0);
 	drawOn = new drawOnWidget(NULL, 0);
 	drawOn->setFixedWidth(1000);
 	drawOn->setFixedHeight(750);
