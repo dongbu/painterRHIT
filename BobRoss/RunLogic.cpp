@@ -1,40 +1,70 @@
 #include "RunLogic.h"
 
+int COMMAND_DELAY = 1000; //(ms)
+
 RunLogic::RunLogic(int width, int height, Shapes *shapes) {
 	this->width = width;
 	this->height = height;
 	this->shapes = shapes;
 	this->simWin = new DrawWindow(width, height, "simulation window");
+	this->simWin->hideWindow();
+	stopClicked();
 }
 
+void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
+
 void RunLogic::stopClicked() {
-	printf("TODO: reset position and toggles\n");
-	this->shapes->setRunning(false);
-	this->simWin->clearWindow(255, 255, 255);
+	this->simWin->showWindow();
+	running = false;
+	simWin->clearWindow(255, 255, 255); //white
+	currentShapeIndex = 0;
+	stopIndex = shapes->length();
 }
-void RunLogic::pauseClicked() {
-	this->shapes->setRunning(false);
-}
+void RunLogic::pauseClicked() { running = false; }
+	
 void RunLogic::forwardClicked() {
-	printf("TODO: implement forwardClicked\n");
+	this->simWin->showWindow();
+	if (currentShapeIndex >= shapes->length()) return;
+	running = false;
+	runOnly(currentShapeIndex);
+	currentShapeIndex++;
 }
 void RunLogic::backwardClicked() {
-	printf("TODO: implement backwardClicked\n");
+	this->simWin->showWindow();
+	if (currentShapeIndex <= 0) return;
+	currentShapeIndex--; //otherwise, -- the index
+	simWin->clearWindow(255, 255, 255); //white
+	running = false;
+	for (int i = 0; i < currentShapeIndex; i++) runOnly(i);
 }
 void RunLogic::runClicked() {
-	printf("TODO: keep track of position\n");
-	printf("TODO: change colors\n");
-	printf("TODO: deal with breakpoints and toggles\n");
 	this->simWin->showWindow();
-	this->shapes->drawAll(this->simWin);
+	if (running) return; //don't start multiple window threads (that's bad...)
+	running = true;
+	auto d1 = std::async(&RunLogic::drawingThread, this, simWin);
 }
 
 void RunLogic::runFrom(int index) {
-	printf("TODO: implement runFrom\n");
+	this->simWin->showWindow();
+	currentShapeIndex = index;
+	stopIndex = shapes->length();
+	runClicked();
 }
 void RunLogic::runOnly(int index) {
-	printf("TODO: implement runOnly\n");
+	this->simWin->showWindow();
+	shapes->at(index)->draw(simWin);
+	simWin->show();
 }
 void RunLogic::setBreakPoint(int index) {
 	printf("TODO: implement setBreakPoint\n");
+}
+
+void RunLogic::drawingThread(DrawWindow *W) {
+	while (running && currentShapeIndex < stopIndex) {
+		shapes->at(currentShapeIndex)->draw(W);
+		W->show();
+		currentShapeIndex++;
+		_sleep(COMMAND_DELAY);
+	}
+	running = false;
 }

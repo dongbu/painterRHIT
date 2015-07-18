@@ -29,7 +29,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
 	getColor(); //sets class's color
 	cvWindow->clearWindow(); //clear the window
-	shapes->stdDrawAll(cvWindow); //redraw the window
+	shapes->DrawAll(cvWindow); //redraw the window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	this->startNewCommand(); //prep for initial command
 }
@@ -44,7 +44,7 @@ void Sketchpad::redraw() {
 	startNewCommand();
 
 	cvWindow->clearWindow(); //clear the window
-	shapes->stdDrawAll(cvWindow); //redraw the window
+	shapes->DrawAll(cvWindow); //redraw the window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
@@ -132,8 +132,8 @@ void Sketchpad::refresh(int x, int y) {
 		shapes->addShape(currentShape);
 		startNewCommand();
 		cvWindow->clearWindow();
-		shapes->stdDrawAll(cvWindow); //redraw window
-		emit prodCommandWindow();
+		shapes->DrawAll(cvWindow); //redraw window
+		emit prodOtherWindows();
 	}
 	else {
 		currentShape->draw(cvWindow);
@@ -244,7 +244,7 @@ void Sketchpad::openClicked() {
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
 		emit load(directory.selectedFiles().at(0).toStdString());
-		emit prodCommandWindow();
+		emit prodOtherWindows();
 	}
 }
 void Sketchpad::newClicked() {
@@ -252,5 +252,5 @@ void Sketchpad::newClicked() {
 	this->shapes->clear();
 	this->paintingName = "unnamed";
 	this->redraw();
-	emit prodCommandWindow();
+	emit prodOtherWindows();
 }

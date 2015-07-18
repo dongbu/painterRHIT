@@ -45,10 +45,11 @@ void Painter::showGUI(bool toggle){
 	sketch = new Sketchpad(width, height, shapes);
 	launchSimulation();
 
-	QObject::connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
-	QObject::connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
-	QObject::connect(sketch, SIGNAL(prodCommandWindow()), commandWin, SLOT(populate()));
-	QObject::connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
+	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
+	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
+	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
+	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
+	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
 	if (toggle){
 		sketch->show();
@@ -71,6 +72,7 @@ void Painter::launchSimulation(){
 	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
 	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(setBreakPoint(int)));
+	connect(commandWin, SIGNAL(modifiedCommand()), logic, SLOT(shapesChanged()));
 }
 
 //Antiquated functions below here (should consult with Zach before deleting)//

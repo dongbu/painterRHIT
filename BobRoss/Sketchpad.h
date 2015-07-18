@@ -55,7 +55,7 @@ public slots:
 	void redraw();
 
 signals:
-	void prodCommandWindow();
+	void prodOtherWindows();
 	void load(std::string);
 	void save(std::string);
 
