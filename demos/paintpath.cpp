@@ -13,7 +13,7 @@ cv::Vec3b scalarToVec3b (cv::Scalar s) {
 }
 
 // returns 1 if all of the pixels at points are of color color (ABC: change points to *points)
-int imageOnlyHasColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
+int imageOnlyHasColorOBSOLETE(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
   cv::Point p;
   int debug=0;
   if (debug) printf(" - points has %i points, offset %i,%i\n",(int)points.size(),offsetx,offsety);
@@ -39,12 +39,14 @@ int imageOnlyHasColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b c
 }
 
 
-// returns 1 if all of the pixels at points are of color color (ABC: change points to *points)
+// returns 0 if any of the points can't be painted... otherwise it returns the # of ok pixels that
+// are in the desired region to be painted (ABC: change points to *points)
 int imageOnlyHasColor(int *grid, int w, int h, std::vector<cv::Point> points, int offsetx=0, int offsety=0) {
   cv::Point p;
   int debug=0;
   if (debug) printf(" - points has %i points, offset %i,%i\n",(int)points.size(),offsetx,offsety);
 
+  int num_ok_pixels=0;
   cv::Vec3b icolor;
   for (int i=0; i<(int)points.size(); i++) {
     p = points[i];
@@ -58,19 +60,20 @@ int imageOnlyHasColor(int *grid, int w, int h, std::vector<cv::Point> points, in
       if (grid[x*h+y]==3) { // untouchable
 	//printf(" - - - %i,%i is untouchable\n",x,y);
 	return 0; 
-      } else {
+      } else if (grid[x*h+y]==1) { // desired place to paint
 	//if (debug) printf(" - - - %i,%i is ok\n",x,y);
+	num_ok_pixels++;
       }
     } else {
       return 0; // only if you don't want to put brush outside of paper
     }
   }
   if (debug) printf(" - - - all points are the given color\n");
-  return 1;
+  return num_ok_pixels;
 }
 
 // returns 1 if any of the pixels at points are of color color (ABC: change points to *points)
-int imageHasColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
+int imageHasColorOBSOLETE(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
   cv::Point p;
   for (int i=0; i<(int)points.size(); i++) {
     p = points[i];
@@ -82,7 +85,7 @@ int imageHasColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color
 }
 
 // returns 1 if none of the pixels at points are of color color (ABC: change points to *points)
-int imageHasNoColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
+int imageHasNoColorOBSOLETE(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b color, int offsetx=0, int offsety=0) {
   cv::Point p;
   for (int i=0; i<(int)points.size(); i++) {
     p = points[i];
@@ -93,18 +96,21 @@ int imageHasNoColor(cv::Mat *image, std::vector<cv::Point> points, cv::Vec3b col
   return 1;
 }
 
-void defineBoundary(cv::Mat *image, cv::Scalar region_color, std::vector<cv::Point> *boundary) {
+
+// scans an image and returns the pixels at the border of a colored region (optionally, returns the interior)
+void defineBoundary(cv::Mat *image, cv::Scalar region_color, std::vector<cv::Point> *boundary, std::vector<cv::Point> *interior = NULL) {
   int w=image->cols;
   int h=image->rows;
   // determine the boundary pixels
   for (int i=0; i<w; i++) {
     for (int j=0; j<h; j++) {
-      cv::Scalar color = image->at<cv::Vec3b>(cv::Point(i,j));
+      cv::Scalar color = image->at<cv::Vec3b>(cv::Point(i,j)); // hxxx
       
+      int is_boundary=0;
       if (color == region_color) {
 	// see if pixel is at boundary of region to be painted
 	if (i==0 || j==0 || i==w-1 || j==h-1) {
-	  boundary->push_back(cv::Point(i,j));
+	  is_boundary=1;
 	} else {
 	  // check for neighbors
 	  int left=std::max(i-1 , 0);
@@ -119,16 +125,50 @@ void defineBoundary(cv::Mat *image, cv::Scalar region_color, std::vector<cv::Poi
 	      if (neighbor_color[0] != region_color[0] ||
 		  neighbor_color[1] != region_color[1] ||
 		  neighbor_color[2] != region_color[2] ) {
-		boundary->push_back(cv::Point(i,j));
+		is_boundary=1;
+		//boundary->push_back(cv::Point(i,j));
 		n=right;
 		m=bottom;
 	      }
 	    }
 	  }
+	}	
+	if (is_boundary) {
+	  boundary->push_back(cv::Point(i,j));
+	} else if (interior) {
+	  interior->push_back(cv::Point(i,j));
 	}
       }
     }
   }
+}
+
+
+// given a region of pixels, returns the pixels at the border of a colored region (optionally, returns the interior)
+void defineBoundary(std::vector<cv::Point> region, cv::Scalar region_color, std::vector<cv::Point> *boundary, std::vector<cv::Point> *interior = NULL) {
+  int minx=region[0].x;
+  int miny=region[0].y;
+  int maxx=0;
+  int maxy=0;
+  for (int i=0; i<(int)region.size(); i++) {
+      minx = std::min(minx,region[i].x);
+      miny = std::min(minx,region[i].y);
+      maxx = std::max(maxx,region[i].x);
+      maxy = std::max(maxx,region[i].y);
+    }
+	 cv::Mat image = cv::Mat::zeros(cv::Size(maxx-minx,maxy-miny), CV_8UC3);
+       
+       if (region_color[0]==0 && region_color[0]==0 && region_color[0]==0) {
+	 image.setTo(cv::Scalar(1,1,1));
+       } else {
+	 image.setTo(cv::Scalar(0,0,0));
+       }
+
+	 cv::Vec3b region_color_vec = scalarToVec3b(region_color);
+       for (int i=0; i<(int)region.size(); i++) {
+	   image.at<cv::Vec3b>(region[i]) = region_color_vec;
+	 }
+	      defineBoundary(&image,region_color,boundary,interior);
 }
 
 
@@ -147,7 +187,7 @@ int main( int argc, char** argv )
   for (int i=0; i<w*h; i++) { grid[i]=3; }
   
   DrawWindow W = DrawWindow(w+2*border,h+2*border,"Region"); // w,h
-  W.moveWindow(30,50);
+  W.moveWindow(0,50);
 
   W.setPenColor(100,0,0);  // show all pixels to be untouchable
   W.drawRectangle(border,border,border+w,border+h,1); // default 
@@ -155,7 +195,7 @@ int main( int argc, char** argv )
   //  W.drawPixel(n,m);
 
   // mark pixels that will be painted over by another color later
-  if (0) {
+  if (1) {
     W.setPenColor(0,0,100);
     for (int i=0; i<10; i++) {
       int x= rng.uniform(0.,.8*w);
@@ -192,10 +232,8 @@ int main( int argc, char** argv )
 
   W.show();
 
-  cv::Vec3b set_color;
-
   // create brush mask
-  int brush_w = 10; // max dimensions of brush
+  int brush_w = 30; // max dimensions of brush
   int brush_h = 20;
   //int *brush_mask new int [brush_w*brush_h]; // which pixels are mask
   //for (int i=0; i<brush_w*brush_h; i++) { brush_mask[i]=0; }
@@ -207,48 +245,42 @@ int main( int argc, char** argv )
   brush.setTo(not_brush_color);
 
   std::vector<cv::Point> brush_pixels;
-  set_color = scalarToVec3b(brush_color);
+  cv::Vec3b brush_color_vec3b = scalarToVec3b(brush_color);
 
   // draw brush (note: this is so we can use arbitrary shaped brushes
-  for (int i=0; i<brush_w; i++) {
-    for (int j=0; j<brush_h; j++) {
-      brush.at<cv::Vec3b>(cv::Point(i,j)) = set_color;
-    } 
-  }
-
+  cv::rectangle( brush, cv::Point(0,0), cv::Point(brush_w,brush_h), brush_color, -1);
   cv::namedWindow( "brush", CV_WINDOW_AUTOSIZE );
   cv::imshow( "brush", brush );
 
+  // make a vector of brush pixels
   for (int i=0; i<brush_w; i++) {
     for (int j=0; j<brush_h; j++) {
-      if (brush.at<cv::Vec3b>(cv::Point(i,j)) == set_color) {
+      if (brush.at<cv::Vec3b>(cv::Point(i,j)) == brush_color_vec3b) {
 	brush_pixels.push_back(cv::Point(i,j));
       }
     }
   }
 
+  // find the pixels of the boundary of the brush
   std::vector<cv::Point> brush_boundary;
-  defineBoundary(&brush,brush_color,&brush_boundary);
+  std::vector<cv::Point> brush_interior;
+  defineBoundary(&brush,brush_color,&brush_boundary,&brush_interior);
   printf("brush boundary has %i points\n",(int)brush_boundary.size());
 
+  // find the pixels at the boundary of the region you want to paint
   std::vector<cv::Point> boundary;
   cv::Mat *painting = &W.grid;
   defineBoundary(painting,brush_color,&boundary);
-  // offset the region
+  // offset the region 
   for (int i=0; i<(int)boundary.size(); i++) {
     boundary[i].x-=border;
     boundary[i].y-=border;
   }
   printf("painting boundary has %i points\n",(int)boundary.size());
-  
-  set_color = scalarToVec3b(cv::Scalar(0,0,255));
-  set_color[0]=0;
-  set_color[1]=0;
-  set_color[2]=255;
 
+  // find the pixels where you can place the brush and not over paint somewhere it shouldn't
   std::vector<cv::Point> candidate_pixels;
-
-  //cv::Vec3b candidate_color = scalarToVec3b(cv::Scalar(0,255,0));
+  std::vector<cv::Point> untouchable_boundary_pixels;
   for (int i=0; i<(int)boundary.size(); i++) {
     int x=boundary[i].x;
     int y=boundary[i].y;
@@ -259,13 +291,29 @@ int main( int argc, char** argv )
       //printf(" checking painting point %i,%i\n",x,y);
 
       int ok_point_id=-1;
+      int max_ok_pixels=0;
       for (int bb_id=0; bb_id<(int)brush_boundary.size(); bb_id++) {
 	int bb_x = brush_boundary[bb_id].x;
 	int bb_y = brush_boundary[bb_id].y;
 	//printf(" - offset %i,%i\n",bb_x,bb_y);
-	// ABC: should be brush_pixels not brush_boundary (or test boundary first)
-	if (imageOnlyHasColor(grid, w, h, brush_boundary, x-bb_x, y-bb_y)) {
+
+	// check the boundary of the brush to see if it's ok... 
+	int num_ok_pixels=imageOnlyHasColor(grid, w, h, brush_boundary, x-bb_x, y-bb_y);
+	if (num_ok_pixels>0) { // .. if boundary is ok, then check interior
+	  int num_ok_pixels_interior=imageOnlyHasColor(grid, w, h, brush_interior, x-bb_x, y-bb_y);
+	  if (num_ok_pixels_interior==0) { // if can't paint the interior, then scrap it
+	    num_ok_pixels=0;
+	  } else {
+	    num_ok_pixels += num_ok_pixels_interior;
+	  }
+	}
+
+	//if (imageOnlyHasColor(grid, w, h, brush_boundary, x-bb_x, y-bb_y)) {
+	//ok_point_id=bb_id;
+	//bb_id = (int)brush_boundary.size(); //xxx
+	if (num_ok_pixels>max_ok_pixels) { // looks for the best place to put a brush
 	  ok_point_id=bb_id;
+	  max_ok_pixels = num_ok_pixels;
 	}
       }
       if (ok_point_id>=0) {
@@ -278,6 +326,8 @@ int main( int argc, char** argv )
       } else {
 	W.setPenColor(0,0,255);
 	W.drawPixel(x+border,y+border);
+	// record pixels that can't be touched by the brush w/o painting over untouchable pixels
+	untouchable_boundary_pixels.push_back(boundary[i]);
       }
     } else {
       W.setPenColor(0,0,255);
@@ -286,6 +336,7 @@ int main( int argc, char** argv )
   }
 
   printf("Found %lu candidate_pixels\n", candidate_pixels.size());
+  printf("Found %lu untouchable_boundary_pixels\n", untouchable_boundary_pixels.size());
 
   W.setPenColor(0,255,255);
   for (int i=0; i<(int)candidate_pixels.size(); i++) {
@@ -302,7 +353,7 @@ int main( int argc, char** argv )
 
   // draw the brush at every candidate_pixels point
   DrawWindow F = DrawWindow(w+2*border,h+2*border,"FF"); // w,h
-  F.moveWindow(30+w+2*border+10,50);
+  F.moveWindow(0,50+h+2*border+10);
   F.clearWindow(230,230,230); // default background is white
   F.setPenColor(180,180,180);
   for (int i=0; i<(int)candidate_pixels.size(); i++) {
@@ -319,19 +370,13 @@ int main( int argc, char** argv )
     F.drawPixel(boundary[i].x+border , boundary[i].y+border);
   }
 
+  // draw desired region boundary pixels that were untouchable
+  F.setPenColor(255,255,0);
+  for (int i=0; i<(int)untouchable_boundary_pixels.size(); i++) {
+    F.drawPixel(untouchable_boundary_pixels[i].x+border , untouchable_boundary_pixels[i].y+border);
+  }
   
   F.show();
-
-  if (0) {
-    DrawWindow FW = DrawWindow(w+border,h+border,"Painting"); // w,h
-    //FW.moveWindow(30+w+10,50);
-    FW.clearWindow(230,230,230); // default background is white
-    FW.setPenColor(0,0,0);
-    for (int i=0; i<(int)candidate_pixels.size(); i++) {
-      //FW.drawRegion(brush_pixels);
-    }
-    FW.show();
-  }
 
   while (1) {
     int k = cv::waitKey(33);
