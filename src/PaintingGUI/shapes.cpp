@@ -157,7 +157,7 @@ public:
      */
     virtual std::string getXML() {
         std::string line;
-        line.append(string_format("<shape type=\"polyline\" id=\"%i\">", getID()));
+        line.append(string_format("<shape type=\"polyline\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint,thickness));
         line.append(Shape::getColorXML());
         line.append("<points>");
         for (int i=0; i<points.size(); i++) {
@@ -220,7 +220,7 @@ public:
      */
     virtual std::string getXML() {
         std::string line;
-        line.append(string_format("<shape type=\"polypoints\" id=\"%i\">", getID()));
+		line.append(string_format("<shape type=\"polypoints\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint,thickness));
         line.append(Shape::getColorXML());
         line.append("<points>");
         for (int i=0; i<points.size(); i++) {
@@ -262,7 +262,6 @@ public:
  */
 class PixelRegion: public Shape {
 protected:
-    int thickness;
     std::vector<cv::Point> points;
 
 public:
@@ -274,11 +273,6 @@ public:
     void addPoint(int i, int j) {
         points.push_back(cv::Point(i,j));
     }
-    /**
-     * @brief set the thickness (not used?)
-     * @param t
-     */
-    void setThickness(int t=1) { thickness=t; }
 
     /**
      * @brief get XML information
@@ -286,7 +280,7 @@ public:
      */
     virtual std::string getXML() {
         std::string line;
-        line.append(string_format("<shape type=\"pixelregion\" id=\"%i\">", getID()));
+		line.append(string_format("<shape type=\"pixelregion\" id=\"%i\" breakPoint=\"%i\">", getID(), isBreakPoint));
         line.append(Shape::getColorXML());
         line.append("<points>");
         for (int i=0; i<points.size(); i++) {
@@ -350,7 +344,7 @@ public:
      */
     virtual std::string getXML() {
         std::string line;
-        line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\">", getID(), fill));
+		line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakPoint=\"%i\">", getID(), fill, isBreakPoint));
         line.append(getColorXML());
         line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
                                   pt1.x,pt1.y,pt2.x,pt2.y));
@@ -419,8 +413,8 @@ public:
 
     virtual std::string getXML() {
         std::string line;
-        line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\">",
-                                  getID(),fill,pt.x,pt.y,axes.width,axes.height));
+        line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
+                                  getID(),fill,pt.x,pt.y,axes.width,axes.height, isBreakPoint));
         line.append(getColorXML());
         line.append("</shape>");
         return line;
@@ -490,21 +484,24 @@ public:
      */
     void parseXML(pugi::xml_node *shapes) {
         int debug=0;
-        printf("parsing xml\n");
         for (pugi::xml_node shape = shapes->first_child(); shape; shape = shape.next_sibling()) {
             string type = shape.attribute("type").value();
             int id=shape.attribute("id").as_int();
             int r=shape.child("color").attribute("r").as_int();
             int g=shape.child("color").attribute("g").as_int();
             int b=shape.child("color").attribute("b").as_int();
+			int breakPoint = shape.attribute("breakPoint").as_int();
             if (debug) cout << type;
             if (debug) printf(" shape ID:%i\n",id);
             if (debug) printf(" RGB %d %d %d\n",r,g,b);
 
             if (type.compare("polyline")==0) {
                 PolyLine *PL = new PolyLine();
+				int thickness = shape.attribute("thickness").as_int();
                 PL->setPenColor(r,g,b);
                 PL->setID(id);
+				PL->setThickness(thickness);
+				if (breakPoint == 1) PL->toggleBreakPoint(true);
 
                 pugi::xml_node points = shape.child("points");
                 for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
@@ -518,8 +515,11 @@ public:
 
             if (type.compare("polypoints")==0) {
                 PolyPoints *PP = new PolyPoints();
+				int thickness = shape.attribute("thickness").as_int();
                 PP->setPenColor(r,g,b);
                 PP->setID(id);
+				PP->setThickness(thickness);
+				if (breakPoint == 1) PP->toggleBreakPoint(true);
 
                 pugi::xml_node points = shape.child("points");
                 for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
@@ -527,6 +527,7 @@ public:
                     int y=point.attribute("y").as_int();
                     if (debug) printf(" - point %i %i\n",x,y);
                     PP->addPoint(x,y);
+					
                 }
                 addShape(PP);
             }
@@ -535,6 +536,7 @@ public:
                 PixelRegion *PR = new PixelRegion();
                 PR->setPenColor(r,g,b);
                 PR->setID(id);
+				if (breakPoint == 1) PR->toggleBreakPoint(true);
 
                 pugi::xml_node points = shape.child("points");
                 for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
@@ -550,6 +552,7 @@ public:
                 Rectangle *R = new Rectangle();
                 R->setPenColor(r,g,b);
                 R->setID(id);
+				if (breakPoint == 1) R->toggleBreakPoint(true);
 
                 pugi::xml_node corners = shape.child("corners");
                 int pt1x=corners.attribute("pt1x").as_int();
@@ -567,6 +570,7 @@ public:
                 Ellipse *E = new Ellipse();
                 E->setPenColor(r,g,b);
                 E->setID(id);
+				if (breakPoint == 1) E->toggleBreakPoint(true);
 
                 int x=shape.attribute("x").as_int();
                 int y=shape.attribute("y").as_int();

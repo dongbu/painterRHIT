@@ -53,13 +53,22 @@ void RunLogic::forwardClicked() {
  * @brief steps backwards.
  */
 void RunLogic::backwardClicked() {
+	printf("checkpoing 1.0 \n");
     this->simWin->showWindow();
+	printf("checkpoing 2.0 \n");
     emit setRunColor(currentShapeIndex, false);
+	printf("checkpoing 3.0 \n");
     if (currentShapeIndex <= 0) return;
+	printf("checkpoing 4.0 \n");
     currentShapeIndex--; //otherwise, -- the index
+	printf("checkpoing 5.0 \n");
     simWin->clearWindow(255, 255, 255); //white
+	printf("checkpoing 6.0 \n");
     running = false;
+	printf("checkpoing 7.0 \n");
     for (int i = 0; i < currentShapeIndex; i++) runOnly(i);
+	printf("checkpoing 8.0 \n");
+
 }
 /**
  * @brief runs simulation.
@@ -124,5 +133,6 @@ void RunLogic::drawingThread(DrawWindow *W) {
         currentShapeIndex++;
         _sleep(COMMAND_DELAY);
     }
+	if (currentShapeIndex == stopIndex) currentShapeIndex--;
     running = false;
 }
