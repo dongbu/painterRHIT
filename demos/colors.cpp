@@ -4,15 +4,12 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <cv.h>
+#include <highgui.h>
 #include <math.h>       /* pow */
-#include <Windows.h> // sleep
+#include <unistd.h> // sleep
 
 #include "kmeansSegment.cpp"
-
-// this is a silly comment to test git checkin
-// Hello from Gunnar (as requested)
 
 using namespace cv;
 using namespace std;
@@ -21,13 +18,12 @@ using namespace std;
 //cv::setWindowProperties("myWindow", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN)
 //http://stackoverflow.com/questions/6512094/how-to-display-an-image-in-full-screen-borderless-window-in-opencv
 
-int M_PI = 3.141459265359;
-
 void showSingleColor(int use_kmeans);
 
 Mat src; 
 Mat kmeans_image;
 Mat canvas_image; 
+char* g_image_filename="images/lena.jpg";
 int g_photo_width = 512;
 int g_photo_height = 512;
 int g_colors = 20; // kmeans
@@ -372,7 +368,7 @@ void autoPaint(int candidate_multiplier=1) {
 }
 
 void line_callback(int, void* ) {
-  printf("line width: %i, line lenght: %i\n", g_line_width, g_line_length);
+  printf("line width: %i, line length: %i\n", g_line_width, g_line_length);
 }
 
 void color_distance_callback(int, void* ) {
@@ -414,7 +410,11 @@ Point2f projectorOutputQuad[4]; // Input Quadilateral or Image plane coordinates
 
 void getProjectorQuadPointsFromFile() {
   ifstream infile; 
-  infile.open("projector_4_points.txt"); 
+
+  char filename[250];
+  sprintf(filename,"projector_4_points.%s.txt",g_image_filename);
+  //infile.open(filename);  
+  infile.open("projector_4_points.txt");  
   for (int i=0; i<4; i++) {
     infile >> projectorOutputQuad[i].x;
     infile >> projectorOutputQuad[i].y;
@@ -441,6 +441,7 @@ void calibrate_projector() {
   namedWindow( "projector_window", CV_WINDOW_AUTOSIZE );
 
   g_projector_image = Mat::zeros(g_projector_pixels_height, g_projector_pixels_width, CV_8UC3);
+  src.copyTo(g_projector_image(Rect(offset_x,offset_y,w,h)));
   rectangle( g_projector_image, Point(offset_x,offset_y), Point(offset_x+w,offset_y+h), Scalar( 0, 55, 255 ), +1, 4 );
 
   float delta = 16.0;
@@ -497,12 +498,16 @@ void calibrate_projector() {
 	printf("Changed delta to %.1f\n",delta);
 
       } else if (k == int('r')) { 
-	printf("loading projector calibration quad points.\n");
+	printf("loading projector calibration quad doints.\n");
 	getProjectorQuadPointsFromFile();
       } else if (k == int('s')) { 
-	printf("saving projector 4 points (for calibration matrix) to ...\n");
+	char filename[250];
+	sprintf(filename,"projector_4_points.%s.txt",g_image_filename);
+	//filename = 'projector_4_points.txt';
+	//printf("saving projector 4 points (for calibration matrix) to %s\n",filename);
+	printf("saving projector 4 points (for calibration matrix)\n");
 	ofstream outfile;
-	outfile.open ("projector_4_points.txt");
+	outfile.open("projector_4_points.txt");
 	for (int i=0; i<4; i++) {
 	  outfile << projectorOutputQuad[i].x << endl;
 	  outfile << projectorOutputQuad[i].y << endl;
@@ -597,8 +602,7 @@ void showSingleColor(int use_kmeans=1) {
   
   namedWindow( "single_color_image_window", CV_WINDOW_AUTOSIZE );
   imshow( "single_color_image_window", single_color_image );
-  moveWindow("single_color_image_window",win_w(0),win_h(1)); 
-
+  //  moveWindow("single_color_image_window",win_w(0),win_h(1)); 
 
   showProjectorWindow(single_color_image);
 }
@@ -618,13 +622,7 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
 
   // get a list of valid pixels
   int n_pixels=0;
-  //go here
-  //int pixels[src.rows*src.cols][2];
-
-  int** pixels = new int*[src.rows*src.cols];
-  for (int i = 0; i < src.rows*src.cols; ++i)
-	  pixels[i] = new int[2];
-
+  int pixels[src.rows*src.cols][2];
   for (int i=0; i<src.cols; i++) {
     for (int j=0; j<src.rows; j++) {
       Vec3b color = kmeans_image.at<Vec3b>(Point(i,j));
@@ -635,11 +633,6 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
       }
     }
   }
-  for (int i = 0; i < src.rows*src.cols; ++i) {
-	  delete[] pixels[i];
-  }
-  delete[] pixels;
-
   printf("%d pixels found\n",n_pixels);
 
   int num_candidates=n_pixels/(thickness*line_length/15);
@@ -658,6 +651,8 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
     strokes[i].length = line_length;
     strokes[i].width = thickness;    
 
+    //printf("x=%i y=%i w=%f l=%.3f at %.3f rad\n",x,y,strokes[i].width,strokes[i].length,strokes[i].direction);
+
     // do quick score = count how many pixels of kmeans image in the stroke are the right color
     int c = 0;
     for (int n=-strokes[i].width; n<=strokes[i].width; n++) { // go along width
@@ -666,11 +661,14 @@ void singlePaintColorOnCanvas(int r=-1, int g=-1, int b=-1) {
 	double sine = sin(strokes[i].direction);
 	int dx = floor(m * cosine - n * sine);
 	int dy = floor(m * sine + n * cosine);
-
-	Vec3b color = kmeans_image.at<Vec3b>(Point(x + dx,y + dy));
-	if (color[0] == strokes[i].b && color[1] == strokes[i].g && color[2] == strokes[i].r) {
-	  c++;
-	}
+	int kx = x + dx;
+	int ky = y + dy;
+	if (kx>=0 && kx < src.cols && ky>=0 && ky < src.rows) {
+	    Vec3b color = kmeans_image.at<Vec3b>(Point(x + dx,y + dy));
+	    if (color[0] == strokes[i].b && color[1] == strokes[i].g && color[2] == strokes[i].r) {
+	      c++;
+	    }
+	  }
       }
     }
     strokes[i].score = c;
@@ -872,7 +870,9 @@ void sortColorsInImage(Mat *image, std::vector<Vec3b>& sorted_colors) {
   for (int i=0; i<image->cols; i++) {
     for (int j=0; j<image->rows; j++) {
       int found=-1;
-      Vec3b color = kmeans_image.at<Vec3b>(Point(i,j));
+      //ABC: probable bug 
+      //Vec3b color = kmeans_image.at<Vec3b>(Point(i,j));
+      Vec3b color = image->at<Vec3b>(Point(i,j));
       for (int k=0; k<n_colors; k++) {
 	if (color[0] == colors[k][0] && color[1] == colors[k][1] && color[2] == colors[k][2]) {
 	  found=k;
@@ -950,7 +950,7 @@ void kmeansMouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
     cout << "kmeans R(" << r << ")" << "G(" << g << ")" << "B(" << b << ")" << endl;
     updateColorWindow(r,g,b);
     showSingleColor(1);
-    Sleep(2000);
+    usleep(2000);
 
   } else if  ( event == EVENT_RBUTTONDOWN ) {
     cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
@@ -1105,7 +1105,7 @@ void colors_callback(int, void* )
 
 int g_webcam_calibrated = 0;
 int g_flip_webcam = 1; 
-int g_webcamID = 1;
+int g_webcamID = 0;
 int g_webcam_corner = 0;	
 int g_canvas_pixels_width = 1000;
 int g_canvas_pixels_height = 800;
@@ -1244,17 +1244,25 @@ int main( int argc, char** argv )
   printf("  s = paint only a single color in the canvas (choose color by clicking in any window) \n");
   printf("  c = show where single color on the kmeans image (choose color by clicking in any window) \n");
 
-  char* image="images/lena.jpg";
-  if (argv[1]) {
-    image = argv[1];
-  }
+  // define image file
+  if (argv[1]) { g_image_filename = argv[1]; }
+
+  // reduce to black/white
+  int make_bw=0;
+  if (argv[2]) { make_bw=1; }
 
   /// Load source image and convert it to gray
-  src = imread( image, 1 );
+  src = imread( g_image_filename, 1 );
   if (src.empty()) {
     std::cout << "!!! Failed imread()\n ./colors <image filename>" << std::endl;
     return -1;
   }  
+  if (make_bw==1) { 
+    Mat gray_image;
+    cvtColor( src, gray_image, CV_BGR2GRAY );
+    imwrite( "./Gray_Image.jpg", gray_image );
+    src = imread("./Gray_Image.jpg", 1 );
+  }
 
   //g_photo_width = src.cols;
   //g_photo_height = src.rows;
@@ -1268,20 +1276,19 @@ int main( int argc, char** argv )
   /// Create Window
   char source_window[] = "Source";
   namedWindow( source_window, CV_WINDOW_AUTOSIZE );
-  //   setWindowProperty(source_window, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN); //#FULLSCREEN)
-   setWindowProperty(source_window, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN); //#FULLSCREEN)
+  setWindowProperty(source_window, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN); //#FULLSCREEN)
 
   moveWindow(source_window,win_w(0),win_h(0,-30));
   imshow( source_window, src );
 
-  namedWindow( "controls", CV_WINDOW_AUTOSIZE );
+  namedWindow( "controls", CV_WINDOW_AUTOSIZE ); 
   createTrackbar( " Canny thresh:", "controls", &g_thresh, g_max_thresh, thresh_callback );
   createTrackbar( " Blur loops:", "controls", &g_blur_loops, g_max_blur_loops, colors_callback ); 
   createTrackbar( " Colors:", "controls", &g_colors, g_max_colors, colors_callback );
   createTrackbar( " Gradient blur loops:", "controls", &g_gradient_blur_loops, g_max_gradient_blur_loops, colors_callback );
   createTrackbar( " Line width:", "controls", &g_line_width, 20, line_callback );
   createTrackbar( " Line length:", "controls", &g_line_length, 40, line_callback );
-
+  resizeWindow("controls",500,200);
   thresh_callback( 0, 0 );
   colors_callback( 0, 0 );
 
