@@ -16,6 +16,7 @@ class RunLogic : public QObject
 
 public:
     RunLogic(int width, int height, Shapes *shapes);
+	DrawWindow *simWin;
 
 private:
     void drawingThread(DrawWindow *W);
@@ -23,7 +24,7 @@ private:
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;
     int width, height;
-    DrawWindow *simWin;
+    
 
 
 public slots:

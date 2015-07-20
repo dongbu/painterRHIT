@@ -116,6 +116,9 @@ void CommandWindow::recieveBreakPointColor(int index, bool toggle){
  * @param runToggle
  */
 void CommandWindow::recieveRunColor(int index, bool runToggle){
+	if (index >= ui->listWidget->count()){
+		index = ui->listWidget->count() - 1;
+	}
     if (runToggle){
         ui->listWidget->item(index)->setBackgroundColor("green");
     }

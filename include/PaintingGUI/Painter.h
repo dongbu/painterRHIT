@@ -26,23 +26,19 @@ public:
     void showGUI(bool toggle);
     void launchSimulation();
 
-    //Ask about deleting the following commented out things:
-    //void load(std::string projectName, std::string projectLocation);
-    //std::string ProjectName, ProjectLocation;
-    //Shapes completedShapes;
-    //Painter(std::string name, Shapes *shapes);
-    //Painter(std::string name);
-    //void setShapes(Shapes *shapes);
-    //void launchSimulatorWindow();
-    //void launchCommandWindow();
 
 private:
     Shapes *shapes;
     int width, height;
+	bool stuffshowing;
 
     CommandWindow *commandWin;
     Sketchpad *sketch;
     RunLogic *logic;
+
+	std::string Painter::string_format(const std::string fmt, ...);
+	std::string Painter::getXML();
+	void parseXML(pugi::xml_node *canvasInfo);
 
 public slots:
     void save(std::string projectLocation);

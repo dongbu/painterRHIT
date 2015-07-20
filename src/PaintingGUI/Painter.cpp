@@ -4,8 +4,9 @@
  * @brief default constructor
  */
 Painter::Painter() {
-    width = 1000;
-    height = 800;
+    width = 600;
+    height = 600;
+	this->stuffshowing = false;
 }
 /**
  * @brief constructor with shapes.
@@ -13,8 +14,9 @@ Painter::Painter() {
  */
 Painter::Painter(Shapes *shapes) {
     this->shapes = shapes;
-    width = 1000;
-    height = 800;
+    width = 600;
+    height = 600;
+	this->stuffshowing = false;
 }
 /**
  * @brief add list of shapes to painter.
@@ -40,6 +42,12 @@ void Painter::addShape(Shape *inboundShape) {
 void Painter::setDimensions(int width, int height) {
     this->width = width;
     this->height = height;
+	this->sketch->close();
+	this->commandWin->close();
+
+	if (stuffshowing){
+		showGUI(true);
+	}
 }
 /**
  * @brief save into xml.
@@ -47,7 +55,10 @@ void Painter::setDimensions(int width, int height) {
  */
 void Painter::save(std::string name) {
     std::string xml = "<?xml version=\"1.0\"?>\n";
+	xml.append("<robot>\n");
+	xml.append(this->getXML());
     xml.append(shapes->getXML());
+	xml.append("</robot>\n");
     ofstream myfile;
     myfile.open(name);
     myfile << xml;
@@ -61,8 +72,11 @@ void Painter::save(std::string name) {
 void Painter::load(std::string projectLocation) {
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file((projectLocation).c_str());
-    pugi::xml_node listOfShapes = doc.child("shapes");
+	
+    pugi::xml_node listOfShapes = doc.child("robot").child("shapes");
     shapes->parseXML(&listOfShapes);
+	pugi::xml_node canvasInfo = doc.child("robot").child("canvas");
+	this->parseXML(&canvasInfo);
     printf("%s\n", result.description());
     this->sketch->redraw();
 }
@@ -73,6 +87,7 @@ void Painter::load(std::string projectLocation) {
  * @param toggle
  */
 void Painter::showGUI(bool toggle){
+	stuffshowing = toggle;
     sketch = new Sketchpad(width, height, shapes);
     launchSimulation();
 
@@ -112,79 +127,52 @@ void Painter::launchSimulation(){
     connect(logic, SIGNAL(clearRunColors()), commandWin, SLOT(recieveClearRunColors()));
 }
 
-//Antiquated functions below here (should consult with Zach before deleting)//
 
-//void Painter::load(std::string projectName, std::string projectLocation) {
-//	this->ProjectLocation = projectLocation;
-//	this->ProjectName = projectName;
-//	pugi::xml_document doc;
-//	pugi::xml_parse_result result = doc.load_file((ProjectLocation + "/" + ProjectName + ".xml").c_str());
-//	printf("loading file: %s\n", (ProjectLocation + "/" + ProjectName + ".xml").c_str());
-//	pugi::xml_node listOfShapes = doc.child("shapes");
-//	shapes->parseXML(&listOfShapes);
-//	printf("%s\n", result.description());
-//}
+/**
+* @brief I honestly have no idea what this does.
+* @param fmt
+* @return std::string
+*/
+std::string Painter::string_format(const std::string fmt, ...) {
+	int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
+	std::string str;
+	va_list ap;
+	while (1) {     // Maximum two passes on a POSIX system...
+		str.resize(size);
+		va_start(ap, fmt);
+		int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
+		va_end(ap);
+		if (n > -1 && n < size) {  // Everything worked
+			str.resize(n);
+			printf("returning: %s\n", str);
+			return str;
+		}
+		if (n > -1)  // Needed size returned
+			size = n + 1;   // For null char
+		else
+			size *= 2;      // Guess at a larger size (OS specific)
+	}
+	return str;
+}
 
-//void Painter::save(std::string name) {
-//	std::string xml = "<?xml version=\"1.0\"?>\n";
-//	xml.append(shapes->getXML());
-//	ofstream myfile;
-//	myfile.open(ProjectLocation + "/" + ProjectName + ".xml");
-//	myfile << xml;
-//	myfile.close();
-//}
+/*
+ * @brief gets XML information
+*/
+std::string Painter::getXML() { 
+	std::string line;
+	line = "<canvas width=\"" + std::to_string(this->width) + "\" height=\"" + std::to_string(this->height) + "\">\n";
 
-//void Painter::setName(std::string ProjectName){
-//	this->ProjectName = ProjectName;
-//	delete simWin;
-//	this->simWin = new DrawWindow(width, height, ProjectName);
-//	simWin->show();
-//}
+	line.append("</canvas>\n");
+	return line;
+	return line;
+}
 
-//void Painter::setLocation(std::string ProjectLocation){
-//	this->ProjectLocation = ProjectLocation;
-//}
-//Painter::Painter() {
-//	ProjectName = "Temp";
-//	ProjectLocation = "";
-//	width = 1000;
-//	height = 800;
-//}
-
-//Painter::Painter(std::string name) {
-//	ProjectName = name;
-//	ProjectLocation = "";
-//	width = 1000;
-//	height = 800;
-//}
-
-//Painter::Painter(Shapes *shapes) {
-//	this->shapes = shapes;
-//	ProjectName = "Temp";
-//	ProjectLocation = "";
-//	width = 1000;
-//	height = 800;
-//}
-
-//Painter::Painter(std::string name, Shapes *shapes) {
-//	this->shapes = shapes;
-//	ProjectName = name;
-//	ProjectLocation = "";
-//	width = 1000;
-//	height = 800;
-//}
-
-//void Painter::setShapes(Shapes *shapes){
-//	this->shapes = shapes;
-//}
-
-//void Painter::launchSimulatorWindow(){
-//	simWin = new DrawWindow(width, height, "Simulator");
-//	this->simWin->show();
-//	//this->shapes.drawAll(this->simWin);
-//}
-
-//void Painter::launchCommandWindow(){
-//	commandWin = new CommandWindow(shapes);
-//	commandWin->show();
-//}
+/*
+ * @brief parses XML information
+ */
+void Painter::parseXML(pugi::xml_node *canvasInfo){
+	int h = canvasInfo->attribute("height").as_int();
+	int w = canvasInfo->attribute("width").as_int();
+	this->setDimensions(w, h);
+	
+}

@@ -25,6 +25,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     ui->setupUi(this);
     setupQt();
     this->paintingName = "unnamed";
+	this->setFixedHeight(height + ui->toolBar->height() + ui->menubar->height() + 30);
+	this->setFixedWidth(width + ui->toolBar_2->width() + 10);
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -277,16 +279,13 @@ void Sketchpad::openClicked() {
     if (directory.exec()) {
         emit load(directory.selectedFiles().at(0).toStdString());
         emit prodOtherWindows();
-        QString temp = directory.selectedFiles().at(0).split("/").last();
-        temp.chop(4);
-        this->paintingName = temp.toStdString();
+        this->paintingName = directory.selectedFiles().at(0).toStdString();
     }
 }
 /**
  * @brief New project functionality.
  */
 void Sketchpad::newClicked() {
-    printf("new clicked");
     this->shapes->clear();
     this->paintingName = "unnamed";
     this->redraw();
