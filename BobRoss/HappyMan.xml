@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<shapes>
+<shape type="rectangle" id="32" fill="1"><color r="255" g="144" b="30"></color><corners pt1x="799" pt1y="4" pt2x="1" pt2y="196"></corners></shape>
+<shape type="rectangle" id="33" fill="1"><color r="34" g="139" b="34"></color><corners pt1x="798" pt1y="198" pt2x="0" pt2y="749"></corners></shape>
+<shape type="ellipse" id="8" fill="0" x="361" y="344" w="646" h="646"><color r="0" g="0" b="0"></color></shape>
+<shape type="polyline" id="9"><color r="0" g="0" b="0"></color><points><p x="186" y="155"></p><p x="250" y="170"></p><p x="297" y="183"></p></points></shape>
+<shape type="polyline" id="10"><color r="0" g="0" b="0"></color><points><p x="440" y="201"></p><p x="489" y="174"></p><p x="534" y="162"></p></points></shape>
+<shape type="ellipse" id="11" fill="0" x="231" y="230" w="78" h="78"><color r="0" g="0" b="0"></color></shape>
+<shape type="ellipse" id="12" fill="0" x="498" y="251" w="74" h="74"><color r="0" g="0" b="0"></color></shape>
+<shape type="polypoints" id="13"><color r="34" g="34" b="178"></color><points><p x="189" y="442"></p><p x="217" y="497"></p><p x="313" y="563"></p><p x="358" y="561"></p><p x="434" y="555"></p><p x="490" y="528"></p><p x="508" y="500"></p><p x="518" y="466"></p><p x="527" y="440"></p><p x="520" y="427"></p><p x="185" y="427"></p><p x="185" y="427"></p></points></shape>
+<shape type="polyline" id="14"><color r="0" g="0" b="0"></color><points><p x="382" y="288"></p><p x="329" y="367"></p><p x="412" y="370"></p></points></shape>
+<shape type="polyline" id="16"><color r="34" g="139" b="34"></color><points><p x="209" y="230"></p><p x="238" y="214"></p><p x="249" y="234"></p></points></shape>
+<shape type="polyline" id="17"><color r="34" g="139" b="34"></color><points><p x="482" y="260"></p><p x="506" y="235"></p><p x="521" y="266"></p></points></shape>
+<shape type="polypoints" id="18"><color r="240" g="32" b="160"></color><points><p x="101" y="121"></p><p x="155" y="65"></p><p x="213" y="30"></p><p x="294" y="12"></p><p x="340" y="10"></p><p x="426" y="13"></p><p x="501" y="27"></p><p x="547" y="42"></p><p x="608" y="86"></p><p x="649" y="140"></p><p x="666" y="171"></p><p x="611" y="123"></p><p x="613" y="181"></p><p x="552" y="118"></p><p x="545" y="158"></p><p x="501" y="120"></p><p x="504" y="204"></p><p x="472" y="137"></p><p x="418" y="196"></p><p x="401" y="156"></p><p x="387" y="123"></p><p x="350" y="188"></p><p x="318" y="75"></p><p x="288" y="175"></p><p x="278" y="188"></p><p x="273" y="155"></p><p x="249" y="117"></p><p x="229" y="155"></p><p x="202" y="128"></p><p x="177" y="149"></p><p x="159" y="140"></p><p x="139" y="141"></p><p x="112" y="163"></p><p x="112" y="141"></p><p x="112" y="141"></p></points></shape>
+<shape type="polyline" id="19"><color r="0" g="0" b="0"></color><points><p x="203" y="627"></p><p x="199" y="749"></p></points></shape>
+<shape type="polyline" id="20"><color r="0" g="0" b="0"></color><points><p x="532" y="622"></p><p x="539" y="749"></p></points></shape>
+<shape type="polyline" id="21"><color r="0" g="0" b="0"></color><points><p x="76" y="747"></p><p x="1" y="557"></p></points></shape>
+<shape type="polyline" id="22"><color r="0" g="0" b="0"></color><points><p x="99" y="748"></p><p x="2" y="500"></p></points></shape>
+<shape type="polyline" id="23"><color r="0" g="0" b="0"></color><points><p x="642" y="748"></p><p x="799" y="452"></p></points></shape>
+<shape type="polyline" id="24"><color r="0" g="0" b="0"></color><points><p x="665" y="749"></p><p x="797" y="518"></p></points></shape>
+<shape type="ellipse" id="25" fill="0" x="258" y="707" w="48" h="48"><color r="255" g="144" b="30"></color></shape>
+<shape type="ellipse" id="26" fill="0" x="475" y="710" w="50" h="50"><color r="255" g="144" b="30"></color></shape>
+<shape type="polyline" id="27"><color r="255" g="144" b="30"></color><points><p x="284" y="707"></p><p x="309" y="691"></p><p x="328" y="733"></p><p x="359" y="698"></p><p x="378" y="733"></p><p x="400" y="699"></p><p x="420" y="735"></p><p x="449" y="711"></p></points></shape>
+<shape type="polyline" id="28"><color r="0" g="0" b="0"></color><points><p x="173" y="455"></p><p x="164" y="433"></p><p x="163" y="408"></p><p x="179" y="401"></p><p x="202" y="400"></p><p x="210" y="402"></p></points></shape>
+<shape type="polyline" id="29"><color r="0" g="0" b="0"></color><points><p x="508" y="408"></p><p x="521" y="404"></p><p x="533" y="405"></p><p x="544" y="421"></p><p x="545" y="440"></p><p x="537" y="461"></p></points></shape>
+<shape type="polyline" id="30"><color r="0" g="0" b="0"></color><points><p x="321" y="485"></p><p x="321" y="505"></p><p x="326" y="537"></p><p x="337" y="543"></p><p x="362" y="540"></p><p x="373" y="537"></p><p x="385" y="508"></p><p x="392" y="484"></p></points></shape>
+<shape type="polyline" id="31"><color r="0" g="0" b="0"></color><points><p x="352" y="530"></p><p x="358" y="494"></p></points></shape>
+</shapes>
