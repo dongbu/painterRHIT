@@ -2,6 +2,9 @@
 #include "drawwindow.cpp"
 #include "shapes.cpp"
 
+// demo to show how webcam can be used to give feedback on what places still
+// need to be painted ... assuming that the brush color is black
+
 int colorClose(cv::Vec3b c1, cv::Vec3b c2, int max_distance=10) {
 
   if (abs(c1[0]-c2[0]) + abs(c1[1]-c2[1]) + abs(c1[2]-c2[2]) < max_distance) {
@@ -50,55 +53,74 @@ int main(void)
   DW.show();
 
   cv::Mat frame;
-  cv::Mat errors;
+
+  DrawWindow EW = DrawWindow(width,height,"Error Window");
+  EW.moveWindow(2*(width+5)+20,150);
 
   char map_window[] = "Mapped Webcam";
   cv::namedWindow( map_window, CV_WINDOW_AUTOSIZE );
-  char errors_window[] = "Painting Errors";
-  cv::namedWindow( errors_window, CV_WINDOW_AUTOSIZE );
   
   while (1) {   
     int k = cv::waitKey(33);
     //if (k>0) { printf("key = %d\n",k); }
     if (k==27) { return(0); }  // Esc key to stop
     if (k == int('c')) { W.calibrateWebcam(); }
+    
+    if (k == int('s')) {  // make the desired painting be a snap of the webcam
+      W.getMappedFrame(&frame);
+      DW.grid = frame; 
+      DW.show();
+    }
 
     if (k == int('m')) {
-      printf("showing mapped frame\n");
-      W.getMappedFrame(&frame);
 
-      //cv::RNG rng(12345);
-      //for (int i=0; i<1000; i++) { frame.at<cv::Vec3b>(cv::Point(rng.uniform(0,width),rng.uniform(0,height))) = cv::Vec3b(0,0,0);       }
-      cv::moveWindow(map_window,1*(width+5)+20,150);
-      cv::imshow(map_window, frame);
+      int done=0;
+      while (!done) {
+	W.getMappedFrame(&frame);
+	
+	cv::moveWindow(map_window,1*(width+5)+20,150);
+	cv::imshow(map_window, frame);
+	//cvtColor( frame, frame, CV_RGB2GRAY );
+	
+	cv::Vec3b pen_color = cv::Vec3b(0,0,0);
 
-      cv::Vec3b pen_color = cv::Vec3b(0,0,0);
+	int right=0;
+	int wrong=0;
+	EW.setCanvasColor(0,0,0);
 
-      int right=0;
-      int wrong=0;
-      errors = cv::Mat::zeros(height, width, frame.type() );
-      for (int i=0; i<width; i++) {
-	for (int j=0; j<height; j++) {
-	  cv::Vec3b desired_color = DW.getColor(i,j);
-	  if (colorClose(desired_color,pen_color,10)) { 
-	    cv::Vec3b webcam_color = frame.at<cv::Vec3b>(cv::Point(i,j));
-	    if (colorClose(desired_color,webcam_color,10+30)) { 
-	      right++;
-	      errors.at<cv::Vec3b>(cv::Point(i,j)) = desired_color;
+	for (int i=0; i<width; i++) {
+	  for (int j=0; j<height; j++) {
+	    cv::Vec3b desired_color = DW.getColor(i,j);
+	    //pen_color = DW.getColor(i,j);
+
+	    if (colorClose(desired_color,pen_color,100)) { 
+	      cv::Vec3b webcam_color = frame.at<cv::Vec3b>(cv::Point(i,j));
+	      if (colorClose(desired_color,webcam_color,200)) { 
+		right++;
+		EW.setPenColor(desired_color[0],desired_color[1],desired_color[2]);
+		EW.drawPixel(i,j);
+	      } else {
+		wrong++;
+		EW.setPenColor(255,0,0);
+		EW.drawPixel(i,j);
+	      }
 	    } else {
-	      wrong++;
-	      errors.at<cv::Vec3b>(cv::Point(i,j)) = cv::Vec3b(0,0,255);
+	      EW.setPenColor(0,255,0);
+	      EW.drawPixel(i,j);
 	    }
-	  } else {
-	    errors.at<cv::Vec3b>(cv::Point(i,j)) = cv::Vec3b(0,255,0); // untouched
 	  }
 	}
+	
+	EW.setPenColor(0,0,0);
+	char text [50];
+	sprintf(text,"%.0f%%  OK:%i TODO:%i",(double)100.*right/(right+wrong),right,wrong);
+	EW.drawText(10,10,text);
+	EW.show();
+	//printf("%i OK, %i bad pixels\n",right,wrong);
+	
+	int k = cv::waitKey(33);
+	if (k==27 || k == int('m')) { done=1; }
       }
-
-      printf("%i OK, %i bad pixels\n",right,wrong);
-
-      cv::moveWindow(errors_window,2*(width+5)+20,150);
-      cv::imshow(errors_window, errors);
     }
 
     if (k == int('f')) {
