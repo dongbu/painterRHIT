@@ -25,26 +25,26 @@ public:
     ~Sketchpad();
 
 private:
-	void getColor();
-	void setupQt();
+    void getColor();
+    void setupQt();
 
     Ui::Sketchpad *ui;
     CVImageWidget *translator;
-	DrawWindow *cvWindow;
+    DrawWindow *cvWindow;
     QComboBox *color;
     QSpinBox *thickness;
     Shapes *shapes;
-	Shape *currentShape;
-	PolyLine *curPolyLine;
-	Ellipse *curCircle;
-	Rectangle *curRectangle;
-	int prevX, prevY;
-	std::vector<int> rgbColor;
-	std::string paintingName;
+    Shape *currentShape;
+    PolyLine *curPolyLine;
+    Ellipse *curCircle;
+    Rectangle *curRectangle;
+    int prevX, prevY;
+    std::vector<int> rgbColor;
+    std::string paintingName;
 
 private slots:
-	void refresh(int x, int y);
-	void startNewCommand();
+    void refresh(int x, int y);
+    void startNewCommand();
 
     void saveAsClicked();
     void saveClicked();
@@ -52,12 +52,12 @@ private slots:
     void newClicked();
 
 public slots:
-	void redraw();
+    void redraw();
 
 signals:
-	void prodOtherWindows();
-	void load(std::string);
-	void save(std::string);
+    void prodOtherWindows();
+    void load(std::string);
+    void save(std::string);
 
 };
 

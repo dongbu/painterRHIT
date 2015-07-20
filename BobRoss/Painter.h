@@ -12,41 +12,41 @@
 class Painter : public QObject
 
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	Painter();
-	Painter(Shapes *shapes);
+    Painter();
+    Painter(Shapes *shapes);
 
-	void addShape(Shape *inboundShape);
-	void addShapes(Shapes *inboundShapes);
-	void setDimensions(int width, int height);
-	void setName(std::string ProjectName);
-	void setLocation(std::string ProjectLocation);
-	void showGUI(bool toggle);
-	void launchSimulation();
+    void addShape(Shape *inboundShape);
+    void addShapes(Shapes *inboundShapes);
+    void setDimensions(int width, int height);
+    void setName(std::string ProjectName);
+    void setLocation(std::string ProjectLocation);
+    void showGUI(bool toggle);
+    void launchSimulation();
 
-	//Ask about deleting the following commented out things:
-	//void load(std::string projectName, std::string projectLocation);
-	//std::string ProjectName, ProjectLocation;
-	//Shapes completedShapes;
-	//Painter(std::string name, Shapes *shapes);
-	//Painter(std::string name);
-	//void setShapes(Shapes *shapes);
-	//void launchSimulatorWindow();
-	//void launchCommandWindow();
+    //Ask about deleting the following commented out things:
+    //void load(std::string projectName, std::string projectLocation);
+    //std::string ProjectName, ProjectLocation;
+    //Shapes completedShapes;
+    //Painter(std::string name, Shapes *shapes);
+    //Painter(std::string name);
+    //void setShapes(Shapes *shapes);
+    //void launchSimulatorWindow();
+    //void launchCommandWindow();
 
 private:
-	Shapes *shapes;
-	int width, height;
+    Shapes *shapes;
+    int width, height;
 
-	CommandWindow *commandWin;
-	Sketchpad *sketch;
-	RunLogic *logic;
+    CommandWindow *commandWin;
+    Sketchpad *sketch;
+    RunLogic *logic;
 
 public slots:
-	void save(std::string projectLocation);
-	void load(std::string projectLocation);
+    void save(std::string projectLocation);
+    void load(std::string projectLocation);
 };
 
 #endif // PAINTER_H

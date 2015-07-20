@@ -10,13 +10,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-	AllocConsole();
-	SetConsoleTitleA("Robot Artist V2.0.0 (7/17/15)");
-	freopen("conin$", "r", stdin);
-	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
+    AllocConsole();
+    SetConsoleTitleA("Robot Artist V2.0.0 (7/17/15)");
+    freopen("conin$", "r", stdin);
+    freopen("conout$", "w", stdout);
+    freopen("conout$", "w", stderr);
 
-	PolyLine *p1 = new PolyLine();
+    PolyLine *p1 = new PolyLine();
     p1->addPoint(50, 60);
     p1->addPoint(80, 200);
     PolyLine *p2 = new PolyLine();
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     ss->addShape(p2);
     ss->addShape(p3);
     Painter *painter = new Painter(ss);
-	painter->showGUI(true);
+    painter->showGUI(true);
 
-	return a.exec();
+    return a.exec();
 }

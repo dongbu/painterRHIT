@@ -7,23 +7,23 @@
 
 class CVImageWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit CVImageWidget(QWidget *parent = 0) : QWidget(parent) {}
-	QSize sizeHint();
-	QSize minimumSizeHint();
+    explicit CVImageWidget(QWidget *parent = 0) : QWidget(parent) {}
+    QSize sizeHint();
+    QSize minimumSizeHint();
 
-	public slots :
+public slots :
 
-	void showImage(const cv::Mat& image);
+    void showImage(const cv::Mat& image);
 
 protected:
-	void paintEvent(QPaintEvent* /*event*/);
-	void mousePressEvent(QMouseEvent * event);
+    void paintEvent(QPaintEvent* /*event*/);
+    void mousePressEvent(QMouseEvent * event);
 
-	QImage _qimage;
-	cv::Mat _tmp;
+    QImage _qimage;
+    cv::Mat _tmp;
 
 signals:
-	void emitRefresh(int currentX, int currentY);
+    void emitRefresh(int currentX, int currentY);
 };

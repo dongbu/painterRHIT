@@ -15,24 +15,27 @@ class CommandWindow : public QMainWindow
 public:
     explicit CommandWindow(Shapes *ss, QWidget *parent = 0);
     ~CommandWindow();
-	Shapes *shapes;
-	Ui::CommandWindow *ui;
+    Shapes *shapes;
+    Ui::CommandWindow *ui;
 
 private slots:
     void moveUpClicked();
     void moveDownClicked();
     void deleteCommandClicked();
-	void launchRightClick(QPoint p);
-	void menuSort(QAction *a);
+    void launchRightClick(QPoint p);
+    void menuSort(QAction *a);
 
 public slots:
-	void populate();
+    void populate();
+    void recieveBreakPointColor(int index, bool toggle);
+    void recieveRunColor(int index, bool toggle);
+    void recieveClearRunColors();
 
 signals:
-	void modifiedCommand();
-	void runFrom(int index);
-	void runOnly(int index);
-	void setBreakPoint(int index);
+    void modifiedCommand();
+    void runFrom(int index);
+    void runOnly(int index);
+    void setBreakPoint(int index);
 
 };
 
