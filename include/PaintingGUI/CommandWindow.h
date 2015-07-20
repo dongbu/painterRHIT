@@ -2,7 +2,7 @@
 #define COMMANDWINDOW_H
 
 #include "ui_commandwindow.h"
-#include "EditorWindow.h"
+#include "../src/PaintingGUI/Shapes.cpp"
 
 namespace Ui {
 class CommandWindow;

@@ -12,24 +12,26 @@ TARGET = BobRoss
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-    Sketchpad.cpp \
-    CommandWindow.cpp \
-    EditorWindow.cpp \
-    DrawWindow.cpp \
-    Painter.cpp \
-    pugixml.cpp \
-    shapes.cpp \
-    CVImageWidget.cpp
+SOURCES += ..\src\PaintingGUI\main.cpp\
+    ..\src\PaintingGUI\Sketchpad.cpp \
+    ..\src\PaintingGUI\CommandWindow.cpp \
+    ..\src\PaintingGUI\EditorWindow.cpp \
+    ..\src\PaintingGUI\DrawWindow.cpp \
+    ..\src\PaintingGUI\Painter.cpp \
+    ..\src\PaintingGUI\pugixml.cpp \
+    ..\src\PaintingGUI\shapes.cpp \
+    ..\src\PaintingGUI\runLogic.cpp \
+    ..\src\PaintingGUI\CVImageWidget.cpp
 
 HEADERS  += \
-    Sketchpad.h \
-    CommandWindow.h \
-    EditorWindow.h \
-    Painter.h \
-    pugixml.hpp \
-    pugiconfig.hpp \
-    CVImageWidget.h
+    ..\include\PaintingGUI\Sketchpad.h \
+    ..\include\PaintingGUI\CommandWindow.h \
+    ..\include\PaintingGUI\EditorWindow.h \
+    ..\include\PaintingGUI\Painter.h \
+    ..\include\PaintingGUI\pugixml.hpp \
+    ..\include\PaintingGUI\pugiconfig.hpp \
+    ..\include\PaintingGUI\runLogic.h \
+    ..\include\PaintingGUI\CVImageWidget.h
 
 FORMS    += \
     Sketchpad.ui \

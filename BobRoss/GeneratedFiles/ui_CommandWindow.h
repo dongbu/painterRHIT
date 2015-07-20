@@ -43,7 +43,6 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QListWidget *listWidget;
     QVBoxLayout *verticalLayout;
-    QPushButton *EditCommand;
     QPushButton *DeleteCommand;
     QPushButton *MoveUp;
     QPushButton *MoveDown;
@@ -110,11 +109,6 @@ public:
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        EditCommand = new QPushButton(layoutWidget);
-        EditCommand->setObjectName(QStringLiteral("EditCommand"));
-
-        verticalLayout->addWidget(EditCommand);
-
         DeleteCommand = new QPushButton(layoutWidget);
         DeleteCommand->setObjectName(QStringLiteral("DeleteCommand"));
 
@@ -196,7 +190,6 @@ public:
         actionPause->setToolTip(QApplication::translate("CommandWindow", "pause simulation", 0));
 #endif // QT_NO_TOOLTIP
         Command_List_Label->setText(QApplication::translate("CommandWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
-        EditCommand->setText(QApplication::translate("CommandWindow", "Edit", 0));
         DeleteCommand->setText(QApplication::translate("CommandWindow", "Delete", 0));
         MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
         MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));

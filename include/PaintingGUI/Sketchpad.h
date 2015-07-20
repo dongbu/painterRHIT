@@ -1,9 +1,9 @@
 #ifndef SKETCHPAD_H
 #define SKETCHPAD_H
 
-#include "shapes.cpp"
+#include "../src/PaintingGUI/shapes.cpp"
 #include "CVImageWidget.h"
-#include "DrawWindow.cpp"
+#include "../src/PaintingGUI/DrawWindow.cpp"
 
 #include <QObject>
 #include <QMainWindow>
