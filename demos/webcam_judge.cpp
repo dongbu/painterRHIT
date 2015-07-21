@@ -1,6 +1,7 @@
 #include "webcam.cpp"
 #include "drawwindow.cpp"
 #include "shapes.cpp"
+#include <unistd.h> // sleep
 
 // use webcam to score how close a painting is to the desired result
 
@@ -31,13 +32,14 @@ int main(void)
   INTRO.drawText(10,30,"c=calibrate webcam(1-4,arrows,s=save,esc=done)");
   INTRO.show(); 
 
-  int width=280;
-  int height=200;
+  int width=560;
+  int height=400;
   int blackwhite = 0; 
   cv::Mat frame;
   cv::Mat bwframe;
 
   Webcam W;
+  W.setFlip(1);
   W.setMapSize(width,height);
 
   DrawWindow DW = DrawWindow(width,height,"Desired Painting"); 
@@ -62,6 +64,7 @@ int main(void)
     //if (k>0) { printf("key = %d\n",k); }
     if (k==27) { return(0); }  // Esc key to stop
     if (k == int('c')) { W.calibrateWebcam(); }
+    if (k == int('e')) { W.calibrateWebcam(1); }
     
     if (k == int('s')) {  // make the desired painting be a snap of the webcam
       W.getMappedFrame(&frame);
@@ -72,6 +75,27 @@ int main(void)
 	DW.grid = frame.clone(); 
       }
       DW.show();
+    }
+
+    if (k == int('t')) {
+      int toggle=0;
+      int done=0;
+      //Mat T1 = EW.grid;
+      //Mat T2 = frame;
+      cv::namedWindow("Toggle", CV_WINDOW_AUTOSIZE );
+
+      while (!done) {
+	if (toggle==1) {
+	  toggle=0;
+	  cv::imshow("Toggle", frame);
+	} else {
+	  toggle=1;
+	  cv::imshow("Toggle", EW.grid);
+	}
+	sleep(1);
+	int k = cv::waitKey(33);
+	if (k==27 || k == int('t')) { done=1; }
+      }
     }
 
     if (k == int('m')) {
@@ -106,12 +130,16 @@ int main(void)
 		     webcam_color[0],webcam_color[1],webcam_color[2],
 		     closeness); 
 	    }
-	    int c = 128 + cdiff/(2); 
-	    c = closeness;
+	    int c = cdiff; 
+	    //c = closeness;
 	    if (c>255) { c=255; }  
-	    if (c<0) { c=0; }
-
-	    EW.setPenColor(c,c,c);
+	    if (c<-255) { c=-255; }
+	    
+	    if (c>=0) {
+	      EW.setPenColor(0,0,c);
+	    } else {
+	      EW.setPenColor(-c,0,0);
+	    }
 	    EW.drawPixel(i,j);
 	    if (closeness<50) {
 	      right++;
@@ -130,7 +158,8 @@ int main(void)
 	EW.show();
 	DW.show();
 	//printf("%i OK, %i bad pixels\n",right,wrong);
-	
+	sleep(1);
+
 	int k = cv::waitKey(33);
 	if (k==27 || k == int('m')) { done=1; }
       }

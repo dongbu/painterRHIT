@@ -71,7 +71,7 @@ public:
   }
 
   // sets the desired region of the webcam 
-  void calibrateWebcam () {
+  void calibrateWebcam (int skip_reset=0) {
     cv::Mat webcam;
     cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
     //    cv::Mat canvas; // this is the "canvas"
@@ -85,7 +85,7 @@ public:
 
     cv::namedWindow(mapped_name,1);
 
-    resetMapping();
+    if (!skip_reset) { resetMapping(); }
 
     cv::Mat scaledWebcam;
     webcam_corner = 0;
