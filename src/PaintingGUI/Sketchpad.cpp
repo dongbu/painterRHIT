@@ -312,13 +312,10 @@ void Sketchpad::newClicked() {
 
 
 void Sketchpad::connectCytonClicked(){
-	printf("connect to cyton\n");
 	if (!Ava->connect()){
 		return;
 	}
 	ui->menuWorkspace->setEnabled(true);
-	//ui->actionStartup->setDisabled(true);
-	//ui->actionShutdown->setDisabled(true);
 }
 void Sketchpad::connectABBClicked(){
 	printf("setup connection to ABB here\n");
@@ -326,17 +323,27 @@ void Sketchpad::connectABBClicked(){
 }
 void Sketchpad::loadWorkspaceClicked(){
 	printf("load workspace\n");
-
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString());
+	}
+	ui->actionStartup->setEnabled(true);
+	ui->actionShutdown->setEnabled(true);
 }
 void Sketchpad::createWorkspaceClicked(){
 	printf("create workspace\n");
 
+	ui->actionStartup->setEnabled(true);
+	ui->actionShutdown->setEnabled(true);
+
 }
 void Sketchpad::startupClicked(){
-	printf("startup\n");
+	Ava->startup();
 
 }
 void Sketchpad::shutDownClicked(){
-	printf("shut down\n");
-
+	Ava->shutdown();
 }

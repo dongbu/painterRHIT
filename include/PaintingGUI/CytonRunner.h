@@ -14,6 +14,7 @@
 #include <math.h>
 #include <qobject.h>
 #include <iostream>
+#include "pugixml.hpp"
 
 #include <opencv2/opencv.hpp>
 class CytonRunner
@@ -33,6 +34,14 @@ public:
 	void getPaint(int paint_can_id);
 	void drawPoint(std::pair<int, int> pt);
 	void stroke(std::pair<int, int> pt1, std::pair<int, int> pt2);
+
+private:
+	bool goToJointHome(int type);
+	EcRealVector startJointPosition;
+	std::vector<std::pair<int, int>> canvasCorners;
+	std::vector<std::pair<int, std::pair<int, int>>> paint;
+	double dx, dy, dz;
+	std::string brushType;
 
 	
 

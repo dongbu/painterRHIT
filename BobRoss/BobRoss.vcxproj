@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\PaintingGUI\CVImageWidget.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
     <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp" />
@@ -150,7 +151,6 @@
     <ClCompile Include="..\src\PaintingGUI\main.cpp" />
     <ClCompile Include="..\src\PaintingGUI\pugixml.cpp" />
     <ClCompile Include="..\src\PaintingGUI\runLogic.cpp" />
-    <ClCompile Include="CytonRunner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="GeneratedFiles\ui_CommandWindow.h">
@@ -975,7 +975,7 @@ endlocal
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CytonRunner.h" />
+    <ClInclude Include="..\include\PaintingGUI\CytonRunner.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
