@@ -13,7 +13,7 @@ int main(void)
   Shapes SIPC;
   ImageParserContours IPC;
   if (1) {
-    IPC.setDebug(1);
+    //IPC.setDebug(1);
     IPC.setMinContourLength(5);
     IPC.setCannyThreshold(50);
     IPC.parseImage(src);
@@ -23,7 +23,7 @@ int main(void)
     //IPC.printImageData(1);
     
     WIPC.clearWindow(230,230,230); // default background is white
-    SIPC.drawAll(&WIPC);
+    SIPC.DrawAll(&WIPC);
     WIPC.show();
   }
 
@@ -31,16 +31,16 @@ int main(void)
   ImageParserKmeans IPK;
   DrawWindow WIPK = DrawWindow(src.cols,src.rows,"IPK pixel regions"); // w,h
   if (1) {
-    IPK.setDebug(1);
+    //IPK.setDebug(1);
     IPK.setMinPixelsInRegion(5);
     IPK.parseImage(src);
     IPK.useRandomColors(1); // shows each contour as a random color
-    IPK.draw();
+    //IPK.draw();
     IPK.defineShapes(&SIPK);
     //  IPC.printImageData(1);
     
     WIPK.clearWindow(230,230,230); // default background is white
-    SIPK.drawAll(&WIPK);
+    SIPK.DrawAll(&WIPK);
     WIPK.show();
   }
 

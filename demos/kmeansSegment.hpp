@@ -1,6 +1,4 @@
-#ifndef KMEANSSEGMENT_HPP
-#define KMEANSSEGMENT_HPP
-#endif
+#pragma once
 
 #include <opencv2/core/core.hpp>
 
@@ -35,3 +33,4 @@ private:
   cv::Mat results_;
   cv::Mat samples_;
 };
+
