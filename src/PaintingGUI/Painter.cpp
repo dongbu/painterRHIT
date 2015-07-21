@@ -72,7 +72,6 @@ void Painter::save(std::string name) {
 void Painter::load(std::string projectLocation) {
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file((projectLocation).c_str());
-	
     pugi::xml_node listOfShapes = doc.child("robot").child("shapes");
     shapes->parseXML(&listOfShapes);
 	pugi::xml_node canvasInfo = doc.child("robot").child("canvas");

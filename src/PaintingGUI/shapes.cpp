@@ -118,7 +118,6 @@ public:
     }
 
     virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); }
-
     Shape() { id = -1; type = "shape"; }
     ~Shape() { }
 };
@@ -160,7 +159,7 @@ public:
         line.append(string_format("<shape type=\"polyline\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint,thickness));
         line.append(Shape::getColorXML());
         line.append("<points>");
-        for (int i=0; i<points.size(); i++) {
+        for (size_t i=0; i<points.size(); i++) {
             line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
         }
         line.append("</points>");
@@ -176,7 +175,7 @@ public:
         cv::Scalar color = getPenColor();
         W->setPenColor(color[0],color[1],color[2]);
         W->setLineThickness(thickness);
-        for (int i=0; i<points.size()-1; i++) {
+        for (size_t i=0; i<points.size()-1; i++) {
             W->drawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y);
         }
     }
@@ -223,7 +222,7 @@ public:
 		line.append(string_format("<shape type=\"polypoints\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint,thickness));
         line.append(Shape::getColorXML());
         line.append("<points>");
-        for (int i=0; i<points.size(); i++) {
+        for (size_t i=0; i<points.size(); i++) {
             line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
         }
         line.append("</points>");
@@ -240,7 +239,7 @@ public:
         W->setPenColor(color[0],color[1],color[2]);
         W->setLineThickness(thickness);
         W->startPolyPoints();
-        for (int i=0; i<points.size()-1; i++) {
+        for (size_t i=0; i<points.size()-1; i++) {
             W->addPolyPoint(points[i].x,points[i].y);
         }
         W->drawPolyPoints();
@@ -283,7 +282,7 @@ public:
 		line.append(string_format("<shape type=\"pixelregion\" id=\"%i\" breakPoint=\"%i\">", getID(), isBreakPoint));
         line.append(Shape::getColorXML());
         line.append("<points>");
-        for (int i=0; i<points.size(); i++) {
+        for (size_t i=0; i<points.size(); i++) {
             line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
         }
         line.append("</points>");
@@ -298,7 +297,7 @@ public:
     virtual void draw(DrawWindow *W) {
         cv::Scalar color = getPenColor();
         W->setPenColor(color[0],color[1],color[2]);
-        for (int i=0; i<points.size()-1; i++) {
+        for (size_t i=0; i<points.size()-1; i++) {
             W->drawPixel(points[i].x,points[i].y);
 
         }
@@ -470,7 +469,7 @@ public:
      */
     std::string getXML() {
         std::string line = "<shapes>\n";
-        for (int i=0; i<shapes.size(); i++) {
+        for (size_t i=0; i<shapes.size(); i++) {
             line.append(shapes[i]->getXML());
             line.append("\n");
         }
@@ -590,7 +589,7 @@ public:
      * @param Draw Window
      */
     void DrawAll(DrawWindow *W) {
-        for (int i = 0; i < shapes.size(); i++) {
+        for (size_t i = 0; i < shapes.size(); i++) {
             shapes.at(i);
             shapes.at(i)->draw(W);
         }
@@ -603,7 +602,7 @@ public:
      * @param id
      */
     void drawOne(DrawWindow *W, int id=0) {
-        for (int i=0; i<shapes.size(); i++) {
+        for (size_t i=0; i<shapes.size(); i++) {
             if (shapes[i]->getID() == id ) { shapes[i]->draw(W); }
         }
     }
@@ -613,7 +612,7 @@ public:
      * @param id
      */
     void removeShape(int id) {
-        for (int i=0; i<shapes.size(); i++) {
+        for (size_t i=0; i<shapes.size(); i++) {
             if (shapes[i]->getID() == id) {
                 shapes.erase(shapes.begin() + i);
                 i=shapes.size()+1;
@@ -644,7 +643,7 @@ public:
      * @return Shape
      */
     Shape* getById(int id){
-        for (int i = 0; i < shapes.size(); i++){
+        for (size_t i = 0; i < shapes.size(); i++){
             if (shapes[i]->getID() == id){
                 return shapes.at(i);
             }

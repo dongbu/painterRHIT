@@ -32,6 +32,13 @@ bool CytonRunner::connect(){
 
 
 void CytonRunner::loadWorkspace(std::string fileLocation){
+	//clear all variables.
+	startJointPosition.clear();
+	canvasCorners.clear();
+	paint.clear();
+	dx = dy = dz = 0;
+	brushType = "";
+
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file((fileLocation).c_str());
 
@@ -40,23 +47,25 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	pugi::xml_node paintPickup = doc.child("workspace").child("paintPickup");
 	pugi::xml_node brush = doc.child("workspace").child("brush");
 
-	for (pugi::xml_node temp = start; temp; temp = temp.next_sibling()){
-		startJointPosition.push_back(temp.attribute("s").as_double());
+	for (pugi::xml_node temp = start.first_child(); temp; temp = temp.next_sibling()){
+		double rot = temp.attribute("s").as_double();
+		startJointPosition.push_back(rot);
 	}
-	for (pugi::xml_node temp = canvas; temp; temp = temp.next_sibling()){
-		int x = temp.attribute("x").as_double();
-		int y = temp.attribute("y").as_double();
+	
+	for (pugi::xml_node temp = canvas.first_child(); temp; temp = temp.next_sibling()){
+		double x = temp.attribute("x").as_double();
+		double y = temp.attribute("y").as_double();
 		std::pair<int, int> corner(x,y);
 		canvasCorners.push_back(corner);
 	}
-	for (pugi::xml_node temp = paintPickup; temp; temp = temp.next_sibling()){
+	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
 		paint;
-		int x = temp.attribute("x").as_double();
-		int y = temp.attribute("y").as_double();
-		int id = temp.attribute("id").as_int();
+		double x = temp.attribute("x").as_double();
+		double y = temp.attribute("y").as_double();
+		double id = temp.attribute("id").as_int();
 
-		std::pair<int, int> pos(x, y);
-		std::pair<int, std::pair<int, int>> paintPickup(id, pos);
+		std::pair<double, double> pos(x, y);
+		std::pair<double, std::pair<double, double>> paintPickup(id, pos);
 		paint.push_back(paintPickup);
 	}
 	
@@ -64,7 +73,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	dy = brush.next_sibling().attribute("dy").as_double();
 	dz = brush.next_sibling().attribute("dz").as_double();
 	brushType = brush.next_sibling().attribute("type").as_string();
-
 
 }
 void CytonRunner::createWorkspace(){
@@ -76,35 +84,88 @@ void CytonRunner::saveWorkspace(){
 void CytonRunner::startup(){
 	goToJointHome(1);
 }
-void CytonRunner::shutdown(){
+bool CytonRunner::shutdown(){
 	QMessageBox message;
 	message.setInformativeText("Please clear away any and all paints before continuing");
 	QPushButton *okButton = message.addButton(QMessageBox::Ok);
-	QPushButton *cancelButton = message.addButton(QMessageBox::Cancel);
+	message.addButton(QMessageBox::Cancel);
 	message.exec();
 	if(message.clickedButton() == okButton){
 		if (goToJointHome(0)){
+			startJointPosition.clear();
+			canvasCorners.clear();
+			paint.clear();
+			dx = dy = dz = 0;
+			brushType = "";
 			Ec::shutdown();
 			printf("shut down\n");
+			return true;
+		}
+	}
+	return false;
+}
+void CytonRunner::goToPos(double x, double y, double z){
+	EcCoordinateSystemTransformation pose;
+	pose.setTranslationX(x);
+	pose.setTranslationY(y);
+	pose.setTranslationZ(z);
+	EcOrientation orientation;
+	
+	//roll about x-axis, pitch about y-axis,Yaw about z-axis
+	orientation.setFrom123Euler(0, 0, 0);
+	
+	pose.setOrientation(orientation);
+
+	setEndEffectorSet(FRAME_EE_SET); // point end effector set index
+	EcEndEffectorPlacement desiredPlacement(pose);
+	EcManipulatorEndEffectorPlacement actualEEPlacement;
+	EcCoordinateSystemTransformation offset, zero, actualCoord;
+	zero.setTranslation(EcVector(0, 0, 0));
+
+	//set the desired position
+	setDesiredPlacement(desiredPlacement, 0, 0);
+
+	// if it hasnt been achieved after 5 sec, return false
+	EcU32 timeout = 5000;
+	EcU32 interval = 10;
+	EcU32 count = 0;
+	EcBoolean achieved = EcFalse;
+	while (!achieved && !(count >= timeout / interval))
+	{
+		EcSLEEPMS(interval);
+		count++;
+
+		getActualPlacement(actualEEPlacement);
+		actualCoord = actualEEPlacement.offsetTransformations()[0].coordSysXForm();
+
+		//get the transformation between the actual and desired 
+		offset = (actualCoord.inverse()) * pose;
+
+		if (offset.approxEq(zero, .00001))
+		{
+			achieved = EcTrue;
 		}
 	}
 }
-void CytonRunner::goToPos(int x, int y){
-
-}
 void CytonRunner::raiseBrush(){
-
+	if (!isUp){
+		printf("move up\n");
+	}
+	isUp = true;
 }
 void CytonRunner::lowerBrush(){
-
+	if (isUp){
+		printf("move down\n");
+	}
+	isUp = false;
 }
 void CytonRunner::getPaint(int paint_can_id){
 
 }
-void CytonRunner::drawPoint(std::pair<int, int> pt){
+void CytonRunner::drawPoint(std::pair<double, double> pt){
 
 }
-void CytonRunner::stroke(std::pair<int, int> pt1, std::pair<int, int> pt2){
+void CytonRunner::stroke(std::pair<double, double> pt1, std::pair<double, double> pt2){
 
 }
 
@@ -113,6 +174,7 @@ bool CytonRunner::goToJointHome(int type){
 	EcRealVector jointPosition(7);
 	if (type == 1){
 		jointPosition = startJointPosition;
+		isUp = true;
 	}
 	const EcReal angletolerance = .000001;
 

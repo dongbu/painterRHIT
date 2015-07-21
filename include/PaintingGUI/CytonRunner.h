@@ -27,19 +27,19 @@ public:
 	void createWorkspace();
 	void saveWorkspace();
 	void startup();
-	void shutdown();
-	void goToPos(int x, int y);
+	bool shutdown();
+	void goToPos(double x, double y, double z);
 	void raiseBrush();
 	void lowerBrush();
 	void getPaint(int paint_can_id);
-	void drawPoint(std::pair<int, int> pt);
-	void stroke(std::pair<int, int> pt1, std::pair<int, int> pt2);
+	void drawPoint(std::pair<double, double> pt);
+	void stroke(std::pair<double, double> pt1, std::pair<double, double> pt2);
 
 private:
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
-	std::vector<std::pair<int, int>> canvasCorners;
-	std::vector<std::pair<int, std::pair<int, int>>> paint;
+	std::vector<std::pair<double, double>> canvasCorners;
+	std::vector<std::pair<double, std::pair<double, double>>> paint;
 	double dx, dy, dz;
 	std::string brushType;
 
