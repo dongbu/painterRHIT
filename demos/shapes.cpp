@@ -86,6 +86,10 @@ public:
     points.push_back(cv::Point(i,j));
   }
 
+  void addPoint(cv::Point pt) {
+    points.push_back(pt);
+  }
+
   void setThickness(int t=1) { thickness=t; }
 
   virtual std::string getXML() {
@@ -221,6 +225,17 @@ public:
     pt2 = cv::Point(x2,y2);
   }
 
+  // returns a polyline representation of a rectangle
+  PolyLine toPolyline() {
+    PolyLine PL;
+    PL.addPoint(pt1);
+    PL.addPoint(cv::Point(pt2.x,pt1.y));
+    PL.addPoint(pt2);
+    PL.addPoint(cv::Point(pt1.x,pt2.y));
+    PL.addPoint(pt1);
+    return PL;
+  }
+
   virtual void setFill(int f=1) { fill=f; }
 
   virtual std::string getXML() {
@@ -257,6 +272,24 @@ public:
   void setData(int x, int y, double width, double height) { // ellipse
     pt = cv::Point(x,y);
     axes = cv::Size(width,height);
+  }
+
+  // returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
+  PolyLine toPolyline() {
+    PolyLine PL;
+    double radius = (axes.width + axes.height)/4. + .25; // .25 to help anti-aliasing
+    //printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
+    int n = radius*2;
+    double pi = 3.1415928; // yah, should find the math var
+    for (int i=0; i<n; i++) {
+      double rad = 2.*pi*((double)i/(double)n);
+      int x = pt.x+radius*cos(rad);
+      int y = pt.y+radius*sin(rad);
+      //printf("%i,%i at %f\n",x,y,rad);
+      PL.addPoint(cv::Point(x, y));
+    }
+    PL.addPoint(cv::Point(pt.x+radius, pt.y));
+    return PL;
   }
 
   virtual void setFill(int f=1) { fill=f; }

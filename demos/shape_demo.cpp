@@ -69,12 +69,20 @@ int main(void)
   R->setFill(1);
   S.addShape(R);
 
+  PolyLine RtoPL = R->toPolyline();
+  RtoPL.setPenColor(0,255,0);
+  S.addShape(&RtoPL);
+
   // add circle
   Ellipse *E = new Ellipse();
   E->setFill(1);
   E->setPenColor(200,0,0);
   E->setData(30,200,20.0); // circle
   S.addShape(E);
+
+  PolyLine EtoPL = E->toPolyline();
+  EtoPL.setPenColor(0,255,0);
+  S.addShape(&EtoPL);
 
   E = new Ellipse();
   E->setData(130,200,20.0,40.);
@@ -89,18 +97,18 @@ int main(void)
   // save to XML
   std::string xml = "<?xml version=\"1.0\"?>\n";
   xml.append(S.getXML());
-  ofstream myfile;
+  std::ofstream myfile;
   myfile.open ("shapes.xml");
   myfile << xml;
   myfile.close();
-  if (debug) cout << xml;
+  if (debug) std::cout << xml;
 
   // load up a drawing from XML
 
   pugi::xml_document doc;
   pugi::xml_parse_result result = doc.load_file("shapes.xml");
 
-  if (debug) cout << "Load result: " << result.description() << endl;
+  if (debug) std::cout << "Load result: " << result.description() << std::endl;
 
   pugi::xml_node shapes = doc.child("shapes");
   Shapes SS;
@@ -108,7 +116,7 @@ int main(void)
 
   xml = "<?xml version=\"1.0\"?>\n";
   xml.append(SS.getXML());
-  if (debug) cout << xml;
+  if (debug) std::cout << xml;
 
   DrawWindow W2 = DrawWindow(w,h,"Shapes Loaded via XML"); // w,h
   W2.clearWindow(230,230,230); // default background is white
