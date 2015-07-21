@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -103,6 +103,7 @@
    <addaction name="actionDraw_Filled_Circle"/>
    <addaction name="actionDraw_Filled_Rectangle"/>
    <addaction name="actionDraw_Filled_Polygon"/>
+   <addaction name="actionActionFill"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -245,6 +246,18 @@
   <action name="actionABB">
    <property name="text">
     <string>ABB</string>
+   </property>
+  </action>
+  <action name="actionActionFill">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/fill.png</normaloff>:/Icon Storage/fill.png</iconset>
+   </property>
+   <property name="text">
+    <string>actionFill</string>
+   </property>
+   <property name="toolTip">
+    <string>Fill Region</string>
    </property>
   </action>
  </widget>

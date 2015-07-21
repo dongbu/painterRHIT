@@ -8,7 +8,7 @@
 #include <cmath>
 #include <QFileDialog>
 
-///Public methods below here
+using namespace cv;
 
 /**
  * @brief constructor
@@ -33,7 +33,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     this->translator = new CVImageWidget(ui->widget);
     connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
     this->cvWindow = new DrawWindow(height,width,"garbage name");
-    this->cvWindow->hideWindow();
+    //this->cvWindow->hideWindow();
 
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -90,7 +90,12 @@ void Sketchpad::startNewCommand() {
         if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
         curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
         this->currentShape = curRectangle;
-    }
+	} else if (ui->actionActionFill->isChecked()) {
+		curPixelRegion = new PixelRegion();
+		curPixelRegion->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curPixelRegion;
+
+	}
 }
 
 /**
@@ -152,6 +157,15 @@ void Sketchpad::refresh(int x, int y) {
         }
     }
 
+	//DRAW PIXELREGION (fill)
+	else if (ui->actionActionFill->isChecked()) {
+		reset = true;
+		cvWindow->clearWindow();
+
+		shapes->DrawAll(cvWindow);
+		flood(Point(x, y));
+	}
+
     //DELETE CLICK CIRCLES
     if (reset) {
         shapes->addShape(currentShape);
@@ -170,6 +184,49 @@ void Sketchpad::refresh(int x, int y) {
 
 }
 
+void Sketchpad::flood(Point p) {
+	Mat processed;
+	processed = Mat(cvWindow->grid.size().width, cvWindow->grid.size().height, CV_64F, cvScalar(0.));
+	Vec3b floodColor = cvWindow->grid.at<Vec3b>(p);
+
+	std::vector<Point> pointVec;
+	pointVec.push_back(p);
+	while (pointVec.size() > 0)
+	{
+		p = pointVec.back();
+		pointVec.pop_back();
+		cvWindow->grid.at<Vec3b>(p);
+		Vec3b curPix = cvWindow->grid.at<Vec3b>(p);
+		bool skip = false;
+
+		if ((floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2])) {
+			curPix[0] = 36;
+			curPix[1] = 255;
+			curPix[2] = 92;
+			cvWindow->grid.at<Vec3b>(p) = curPix;
+			curPixelRegion->addPoint(p.x,p.y);
+		}
+		else skip = true;
+
+		if (!skip && p.y - 1 > 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
+			processed.at<double>(p.x, p.y - 1) = 1;
+			pointVec.push_back(Point(p.x, p.y - 1));
+		}
+		if (!skip && p.x - 1 > 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
+			processed.at<double>(p.x - 1, p.y) = 1;
+			pointVec.push_back(Point(p.x - 1, p.y));
+		}
+		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //recurse up
+			processed.at<double>(p.x - 1, p.y) = 1;
+			pointVec.push_back(Point(p.x, p.y + 1));
+		}
+		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //recurse right
+			processed.at<double>(p.x + 1, p.y) != 1;
+			pointVec.push_back(Point(p.x + 1, p.y));
+		}
+	}
+}
+
 //Tedious functions below here
 /**
  * @brief sets up the Qt ui with all buttons, actions, etc.
@@ -182,12 +239,14 @@ void Sketchpad::setupQt() {
     actionGroup->addAction(ui->actionDraw_Filled_Circle);
     actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
     actionGroup->addAction(ui->actionDraw_Filled_Polygon);
+	actionGroup->addAction(ui->actionActionFill);
     ui->actionDraw_Square->setCheckable(true);
     ui->actionDraw_Circle->setCheckable(true);
     ui->actionDraw_Line->setCheckable(true);
     ui->actionDraw_Filled_Rectangle->setCheckable(true);
     ui->actionDraw_Filled_Circle->setCheckable(true);
     ui->actionDraw_Filled_Polygon->setCheckable(true);
+	ui->actionActionFill->setCheckable(true);
     connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
 
     color = new QComboBox();

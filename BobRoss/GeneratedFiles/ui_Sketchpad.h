@@ -44,6 +44,7 @@ public:
     QAction *actionCreate;
     QAction *actionCyton;
     QAction *actionABB;
+    QAction *actionActionFill;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -127,6 +128,11 @@ public:
         actionCyton->setObjectName(QStringLiteral("actionCyton"));
         actionABB = new QAction(Sketchpad);
         actionABB->setObjectName(QStringLiteral("actionABB"));
+        actionActionFill = new QAction(Sketchpad);
+        actionActionFill->setObjectName(QStringLiteral("actionActionFill"));
+        QIcon icon10;
+        icon10.addFile(QStringLiteral(":/Icon Storage/fill.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionActionFill->setIcon(icon10);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -136,7 +142,7 @@ public:
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 960, 21));
+        menubar->setGeometry(QRect(0, 0, 960, 26));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuRobot = new QMenu(menubar);
@@ -179,6 +185,7 @@ public:
         toolBar_2->addAction(actionDraw_Filled_Circle);
         toolBar_2->addAction(actionDraw_Filled_Rectangle);
         toolBar_2->addAction(actionDraw_Filled_Polygon);
+        toolBar_2->addAction(actionActionFill);
 
         retranslateUi(Sketchpad);
 
@@ -209,6 +216,10 @@ public:
         actionCreate->setText(QApplication::translate("Sketchpad", "create", 0));
         actionCyton->setText(QApplication::translate("Sketchpad", "Cyton", 0));
         actionABB->setText(QApplication::translate("Sketchpad", "ABB", 0));
+        actionActionFill->setText(QApplication::translate("Sketchpad", "actionFill", 0));
+#ifndef QT_NO_TOOLTIP
+        actionActionFill->setToolTip(QApplication::translate("Sketchpad", "Fill Region", 0));
+#endif // QT_NO_TOOLTIP
         menuFile->setTitle(QApplication::translate("Sketchpad", "file", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "workspace", 0));
