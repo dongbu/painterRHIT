@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     AllocConsole();
-    SetConsoleTitleA("Robot Artist V2.0.0 (7/20/15)");
+    SetConsoleTitleA("Robot Artist V2.0.0 (7/21/15)");
     freopen("conin$", "r", stdin);
     freopen("conout$", "w", stdout);
     freopen("conout$", "w", stderr);

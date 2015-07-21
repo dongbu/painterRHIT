@@ -42,6 +42,13 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     shapes->DrawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
     this->startNewCommand(); //prep for initial command
+
+	//robot logic
+	//ui->menuRobot->setDisabled(true);
+	ui->menuWorkspace->setDisabled(true);
+	ui->actionStartup->setDisabled(true);
+	ui->actionShutdown->setDisabled(true);
+
 }
 
 /**
@@ -204,6 +211,17 @@ void Sketchpad::setupQt() {
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
+
+	//robot work
+	Ava = new CytonRunner();
+	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
+	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
+	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
+	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
+	connect(ui->actionStartup, SIGNAL(triggered()), this, SLOT(startupClicked()));
+	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
+
+
 }
 
 /**
@@ -290,4 +308,42 @@ void Sketchpad::newClicked() {
     this->paintingName = "unnamed";
     this->redraw();
     emit prodOtherWindows();
+}
+
+
+void Sketchpad::connectCytonClicked(){
+	if (!Ava->connect()){
+		return;
+	}
+	ui->menuWorkspace->setEnabled(true);
+}
+void Sketchpad::connectABBClicked(){
+	printf("setup connection to ABB here\n");
+
+}
+void Sketchpad::loadWorkspaceClicked(){
+	printf("load workspace\n");
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString());
+	}
+	ui->actionStartup->setEnabled(true);
+	ui->actionShutdown->setEnabled(true);
+}
+void Sketchpad::createWorkspaceClicked(){
+	printf("create workspace\n");
+
+	ui->actionStartup->setEnabled(true);
+	ui->actionShutdown->setEnabled(true);
+
+}
+void Sketchpad::startupClicked(){
+	Ava->startup();
+
+}
+void Sketchpad::shutDownClicked(){
+	Ava->shutdown();
 }

@@ -42,6 +42,7 @@
     <Import Project="property files\MyProps.props" />
     <Import Project="property files\OpenCV.props" />
     <Import Project="property files\Qt.props" />
+    <Import Project="property files\Cyton.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -142,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\PaintingGUI\CVImageWidget.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
     <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp" />
@@ -971,6 +973,9 @@ endlocal
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </AdditionalInputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\PaintingGUI\CytonRunner.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
