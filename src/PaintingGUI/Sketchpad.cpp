@@ -114,7 +114,7 @@ void Sketchpad::refresh(int x, int y) {
                 PolyPoints *pp = new PolyPoints();
                 pp->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
                 pp->setThickness(4);
-                for (int i = 0; i < curPolyLine->points.size(); i++) {
+                for (size_t i = 0; i < curPolyLine->points.size(); i++) {
                     pp->addPoint(curPolyLine->points.at(i).x,curPolyLine->points.at(i).y);
                 }
                 pp->addPoint(x, y);
@@ -343,7 +343,12 @@ void Sketchpad::createWorkspaceClicked(){
 void Sketchpad::startupClicked(){
 	Ava->startup();
 
+
 }
 void Sketchpad::shutDownClicked(){
-	Ava->shutdown();
+	if (Ava->shutdown()){
+		ui->actionShutdown->setDisabled(true);
+		ui->actionStartup->setDisabled(true);
+		ui->menuWorkspace->setDisabled(true);
+	}
 }

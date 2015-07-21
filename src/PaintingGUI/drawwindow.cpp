@@ -249,7 +249,7 @@ public:
    * @param pixels
    */
     void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference
-        for (int i=0; i<pixels.size(); i++) {
+        for (size_t i=0; i<pixels.size(); i++) {
             grid.at<cv::Vec3b>(pixels[i]) = pen_color_vec;
         }
     }
