@@ -9,7 +9,7 @@
 #include "drawwindow.cpp"
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
-using namespace std;
+//using namespace std;
 
 std::string string_format(const std::string fmt, ...) {
     int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
@@ -39,7 +39,7 @@ protected:
   int r,g,b;
 
 public:
-  string type;
+  std::string type;
   int id;
 
   void setID(int i) { id = i; }
@@ -311,12 +311,12 @@ public:
     int debug=0;
 
     for (pugi::xml_node shape = shapes->first_child(); shape; shape = shape.next_sibling()) {
-      string type = shape.attribute("type").value();
+      std::string type = shape.attribute("type").value();
       int id=shape.attribute("id").as_int();
       int r=shape.child("color").attribute("r").as_int();
       int g=shape.child("color").attribute("g").as_int();
       int b=shape.child("color").attribute("b").as_int();
-      if (debug) cout << type;
+      if (debug) std::cout << type;
       if (debug) printf(" shape ID:%i\n",id);
       if (debug) printf(" RGB %d %d %d\n",r,g,b);
 
