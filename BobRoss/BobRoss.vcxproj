@@ -42,6 +42,7 @@
     <Import Project="property files\MyProps.props" />
     <Import Project="property files\OpenCV.props" />
     <Import Project="property files\Qt.props" />
+    <Import Project="property files\Cyton.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -149,6 +150,7 @@
     <ClCompile Include="..\src\PaintingGUI\main.cpp" />
     <ClCompile Include="..\src\PaintingGUI\pugixml.cpp" />
     <ClCompile Include="..\src\PaintingGUI\runLogic.cpp" />
+    <ClCompile Include="CytonRunner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="GeneratedFiles\ui_CommandWindow.h">
@@ -971,6 +973,9 @@ endlocal
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </AdditionalInputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CytonRunner.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -4,6 +4,7 @@
 #include "../src/PaintingGUI/shapes.cpp"
 #include "CVImageWidget.h"
 #include "../src/PaintingGUI/DrawWindow.cpp"
+#include "CytonRunner.h"
 
 #include <QObject>
 #include <QMainWindow>
@@ -41,6 +42,7 @@ private:
     int prevX, prevY;
     std::vector<int> rgbColor;
     std::string paintingName;
+	CytonRunner *Ava;
 
 private slots:
     void refresh(int x, int y);
@@ -50,6 +52,13 @@ private slots:
     void saveClicked();
     void openClicked();
     void newClicked();
+
+	void connectCytonClicked();
+	void connectABBClicked();
+	void loadWorkspaceClicked();
+	void createWorkspaceClicked();
+	void startupClicked();
+	void shutDownClicked();
 
 public slots:
     void redraw();
