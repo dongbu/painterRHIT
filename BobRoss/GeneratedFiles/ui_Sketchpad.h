@@ -45,6 +45,7 @@ public:
     QAction *actionCyton;
     QAction *actionABB;
     QAction *actionActionFill;
+    QAction *actionLoad_Photo;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -133,6 +134,11 @@ public:
         QIcon icon10;
         icon10.addFile(QStringLiteral(":/Icon Storage/fill.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionActionFill->setIcon(icon10);
+        actionLoad_Photo = new QAction(Sketchpad);
+        actionLoad_Photo->setObjectName(QStringLiteral("actionLoad_Photo"));
+        QIcon icon11;
+        icon11.addFile(QStringLiteral(":/Icon Storage/camera.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionLoad_Photo->setIcon(icon11);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -179,6 +185,7 @@ public:
         toolBar->addAction(actionNew);
         toolBar->addAction(actionSave);
         toolBar->addAction(actionOpen);
+        toolBar->addAction(actionLoad_Photo);
         toolBar_2->addAction(actionDraw_Square);
         toolBar_2->addAction(actionDraw_Circle);
         toolBar_2->addAction(actionDraw_Line);
@@ -219,6 +226,10 @@ public:
         actionActionFill->setText(QApplication::translate("Sketchpad", "actionFill", 0));
 #ifndef QT_NO_TOOLTIP
         actionActionFill->setToolTip(QApplication::translate("Sketchpad", "Fill Region", 0));
+#endif // QT_NO_TOOLTIP
+        actionLoad_Photo->setText(QApplication::translate("Sketchpad", "Load Photo", 0));
+#ifndef QT_NO_TOOLTIP
+        actionLoad_Photo->setToolTip(QApplication::translate("Sketchpad", "Load photo", 0));
 #endif // QT_NO_TOOLTIP
         menuFile->setTitle(QApplication::translate("Sketchpad", "file", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "robot", 0));

@@ -7,6 +7,7 @@
 #include "pugixml.hpp"
 #include "pugixml.cpp"
 #include "drawwindow.cpp"
+#include <cstdarg> //gunnar needs this to compile
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
 //using namespace std;

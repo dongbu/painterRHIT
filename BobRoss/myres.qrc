@@ -17,5 +17,6 @@
         <file>Icon Storage/FreeForm.png</file>
         <file>Icon Storage/FilledSquare.png</file>
         <file>Icon Storage/fill.png</file>
+        <file>Icon Storage/camera.png</file>
     </qresource>
 </RCC>

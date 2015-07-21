@@ -23,7 +23,7 @@ int main(void)
     //IPC.printImageData(1);
     
     WIPC.clearWindow(230,230,230); // default background is white
-    SIPC.DrawAll(&WIPC);
+    SIPC.drawAll(&WIPC);
     WIPC.show();
   }
 
@@ -40,7 +40,7 @@ int main(void)
     //  IPC.printImageData(1);
     
     WIPK.clearWindow(230,230,230); // default background is white
-    SIPK.DrawAll(&WIPK);
+    SIPK.drawAll(&WIPK);
     WIPK.show();
   }
 

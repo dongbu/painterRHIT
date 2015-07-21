@@ -1,6 +1,6 @@
 #include "RunLogic.h"
 
-int COMMAND_DELAY = 1000; //(ms)
+int COMMAND_DELAY = 10; //(ms)
 
 /**
  * @brief constructor

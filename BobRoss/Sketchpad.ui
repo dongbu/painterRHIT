@@ -86,6 +86,7 @@
    <addaction name="actionNew"/>
    <addaction name="actionSave"/>
    <addaction name="actionOpen"/>
+   <addaction name="actionLoad_Photo"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
@@ -258,6 +259,18 @@
    </property>
    <property name="toolTip">
     <string>Fill Region</string>
+   </property>
+  </action>
+  <action name="actionLoad_Photo">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Photo</string>
+   </property>
+   <property name="toolTip">
+    <string>Load photo</string>
    </property>
   </action>
  </widget>

@@ -4,7 +4,6 @@
 #include "Shapes.cpp"
 #include <windows.h>
 #include "DrawWindow.cpp"
-RECTANGLE
 
 int main(int argc, char *argv[])
 {

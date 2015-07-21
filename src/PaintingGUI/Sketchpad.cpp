@@ -1,12 +1,6 @@
 #pragma once
 
 #include "Sketchpad.h"
-#include "ui_Sketchpad.h"
-#include <QMouseEvent>
-#include <qvBoxLayout>
-#include <QActionGroup>
-#include <cmath>
-#include <QFileDialog>
 
 using namespace cv;
 
@@ -270,6 +264,7 @@ void Sketchpad::setupQt() {
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
+	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
 
 	//robot work
 	Ava = new CytonRunner();
@@ -405,4 +400,32 @@ void Sketchpad::startupClicked(){
 }
 void Sketchpad::shutDownClicked(){
 	Ava->shutdown();
+}
+
+void Sketchpad::loadPhotoClicked(){
+	newClicked();
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Images (*.png *.xpm *.jpg)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		cv::Mat image = imread(directory.selectedFiles().at(0).toStdString());
+		cv::resize(image, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
+
+		ImageParserContours IPC;
+		IPC.setMinContourLength(5);
+		IPC.setCannyThreshold(50);
+		IPC.parseImage(cvWindow->grid);
+		IPC.defineShapes(shapes);
+
+		ImageParserKmeans IPK;
+		IPK.setMinPixelsInRegion(5);
+		IPK.parseImage(cvWindow->grid);
+		IPK.defineShapes(shapes);
+
+		cvWindow->clearWindow();
+		shapes->DrawAll(cvWindow); //redraw window
+		translator->showImage(cvWindow->grid); //actually redraw the window
+		emit prodOtherWindows();
+	}
 }

@@ -123,6 +123,12 @@
     <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\imageparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\PaintingGUI\CVImageWidget.h">
@@ -270,6 +276,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\PaintingGUI\CytonRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\PaintingGUI\kmeansSegment.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

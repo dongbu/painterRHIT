@@ -145,6 +145,8 @@
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
     <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\imageparser.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Sketchpad.cpp" />
@@ -976,6 +978,7 @@ endlocal
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\PaintingGUI\CytonRunner.h" />
+    <ClInclude Include="..\include\PaintingGUI\kmeansSegment.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

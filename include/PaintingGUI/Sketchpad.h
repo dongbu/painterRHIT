@@ -1,9 +1,11 @@
 #ifndef SKETCHPAD_H
 #define SKETCHPAD_H
 
-#include "../src/PaintingGUI/shapes.cpp"
+#include "shapes.cpp"
+#include "DrawWindow.cpp"
+#include "imageparser.cpp"
+#include "ui_Sketchpad.h"
 #include "CVImageWidget.h"
-#include "../src/PaintingGUI/DrawWindow.cpp"
 #include "CytonRunner.h"
 
 #include <QObject>
@@ -12,6 +14,11 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QMainWindow>
+#include <QMouseEvent>
+#include <qvBoxLayout>
+#include <QActionGroup>
+#include <cmath>
+#include <QFileDialog>
 
 namespace Ui {
 class Sketchpad;
@@ -54,6 +61,7 @@ private slots:
     void saveClicked();
     void openClicked();
     void newClicked();
+	void loadPhotoClicked();
 
 	void connectCytonClicked();
 	void connectABBClicked();

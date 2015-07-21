@@ -2,7 +2,9 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include <highgui.h> // WINDOW_AUTOSIZE
+//#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
+#include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
+
 
 //using namespace std;
 
