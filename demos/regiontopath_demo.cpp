@@ -62,8 +62,10 @@ int main( int argc, char** argv )
     RTP.putGridOnWindow(&W,border,border);
     W.show();
 
-    //RTP.defineBrush(30,20,"rectangle");
-    RTP.defineBrush(30,20,"ellipse");
+    Brush brush(30,20,"rectangle");
+    RTP.defineBrush(30,20,"rectangle");
+    //RTP.defineBrush(30,20,"ellipse");
+    //RTP.defineBrush(&brush);
 
     RTP.definePaths(&W); // NOTE: &W is optional .. if send a DrawWindow, it shows debugging
     W.show();
