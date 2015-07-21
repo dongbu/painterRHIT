@@ -3,11 +3,62 @@
 // Tools to take a set of desired points to paint and returns paths for a brush
 // see regiontopaths_demo.cpp for example use
 
+class Brush {
+protected:
+  int width, height, border;
+
+  // brush variables
+  int brush_w, brush_h;
+  std::vector<cv::Point> brush_boundary;
+  std::vector<cv::Point> brush_interior;
+public:
+
+  Brush(int w, int h, std::string type="rectangle", int show_brush = 0) {
+    // create brush mask
+    brush_w = w; // max dimensions of brush
+    brush_h = h;
+    
+    //ABC: simplify brush to an int mask as dosnt' need to be color'd
+    cv::Scalar brush_color = cv::Scalar(0,0,0); 
+    cv::Scalar not_brush_color = cv::Scalar(255,255,255); 
+    brush = cv::Mat::zeros(cv::Size(brush_w,brush_h), CV_8UC3);
+    brush.setTo(not_brush_color);
+    
+    cv::Vec3b brush_color_vec3b = scalarToVec3b(brush_color);
+    
+    // draw brush (note: this is so we can use arbitrary shaped brushes
+    if (type.compare("ellipse")==0) {
+      cv::ellipse( brush, cv::Point(std::floor(w/2),std::floor(h/2)), 
+		   cv::Size(std::floor(brush_w/2), std::floor(brush_h/2)), 0., 0., 360., brush_color, -1);
+    } else {
+      cv::rectangle( brush, cv::Point(0,0), cv::Point(brush_w,brush_h), brush_color, -1);
+    }
+    if (show_brush) {
+      cv::namedWindow( "Brush", CV_WINDOW_AUTOSIZE );
+      cv::imshow( "Brush", brush );
+    }
+    
+    // make a vector of brush pixels
+    for (int i=0; i<brush_w; i++) {
+      for (int j=0; j<brush_h; j++) {
+	if (brush.at<cv::Vec3b>(cv::Point(i,j)) == brush_color_vec3b) {
+	  brush_pixels.push_back(cv::Point(i,j));
+	}
+      }
+    }
+    
+    // find the pixels of the boundary of the brush
+    defineBoundary(&brush,brush_color,&brush_boundary,&brush_interior);
+    //printf("brush boundary has %i points\n",(int)brush_boundary.size());
+  }
+}
+
 class RegionToPaths {
 protected:
   int width, height, border;
 
   // brush variables
+  Brush brush;
   int brush_w, brush_h;
   std::vector<cv::Point> brush_boundary;
   std::vector<cv::Point> brush_interior;
@@ -17,7 +68,7 @@ protected:
   std::vector<cv::Point> candidate_pixels; // possible places where could put brush for all loops
   std::vector<cv::Point> untouchable_boundary_pixels;
   std::vector<cv::Point> brush_pixels;
-  cv::Mat brush;
+  //cv::Mat brush_mat;
 
 public:
   int *grid;

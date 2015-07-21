@@ -28,6 +28,7 @@ public:
 private:
     void getColor();
     void setupQt();
+	void flood(cv::Point p);
 
     Ui::Sketchpad *ui;
     CVImageWidget *translator;
@@ -39,6 +40,7 @@ private:
     PolyLine *curPolyLine;
     Ellipse *curCircle;
     Rectangle *curRectangle;
+	PixelRegion *curPixelRegion;
     int prevX, prevY;
     std::vector<int> rgbColor;
     std::string paintingName;

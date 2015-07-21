@@ -16,5 +16,6 @@
         <file>Icon Storage/FilledCircle.png</file>
         <file>Icon Storage/FreeForm.png</file>
         <file>Icon Storage/FilledSquare.png</file>
+        <file>Icon Storage/fill.png</file>
     </qresource>
 </RCC>
