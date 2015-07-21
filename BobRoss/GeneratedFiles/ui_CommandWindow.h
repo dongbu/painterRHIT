@@ -168,7 +168,7 @@ public:
 
     void retranslateUi(QMainWindow *CommandWindow)
     {
-        CommandWindow->setWindowTitle(QApplication::translate("CommandWindow", "MainWindow", 0));
+        CommandWindow->setWindowTitle(QApplication::translate("CommandWindow", "Command List", 0));
         actionPlay->setText(QApplication::translate("CommandWindow", "Play", 0));
 #ifndef QT_NO_TOOLTIP
         actionPlay->setToolTip(QApplication::translate("CommandWindow", "Runs the simulation", 0));
