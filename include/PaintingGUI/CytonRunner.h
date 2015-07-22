@@ -1,5 +1,6 @@
 #pragma once
 #include "ui_CytonRunner.h"
+#include "shapes.cpp"
 #include <QObject>
 #include <QMainWindow>
 #include <qwidget.h>
@@ -16,6 +17,10 @@
 #include <manipulation/ecManipulationActionManager.h>
 #include <manipulationDirector/ecManipulationScript.h>
 #include <remoteCommand/ecRemoteCommand.h>
+
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv/highgui.h>
 
 #include <math.h>
 #include <qobject.h>
@@ -47,16 +52,17 @@ public:
 	void raiseBrush();
 	void lowerBrush();
 	void getPaint(int paint_can_id);
-	void drawPoint(std::pair<double, double> pt);
-	void stroke(std::pair<double, double> pt1, std::pair<double, double> pt2);
-	void stroke(std::vector<std::pair<double, double>> pts);
+	void drawPoint(cv::Point pt);
+	void stroke(cv::Point pt1, cv::Point pt2);
+	void stroke(std::vector<cv::Point> pts);
+	void paintShape(Shape *s);
 
 private:
 	Ui::CytonRunner *ui;
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
-	std::vector<std::vector<double>> canvasCorners;
-	std::vector<std::pair<double, std::pair<double, double>>> paint;
+	std::vector<cv::Point3d> canvasCorners;
+	std::vector<std::pair<int, cv::Point>> paint;
 	std::vector<double> convert(double x, double y, double z);
 	double dx, dy, dz;
 	std::string brushType;
