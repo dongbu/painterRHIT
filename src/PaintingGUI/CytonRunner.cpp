@@ -1,9 +1,6 @@
 #include "CytonRunner.h"
 #include <qmessagebox>
 #include <qpushbutton.h>
-#include <qgridlayout.h>
-#include <qlabel.h>
-#include <qplaintextedit.h>
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -14,8 +11,11 @@ using namespace Ec;
 using namespace cv;
 
 
-CytonRunner::CytonRunner()
+CytonRunner::CytonRunner(QWidget *parent)
+//:QDialog(parent),
+//ui(new Ui::CytonRunner)
 {
+	//ui = Ui::CytonRunner;
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
@@ -24,6 +24,7 @@ CytonRunner::CytonRunner()
 
 CytonRunner::~CytonRunner()
 {
+	delete ui;
 }
 
 bool CytonRunner::connect(){
@@ -83,7 +84,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	dx = brush.attribute("dx").as_double();
 	dy = brush.attribute("dy").as_double();
 	dz = brush.attribute("dz").as_double();
-	printf("dz is: %d", dz);
+
 	brushType = brush.next_sibling().attribute("type").as_string();
 
 	//figure out roll, pitch, and yaw.  Not used as of yet.
@@ -94,7 +95,10 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 }
 void CytonRunner::createWorkspace(){
-	
+	QWidget *widget = new QWidget();
+	printf("should show ui here\n");
+	printf("please excuse the lack of showing said ui\n");
+
 
 }
 void CytonRunner::startup(){

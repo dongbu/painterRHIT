@@ -406,7 +406,6 @@ void Sketchpad::startupClicked(){
 	Ava->startup();
 }
 void Sketchpad::shutDownClicked(){
-	Ava->shutdown();
 	if (Ava->shutdown()){
 		ui->actionShutdown->setDisabled(true);
 		ui->actionStartup->setDisabled(true);

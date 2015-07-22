@@ -14,7 +14,6 @@
 #include <vector>
 #include <QComboBox>
 #include <QSpinBox>
-#include <QMainWindow>
 #include <QMouseEvent>
 #include <qvBoxLayout>
 #include <QActionGroup>
