@@ -19,8 +19,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     ui->setupUi(this);
     setupQt();
     this->paintingName = "unnamed";
-	//this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	//this->setFixedWidth(width + 20);
+	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(width + 20);
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -381,13 +381,11 @@ void Sketchpad::connectABBClicked(){
 
 }
 void Sketchpad::loadWorkspaceClicked(){
-	printf("load workspace\n");
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Text files (*.xml)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
-		//printf("loading result = %i\n", directory.result());
 		Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString());
 		ui->actionStartup->setEnabled(true);
 		ui->actionShutdown->setEnabled(true);
@@ -395,7 +393,6 @@ void Sketchpad::loadWorkspaceClicked(){
 
 }
 void Sketchpad::createWorkspaceClicked(){
-	printf("create workspace\n");
 	Ava->createWorkspace();
 
 	ui->actionStartup->setEnabled(true);
