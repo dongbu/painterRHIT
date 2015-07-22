@@ -5,6 +5,7 @@
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
 #define POINT_EE_SET 0
+#define M_PI 3.141592653
 
 using namespace Ec;
 using namespace cv;
@@ -12,6 +13,9 @@ using namespace cv;
 
 CytonRunner::CytonRunner()
 {
+	currentX = 0;
+	currentY = 0;
+	raiseHeight = 0.1;
 }
 
 
@@ -51,11 +55,15 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		double rot = temp.attribute("s").as_double();
 		startJointPosition.push_back(rot);
 	}
-	
+
 	for (pugi::xml_node temp = canvas.first_child(); temp; temp = temp.next_sibling()){
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
-		std::pair<int, int> corner(x,y);
+		double z = temp.attribute("z").as_double();
+		std::vector<double> corner;
+		corner.push_back(x);
+		corner.push_back(y);
+		corner.push_back(z);
 		canvasCorners.push_back(corner);
 	}
 	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
@@ -68,11 +76,18 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		std::pair<double, std::pair<double, double>> paintPickup(id, pos);
 		paint.push_back(paintPickup);
 	}
-	
-	dx = brush.next_sibling().attribute("dx").as_double();
-	dy = brush.next_sibling().attribute("dy").as_double();
-	dz = brush.next_sibling().attribute("dz").as_double();
+
+	dx = brush.attribute("dx").as_double();
+	dy = brush.attribute("dy").as_double();
+	dz = brush.attribute("dz").as_double();
+	printf("dz is: %d", dz);
 	brushType = brush.next_sibling().attribute("type").as_string();
+
+	//figure out roll, pitch, and yaw.
+	this->phi = 0;
+	this->theta = 0;
+	this->psi = 0;
+
 
 }
 void CytonRunner::createWorkspace(){
@@ -90,12 +105,13 @@ bool CytonRunner::shutdown(){
 	QPushButton *okButton = message.addButton(QMessageBox::Ok);
 	message.addButton(QMessageBox::Cancel);
 	message.exec();
-	if(message.clickedButton() == okButton){
+	if (message.clickedButton() == okButton){
 		if (goToJointHome(0)){
 			startJointPosition.clear();
 			canvasCorners.clear();
 			paint.clear();
 			dx = dy = dz = 0;
+			currentX = currentY = 0;
 			brushType = "";
 			Ec::shutdown();
 			printf("shut down\n");
@@ -106,20 +122,24 @@ bool CytonRunner::shutdown(){
 }
 void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
-	pose.setTranslationX(x);
-	pose.setTranslationY(y);
-	pose.setTranslationZ(z);
+
+	std::vector<double> vec = convert(x, y, z);
+	pose.setTranslationX(vec.at(0));
+	pose.setTranslationY(vec.at(1));
+	pose.setTranslationZ(vec.at(2));
 	EcOrientation orientation;
-	
+
 	//roll about x-axis, pitch about y-axis,Yaw about z-axis
 	orientation.setFrom123Euler(0, 0, 0);
-	
+
 	pose.setOrientation(orientation);
 
 	setEndEffectorSet(FRAME_EE_SET); // point end effector set index
 	EcEndEffectorPlacement desiredPlacement(pose);
 	EcManipulatorEndEffectorPlacement actualEEPlacement;
 	EcCoordinateSystemTransformation offset, zero, actualCoord;
+
+	//until further notice, canvas is on ground.
 	zero.setTranslation(EcVector(0, 0, 0));
 
 	//set the desired position
@@ -146,26 +166,53 @@ void CytonRunner::goToPos(double x, double y, double z){
 			achieved = EcTrue;
 		}
 	}
+	currentX = x;
+	currentY = y;
 }
 void CytonRunner::raiseBrush(){
 	if (!isUp){
-		printf("move up\n");
+		printf("going up!\n");
+		goToPos(currentX, currentY, raiseHeight);
 	}
 	isUp = true;
 }
 void CytonRunner::lowerBrush(){
 	if (isUp){
-		printf("move down\n");
+		printf("going down!\n");
+		goToPos(currentX + 0.01, currentY + 0.01, 0.05);
+		//almost there, let's not push the tip straight down.
+		goToPos(currentX - 0.01, currentY - 0.01, 0);
 	}
 	isUp = false;
 }
 void CytonRunner::getPaint(int paint_can_id){
-
+	raiseBrush();
+	double x;
+	double y;
+	for (size_t i = 0; i < this->paint.size(); i++){
+		if (this->paint.at(i).first == paint_can_id){
+			x = this->paint.at(i).second.first;
+			y = this->paint.at(i).second.second;
+			break;
+		}
+	}
+	goToPos(x, y, raiseHeight);
 }
 void CytonRunner::drawPoint(std::pair<double, double> pt){
-
+	if (!isUp){
+		raiseBrush();
+	}
+	goToPos(pt.first, pt.second, raiseHeight);
+	lowerBrush();
+	raiseBrush();
 }
 void CytonRunner::stroke(std::pair<double, double> pt1, std::pair<double, double> pt2){
+	if (!isUp){
+		raiseBrush();
+	}
+	goToPos(pt1.first, pt1.second, raiseHeight);
+	lowerBrush();
+	goToPos(pt2.first, pt2.second, 0);
 
 }
 
@@ -241,4 +288,35 @@ bool CytonRunner::goToJointHome(int type){
 		}
 	}
 	return positionAchieved;
+}
+
+
+
+//returns vector containing x, y, and z appropriate for the canvas's location.
+//after recieving x, y, and z relative to top left corner of canvas.
+//CHECK LATER
+std::vector<double> CytonRunner::convert(double x, double y, double z){
+	double x1 = canvasCorners.at(0).at(0);
+	double y1 = canvasCorners.at(0).at(1);
+	double z1 = canvasCorners.at(0).at(2);
+
+
+	//need to figure out plane transformations
+	//double xNew = x*cos(theta) + z*sin(theta) + y*sin(psi) + x*sin(psi) + x1 + dx;
+	//double yNew = y*cos(phi) + z*sin(phi) + y*sin(psi) - x*sin(psi) + y1 + dy;
+	//double zNew = -y*sin(phi) + (z / 2.0)*(cos(phi) + cos(theta)) - x*sin(theta) + z1 + dz;
+
+	double xNew = x + x1 + dx;
+	double yNew = y + y1 + dy;
+	double zNew = z + z1 + dz;
+
+	std::vector<double> temp;
+	temp.push_back(xNew);
+	temp.push_back(yNew);
+	temp.push_back(zNew);
+
+	printf("%d, %f, %i", dz, dz, dz);
+
+	printf("x: %f, y: %f, z: %f\n", xNew, &yNew, &zNew);
+	return temp;
 }

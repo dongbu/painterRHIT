@@ -38,12 +38,17 @@ public:
 private:
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
-	std::vector<std::pair<double, double>> canvasCorners;
+	std::vector<std::vector<double>> canvasCorners;
 	std::vector<std::pair<double, std::pair<double, double>>> paint;
+	std::vector<double> convert(double x, double y, double z);
 	double dx, dy, dz;
 	std::string brushType;
+	double theta, phi, psi;
+	double currentX, currentY;
+	double raiseHeight;
 
-	
+
+
 
 
 
