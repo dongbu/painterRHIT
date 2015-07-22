@@ -60,8 +60,6 @@ int main( int argc, char** argv )
     RTP.putGridOnWindow(&W,border,border);
     W.show();
 
-    //RTP.defineBrush(30,20,"rectangle");
-    //RTP.defineBrush(30,20,"ellipse");
     //Brush brush = Brush(30,20,"rectangle");
     Brush brush = Brush(30,20,"ellipse");
     RTP.defineBrush(&brush);
@@ -86,7 +84,7 @@ int main( int argc, char** argv )
       //printf("BRUSH %i: (%i,%i)\n",i,brush_locations[i].x,brush_locations[i].y);
     }
 
-    // get a vector of brush stroke points
+    // get a vector of brush stroke points & draw blue lines on the path
     printf("Get the brush strokes\n");
     std::vector<std::vector<cv::Point> > brush_strokes;
     RTP.getCandidateBrushStrokes(&brush_strokes);

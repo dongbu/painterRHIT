@@ -7,11 +7,8 @@
 #include "pugixml.hpp"
 #include "pugixml.cpp"
 #include "drawwindow.cpp"
-<<<<<<< Updated upstream
-#include <cstdarg> //gunnar needs this to compile
-=======
-#incluee "helpers.cpp"
->>>>>>> Stashed changes
+#include <cstdarg> //gunnar needs this to compile (AC: why?... put reason here for potential future deletion)
+#include "helpers.cpp" // string_format
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
 //using namespace std;
@@ -66,13 +63,8 @@ protected:
   std::vector<cv::Point> points;
 
 public:
-  void addPoint(int i, int j) {
-    points.push_back(cv::Point(i,j));
-  }
-
-  void addPoint(cv::Point pt) {
-    points.push_back(pt);
-  }
+  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
+  void addPoint(cv::Point pt) { points.push_back(pt); }
 
   void setThickness(int t=1) { thickness=t; }
 
@@ -109,10 +101,9 @@ protected:
   std::vector<cv::Point> points;
 
 public:
-  void addPoint(int i, int j) {
-    points.push_back(cv::Point(i,j));
-  }
-
+  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
+  void addPoint(cv::Point pt) { points.push_back(pt); }
+ 
   void setThickness(int t=1) { thickness=t; }
 
   virtual std::string getXML() {
@@ -151,9 +142,8 @@ protected:
   std::vector<cv::Point> points;
 
 public:
-  void addPoint(int i, int j) {
-    points.push_back(cv::Point(i,j));
-  }
+  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
+  void addPoint(cv::Point pt) { points.push_back(pt); }
 
   void setThickness(int t=1) { thickness=t; }
   void setStyle(int s=1) { style=s; }
@@ -210,14 +200,27 @@ public:
   }
 
   // returns a polyline representation of a rectangle
-  PolyLine toPolyline() {
+  PolyLine toPolyline() { // note: only perimeter
     PolyLine PL;
     PL.addPoint(pt1);
-    PL.addPoint(cv::Point(pt2.x,pt1.y));
+    PL.addPoint(pt2.x,pt1.y);
     PL.addPoint(pt2);
-    PL.addPoint(cv::Point(pt1.x,pt2.y));
+    PL.addPoint(pt1.x,pt2.y);
     PL.addPoint(pt1);
     return PL;
+  }
+
+  // returns a pixelregion representation of a rectangle
+  PixelRegion toPixelRegion() {
+    PixelRegion PR;
+    for (int i=pt1.x; i<=pt2.x; i++) {
+      for (int j=pt1.y; j<=pt2.y; j++) {
+	if (fill==1 || (i==pt1.x || i==pt2.x || j==pt1.y || j==pt2.y)) {
+	  PR.addPoint(i,j);
+	}
+      }
+    }
+    return PR;
   }
 
   virtual void setFill(int f=1) { fill=f; }
@@ -259,21 +262,41 @@ public:
   }
 
   // returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
-  PolyLine toPolyline() {
+  PolyLine toPolyline() { // note: only perimeter
     PolyLine PL;
     double radius = (axes.width + axes.height)/4. + .25; // .25 to help anti-aliasing
     //printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
     int n = radius*2;
-    double pi = 3.1415928; // yah, should find the math var
+    double pi = 3.14159265358979323846; // yah, should find the math var
     for (int i=0; i<n; i++) {
       double rad = 2.*pi*((double)i/(double)n);
       int x = pt.x+radius*cos(rad);
       int y = pt.y+radius*sin(rad);
       //printf("%i,%i at %f\n",x,y,rad);
-      PL.addPoint(cv::Point(x, y));
+      PL.addPoint(x, y);
     }
-    PL.addPoint(cv::Point(pt.x+radius, pt.y));
+    PL.addPoint(pt.x+radius, pt.y);
     return PL;
+  }
+
+  // returns a pixelregion representation of a circle  [don't worry about doing a real ellipse for now]
+ PixelRegion toPixelRegion() {
+    PixelRegion PR;
+    double radius = (axes.width + axes.height)/4. + .25; // .25 to help anti-aliasing
+
+    for (int dx=0; dx<=radius; dx++) {
+      double rad = atan2(dx,radius);
+      int dy = sin(rad) * radius;
+
+      for (int i=-dx; i<=dx; i++) {
+	for (int j=-dy; j<=dy; j++) {
+	  if (fill || (i==-dx || i==dx || j==-dy || j==dy)) {
+	    PR.addPoint(pt.x + i, pt.y + j);
+	  }
+	}
+      }
+    }
+    return PR;
   }
 
   virtual void setFill(int f=1) { fill=f; }
