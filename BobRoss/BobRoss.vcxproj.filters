@@ -45,16 +45,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{751c9b48-417f-49b6-844d-f3d1664cd8e8}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{3d7348b4-f32a-43c2-b3b1-e1af284a5886}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PaintingGUI\CVImageWidget.cpp">
@@ -78,42 +68,6 @@
     <ClCompile Include="..\src\PaintingGUI\runLogic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_CVImageWidget.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_CVImageWidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_CommandWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_CommandWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_EditorWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_Painter.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_Painter.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_Sketchpad.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_Sketchpad.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_runLogic.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_runLogic.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -128,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\imageparser.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,12 +108,6 @@
     </CustomBuild>
     <CustomBuild Include="Icon Storage\Circle.png">
       <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_CommandWindow.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_Sketchpad.h">
-      <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\PaintingGUI\pugiconfig.hpp">
       <Filter>Header Files</Filter>
@@ -260,6 +211,15 @@
     <CustomBuild Include="Icon Storage\FilledSquare.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\include\PaintingGUI\CytonRunner.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\include\PaintingGUI\kmeansSegment.hpp">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CytonRunner.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -275,11 +235,14 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\PaintingGUI\CytonRunner.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GeneratedFiles\ui_CommandWindow.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\PaintingGUI\kmeansSegment.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GeneratedFiles\ui_CytonRunner.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_Sketchpad.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

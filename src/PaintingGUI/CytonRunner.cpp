@@ -1,6 +1,9 @@
 #include "CytonRunner.h"
 #include <qmessagebox>
 #include <qpushbutton.h>
+#include <qgridlayout.h>
+#include <qlabel.h>
+#include <qplaintextedit.h>
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -83,7 +86,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	printf("dz is: %d", dz);
 	brushType = brush.next_sibling().attribute("type").as_string();
 
-	//figure out roll, pitch, and yaw.
+	//figure out roll, pitch, and yaw.  Not used as of yet.
 	this->phi = 0;
 	this->theta = 0;
 	this->psi = 0;
@@ -91,9 +94,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 }
 void CytonRunner::createWorkspace(){
-
-}
-void CytonRunner::saveWorkspace(){
+	
 
 }
 void CytonRunner::startup(){
@@ -199,21 +200,28 @@ void CytonRunner::getPaint(int paint_can_id){
 	goToPos(x, y, raiseHeight);
 }
 void CytonRunner::drawPoint(std::pair<double, double> pt){
-	if (!isUp){
-		raiseBrush();
-	}
+	raiseBrush();
 	goToPos(pt.first, pt.second, raiseHeight);
 	lowerBrush();
 	raiseBrush();
 }
 void CytonRunner::stroke(std::pair<double, double> pt1, std::pair<double, double> pt2){
-	if (!isUp){
-		raiseBrush();
-	}
+	raiseBrush();
 	goToPos(pt1.first, pt1.second, raiseHeight);
 	lowerBrush();
 	goToPos(pt2.first, pt2.second, 0);
 
+}
+
+void CytonRunner::stroke(std::vector<std::pair<double, double>> pts){
+	raiseBrush();
+	goToPos(pts.at(0).first, pts.at(0).second, raiseHeight);
+	lowerBrush();
+	for (int i = 0; i < pts.size(); i++){
+		goToPos(pts.at(i).first, pts.at(i).second, 0);
+	}
+	raiseBrush();
+	
 }
 
 bool CytonRunner::goToJointHome(int type){

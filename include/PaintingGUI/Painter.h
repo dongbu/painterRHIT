@@ -12,7 +12,7 @@
 class Painter : public QObject
 
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
     Painter();

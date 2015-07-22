@@ -382,13 +382,16 @@ void Sketchpad::loadWorkspaceClicked(){
 	filters << "Text files (*.xml)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
+		//printf("loading result = %i\n", directory.result());
 		Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString());
+		ui->actionStartup->setEnabled(true);
+		ui->actionShutdown->setEnabled(true);
 	}
-	ui->actionStartup->setEnabled(true);
-	ui->actionShutdown->setEnabled(true);
+
 }
 void Sketchpad::createWorkspaceClicked(){
 	printf("create workspace\n");
+	Ava->createWorkspace();
 
 	ui->actionStartup->setEnabled(true);
 	ui->actionShutdown->setEnabled(true);

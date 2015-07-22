@@ -1,4 +1,8 @@
 #pragma once
+#include <QObject>
+#include <QMainWindow>
+#include <ui_CytonRunner.h>
+
 #include <control/ecEndEffectorSet.h>
 #include <controlCore/ecFrameEndEffector.h>
 #include <control/ecManipEndEffectorPlace.h>
@@ -16,9 +20,16 @@
 #include <iostream>
 #include "pugixml.hpp"
 
+
+
 #include <opencv2/opencv.hpp>
-class CytonRunner
+namespace Ui {
+	class CytonRunner;
+}
+class CytonRunner: public QMainWindow
 {
+	Q_OBJECT
+
 public:
 	CytonRunner();
 	~CytonRunner();
@@ -34,8 +45,10 @@ public:
 	void getPaint(int paint_can_id);
 	void drawPoint(std::pair<double, double> pt);
 	void stroke(std::pair<double, double> pt1, std::pair<double, double> pt2);
+	void stroke(std::vector<std::pair<double, double>> pts);
 
 private:
+	Ui::CytonRunner *ui;
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
 	std::vector<std::vector<double>> canvasCorners;
@@ -46,12 +59,6 @@ private:
 	double theta, phi, psi;
 	double currentX, currentY;
 	double raiseHeight;
-
-
-
-
-
-
 
 
 private:
