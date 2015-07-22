@@ -61,7 +61,6 @@ public:
 	static void zoomMouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
 		Webcam *self = static_cast<Webcam*>(userdata);
 		if (event == cv::EVENT_LBUTTONDOWN) {
-			printf("Setting zoom corner %d to %i,%i\n", self->webcam_corner, x, y);
 			self->zoomQuad[self->webcam_corner].x = x * 2;
 			self->zoomQuad[self->webcam_corner].y = y * 2;
 		}
@@ -75,28 +74,24 @@ public:
 		char mapped_name[] = "Mapped Webcam";
 		char webcam_name[] = "Webcam";
 		int debug = 1;
-
 		cv::namedWindow(webcam_name, 1);
 		cv::moveWindow(webcam_name, 20, 20);
 		cv::setMouseCallback(webcam_name, zoomMouseCallBackFunc, this);
 
 		cv::namedWindow(mapped_name, 1);
-
 		if (!skip_reset) { resetMapping(); }
 
 		cv::Mat scaledWebcam;
 		webcam_corner = 0;
 		int done = 0;
+
 		while (!done) {
 			getFrame(&webcam, 3); // get a new frame from camera (blend 3 frames for better clarity)
-
 			cv::resize(webcam, scaledWebcam, cv::Size(), 0.5, 0.5);
 			cv::imshow(webcam_name, scaledWebcam);
 			cv::moveWindow(mapped_name, 40 + scaledWebcam.cols, 20);
-
 			getMappedFrame(&mapped_webcam);
 			cv::imshow(mapped_name, mapped_webcam);
-
 			int k = cv::waitKey(33);
 			if (k == 27 || k == int('x')) { // Esc key to stop
 				done = 1;
@@ -141,25 +136,44 @@ public:
 
 	// sets frame to a mapping of the webcam 
 	void getMappedFrame(cv::Mat *mapped_frame) {
+		printf("getting mapped frame \n");
 		cv::Mat webcam;
 		getFrame(&webcam); // get a new frame from camera
 
+
 		// zoom into the webcam to where ever the desired region
+
 		cv::Mat zoom_lambda(2, 4, CV_32FC1);
+
 		// Set the lambda matrix the same type and size as webcam
 		zoom_lambda = cv::Mat::zeros(webcam.rows, webcam.cols, webcam.type());
+
 		// Get the Perspective Transform Matrix i.e. lambda
 		zoom_lambda = cv::getPerspectiveTransform(zoomQuad, webcamQuad);
+
 		// Apply the Perspective Transform just found to the src image
 		cv::warpPerspective(webcam, webcam, zoom_lambda, webcam.size());
 
 		// create the mapped_frame 
-		*mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type());
+		printf("checkpoint 7.0 \n");
+		//*mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type());
+
+		*mapped_frame = cv::Mat(map_height, map_width, webcam.type());
+		printf("hi");
+		mapped_frame->zeros(map_height, map_width, webcam.type());
+
+		printf("checkpoint 8.0 \n");
+
+
+
 
 		cv::Mat webcam_lambda = getMapLambda(&webcam);
 
+
 		// Apply the Perspective Transform just found to the src image
 		cv::warpPerspective(webcam, *mapped_frame, webcam_lambda, mapped_frame->size());
+		printf("finished getting mapped frame \n");
+
 	}
 
 	cv::Mat getMappedFrame() {
@@ -172,6 +186,8 @@ public:
 		map_height = h;
 		map_width = w;
 		resetMapping();
+		printf("setMapSize went well \n");
+
 	}
 
 	void setFlip(int flip) { // set 1 to flip over the webcam
@@ -232,10 +248,11 @@ public:
 		map_width = 600;
 		map_height = 400;
 		flip_webcam = 0;
-		webcam_corner = 0;
+		webcam_corner = -1;
 		cam0 = new cv::VideoCapture(0); // open the default camera
 		cam1 = new cv::VideoCapture(1); // open cam 1
 		resetMapping();
+		printf("constructor went well \n");
 	}
 
 	~Webcam() {

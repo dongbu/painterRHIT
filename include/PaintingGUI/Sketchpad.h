@@ -41,8 +41,6 @@ private:
     CVImageWidget *translator;
     DrawWindow *cvWindow;
 	std::string paintingName;
-	int width, height;
-
 
 	Shapes *shapes;
 	Shape *currentShape;
@@ -57,6 +55,8 @@ private:
 	int prevX, prevY;
 
 	CytonRunner *Ava;
+	Webcam *Web;
+
 
 private slots:
     void refresh(int x, int y);
@@ -88,5 +88,3 @@ signals:
 };
 
 #endif // SKETCHPAD_H
-
-
