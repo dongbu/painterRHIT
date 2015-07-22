@@ -7,6 +7,7 @@ Painter::Painter() {
     width = 600;
     height = 600;
 	this->stuffshowing = false;
+	this->shapes = new Shapes();
 }
 /**
  * @brief constructor with shapes.

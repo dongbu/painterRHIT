@@ -3,16 +3,12 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-// put up here so that the webcam is always on (if not, takes time to warm up)
-cv::VideoCapture cam0(0); // open the default camera
-cv::VideoCapture cam1(0); // open cam 1
-
 // Packages simple drawing commands for the simulator display window
 class Webcam {
 protected:
-  cv::VideoCapture *cam0ptr;
-  cv::VideoCapture *cam1ptr;
-  cv::VideoCapture *camptr;
+	cv::VideoCapture *cam0; // open the default camera
+	cv::VideoCapture *cam1; // open cam 1
+
   int map_width;
   int map_height;
   int cam_id;
@@ -178,8 +174,8 @@ public:
 
   int getFrame(cv::Mat *frame, int loops=0) {
     if (cam_id==0) {
-      if(cam0.isOpened()) {  // check if we succeeded
-	cam0 >> *frame;
+      if(cam0->isOpened()) {  // check if we succeeded
+		  cam0->read(*frame);
 	if (flip_webcam) { flip(*frame,*frame,-1); } // horizontal and vertically
 
 	if (loops>0) {
@@ -203,8 +199,8 @@ public:
 	printf("Cam 0 didn't open\n");
       }
     } else {
-      if(cam1.isOpened()) {  // check if we succeeded
-	cam1 >> *frame;
+      if(cam1->isOpened()) {  // check if we succeeded
+		  cam1->read(*frame);
 	if (flip_webcam) { flip(*frame,*frame,-1); } // horizontal and vertically
 
 	if (loops>0) {
@@ -223,6 +219,7 @@ public:
   }
 
   Webcam() { // constructor
+	 printf("constructing webcam \n");
     cam_id=0;
     map_width=600;
     map_height=400;
@@ -230,28 +227,8 @@ public:
     webcam_corner = 0;	
 
     resetMapping();
-
-    if (0) { // was trying to open webcam only when create this object... but cam not persistent after constructor
-      cv::VideoCapture cam0(0); // open the default camera
-      cam0ptr = &cam0;
-      if(cam0.isOpened()) {  // check if we succeeded
-	printf("Camera0 opened ok\n");
-	camptr = cam0ptr;
-      } else {
-	printf("Camera0 not open\n");
-      }
-      
-      int cam1_on=1;
-      cv::VideoCapture cam1(1); // open the default camera
-      cam1ptr = &cam1;
-      if(cam1.isOpened()) {  // check if we succeeded
-	printf("Camera1 opened ok\n");
-	camptr = cam1ptr;
-      } else {
-	cam1_on=0;
-	printf("Camera1 not open\n");
-      }
-    }
+	cam0 = new cv::VideoCapture(0); // open the default camera
+	cam1 = new cv::VideoCapture(1); // open cam 1
   }
 
   ~Webcam() {
