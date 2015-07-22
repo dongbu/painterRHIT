@@ -21,8 +21,6 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     this->paintingName = "unnamed";
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
-	this->width = width;
-	this->height = height;
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -31,6 +29,9 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     this->cvWindow = new DrawWindow(height,width,"garbage name");
     this->cvWindow->hideWindow();
 
+	//Image set-up
+	Web = new Webcam();
+	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -442,13 +443,5 @@ void Sketchpad::loadPhotoClicked(){
 }
 
 void Sketchpad::launchWebcam() {
-	printf("launching webcam \n");
-	Webcam *W = new Webcam();
-	printf("launched webcam \n");
-	W->setMapSize(width, height);
-	char map_window[] = "Mapped Webcam";
-	cv::namedWindow(map_window, CV_WINDOW_AUTOSIZE);
-	cv::Mat frame;
-	W->getMappedFrame(&frame);
-	cv::imshow(map_window, frame);
+	Web->calibrateWebcam();
 }
