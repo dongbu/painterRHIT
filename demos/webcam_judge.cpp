@@ -117,28 +117,30 @@ int main(void)
 	int wrong=0;
 	EW.setCanvasColor(0,0,0);
 
-	for (int i=0; i<width; i++) {
-	  for (int j=0; j<height; j++) {
-	    cv::Vec3b desired_color = DW.getColor(i,j);
-	    cv::Vec3b webcam_color = frame.at<cv::Vec3b>(cv::Point(i,j));
+        for (int i=0; i<width; i++) { //loop rows
+          for (int j=0; j<height; j++) { //loop columns
+            cv::Vec3b desired_color = DW.getColor(i,j); //"real" pixel color
+            cv::Vec3b webcam_color = frame.at<cv::Vec3b>(cv::Point(i,j)); //"wonky" window (what we're aiming for)
 	    int closeness = colorCloseness(desired_color,webcam_color);
 	    int cdiff = desired_color[0]-webcam_color[0] + desired_color[1]-webcam_color[1] + desired_color[2]-webcam_color[2];
 
-	    if (0 && i==33 && j==22) { 
+            if (1 && i==33 && j==22) {
+                //debugging/testing print statement
 	      printf("%i %i,%i [%i %i %i] [%i %i %i] =>%i\n",cdiff, i,j,
 		     desired_color[0],desired_color[1],desired_color[2],
 		     webcam_color[0],webcam_color[1],webcam_color[2],
 		     closeness); 
 	    }
-	    int c = cdiff; 
-	    //c = closeness;
-	    if (c>255) { c=255; }  
-	    if (c<-255) { c=-255; }
+
+            int c = cdiff;
+            //c = closeness;
+            if (c>255) { c=255; }  //too far off?  just set to pure blue
+            if (c<-255) { c=-255; } //too far off?  just set to pure red
 	    
 	    if (c>=0) {
-	      EW.setPenColor(0,0,c);
+              EW.setPenColor(0,0,c); //blue
 	    } else {
-	      EW.setPenColor(-c,0,0);
+              EW.setPenColor(-c,0,0); //red
 	    }
 	    EW.drawPixel(i,j);
 	    if (closeness<50) {

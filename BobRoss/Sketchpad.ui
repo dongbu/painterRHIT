@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>960</width>
-    <height>852</height>
+    <width>924</width>
+    <height>857</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>960</width>
+     <width>924</width>
      <height>26</height>
     </rect>
    </property>
@@ -43,8 +43,8 @@
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
-    <addaction name="actionSave_As"/>
     <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
    </widget>
    <widget class="QMenu" name="menuRobot">
     <property name="title">
@@ -69,13 +69,21 @@
     <addaction name="actionStartup"/>
     <addaction name="actionShutdown"/>
    </widget>
+   <widget class="QMenu" name="menuImage">
+    <property name="title">
+     <string>image</string>
+    </property>
+    <addaction name="actionLoad_Photo"/>
+    <addaction name="actionLaunch_webcam"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
+   <addaction name="menuImage"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>toolBar_2</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -83,28 +91,15 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionLoad_Photo"/>
-  </widget>
-  <widget class="QToolBar" name="toolBar_2">
-   <property name="windowTitle">
-    <string>toolBar_2</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionDraw_Square"/>
-   <addaction name="actionDraw_Circle"/>
-   <addaction name="actionDraw_Line"/>
-   <addaction name="actionDraw_Filled_Circle"/>
-   <addaction name="actionDraw_Filled_Rectangle"/>
-   <addaction name="actionDraw_Filled_Polygon"/>
    <addaction name="actionActionFill"/>
+   <addaction name="actionDraw_Filled_Rectangle"/>
+   <addaction name="actionDraw_Filled_Circle"/>
+   <addaction name="separator"/>
+   <addaction name="actionDraw_Line"/>
+   <addaction name="separator"/>
+   <addaction name="actionDraw_Circle"/>
+   <addaction name="actionDraw_Square"/>
+   <addaction name="actionDraw_Filled_Polygon"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -271,6 +266,18 @@
    </property>
    <property name="toolTip">
     <string>Load photo</string>
+   </property>
+  </action>
+  <action name="actionLaunch_webcam">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/webcam.png</normaloff>:/Icon Storage/webcam.png</iconset>
+   </property>
+   <property name="text">
+    <string>launch webcam</string>
+   </property>
+   <property name="toolTip">
+    <string>launch webcam</string>
    </property>
   </action>
  </widget>

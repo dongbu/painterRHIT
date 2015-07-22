@@ -1,12 +1,13 @@
 #ifndef SKETCHPAD_H
 #define SKETCHPAD_H
 
-#include "shapes.cpp"
-#include "DrawWindow.cpp"
-#include "imageparser.cpp"
 #include "ui_Sketchpad.h"
 #include "CVImageWidget.h"
 #include "CytonRunner.h"
+#include "shapes.cpp"
+#include "DrawWindow.cpp"
+#include "imageparser.cpp"
+#include "Webcam.cpp"
 
 #include <QObject>
 #include <QMainWindow>
@@ -40,17 +41,22 @@ private:
     Ui::Sketchpad *ui;
     CVImageWidget *translator;
     DrawWindow *cvWindow;
-    QComboBox *color;
-    QSpinBox *thickness;
-    Shapes *shapes;
-    Shape *currentShape;
+	std::string paintingName;
+	int width, height;
+
+
+	Shapes *shapes;
+	Shape *currentShape;
     PolyLine *curPolyLine;
     Ellipse *curCircle;
     Rectangle *curRectangle;
 	PixelRegion *curPixelRegion;
-    int prevX, prevY;
-    std::vector<int> rgbColor;
-    std::string paintingName;
+
+	QComboBox *color;
+	QSpinBox *thickness;
+	std::vector<int> rgbColor;
+	int prevX, prevY;
+
 	CytonRunner *Ava;
 
 private slots:
@@ -61,7 +67,9 @@ private slots:
     void saveClicked();
     void openClicked();
     void newClicked();
+
 	void loadPhotoClicked();
+	void launchWebcam();
 
 	void connectCytonClicked();
 	void connectABBClicked();

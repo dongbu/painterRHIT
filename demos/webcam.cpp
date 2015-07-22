@@ -19,7 +19,7 @@ protected:
   int flip_webcam; 
   int webcam_corner;
   cv::Point2f webcamQuad[4]; // four corners of webcam input
-  cv::Point2f zoomQuad[4]; // four cornders of which region of the webcam is desired
+  cv::Point2f zoomQuad[4]; // four corners of which region of the webcam is desired
   cv::Point2f canvasQuad[4]; // four corners of desired mapped output
 
 public:
@@ -152,7 +152,7 @@ public:
     cv::warpPerspective(webcam,webcam,zoom_lambda,webcam.size() );
     
     // create the mapped_frame 
-    *mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type() );
+    *mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type());
 
     cv::Mat webcam_lambda = getMapLambda(&webcam);
 	

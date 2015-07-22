@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Sketchpad.h"
 
 using namespace cv;
@@ -15,19 +14,23 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
+
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
     setupQt();
     this->paintingName = "unnamed";
-	this->setFixedHeight(height + ui->toolBar->height() + ui->menubar->height() + 30);
-	this->setFixedWidth(width + ui->toolBar_2->width() + 10);
+	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(width + 20);
+	this->width = width;
+	this->height = height;
 
     //Linking opencv to Qt.
     shapes = ss;
     this->translator = new CVImageWidget(ui->widget);
     connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
     this->cvWindow = new DrawWindow(height,width,"garbage name");
-    //this->cvWindow->hideWindow();
+    this->cvWindow->hideWindow();
+
 
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -42,7 +45,6 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 	ui->menuWorkspace->setDisabled(true);
 	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
-
 }
 
 /**
@@ -226,6 +228,7 @@ void Sketchpad::flood(Point p) {
  * @brief sets up the Qt ui with all buttons, actions, etc.
  */
 void Sketchpad::setupQt() {
+	//shape connections
     QActionGroup *actionGroup = new QActionGroup(this);
     actionGroup->addAction(ui->actionDraw_Square);
     actionGroup->addAction(ui->actionDraw_Circle);
@@ -243,30 +246,33 @@ void Sketchpad::setupQt() {
 	ui->actionActionFill->setCheckable(true);
     connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
 
+	//shape modifier creation && connections
     color = new QComboBox();
+	thickness = new QSpinBox();
     QStringList colors;
     colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
     color->addItems(colors);
-
-    thickness = new QSpinBox();
     thickness->setFixedWidth(60);
     thickness->setMinimum(1);
     thickness->setMaximum(25);
     thickness->setSingleStep(1);
     thickness->setValue(4);
-
-    ui->toolBar->addWidget(color);
-    ui->toolBar->addWidget(thickness);
-
+    ui->toolBar_2->addWidget(color);
+    ui->toolBar_2->addWidget(thickness);
     connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
     connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
+
+	//load/save connections
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
     connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
-	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
 
-	//robot work
+	//image connections
+	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
+	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
+
+	//robot connections
 	Ava = new CytonRunner();
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
@@ -274,8 +280,6 @@ void Sketchpad::setupQt() {
 	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
 	connect(ui->actionStartup, SIGNAL(triggered()), this, SLOT(startupClicked()));
 	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
-
-
 }
 
 /**
@@ -399,8 +403,6 @@ void Sketchpad::createWorkspaceClicked(){
 }
 void Sketchpad::startupClicked(){
 	Ava->startup();
-
-
 }
 void Sketchpad::shutDownClicked(){
 	Ava->shutdown();
@@ -437,4 +439,16 @@ void Sketchpad::loadPhotoClicked(){
 		translator->showImage(cvWindow->grid); //actually redraw the window
 		emit prodOtherWindows();
 	}
+}
+
+void Sketchpad::launchWebcam() {
+	printf("launching webcam \n");
+	Webcam *W = new Webcam();
+	printf("launched webcam \n");
+	W->setMapSize(width, height);
+	char map_window[] = "Mapped Webcam";
+	cv::namedWindow(map_window, CV_WINDOW_AUTOSIZE);
+	cv::Mat frame;
+	W->getMappedFrame(&frame);
+	cv::imshow(map_window, frame);
 }
