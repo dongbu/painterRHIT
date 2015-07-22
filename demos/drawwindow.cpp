@@ -117,9 +117,11 @@ public:
   void startPolyPoints() {
     while (poly_points.size()) { poly_points.pop_back(); }
   }
+
   void addPolyPoint(int x, int y) {
     poly_points.push_back(cv::Point(x,y));
   }
+
   void drawPolyPoints() {
     unsigned int n = poly_points.size();
     int npt[] = { n };
@@ -146,7 +148,7 @@ public:
     if (x>=0 && y>=0 && x<grid.cols && y<grid.rows) drawPixel(cv::Point(x,y)); 
   }
 
-  void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference
+  void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference but I've not figured out how to access vector
     for (unsigned int i=0; i<pixels.size(); i++) {
 	grid.at<cv::Vec3b>(pixels[i]) = pen_color_vec;
       } 
