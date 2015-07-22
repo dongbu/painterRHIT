@@ -1,7 +1,9 @@
 #pragma once
+#include "ui_CytonRunner.h"
 #include <QObject>
 #include <QMainWindow>
-#include <ui_CytonRunner.h>
+#include <qwidget.h>
+
 
 #include <control/ecEndEffectorSet.h>
 #include <controlCore/ecFrameEndEffector.h>
@@ -19,19 +21,21 @@
 #include <qobject.h>
 #include <iostream>
 #include "pugixml.hpp"
-
-
+#include <qdialog.h>
 
 #include <opencv2/opencv.hpp>
+
+
 namespace Ui {
 	class CytonRunner;
 }
-class CytonRunner: public QMainWindow
+
+class CytonRunner: public QDialog
 {
 	Q_OBJECT
 
 public:
-	CytonRunner();
+	explicit CytonRunner(QWidget *parent = 0);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);
@@ -60,8 +64,6 @@ private:
 	double currentX, currentY;
 	double raiseHeight;
 
-
-private:
 	bool isUp;
 };
 
