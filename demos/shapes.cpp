@@ -142,8 +142,18 @@ protected:
   std::vector<cv::Point> points;
 
 public:
-  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
+  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
+  void addPoint(int i, int j, int dup_check) { // add point if it doesn't exist yet
+    int found=0;
+    for (int n=0; n<(int)points.size(); n++) {
+      if (points[n].x == i && points[n].y == j) {
+	found=1;
+	n=(int)points.size();
+      }
+    }
+    if (!found) addPoint(cv::Point(i,j)); 
+  }
 
   void setThickness(int t=1) { thickness=t; }
   void setStyle(int s=1) { style=s; }
@@ -264,7 +274,7 @@ public:
   // returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
   PolyLine toPolyline() { // note: only perimeter
     PolyLine PL;
-    double radius = (axes.width + axes.height)/4. + .25; // .25 to help anti-aliasing
+    double radius = (axes.width + axes.height)/4. + .4; // .25 to help anti-aliasing
     //printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
     int n = radius*2;
     double pi = 3.14159265358979323846; // yah, should find the math var
@@ -282,16 +292,20 @@ public:
   // returns a pixelregion representation of a circle  [don't worry about doing a real ellipse for now]
  PixelRegion toPixelRegion() {
     PixelRegion PR;
-    double radius = (axes.width + axes.height)/4. + .25; // .25 to help anti-aliasing
+    double radius = (axes.width + axes.height)/4. + .4; // .4 to help anti-aliasing
 
     for (int dx=0; dx<=radius; dx++) {
-      double rad = atan2(dx,radius);
+      double rad = acos((double)dx/(double)radius);
       int dy = sin(rad) * radius;
+      //printf("dx dy %i %i\n",dx,dy);
 
       for (int i=-dx; i<=dx; i++) {
 	for (int j=-dy; j<=dy; j++) {
-	  if (fill || (i==-dx || i==dx || j==-dy || j==dy)) {
-	    PR.addPoint(pt.x + i, pt.y + j);
+	  if (i==-dx || i==dx || j==-dy || j==dy) { // just the rectangle
+	    if (fill || (abs(i*j) == dx*dy)) { // if !fill, then just 4 corners
+	      PR.addPoint(pt.x + i,pt.y + j,1);
+	      //printf(" i,j = %i,%i\n",i,j);
+	    }
 	  }
 	}
       }

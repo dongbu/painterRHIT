@@ -73,6 +73,11 @@ int main(void)
   RtoPL.setPenColor(0,255,0);
   S.addShape(&RtoPL);
 
+  // test overwriting with pixel region
+  PixelRegion RtoPR = R->toPixelRegion();
+  RtoPR.setPenColor(0,255,255);
+  //  S.addShape(&RtoPR);
+
   // add circle
   Ellipse *E = new Ellipse();
   E->setFill(1);
@@ -83,6 +88,10 @@ int main(void)
   PolyLine EtoPL = E->toPolyline();
   EtoPL.setPenColor(0,255,0);
   S.addShape(&EtoPL);
+
+  PixelRegion EtoPR = E->toPixelRegion();
+  EtoPR.setPenColor(255,255,0);
+  S.addShape(&EtoPR);
 
   E = new Ellipse();
   E->setData(130,200,20.0,40.);
