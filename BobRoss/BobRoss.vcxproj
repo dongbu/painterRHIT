@@ -321,6 +321,7 @@ endlocal
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\PaintingGUI\webcam.cpp" />
     <ClCompile Include="Debug\moc_CommandWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>

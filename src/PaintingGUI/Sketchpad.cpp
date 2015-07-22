@@ -19,8 +19,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     ui->setupUi(this);
     setupQt();
     this->paintingName = "unnamed";
-	this->setFixedHeight(height + ui->toolBar->height() + ui->menubar->height() + 30);
-	this->setFixedWidth(width + ui->toolBar_2->width() + 10);
+	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(width + 20);
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -255,8 +255,8 @@ void Sketchpad::setupQt() {
     thickness->setSingleStep(1);
     thickness->setValue(4);
 
-    ui->toolBar->addWidget(color);
-    ui->toolBar->addWidget(thickness);
+    ui->toolBar_2->addWidget(color);
+    ui->toolBar_2->addWidget(thickness);
 
     connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
     connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));

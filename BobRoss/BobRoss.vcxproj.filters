@@ -129,6 +129,9 @@
     <ClCompile Include="..\src\PaintingGUI\imageparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\webcam.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\PaintingGUI\CVImageWidget.h">

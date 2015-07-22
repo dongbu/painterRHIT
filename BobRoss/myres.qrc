@@ -18,5 +18,6 @@
         <file>Icon Storage/FilledSquare.png</file>
         <file>Icon Storage/fill.png</file>
         <file>Icon Storage/camera.png</file>
+        <file>Icon Storage/webcam.png</file>
     </qresource>
 </RCC>
