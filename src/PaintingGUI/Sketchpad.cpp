@@ -441,6 +441,7 @@ void Sketchpad::loadPhotoClicked(){
 void Sketchpad::launchWebcam() {
 	printf("launching webcam \n");
 	Webcam *W = new Webcam();
+	printf("launched webcam \n");
 	W->setMapSize(width, height);
 	char map_window[] = "Mapped Webcam";
 	cv::namedWindow(map_window, CV_WINDOW_AUTOSIZE);
