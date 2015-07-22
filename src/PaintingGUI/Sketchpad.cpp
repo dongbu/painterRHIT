@@ -14,7 +14,6 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
-
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
     setupQt();
@@ -26,7 +25,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     shapes = ss;
     this->translator = new CVImageWidget(ui->widget);
     connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-    this->cvWindow = new DrawWindow(height,width,"garbage name");
+    this->cvWindow = new DrawWindow(height,width,"garbabe_name");
     this->cvWindow->hideWindow();
 
 	//Image set-up
@@ -36,8 +35,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
     getColor(); //sets class's color
-    cvWindow->clearWindow(); //clear the window
-    shapes->DrawAll(cvWindow); //redraw the window
+	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->DrawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
     this->startNewCommand(); //prep for initial command
 
@@ -60,7 +59,7 @@ void Sketchpad::redraw() {
     getColor();
     startNewCommand();
 
-    cvWindow->clearWindow(); //clear the window
+	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
     shapes->DrawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
 }
@@ -157,7 +156,7 @@ void Sketchpad::refresh(int x, int y) {
 	//DRAW PIXELREGION (fill)
 	else if (ui->actionActionFill->isChecked()) {
 		reset = true;
-		cvWindow->clearWindow();
+		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 
 		shapes->DrawAll(cvWindow);
 		flood(Point(x, y));
@@ -167,8 +166,8 @@ void Sketchpad::refresh(int x, int y) {
     if (reset) {
         shapes->addShape(currentShape);
         startNewCommand();
-        cvWindow->clearWindow();
-        shapes->DrawAll(cvWindow); //redraw window
+		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+		shapes->DrawAll(cvWindow); //redraw window
         emit prodOtherWindows();
     }
     else {
@@ -185,6 +184,7 @@ void Sketchpad::flood(Point p) {
 	Mat processed;
 	processed = Mat(cvWindow->grid.size().width, cvWindow->grid.size().height, CV_64F, cvScalar(0.));
 	Vec3b floodColor = cvWindow->grid.at<Vec3b>(p);
+	curPixelRegion->addPoint(p.x, p.y);
 
 	std::vector<Point> pointVec;
 	pointVec.push_back(p);
@@ -197,9 +197,6 @@ void Sketchpad::flood(Point p) {
 		bool skip = false;
 
 		if ((floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2])) {
-			curPix[0] = 36;
-			curPix[1] = 255;
-			curPix[2] = 92;
 			cvWindow->grid.at<Vec3b>(p) = curPix;
 			curPixelRegion->addPoint(p.x,p.y);
 		}
@@ -431,7 +428,7 @@ void Sketchpad::loadPhotoClicked(){
 		IPK.parseImage(cvWindow->grid);
 		IPK.defineShapes(shapes);
 
-		cvWindow->clearWindow();
+		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 		shapes->DrawAll(cvWindow); //redraw window
 		translator->showImage(cvWindow->grid); //actually redraw the window
 		emit prodOtherWindows();
@@ -452,7 +449,7 @@ void Sketchpad::launchWebcam() {
 	IPK.parseImage(cvWindow->grid);
 	IPK.defineShapes(shapes);
 
-	cvWindow->clearWindow();
+	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->DrawAll(cvWindow); //redraw window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	emit prodOtherWindows();

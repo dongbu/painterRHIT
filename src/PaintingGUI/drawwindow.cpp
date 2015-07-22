@@ -327,6 +327,19 @@ public:
         clearWindow(255,255,255);
     }
 
+	DrawWindow(int w, int h) { //constructor
+		width = w;
+		height = h;
+		winx = 0;
+		winy = 0;
+
+		grid = cv::Mat(height, width, CV_8UC3); // 3 channel color
+		setLineType("solid");
+		setLineThickness(2);
+		setPenColor(0, 0, 0);
+		clearWindow(255, 255, 255);
+	}
+
     /**
    * @brief destructor
    */
