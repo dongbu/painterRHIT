@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-07-16T08:34:55
+# Project created by QtCreator 2015-07-22T02:07:50
 #
 #-------------------------------------------------
 
@@ -12,31 +12,36 @@ TARGET = BobRoss
 TEMPLATE = app
 
 
-SOURCES += ..\src\PaintingGUI\main.cpp\
-    ..\src\PaintingGUI\Sketchpad.cpp \
-    ..\src\PaintingGUI\CommandWindow.cpp \
-    ..\src\PaintingGUI\EditorWindow.cpp \
-    ..\src\PaintingGUI\DrawWindow.cpp \
-    ..\src\PaintingGUI\Painter.cpp \
-    ..\src\PaintingGUI\pugixml.cpp \
-    ..\src\PaintingGUI\shapes.cpp \
-    ..\src\PaintingGUI\runLogic.cpp \
-    ..\src\PaintingGUI\CVImageWidget.cpp
+SOURCES +=\
+    ../src/PaintingGUI/CommandWindow.cpp \
+    ../src/PaintingGUI/CVImageWidget.cpp \
+    ../src/PaintingGUI/CytonRunner.cpp \
+    ../src/PaintingGUI/drawwindow.cpp \
+    ../src/PaintingGUI/imageparser.cpp \
+    ../src/PaintingGUI/kmeansSegment.cpp \
+    ../src/PaintingGUI/main.cpp \
+    ../src/PaintingGUI/Painter.cpp \
+    ../src/PaintingGUI/pugixml.cpp \
+    ../src/PaintingGUI/RunLogic.cpp \
+    ../src/PaintingGUI/shapes.cpp \
+    ../src/PaintingGUI/Sketchpad.cpp \
+    ../src/PaintingGUI/webcam.cpp
 
 HEADERS  += \
-    ..\include\PaintingGUI\Sketchpad.h \
-    ..\include\PaintingGUI\CommandWindow.h \
-    ..\include\PaintingGUI\EditorWindow.h \
-    ..\include\PaintingGUI\Painter.h \
-    ..\include\PaintingGUI\pugixml.hpp \
-    ..\include\PaintingGUI\pugiconfig.hpp \
-    ..\include\PaintingGUI\runLogic.h \
-    ..\include\PaintingGUI\CVImageWidget.h
+    ../include/PaintingGUI/CommandWindow.h \
+    ../include/PaintingGUI/CVImageWidget.h \
+    ../include/PaintingGUI/CytonRunner.h \
+    ../include/PaintingGUI/kmeansSegment.hpp \
+    ../include/PaintingGUI/Painter.h \
+    ../include/PaintingGUI/pugiconfig.hpp \
+    ../include/PaintingGUI/pugixml.hpp \
+    ../include/PaintingGUI/runLogic.h \
+    ../include/PaintingGUI/Sketchpad.h
 
 FORMS    += \
-    Sketchpad.ui \
     CommandWindow.ui \
-    EditorWindow.ui
+    CytonRunner.ui \
+    Sketchpad.ui
 
 RESOURCES += \
     myres.qrc
