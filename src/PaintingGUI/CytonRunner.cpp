@@ -24,7 +24,7 @@ CytonRunner::CytonRunner(QWidget *parent)
 
 CytonRunner::~CytonRunner()
 {
-	delete ui;
+//	delete ui;
 }
 
 bool CytonRunner::connect(){
@@ -64,10 +64,10 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
 		double z = temp.attribute("z").as_double();
-		std::vector<double> corner;
-		corner.push_back(x);
-		corner.push_back(y);
-		corner.push_back(z);
+		cv::Point3d corner;
+		corner.x = x;
+		corner.y = y;
+		corner.z = z;
 		canvasCorners.push_back(corner);
 	}
 	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
@@ -76,8 +76,8 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		double y = temp.attribute("y").as_double();
 		double id = temp.attribute("id").as_int();
 
-		std::pair<double, double> pos(x, y);
-		std::pair<double, std::pair<double, double>> paintPickup(id, pos);
+		cv::Point pos(x, y);
+		std::pair<int, cv::Point> paintPickup(id, pos);
 		paint.push_back(paintPickup);
 	}
 
@@ -95,7 +95,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 }
 void CytonRunner::createWorkspace(){
-	QWidget *widget = new QWidget();
+	//QWidget *widget = new QWidget();
 	printf("should show ui here\n");
 	printf("please excuse the lack of showing said ui\n");
 
@@ -176,14 +176,12 @@ void CytonRunner::goToPos(double x, double y, double z){
 }
 void CytonRunner::raiseBrush(){
 	if (!isUp){
-		printf("going up!\n");
 		goToPos(currentX, currentY, raiseHeight);
 	}
 	isUp = true;
 }
 void CytonRunner::lowerBrush(){
 	if (isUp){
-		printf("going down!\n");
 		goToPos(currentX + 0.01, currentY + 0.01, 0.05);
 		//almost there, let's not push the tip straight down.
 		goToPos(currentX - 0.01, currentY - 0.01, 0);
@@ -196,33 +194,33 @@ void CytonRunner::getPaint(int paint_can_id){
 	double y;
 	for (size_t i = 0; i < this->paint.size(); i++){
 		if (this->paint.at(i).first == paint_can_id){
-			x = this->paint.at(i).second.first;
-			y = this->paint.at(i).second.second;
+			x = this->paint.at(i).second.x;
+			y = this->paint.at(i).second.y;
 			break;
 		}
 	}
 	goToPos(x, y, raiseHeight);
 }
-void CytonRunner::drawPoint(std::pair<double, double> pt){
+void CytonRunner::drawPoint(cv::Point pt){
 	raiseBrush();
-	goToPos(pt.first, pt.second, raiseHeight);
+	goToPos(pt.x, pt.y, raiseHeight);
 	lowerBrush();
 	raiseBrush();
 }
-void CytonRunner::stroke(std::pair<double, double> pt1, std::pair<double, double> pt2){
+void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 	raiseBrush();
-	goToPos(pt1.first, pt1.second, raiseHeight);
+	goToPos(pt1.x, pt1.y, raiseHeight);
 	lowerBrush();
-	goToPos(pt2.first, pt2.second, 0);
+	goToPos(pt2.x, pt2.y, 0);
 
 }
 
-void CytonRunner::stroke(std::vector<std::pair<double, double>> pts){
+void CytonRunner::stroke(std::vector<cv::Point> pts){
 	raiseBrush();
-	goToPos(pts.at(0).first, pts.at(0).second, raiseHeight);
+	goToPos(pts.at(0).x, pts.at(0).y, raiseHeight);
 	lowerBrush();
-	for (int i = 0; i < pts.size(); i++){
-		goToPos(pts.at(i).first, pts.at(i).second, 0);
+	for (size_t i = 0; i < pts.size(); i++){
+		goToPos(pts.at(i).x, pts.at(i).y, 0);
 	}
 	raiseBrush();
 	
@@ -308,9 +306,9 @@ bool CytonRunner::goToJointHome(int type){
 //after recieving x, y, and z relative to top left corner of canvas.
 //CHECK LATER
 std::vector<double> CytonRunner::convert(double x, double y, double z){
-	double x1 = canvasCorners.at(0).at(0);
-	double y1 = canvasCorners.at(0).at(1);
-	double z1 = canvasCorners.at(0).at(2);
+	double x1 = canvasCorners.at(0).x;
+	double y1 = canvasCorners.at(0).y;
+	double z1 = canvasCorners.at(0).z;
 
 
 	//need to figure out plane transformations
@@ -327,8 +325,13 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	temp.push_back(yNew);
 	temp.push_back(zNew);
 
-	printf("%d, %f, %i", dz, dz, dz);
-
-	printf("x: %f, y: %f, z: %f\n", xNew, &yNew, &zNew);
 	return temp;
+}
+
+void CytonRunner::paintShape(Shape *s){
+	
+	PolyLine *p = s->convertToPolyLine();
+
+	stroke(p->points);
+	
 }

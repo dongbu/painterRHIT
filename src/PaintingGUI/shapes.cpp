@@ -6,7 +6,6 @@
 #include <fstream>
 #include <cstdarg>
 #include "pugixml.hpp"
-//#include "pugixml.cpp"
 #include "drawwindow.cpp"
 #include <Future>
 #include <cstdlib>
@@ -14,6 +13,8 @@
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
 using namespace std;
+
+class PolyLine; //so we can know about PolyLine in Shape
 
 #ifndef SHAPE
 #define SHAPE
@@ -118,6 +119,8 @@ public:
     }
 
     virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); }
+
+	virtual PolyLine* convertToPolyLine() = 0;
     Shape() { id = -1; type = "shape"; }
     ~Shape() { }
 };
@@ -179,6 +182,10 @@ public:
             W->drawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y);
         }
     }
+
+	PolyLine* convertToPolyLine(){
+		return this;
+	}
     /**
      * @brief constructor
      */
@@ -246,6 +253,12 @@ public:
 
     }
 
+	PolyLine* convertToPolyLine(){
+		printf("TODO: convert PolyPoints to polyline\n");
+		PolyLine *p = new PolyLine();
+		return p;
+	}
+
     /**
      * @brief constructor
      */
@@ -302,6 +315,12 @@ public:
 
         }
     }
+
+	PolyLine* convertToPolyLine(){
+		printf("TODO: convert PixelRegion to polyline\n");
+		PolyLine *p = new PolyLine();
+		return p;
+	}
 
     PixelRegion() : Shape() { type = "pixelregion"; }
 };
@@ -361,6 +380,12 @@ public:
         W->drawRectangle(pt1.x,pt1.y,pt2.x,pt2.y,fill);
 
     }
+
+	PolyLine* convertToPolyLine(){
+		printf("TODO: convert Rectangle to polyline\n");
+		PolyLine *p = new PolyLine();
+		return p;
+	}
 
     /**
      * @brief constructor
@@ -429,6 +454,12 @@ public:
         W->drawEllipse(pt.x,pt.y,axes.width,axes.height,0,fill);
 
     }
+
+	PolyLine* convertToPolyLine(){
+		printf("TODO: convert ellipse to polyline\n");
+		PolyLine *p = new PolyLine();
+		return p;
+	}
 
     /**
      * @brief constructor
