@@ -93,18 +93,18 @@ int main(void)
 	    cv::Vec3b desired_color = DW.getColor(i,j);
 	    //pen_color = DW.getColor(i,j);
 
-	    if (colorClose(desired_color,pen_color,100)) { 
+	    if (colorClose(desired_color,pen_color,100)) { //if the captured frame maps to black
 	      cv::Vec3b webcam_color = frame.at<cv::Vec3b>(cv::Point(i,j));
-	      if (colorClose(desired_color,webcam_color,200)) { 
+	      if (colorClose(desired_color,webcam_color,200)) {  //if the captured frame is < 200 from the actual
 		right++;
 		EW.setPenColor(desired_color[0],desired_color[1],desired_color[2]);
 		EW.drawPixel(i,j);
-	      } else {
+	      } else { //if the captured frame is > 200 from the actual (FAILURE...)
 		wrong++;
 		EW.setPenColor(255,0,0);
 		EW.drawPixel(i,j);
 	      }
-	    } else {
+	    } else { //the pixel maps to white, and is assumed to be correct.
 	      EW.setPenColor(0,255,0);
 	      EW.drawPixel(i,j);
 	    }
