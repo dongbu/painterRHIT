@@ -1,36 +1,109 @@
 #pragma once
 
+#include "helpers.cpp"
 #include "drawwindow.cpp"
 
 // Tools to take a set of desired points to paint and returns paths for a brush
 // see regiontopaths_demo.cpp for example use
+
+class Brush {
+protected:
+  int width, height;
+  int style; // 1=square, 2=ellipse
+  std::vector<cv::Point> pixels;
+  cv::Scalar color;
+
+public:
+  cv::Mat brush;
+
+  int getWidth() { return width; }
+  int getHeight() { return height; }
+  std::vector<cv::Point> getPixels() { return pixels; }
+  void setColor(cv::Scalar c) { color=c; }
+  cv::Scalar getColor() { return color; }
+
+  std::string getColorXML() {
+    std::string line;
+    line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",color[2],color[1],color[0]));
+    return line;
+  }
+
+  virtual std::string getXML() {
+    std::string line;
+    line.append(string_format("<shape type=\"brush\" w=\"%i\" h=\"%i\" style=\"%i\"",width,height,style));
+    line.append(getColorXML());
+    line.append("<points>");
+    for (int i=0; i<(int)pixels.size(); i++) {
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",pixels[i].x,pixels[i].y));
+    }
+    line.append("</points>");
+    line.append("</shape>");
+    return line;
+  }
+
+  Brush(int w, int h, std::string type="rectangle", int show_brush = 0) {
+    // create brush mask
+    width = w; // max dimensions of brush
+    height = h;
+   
+    //ABC: could simplify brush to an int mask as does not need to be color'd (but ok so can use cv::)zv
+    cv::Scalar brush_color = cv::Scalar(0,0,0); 
+    cv::Scalar not_brush_color = cv::Scalar(255,255,255); 
+    brush = cv::Mat::zeros(cv::Size(width,height), CV_8UC3);
+    brush.setTo(not_brush_color);
+    
+    cv::Vec3b brush_color_vec3b = scalarToVec3b(brush_color);
+    
+    // draw brush (note: this is so we can use arbitrary shaped brushes
+    if (type.compare("ellipse")==0) {
+      style = 2;
+      cv::ellipse( brush, cv::Point(std::floor(w/2),std::floor(h/2)), 
+		   cv::Size(std::floor(width/2), std::floor(height/2)), 0., 0., 360., brush_color, -1);
+    } else {
+      style = 1;
+      cv::rectangle( brush, cv::Point(0,0), cv::Point(width,height), brush_color, -1);
+    }
+    if (show_brush) {
+      cv::namedWindow( "Brush", CV_WINDOW_AUTOSIZE );
+      cv::imshow( "Brush", brush );
+    }
+    
+    // make a vector of brush pixels
+    for (int i=0; i<width; i++) {
+      for (int j=0; j<height; j++) {
+	if (brush.at<cv::Vec3b>(cv::Point(i,j)) == brush_color_vec3b) {
+	  pixels.push_back(cv::Point(i,j));
+	}
+      }
+    }
+    
+    // find the pixels of the boundary of the brush
+    //ABC    /////    defineBoundary(&brush,brush_color,&brush_boundary,&brush_interior);
+    //printf("brush boundary has %i points\n",(int)brush_boundary.size());
+  }
+};
+
+
 
 class RegionToPaths {
 protected:
   int width, height, border;
 
   // brush variables
-  int brush_w, brush_h;
+  Brush *brush;
   std::vector<cv::Point> brush_boundary;
   std::vector<cv::Point> brush_interior;
+  std::vector<cv::Point> brush_pixels;
+
   std::vector<cv::Point> initial_boundary; // boundary of the regions to be painted
   std::vector<cv::Point> boundary; // boundary of the regions to be painted
   std::vector<cv::Point> one_border_candidate_pixels; // possible places where could put brush for one border pass
   std::vector<cv::Point> candidate_pixels; // possible places where could put brush for all loops
   std::vector<cv::Point> untouchable_boundary_pixels;
-  std::vector<cv::Point> brush_pixels;
-  cv::Mat brush;
+  //cv::Mat brush_mat;
 
 public:
   int *grid;
-
-  cv::Vec3b scalarToVec3b (cv::Scalar s) { 
-    cv::Vec3b vec;
-    vec[0] = s[0];
-    vec[1] = s[1];
-    vec[2] = s[2];
-    return vec;
-  }
 
   // returns 0 if any of the points can't be painted... otherwise it returns the # of ok pixels that
   // are in the desired region to be painted (ABC: change points to *points)
@@ -140,10 +213,17 @@ public:
     defineBoundary(&image,region_color,boundary,interior,minx,miny);
   }
 
-  void defineBrush(int w, int h, std::string type="rectangle", int show_brush = 0) {
+  void defineBrush(Brush *b) {
+    brush = b;
+    brush_pixels=brush->getPixels();
+    defineBoundary(brush_pixels,brush->getColor(),&brush_boundary,&brush_interior);
+  }
+
+  /*
+  void defineBrushOBSOLETE(int w, int h, std::string type="rectangle", int show_brush = 0) {
     // create brush mask
-    brush_w = w; // max dimensions of brush
-    brush_h = h;
+    int brush_w = w; // max dimensions of brush
+    int brush_h = h;
   
     //ABC: simplify brush to an int mask as dosnt' need to be color'd
     cv::Scalar brush_color = cv::Scalar(0,0,0); 
@@ -177,7 +257,7 @@ public:
     // find the pixels of the boundary of the brush
     defineBoundary(&brush,brush_color,&brush_boundary,&brush_interior);
     //printf("brush boundary has %i points\n",(int)brush_boundary.size());
-  }
+    } */
 
   // scans the grid returns the pixels at the border of a given grid value (optionally, returns the interior)
   void defineBoundaryFromGrid(int value=1, std::vector<cv::Point> *boundary = NULL, std::vector<cv::Point> *interior = NULL) {
@@ -388,6 +468,9 @@ public:
     }
   }
 
+  // simple sort bool
+  static bool comparePoints (cv::Point p1,cv::Point p2) { return (p1.x<p2.x); }
+
   // returns a vector of candidate brush location points
   void getCandidateBrushStrokes(std::vector<std::vector<cv::Point> >*strokes) {
     // make a grid with 1=brush location, 0=otherwise
@@ -398,6 +481,8 @@ public:
       int y=candidate_pixels[i].y;
       cgrid[x * height + y] = 1;
     }
+
+    std::sort(candidate_pixels.begin(), candidate_pixels.end(), comparePoints);
 
     // find all the candidate_pixels that have only 1 neighbor candidate_pixels (e.g., start of line)
     // once all 1 neighbors are done, then do 2+ and get the rest

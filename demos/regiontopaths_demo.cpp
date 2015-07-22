@@ -18,7 +18,6 @@ int main( int argc, char** argv )
 
     RegionToPaths RTP = RegionToPaths(w,h,border);
 
-
     // mark pixels that will be painted over by another color later
     // that is... pixels where the brush could paint even tho it's not desired
 
@@ -58,12 +57,14 @@ int main( int argc, char** argv )
     W.setPenColor(0,0,0);
     W.setLineThickness(1);
     W.drawRectangle(border-4,border-4,border+w+4,border+h+4,0); // draw outline of canvas
-
     RTP.putGridOnWindow(&W,border,border);
     W.show();
 
     //RTP.defineBrush(30,20,"rectangle");
-    RTP.defineBrush(30,20,"ellipse");
+    //RTP.defineBrush(30,20,"ellipse");
+    //Brush brush = Brush(30,20,"rectangle");
+    Brush brush = Brush(30,20,"ellipse");
+    RTP.defineBrush(&brush);
 
     RTP.definePaths(&W); // NOTE: &W is optional .. if send a DrawWindow, it shows debugging
     W.show();

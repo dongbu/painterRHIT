@@ -8,6 +8,15 @@
 
 //using namespace std;
 
+// little helper function
+cv::Vec3b scalarToVec3b (cv::Scalar s) { 
+  cv::Vec3b vec;
+  vec[0] = s[0];
+  vec[1] = s[1];
+  vec[2] = s[2];
+  return vec;
+}
+
 // Packages simple drawing commands for the simulator display window
 class DrawWindow {
 protected:
