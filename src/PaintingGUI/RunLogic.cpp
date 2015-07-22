@@ -47,28 +47,21 @@ void RunLogic::forwardClicked() {
     if (currentShapeIndex >= shapes->length()) return;
     running = false;
     runOnly(currentShapeIndex);
-    currentShapeIndex++;
 }
 /**
  * @brief steps backwards.
  */
 void RunLogic::backwardClicked() {
-	printf("checkpoing 1.0 \n");
     this->simWin->showWindow();
-	printf("checkpoing 2.0 \n");
     emit setRunColor(currentShapeIndex, false);
-	printf("checkpoing 3.0 \n");
+	simWin->clearWindow(255, 255, 255); //white
     if (currentShapeIndex <= 0) return;
-	printf("checkpoing 4.0 \n");
-    currentShapeIndex--; //otherwise, -- the index
-	printf("checkpoing 5.0 \n");
-    simWin->clearWindow(255, 255, 255); //white
-	printf("checkpoing 6.0 \n");
     running = false;
-	printf("checkpoing 7.0 \n");
-    for (int i = 0; i < currentShapeIndex; i++) runOnly(i);
-	printf("checkpoing 8.0 \n");
-
+	int temp = currentShapeIndex;
+	for (int i = 0; i < temp; i++) {
+		runOnly(i);
+		currentShapeIndex--;
+	}
 }
 /**
  * @brief runs simulation.
@@ -97,6 +90,8 @@ void RunLogic::runFrom(int index) {
 void RunLogic::runOnly(int index) {
     this->simWin->showWindow();
     shapes->at(index)->draw(simWin);
+	currentShapeIndex = index + 1;
+	if (currentShapeIndex == stopIndex) currentShapeIndex--;
     emit(setRunColor(index, true));
     simWin->show();
 }
@@ -122,7 +117,6 @@ void RunLogic::toggleBreakPoint(int index) {
 void RunLogic::drawingThread(DrawWindow *W) {
     while (running && currentShapeIndex < stopIndex) {
         if (shapes->at(currentShapeIndex)->isBreakPoint){
-            printf("hit a breakpoint\n");
             toggleBreakPoint(currentShapeIndex);
             running = false;
             return;

@@ -123,7 +123,6 @@ void CommandWindow::recieveRunColor(int index, bool runToggle){
         ui->listWidget->item(index)->setBackgroundColor("green");
     }
     else{
-        printf("setting item at index %i background to white\n", index);
         ui->listWidget->item(index)->setBackgroundColor("white");
     }
 }

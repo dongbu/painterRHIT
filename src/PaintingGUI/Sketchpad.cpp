@@ -401,6 +401,11 @@ void Sketchpad::startupClicked(){
 }
 void Sketchpad::shutDownClicked(){
 	Ava->shutdown();
+	if (Ava->shutdown()){
+		ui->actionShutdown->setDisabled(true);
+		ui->actionStartup->setDisabled(true);
+		ui->menuWorkspace->setDisabled(true);
+	}
 }
 
 void Sketchpad::loadPhotoClicked(){
@@ -428,10 +433,5 @@ void Sketchpad::loadPhotoClicked(){
 		shapes->DrawAll(cvWindow); //redraw window
 		translator->showImage(cvWindow->grid); //actually redraw the window
 		emit prodOtherWindows();
-
-	if (Ava->shutdown()){
-		ui->actionShutdown->setDisabled(true);
-		ui->actionStartup->setDisabled(true);
-		ui->menuWorkspace->setDisabled(true);
 	}
 }
