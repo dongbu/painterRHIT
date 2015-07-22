@@ -24,7 +24,7 @@ CytonRunner::CytonRunner(QWidget *parent)
 
 CytonRunner::~CytonRunner()
 {
-	delete ui;
+//	delete ui;
 }
 
 bool CytonRunner::connect(){
@@ -95,7 +95,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 }
 void CytonRunner::createWorkspace(){
-	QWidget *widget = new QWidget();
+	//QWidget *widget = new QWidget();
 	printf("should show ui here\n");
 	printf("please excuse the lack of showing said ui\n");
 
@@ -219,7 +219,7 @@ void CytonRunner::stroke(std::vector<cv::Point> pts){
 	raiseBrush();
 	goToPos(pts.at(0).x, pts.at(0).y, raiseHeight);
 	lowerBrush();
-	for (int i = 0; i < pts.size(); i++){
+	for (size_t i = 0; i < pts.size(); i++){
 		goToPos(pts.at(i).x, pts.at(i).y, 0);
 	}
 	raiseBrush();
@@ -328,8 +328,10 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	return temp;
 }
 
-void paintShape(Shape *s){
+void CytonRunner::paintShape(Shape *s){
 	
 	PolyLine *p = s->convertToPolyLine();
+
+	stroke(p->points);
 	
 }
