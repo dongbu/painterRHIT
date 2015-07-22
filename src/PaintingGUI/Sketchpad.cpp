@@ -19,8 +19,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     ui->setupUi(this);
     setupQt();
     this->paintingName = "unnamed";
-	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	this->setFixedWidth(width + 20);
+	//this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	//this->setFixedWidth(width + 20);
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -442,5 +442,21 @@ void Sketchpad::loadPhotoClicked(){
 }
 
 void Sketchpad::launchWebcam() {
-	Web->calibrateWebcam();
+	this->cvWindow->grid = Web->calibrateWebcam();
+
+	ImageParserContours IPC;
+	IPC.setMinContourLength(5);
+	IPC.setCannyThreshold(50);
+	IPC.parseImage(cvWindow->grid);
+	IPC.defineShapes(shapes);
+
+	ImageParserKmeans IPK;
+	IPK.setMinPixelsInRegion(5);
+	IPK.parseImage(cvWindow->grid);
+	IPK.defineShapes(shapes);
+
+	cvWindow->clearWindow();
+	shapes->DrawAll(cvWindow); //redraw window
+	translator->showImage(cvWindow->grid); //actually redraw the window
+	emit prodOtherWindows();
 }

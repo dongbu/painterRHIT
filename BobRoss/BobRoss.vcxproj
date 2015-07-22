@@ -144,6 +144,7 @@
     <ClCompile Include="..\src\PaintingGUI\CVImageWidget.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
     <ClCompile Include="..\src\PaintingGUI\RunLogic.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Sketchpad.cpp" />
