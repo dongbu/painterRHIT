@@ -75,12 +75,6 @@
     <ClCompile Include="..\src\PaintingGUI\Sketchpad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\PaintingGUI\imageparser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -133,6 +127,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\imageparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
