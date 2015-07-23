@@ -36,7 +36,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
     getColor(); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->DrawAll(cvWindow); //redraw the window
+	shapes->drawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
     this->startNewCommand(); //prep for initial command
 
@@ -60,7 +60,7 @@ void Sketchpad::redraw() {
     startNewCommand();
 
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-    shapes->DrawAll(cvWindow); //redraw the window
+    shapes->drawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
@@ -158,7 +158,7 @@ void Sketchpad::refresh(int x, int y) {
 		reset = true;
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 
-		shapes->DrawAll(cvWindow);
+		shapes->drawAll(cvWindow);
 		flood(Point(x, y));
 	}
 
@@ -167,7 +167,7 @@ void Sketchpad::refresh(int x, int y) {
         shapes->addShape(currentShape);
         startNewCommand();
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-		shapes->DrawAll(cvWindow); //redraw window
+		shapes->drawAll(cvWindow); //redraw window
         emit prodOtherWindows();
     }
     else {
@@ -429,7 +429,7 @@ void Sketchpad::loadPhotoClicked(){
 		IPK.defineShapes(shapes);
 
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-		shapes->DrawAll(cvWindow); //redraw window
+		shapes->drawAll(cvWindow); //redraw window
 		translator->showImage(cvWindow->grid); //actually redraw the window
 		emit prodOtherWindows();
 	}
@@ -450,7 +450,7 @@ void Sketchpad::launchWebcam() {
 	IPK.defineShapes(shapes);
 
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->DrawAll(cvWindow); //redraw window
+	shapes->drawAll(cvWindow); //redraw window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	emit prodOtherWindows();
 }

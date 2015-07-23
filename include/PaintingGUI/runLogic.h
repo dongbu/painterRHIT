@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <qobject.h>
+#include <future>
 
 class RunLogic : public QObject
 

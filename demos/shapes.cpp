@@ -5,9 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include "pugixml.hpp"
-#include "pugixml.cpp"
+//#include "pugixml.cpp" GH: including both a head and a source is asking for troble.
+//GH: specifically, trouble of a kind that causes linking redundancies that break our code
 #include "drawwindow.cpp"
-#include <cstdarg> //gunnar needs this to compile (AC: why?... put reason here for potential future deletion)
 #include "helpers.cpp" // string_format
 
 //#include <highgui.h> // WINDOW_AUTOSIZE
@@ -22,6 +22,7 @@ protected:
 public:
   std::string type;
   int id;
+  bool isBreakPoint = false;
 
   void setID(int i) { id = i; }
   int getID(int i=-1) { 
@@ -42,13 +43,17 @@ public:
 
   std::string getColorXML() {
     std::string line;
-    line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",pen_color_vec[2],pen_color_vec[1],pen_color_vec[0]));
+    line.append(Helpers::string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",pen_color_vec[2],pen_color_vec[1],pen_color_vec[0]));
     return line;
   }
   
   virtual std::string getXML() {
     std::string line = getColorXML();
     return line;
+  }
+
+  void toggleBreakPoint(bool toggle){
+	  this->isBreakPoint = toggle;
   }
 
   virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); } 
@@ -60,9 +65,9 @@ public:
 class PolyLine: public Shape {
 protected:
   int thickness;
-  std::vector<cv::Point> points;
 
 public:
+  std::vector<cv::Point> points;
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
 
@@ -70,11 +75,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"polyline\" id=\"%i\" thickness=\"%i\">",getID(),thickness));
-    line.append(Shape::getColorXML());
+	line.append(Helpers::string_format("<shape type=\"polyline\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -120,11 +125,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"pixelregion\" id=\"%i\" thickness=\"%i\" style=\"%i\">",getID(),thickness,style));
-    line.append(Shape::getColorXML());
+    line.append(Helpers::string_format("<shape type=\"pixelregion\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\" style=\"%i\">",getID(),isBreakPoint, thickness,style));
+	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -223,11 +228,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"polypoints\" id=\"%i\" thickness=\"%i\">",getID(),thickness));
-    line.append(Shape::getColorXML());
+	line.append(Helpers::string_format("<shape type=\"polypoints\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -289,9 +294,9 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\">",getID(),fill));
-    line.append(getColorXML());
-    line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
+	line.append(Helpers::string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakPoint=\"%i\">", getID(), fill, isBreakPoint));
+	line.append(getColorXML());
+	line.append(Helpers::string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			      pt1.x,pt1.y,pt2.x,pt2.y));
     line.append("</shape>");
     return line;
@@ -369,8 +374,8 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\">",
-			      getID(),fill,pt.x,pt.y,axes.width,axes.height));
+	line.append(Helpers::string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
+		getID(), fill, pt.x, pt.y, axes.width, axes.height, isBreakPoint));
     line.append(getColorXML());
     line.append("</shape>");
     return line;
@@ -422,6 +427,7 @@ public:
       int r=shape.child("color").attribute("r").as_int();
       int g=shape.child("color").attribute("g").as_int();
       int b=shape.child("color").attribute("b").as_int();
+	  int breakPoint = shape.attribute("breakPoint").as_int();
       if (debug) std::cout << type;
       if (debug) printf(" shape ID:%i\n",id);
       if (debug) printf(" RGB %d %d %d\n",r,g,b);
@@ -431,6 +437,7 @@ public:
 	PL->setPenColor(r,g,b);
 	PL->setID(id);
 	int thickness=shape.attribute("thickness").as_int();
+	if (breakPoint == 1) PL->toggleBreakPoint(true);
 	PL->setThickness(thickness);
 
 	pugi::xml_node points = shape.child("points");
@@ -445,8 +452,12 @@ public:
 
       if (type.compare("polypoints")==0) {
 	PolyPoints *PP = new PolyPoints();
+	int thickness = shape.attribute("thickness").as_int();
 	PP->setPenColor(r,g,b);
 	PP->setID(id);
+	PP->setThickness(thickness);
+	if (breakPoint == 1) PP->toggleBreakPoint(true);
+
 
 	pugi::xml_node points = shape.child("points");
 	for (pugi::xml_node point = points.first_child(); point; point = point.next_sibling()) {
@@ -462,6 +473,7 @@ public:
 	PixelRegion *PR = new PixelRegion();
 	PR->setPenColor(r,g,b);
 	PR->setID(id);
+	if (breakPoint == 1) PR->toggleBreakPoint(true);
 	int style=shape.attribute("style").as_int();
 	int thickness=shape.attribute("thickness").as_int();
 	PR->setStyle(style);
@@ -481,6 +493,8 @@ public:
 	Rectangle *R = new Rectangle();
 	R->setPenColor(r,g,b);
 	R->setID(id);
+	if (breakPoint == 1) R->toggleBreakPoint(true);
+
 
 	pugi::xml_node corners = shape.child("corners");
 	int pt1x=corners.attribute("pt1x").as_int();
@@ -497,6 +511,7 @@ public:
       if (type.compare("ellipse")==0) {
 	Ellipse *E = new Ellipse();
 	E->setPenColor(r,g,b);
+	if (breakPoint == 1) E->toggleBreakPoint(true);
 	E->setID(id);
 
 	int x=shape.attribute("x").as_int();
@@ -532,6 +547,34 @@ public:
 	i=(int)shapes.size()+1;
       }
     }
+  }
+
+  void removeShapeAt(int index){
+	  shapes.erase(shapes.begin() + index);
+  }
+
+  Shape* at(int position){
+	  return shapes.at(position);
+  }
+
+  Shape* getById(int id){
+	  for (size_t i = 0; i < shapes.size(); i++){
+		  if (shapes[i]->getID() == id){
+			  return shapes.at(i);
+		  }
+	  }
+  }
+
+  int length(){
+	  return shapes.size();
+  }
+
+  void clear(){
+	  shapes.clear();
+  }
+
+  void swap(int pos1, int pos2){
+	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
   }
 
   Shapes() { max_id=0; }

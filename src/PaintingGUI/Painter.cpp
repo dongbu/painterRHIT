@@ -60,7 +60,7 @@ void Painter::save(std::string name) {
 	xml.append(this->getXML());
     xml.append(shapes->getXML());
 	xml.append("</robot>\n");
-    ofstream myfile;
+    std::ofstream myfile;
     myfile.open(name);
     myfile << xml;
     myfile.close();

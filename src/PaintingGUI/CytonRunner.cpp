@@ -329,9 +329,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 }
 
 void CytonRunner::paintShape(Shape *s){
-	
-	PolyLine *p = s->convertToPolyLine();
-
-	stroke(p->points);
+//	PolyLine *p = s->convertToPolyLine();
+//	stroke(p->points);
 	
 }
