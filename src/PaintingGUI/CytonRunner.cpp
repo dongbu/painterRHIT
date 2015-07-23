@@ -19,8 +19,18 @@ CytonRunner::CytonRunner(QWidget *parent)
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
-}
 
+	//simulation size
+	width = 600;
+	height = 600;
+
+	//canvas size
+	cWidth = 0.3; //meters
+	cHeight = 0.3; //meters
+	xScale = cWidth / width;
+	yScale = cHeight / height;
+
+}
 
 CytonRunner::~CytonRunner()
 {
@@ -128,7 +138,7 @@ bool CytonRunner::shutdown(){
 void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
 
-	std::vector<double> vec = convert(x, y, z);
+	std::vector<double> vec = convert(x*xScale, y*yScale, z);
 	pose.setTranslationX(vec.at(0));
 	pose.setTranslationY(vec.at(1));
 	pose.setTranslationZ(vec.at(2));
@@ -328,6 +338,18 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	return temp;
 }
 
+void CytonRunner::setSimulationSize(int width, int height){
+	this->width = width;
+	this->height = height;
+}
+
+void CytonRunner::setCanvasSize(double width, double height){
+	this->cWidth = width;
+	this->cHeight = height;
+	xScale = cWidth / width;
+	yScale = cHeight / height;
+}
+
 void CytonRunner::paintShape(Shape *s){
 	/*
 	polyline
@@ -336,9 +358,23 @@ void CytonRunner::paintShape(Shape *s){
 	rectangle
 	ellipse
 	*/
+	int border = 30;
 	if (s->fill == 1){
 		PixelRegion *p = s->toPixelRegion();
-		printf("TODO: convert pixelregion to path\n");
+		RegionToPaths RTP = RegionToPaths(width, height, border);
+		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
+		RTP.defineBrush(&brush);
+		
+		for (int i = 0; i < p->getPoints().size(); i++){
+			cv::Point currentPoint = p->getPoints().at(i);
+			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
+		}
+		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+
+		for (int i = 0; i < pathVec.size(); i++){
+			this->stroke(pathVec.at(i));
+		}
+
 		
 	}
 	else if (s->fill == 0){

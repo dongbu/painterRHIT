@@ -189,6 +189,9 @@ public:
 	  return this;
   }
 
+  std::vector<cv::Point> getPoints(){
+	  return this->points;
+  }
 
   
   PixelRegion() : Shape() { type = "pixelregion"; style=1; thickness=1; }
