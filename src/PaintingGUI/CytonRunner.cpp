@@ -329,7 +329,25 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 }
 
 void CytonRunner::paintShape(Shape *s){
-//	PolyLine *p = s->convertToPolyLine();
-//	stroke(p->points);
+	/*
+	polyline
+	pixelregion
+	polypoints
+	rectangle
+	ellipse
+	*/
+	if (s->fill == 1){
+		PixelRegion *p = s->toPixelRegion();
+		printf("TODO: convert pixelregion to path\n");
+		
+	}
+	else if (s->fill == 0){
+		PolyLine *p = s->toPolyline();
+		this->stroke(p->getPoints());
+	}
+	else{
+		printf("fill is neither 1 nor 0.  This is strange...\n");
+	}
+
 	
 }
