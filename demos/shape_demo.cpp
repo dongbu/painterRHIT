@@ -1,4 +1,5 @@
 #include "shapes.cpp"
+#include <unistd.h> // sleep
 
 int main(void)
 {
@@ -49,6 +50,11 @@ int main(void)
   PP->addPoint( ww/4.0 + delx, 13*ww/16.0 + dely );
   S.addShape(PP);
   
+  // test overwriting with pixel region
+  PixelRegion PPtoPR = PP->toPixelRegion();
+  PPtoPR.setPenColor(0,255,255);
+  //S.addShape(&PPtoPR);
+
   // add pixel region
   PixelRegion *PR = new PixelRegion();
   PR->setPenColor(0,0,rng.uniform(0,244));
@@ -98,7 +104,7 @@ int main(void)
   S.addShape(E);
 
   // draw the shapes
-  DrawWindow W = DrawWindow(w,h,"Generated Shapes"); // w,h
+  DrawWindow W = DrawWindow(w,h,"Generated Shapes",1);
   W.clearWindow(230,230,230); // default background is white
   S.drawAll(&W);
   W.show();

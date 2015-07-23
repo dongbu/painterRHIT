@@ -5,7 +5,6 @@
 //#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
 #include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
 
-
 //using namespace std;
 
 // little helper function
@@ -25,6 +24,7 @@ protected:
   cv::Scalar pen_color;
   cv::Vec3b pen_color_vec;
 
+  int window_created;
   int pen_thickness;
   int line_type;
   std::string window_name;
@@ -172,19 +172,31 @@ public:
 
   void hideWindow() { cv::moveWindow(window_name,5000,5000); }
 
-  void showWindow() { cv::moveWindow(window_name,winx,winy); }
+  void showWindow() { 
+    cv::moveWindow(window_name,winx,winy); 
+  }
 
-  void popWindow() { 
+  void topWindow() { 
     // BringWindowToTop(cv::getWindowHandle(window_name));
   }
 
-  void show() { cv::imshow(window_name, grid); }
+  // creates the window
+  void popWindow() {
+    cv::namedWindow(window_name, CV_WINDOW_AUTOSIZE );
+    window_created = 1; 
+  }
 
-  DrawWindow(int w, int h, std::string name) { // constructor
+  void show() { 
+    if (!window_created) { popWindow(); }
+    cv::imshow(window_name, grid); 
+  }
+
+  DrawWindow(int w, int h, std::string name, int hide_window=0) { // constructor
     width=w;
     height=h;
     window_name = name;
-    cv::namedWindow(window_name, CV_WINDOW_AUTOSIZE );
+    window_created = 0;
+    if (!hide_window) { popWindow(); }
     winx=0;
     winy=0;
 

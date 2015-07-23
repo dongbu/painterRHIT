@@ -572,7 +572,7 @@ public:
       int num_pixels=regions[r].size();
       if (num_pixels>=min_region_pixels) {
 	PixelRegion *PR = new PixelRegion();
-	PR->setPenColor(region_colors[r][2],region_colors[r][1],region_colors[r][0]);
+	PR->setPenColor(region_colors[r][0],region_colors[r][1],region_colors[r][2]);
 	if (use_random_colors) { PR->setPenColor(rng.uniform(100,200),rng.uniform(100,200),rng.uniform(100,200)); }
 
 	for (int p=0; p<regions[r].size(); p++) {

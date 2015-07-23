@@ -94,46 +94,6 @@ public:
 };
 
 
-// filled in region bounded by points
-class PolyPoints: public Shape {
-protected:
-  int thickness;
-  std::vector<cv::Point> points;
-
-public:
-  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
-  void addPoint(cv::Point pt) { points.push_back(pt); }
- 
-  void setThickness(int t=1) { thickness=t; }
-
-  virtual std::string getXML() {
-    std::string line;
-    line.append(string_format("<shape type=\"polypoints\" id=\"%i\" thickness=\"%i\">",getID(),thickness));
-    line.append(Shape::getColorXML());
-    line.append("<points>");
-    for (int i=0; i<(int)points.size(); i++) {
-      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
-    }
-    line.append("</points>");
-    line.append("</shape>");
-    return line;
-  }
-
-  virtual void draw(DrawWindow *W) {
-    cv::Scalar color = getPenColor();
-    W->setPenColor(color[0],color[1],color[2]);
-    W->setLineThickness(thickness);
-    W->startPolyPoints();
-    for (int i=0; i<(int)points.size()-1; i++) {
-      W->addPolyPoint(points[i].x,points[i].y);
-    }
-    W->drawPolyPoints();
-  }
-  
-  PolyPoints() : Shape() { type = "polyline"; thickness = 1; }
-};
-
-
 // bunch of pixels
 class PixelRegion: public Shape {
 protected:
@@ -194,6 +154,98 @@ public:
   }
   
   PixelRegion() : Shape() { type = "pixelregion"; style=1; thickness=1; }
+};
+
+
+// filled in region bounded by points
+class PolyPoints: public Shape {
+protected:
+  int thickness;
+  std::vector<cv::Point> points;
+
+public:
+  void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
+  void addPoint(cv::Point pt) { points.push_back(pt); }
+ 
+  void setThickness(int t=1) { thickness=t; }
+
+  // returns a polyline representation of a PolyPoints (note: just returns the perimeter)
+  PolyLine toPolyline() { // note: only perimeter
+    PolyLine PL;
+    for (int i=0; i<(int)points.size()-1; i++) { PL.addPoint(points[i]); }
+    PL.addPoint(points[0]);
+    return PL;
+  }
+
+  // returns a pixelregion representation of a rectangle
+  PixelRegion toPixelRegion() {
+    // plan is to draw a temp graphic then convert it to pixels (yah ugly... )
+    int minx=9999999;
+    int miny=9999999;
+    int maxx=0;
+    int maxy=0;
+    for (int i=0; i<(int)points.size()-1; i++) { 
+      if (points[i].x>maxx) { maxx = points[i].x; }
+      if (points[i].x<minx) { minx = points[i].x; }
+      if (points[i].y>maxy) { maxy = points[i].y; }
+      if (points[i].y<miny) { miny = points[i].y; }
+    }
+
+    unsigned int n = points.size();
+    int npt[] = { n };
+
+    cv::Point **ppoints = new cv::Point*[1];
+    ppoints[0]=new cv::Point[n];
+    for (int i=0; i<n; i++) { 
+      ppoints[0][i] = cv::Point(points[i].y-miny, points[i].x-minx); // dunno why y,x but seems to work
+    }
+    const cv::Point* ppt[1] = { ppoints[0] };
+
+    int w=maxx-minx+1;
+    int h=maxy-miny+1;
+    cv::Mat grid = cv::Mat(w, h, CV_8UC3 ); // 3 channel color
+    grid.setTo(cv::Scalar(255,255,255));
+    fillPoly( grid, ppt, npt, 1, cv::Scalar(0,0,0), 8);
+    
+    PixelRegion PR;
+    for (int i=0; i<w; i++) {
+      for (int j=0; j<h; j++) {
+	if (grid.at<cv::Vec3b>(i,j)[0] == 0) { // i,j is in the region
+	  PR.addPoint(i+minx,j+miny);
+	}
+      }
+    }
+      
+    delete [] ppoints[0];
+    delete [] ppoints;
+    return PR;
+  }
+
+  virtual std::string getXML() {
+    std::string line;
+    line.append(string_format("<shape type=\"polypoints\" id=\"%i\" thickness=\"%i\">",getID(),thickness));
+    line.append(Shape::getColorXML());
+    line.append("<points>");
+    for (int i=0; i<(int)points.size(); i++) {
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+    }
+    line.append("</points>");
+    line.append("</shape>");
+    return line;
+  }
+
+  virtual void draw(DrawWindow *W) {
+    cv::Scalar color = getPenColor();
+    W->setPenColor(color[0],color[1],color[2]);
+    W->setLineThickness(thickness);
+    W->startPolyPoints();
+    for (int i=0; i<(int)points.size()-1; i++) {
+      W->addPolyPoint(points[i].x,points[i].y);
+    }
+    W->drawPolyPoints();
+  }
+
+  PolyPoints() : Shape() { type = "polyline"; thickness = 1; }
 };
 
 

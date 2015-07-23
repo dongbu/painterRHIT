@@ -3,6 +3,7 @@
 int main(void)
 {
   char* g_image_filename="images/lena.jpg";
+  //char* g_image_filename="images/eggs-512.jpg";
   cv::Mat src = cv::imread( g_image_filename, 1 );
   if (src.empty()) {
     std::cout << "!!! Failed imread()\n ./colors <image filename>" << std::endl;
@@ -34,7 +35,7 @@ int main(void)
     //IPK.setDebug(1);
     IPK.setMinPixelsInRegion(5);
     IPK.parseImage(src);
-    IPK.useRandomColors(1); // shows each contour as a random color
+    //IPK.useRandomColors(1); // shows each region as a random color
     //IPK.draw();
     IPK.defineShapes(&SIPK);
     //  IPC.printImageData(1);
