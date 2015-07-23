@@ -35,10 +35,13 @@ private:
     CommandWindow *commandWin;
     Sketchpad *sketch;
     RunLogic *logic;
+	Webcam *Web;
 
 	std::string Painter::string_format(const std::string fmt, ...);
-	std::string Painter::getXML();
-	void parseXML(pugi::xml_node *canvasInfo);
+	std::string Painter::getXMLDim();
+	std::string Painter::getXMLWeb();
+
+	void parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo);
 
 public slots:
     void save(std::string projectLocation);

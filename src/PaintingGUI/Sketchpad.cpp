@@ -25,12 +25,8 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
     shapes = ss;
     this->translator = new CVImageWidget(ui->widget);
     connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-    this->cvWindow = new DrawWindow(height,width,"garbabe_name");
+    this->cvWindow = new DrawWindow(height,width,"garbabe_name",1);
     this->cvWindow->hideWindow();
-
-	//Image set-up
-	Web = new Webcam();
-	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -436,6 +432,7 @@ void Sketchpad::loadPhotoClicked(){
 }
 
 void Sketchpad::launchWebcam() {
+	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 	this->cvWindow->grid = Web->calibrateWebcam();
 
 	ImageParserContours IPC;
@@ -454,3 +451,6 @@ void Sketchpad::launchWebcam() {
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	emit prodOtherWindows();
 }
+
+void Sketchpad::setWebcam(Webcam *W) { Web = W; }
+

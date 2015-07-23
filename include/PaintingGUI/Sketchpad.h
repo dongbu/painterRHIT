@@ -31,6 +31,7 @@ class Sketchpad : public QMainWindow
 public:
     explicit Sketchpad(int width, int height, Shapes *ss, QWidget *parent = 0);
     ~Sketchpad();
+	void setWebcam(Webcam *W);
 
 private:
     void getColor();

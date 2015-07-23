@@ -8,6 +8,8 @@ Painter::Painter() {
     height = 600;
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
+	Web = new Webcam();
+
 }
 /**
  * @brief constructor with shapes.
@@ -18,6 +20,7 @@ Painter::Painter(Shapes *shapes) {
     width = 600;
     height = 600;
 	this->stuffshowing = false;
+	Web = new Webcam();
 }
 /**
  * @brief add list of shapes to painter.
@@ -57,7 +60,8 @@ void Painter::setDimensions(int width, int height) {
 void Painter::save(std::string name) {
     std::string xml = "<?xml version=\"1.0\"?>\n";
 	xml.append("<robot>\n");
-	xml.append(this->getXML());
+	xml.append(this->getXMLDim());
+	xml.append(this->getXMLWeb());
     xml.append(shapes->getXML());
 	xml.append("</robot>\n");
     std::ofstream myfile;
@@ -76,7 +80,8 @@ void Painter::load(std::string projectLocation) {
     pugi::xml_node listOfShapes = doc.child("robot").child("shapes");
     shapes->parseXML(&listOfShapes);
 	pugi::xml_node canvasInfo = doc.child("robot").child("canvas");
-	this->parseXML(&canvasInfo);
+	pugi::xml_node webcamInfo = doc.child("robot").child("zoom");
+	this->parseXML(&canvasInfo,&webcamInfo);
     printf("%s\n", result.description());
     this->sketch->redraw();
 }
@@ -89,6 +94,7 @@ void Painter::load(std::string projectLocation) {
 void Painter::showGUI(bool toggle){
 	stuffshowing = toggle;
     sketch = new Sketchpad(width, height, shapes);
+	sketch->setWebcam(this->Web);
     launchSimulation();
 
     connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
@@ -130,21 +136,38 @@ void Painter::launchSimulation(){
 /*
  * @brief gets XML information
 */
-std::string Painter::getXML() { 
+std::string Painter::getXMLDim() { 
 	std::string line;
 	line = "<canvas width=\"" + std::to_string(this->width) + "\" height=\"" + std::to_string(this->height) + "\">\n";
-
 	line.append("</canvas>\n");
 	return line;
+}
+
+std::string Painter::getXMLWeb() {
+	std::string line;
+	double * zoom = Web->getWebcamZoom();
+	line = "<zoom x0=\"" + std::to_string(zoom[0]) + "\" y0=\"" + std::to_string(zoom[1]) + "\" x1=\"" + std::to_string(zoom[2])
+		+ "\" y1=\"" + std::to_string(zoom[3]) + "\" x2=\"" + std::to_string(zoom[4]) + "\" y2=\"" + std::to_string(zoom[5])
+		+ "\" x4=\"" + std::to_string(zoom[6]) + "\" y4=\"" + std::to_string(zoom[7]) + "\">\n";
+	line.append("</zoom>/n");
 	return line;
 }
 
 /*
  * @brief parses XML information
  */
-void Painter::parseXML(pugi::xml_node *canvasInfo){
+void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 	int h = canvasInfo->attribute("height").as_int();
 	int w = canvasInfo->attribute("width").as_int();
-	this->setDimensions(w, h);
+	int x0 = webcamInfo->attribute("x0").as_int();
+	int y0 = webcamInfo->attribute("y0").as_int();
+	int x1 = webcamInfo->attribute("x1").as_int();
+	int y1 = webcamInfo->attribute("y1").as_int();
+	int x2 = webcamInfo->attribute("x2").as_int();
+	int y2 = webcamInfo->attribute("y2").as_int();
+	int x3 = webcamInfo->attribute("x3").as_int();
+	int y3 = webcamInfo->attribute("y3").as_int();
 	
+	this->setDimensions(w, h);
+	this->Web->setWebcamZoom(x0, y0, x1, y1, x2, y2, x3, y3);
 }
