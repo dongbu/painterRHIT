@@ -129,9 +129,9 @@ class PixelRegion: public Shape {
 protected:
   int thickness;
   int style; // 1=square, 2=circle
-  std::vector<cv::Point> points;
 
 public:
+  std::vector<cv::Point> points;
   void addPoint(cv::Point pt) { points.push_back(pt); }
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(int i, int j, int dup_check) { // add point if it doesn't exist yet

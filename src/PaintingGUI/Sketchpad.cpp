@@ -180,7 +180,6 @@ void Sketchpad::flood(Point p) {
 	Mat processed;
 	processed = Mat(cvWindow->grid.size().width, cvWindow->grid.size().height, CV_64F, cvScalar(0.));
 	Vec3b floodColor = cvWindow->grid.at<Vec3b>(p);
-	curPixelRegion->addPoint(p.x, p.y);
 
 	std::vector<Point> pointVec;
 	pointVec.push_back(p);
@@ -188,33 +187,41 @@ void Sketchpad::flood(Point p) {
 	{
 		p = pointVec.back();
 		pointVec.pop_back();
-		cvWindow->grid.at<Vec3b>(p);
 		Vec3b curPix = cvWindow->grid.at<Vec3b>(p);
 		bool skip = false;
+		bool notProcessed = processed.at<double>(p.x, p.y - 1) != 1;
 
-		if ((floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2])) {
-			cvWindow->grid.at<Vec3b>(p) = curPix;
+		if (floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2]) {
 			curPixelRegion->addPoint(p.x,p.y);
-		}
-		else skip = true;
+		} else skip = true;
 
-		if (!skip && p.y - 1 > 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
-			processed.at<double>(p.x, p.y - 1) = 1;
+		if (!skip && p.y - 1 >= 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
 			pointVec.push_back(Point(p.x, p.y - 1));
+			processed.at<double>(p.x, p.y-1) = 1;
 		}
-		if (!skip && p.x - 1 > 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
-			processed.at<double>(p.x - 1, p.y) = 1;
+		if (!skip && p.x - 1 >= 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
 			pointVec.push_back(Point(p.x - 1, p.y));
+			processed.at<double>(p.x-1, p.y) = 1;
 		}
 		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //recurse up
-			processed.at<double>(p.x - 1, p.y) = 1;
 			pointVec.push_back(Point(p.x, p.y + 1));
+			processed.at<double>(p.x, p.y+1) = 1;
+
 		}
 		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //recurse right
-			processed.at<double>(p.x + 1, p.y) != 1;
 			pointVec.push_back(Point(p.x + 1, p.y));
+			processed.at<double>(p.x+1, p.y) = 1;
 		}
 	}
+	int size = 0;
+	for (int i = 0; i < this->cvWindow->grid.size().height; i++) {
+		for (int j = 0; j < this->cvWindow->grid.size().width; j++) {
+			size++;
+		}
+	}
+
+	printf("The window contains %i pixels\n.", size);
+	printf("Filled %i pixels.\n", curPixelRegion->points.size());
 }
 
 //Tedious functions below here
