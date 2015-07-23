@@ -177,6 +177,7 @@ void Sketchpad::refresh(int x, int y) {
 }
 
 void Sketchpad::flood(Point p) {
+	Point p2 = p;
 	Mat processed;
 	processed = Mat(cvWindow->grid.size().width, cvWindow->grid.size().height, CV_64F, cvScalar(0.));
 	Vec3b floodColor = cvWindow->grid.at<Vec3b>(p);
@@ -213,15 +214,8 @@ void Sketchpad::flood(Point p) {
 			processed.at<double>(p.x+1, p.y) = 1;
 		}
 	}
-	int size = 0;
-	for (int i = 0; i < this->cvWindow->grid.size().height; i++) {
-		for (int j = 0; j < this->cvWindow->grid.size().width; j++) {
-			size++;
-		}
-	}
+	curPixelRegion->addPoint(p2.x + 1, p2.y + 1);
 
-	printf("The window contains %i pixels\n.", size);
-	printf("Filled %i pixels.\n", curPixelRegion->points.size());
 }
 
 //Tedious functions below here
