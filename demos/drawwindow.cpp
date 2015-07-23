@@ -27,11 +27,7 @@ public:
   std::vector<cv::Point> poly_points; // will automatically allocate member if needed
 
   // little helper function
-<<<<<<< HEAD
-  cv::Vec3b scalarToVec3b(cv::Scalar s) {
-=======
   static cv::Vec3b scalarToVec3b(cv::Scalar s) {
->>>>>>> 6402a8cc8822ff53f45b078a5692134238eb2d02
 	  cv::Vec3b vec;
 	  vec[0] = s[0];
 	  vec[1] = s[1];
