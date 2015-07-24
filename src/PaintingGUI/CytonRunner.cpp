@@ -351,15 +351,12 @@ void CytonRunner::setCanvasSize(double width, double height){
 }
 
 void CytonRunner::paintShape(Shape *s){
-	/*
-	polyline
-	pixelregion
-	polypoints
-	rectangle
-	ellipse
-	*/
 	int border = 30;
-	if (s->fill == 1){
+	printf("about to draw %s\n", s->type.c_str());
+	printf("press enter to continue\n");
+	std::cin.ignore();
+	if (s->fill){
+		printf("filled\n");
 		PixelRegion *p = s->toPixelRegion();
 		RegionToPaths RTP = RegionToPaths(width, height, border);
 		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
@@ -377,12 +374,13 @@ void CytonRunner::paintShape(Shape *s){
 
 		
 	}
-	else if (s->fill == 0){
+	else if (!s->fill){
+		printf("not filled\n");
 		PolyLine *p = s->toPolyline();
 		this->stroke(p->getPoints());
 	}
 	else{
-		printf("fill is neither 1 nor 0.  This is strange...\n");
+		printf("fill is %i\n",s->fill);
 	}
 
 	

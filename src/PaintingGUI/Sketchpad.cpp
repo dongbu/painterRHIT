@@ -38,6 +38,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 
 	//robot logic
 	//ui->menuRobot->setDisabled(true);
+	connected = false;
 	ui->menuWorkspace->setDisabled(true);
 	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
@@ -395,12 +396,21 @@ void Sketchpad::createWorkspaceClicked(){
 }
 void Sketchpad::startupClicked(){
 	Ava->startup();
+	connected = true;
+	for (int i = 0; i < shapes->length(); i++){
+		printf("%s\n", shapes->at(i)->type.c_str());
+	}
+	for (int i = 0; i < shapes->length(); i++){
+		Ava->paintShape(shapes->at(i));
+	}
+	//emit sendRobot(Ava);
 }
 void Sketchpad::shutDownClicked(){
 	if (Ava->shutdown()){
 		ui->actionShutdown->setDisabled(true);
 		ui->actionStartup->setDisabled(true);
 		ui->menuWorkspace->setDisabled(true);
+		connected = false;
 	}
 }
 

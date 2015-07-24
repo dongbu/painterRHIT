@@ -101,6 +101,7 @@ void Painter::showGUI(bool toggle){
     connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
     connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
     connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
+	connect(sketch, SIGNAL(sendRobot(CytonRunner*)), commandWin, SLOT(recieveRobot(CytonRunner*)));
     connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
     if (toggle){

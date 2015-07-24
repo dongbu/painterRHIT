@@ -27,7 +27,7 @@ public:
   std::string type;
   int id;
   bool isBreakPoint = false;
-  int fill;
+  bool fill = false;
 
   void setID(int i) { id = i; }
   int getID(int i=-1) { 
@@ -63,13 +63,17 @@ public:
 
   virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); } 
 
-  PolyLine* toPolyline(){
+  virtual PolyLine* toPolyline(){
 	  printf("if you are seeing this message, this class cannot convert to polyline\n");
+	  printf("press enter to exit program\n");
+	  std::cin.ignore();
 	  return NULL;
   }
 
-  PixelRegion* toPixelRegion(){
+  virtual PixelRegion* toPixelRegion(){
 	  printf("if you are seeing this message, this class cannot convert to pixelregion\n");
+	  printf("press enter to exit program\n");
+	  std::cin.ignore();
 	  return NULL;
   }
 
@@ -85,7 +89,6 @@ public:
   std::vector<cv::Point> points;
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
-  int fill = 0;
   void setThickness(int t=1) { thickness=t; }
 
   ////
@@ -111,7 +114,7 @@ public:
     }
   }
   ////
-  PolyLine* toPolyline(){
+  virtual PolyLine* toPolyline(){
 	  return this;
   }
 
@@ -120,7 +123,7 @@ public:
 	  return points;
   }
   ////
-  PolyLine() : Shape() { type = "polyline"; thickness = 1; }
+  PolyLine() : Shape() { type = "polyline"; thickness = 1; fill = false; }
 };
 
 
@@ -144,8 +147,6 @@ public:
     }
     if (!found) addPoint(cv::Point(i,j)); 
   }
-
-  int fill = 1;
 
   void setThickness(int t=1) { thickness=t; }
   void setStyle(int s=1) { style=s; }
@@ -185,7 +186,7 @@ public:
     }
   }
 
-  PixelRegion* toPixelRegion(){
+  virtual PixelRegion* toPixelRegion(){
 	  return this;
   }
 
@@ -194,7 +195,7 @@ public:
   }
 
   
-  PixelRegion() : Shape() { type = "pixelregion"; style=1; thickness=1; }
+  PixelRegion() : Shape() { type = "pixelregion"; style = 1; thickness = 1; fill = true; }
 };
 
 
@@ -207,19 +208,18 @@ protected:
 public:
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
-  int fill = 1;
   void setThickness(int t=1) { thickness=t; }
 
   // returns a polyline representation of a PolyPoints (note: just returns the perimeter)
-  PolyLine toPolyline() { // note: only perimeter
-    PolyLine PL;
-    for (int i=0; i<(int)points.size()-1; i++) { PL.addPoint(points[i]); }
-    PL.addPoint(points[0]);
+  virtual PolyLine* toPolyline() { // note: only perimeter
+    PolyLine *PL = new PolyLine();
+    for (int i=0; i<(int)points.size()-1; i++) { PL->addPoint(points[i]); }
+    PL->addPoint(points[0]);
     return PL;
   }
 
   // returns a pixelregion representation of a rectangle
-  PixelRegion* toPixelRegion() {
+  virtual PixelRegion* toPixelRegion() {
     // plan is to draw a temp graphic then convert it to pixels (yah ugly... )
     int minx=9999999;
     int miny=9999999;
@@ -286,7 +286,7 @@ public:
     W->drawPolyPoints();
   }
 
-  PolyPoints() : Shape() { type = "polyline"; thickness = 1; }
+  PolyPoints() : Shape() { type = "polyline"; thickness = 1; fill = true; }
 };
 
 
@@ -297,14 +297,13 @@ protected:
   
 
 public:
-	int fill=0;
   void setCorners(int x1, int y1, int x2, int y2) {
     pt1 = cv::Point(x1,y1);
     pt2 = cv::Point(x2,y2);
   }
 
   // returns a polyline representation of a rectangle
-  PolyLine* toPolyline() { // note: only perimeter
+  virtual PolyLine* toPolyline() { // note: only perimeter
     PolyLine* PL = new PolyLine();
     PL->addPoint(pt1);
     PL->addPoint(pt2.x,pt1.y);
@@ -315,7 +314,7 @@ public:
   }
 
   // returns a pixelregion representation of a rectangle
-  PixelRegion* toPixelRegion() {
+  virtual PixelRegion* toPixelRegion() {
     PixelRegion* PR = new PixelRegion();
     for (int i=pt1.x; i<=pt2.x; i++) {
       for (int j=pt1.y; j<=pt2.y; j++) {
@@ -327,7 +326,7 @@ public:
     return PR;
   }
 
-  virtual void setFill(int f=1) { fill=f; }
+  virtual void setFill(int f = 1) { fill = f; printf("fill set to %i\n", fill); }
 
   virtual std::string getXML() {
     std::string line;
@@ -345,7 +344,7 @@ public:
     W->drawRectangle(pt1.x,pt1.y,pt2.x,pt2.y,fill);
   }
 
-  Rectangle() : Shape() { type = "rectangle"; fill = 0; }
+  Rectangle() : Shape() { type = "rectangle"; fill = false; }
 };
 
 class Ellipse : public Shape {
@@ -355,7 +354,6 @@ protected:
   
 
 public:
-	int fill=0;
   void setData(int x, int y, double r) { // circle
     pt = cv::Point(x,y);
     axes = cv::Size(r,r);
@@ -367,7 +365,7 @@ public:
   }
 
   // returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
-  PolyLine* toPolyline() { // note: only perimeter
+  virtual PolyLine* toPolyline() { // note: only perimeter
     PolyLine* PL = new PolyLine();
     double radius = (axes.width + axes.height)/4. + .4; // .25 to help anti-aliasing
     //printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
@@ -385,7 +383,7 @@ public:
   }
 
   // returns a pixelregion representation of a circle  [don't worry about doing a real ellipse for now]
- PixelRegion* toPixelRegion() {
+ virtual PixelRegion* toPixelRegion() {
     PixelRegion* PR = new PixelRegion();
     double radius = (axes.width + axes.height)/4. + .4; // .4 to help anti-aliasing
 
@@ -408,7 +406,7 @@ public:
     return PR;
   }
 
-  virtual void setFill(int f=1) { fill=f; }
+ virtual void setFill(int f = 1) { fill = f; printf("fill set to %i\n", fill); }
 
   virtual std::string getXML() {
     std::string line;
@@ -425,7 +423,7 @@ public:
     W->drawEllipse(pt.x,pt.y,axes.width,axes.height,0,fill);
   }
 
-  Ellipse() : Shape() { type = "ellipse"; fill = 0; }
+  Ellipse() : Shape() { type = "ellipse"; fill = false; }
 };
 
 /*******  SHAPES ********/
