@@ -81,7 +81,6 @@ public:
     QLabel *label_48;
     QLineEdit *lineEdit_24;
     QLineEdit *lineEdit_25;
-    QLineEdit *lineEdit_26;
     QLineEdit *lineEdit_27;
     QLineEdit *lineEdit_28;
     QFrame *line_3;
@@ -99,6 +98,7 @@ public:
     QLabel *label_34;
     QLabel *label_40;
     QFrame *line_4;
+    QLineEdit *lineEdit_26;
     QWidget *gridLayoutWidget_2;
     QGridLayout *gridLayout_2;
     QLineEdit *lineEdit_40;
@@ -145,7 +145,7 @@ public:
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
         formLayoutWidget = new QWidget(Dialog);
         formLayoutWidget->setObjectName(QStringLiteral("formLayoutWidget"));
-        formLayoutWidget->setGeometry(QRect(20, 10, 281, 261));
+        formLayoutWidget->setGeometry(QRect(20, 10, 281, 280));
         formLayout = new QFormLayout(formLayoutWidget);
         formLayout->setObjectName(QStringLiteral("formLayout"));
         formLayout->setContentsMargins(0, 0, 0, 0);
@@ -264,7 +264,7 @@ public:
 
         formLayoutWidget_2 = new QWidget(Dialog);
         formLayoutWidget_2->setObjectName(QStringLiteral("formLayoutWidget_2"));
-        formLayoutWidget_2->setGeometry(QRect(20, 280, 281, 163));
+        formLayoutWidget_2->setGeometry(QRect(20, 280, 281, 164));
         formLayout_2 = new QFormLayout(formLayoutWidget_2);
         formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
         formLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -404,11 +404,6 @@ public:
 
         gridLayout->addWidget(lineEdit_25, 14, 1, 1, 1);
 
-        lineEdit_26 = new QLineEdit(gridLayoutWidget);
-        lineEdit_26->setObjectName(QStringLiteral("lineEdit_26"));
-
-        gridLayout->addWidget(lineEdit_26, 15, 1, 1, 1);
-
         lineEdit_27 = new QLineEdit(gridLayoutWidget);
         lineEdit_27->setObjectName(QStringLiteral("lineEdit_27"));
 
@@ -501,6 +496,11 @@ public:
         line_4->setFrameShadow(QFrame::Sunken);
 
         gridLayout->addWidget(line_4, 16, 0, 1, 2);
+
+        lineEdit_26 = new QLineEdit(gridLayoutWidget);
+        lineEdit_26->setObjectName(QStringLiteral("lineEdit_26"));
+
+        gridLayout->addWidget(lineEdit_26, 15, 1, 1, 1);
 
         gridLayoutWidget_2 = new QWidget(Dialog);
         gridLayoutWidget_2->setObjectName(QStringLiteral("gridLayoutWidget_2"));
@@ -710,7 +710,7 @@ public:
         label_45->setText(QApplication::translate("Dialog", "bottom-right", 0));
         label_43->setText(QApplication::translate("Dialog", "Y:", 0));
         label_34->setText(QApplication::translate("Dialog", "X: ", 0));
-        label_40->setText(QApplication::translate("Dialog", "Y:", 0));
+        label_40->setText(QApplication::translate("Dialog", "Z:", 0));
         label_11->setText(QApplication::translate("Dialog", "Paint Can Locations", 0));
         label_13->setText(QApplication::translate("Dialog", "ID", 0));
         label_14->setText(QApplication::translate("Dialog", "X position", 0));

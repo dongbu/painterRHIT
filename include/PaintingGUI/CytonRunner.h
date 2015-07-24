@@ -41,7 +41,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(QWidget *parent = 0);
+	explicit CytonRunner(int width, int height, QWidget *parent = 0);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);

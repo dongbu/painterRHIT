@@ -26,7 +26,6 @@ void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
  * @brief stops and clears simulation.
  */
 void RunLogic::stopClicked() {
-    this->simWin->showWindow();
     running = false;
     simWin->clearWindow(255, 255, 255); //white
     currentShapeIndex = 0;

@@ -1,5 +1,6 @@
 
 #include "CommandWindow.h"
+#include <qdesktopwidget.h>
 
 ///Public methods below here
 /**
@@ -12,6 +13,9 @@ CommandWindow::CommandWindow(Shapes *ss, QWidget *parent) :
     ui(new Ui::CommandWindow)
 {
     ui->setupUi(this);
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(0,r.bottom() - height() - 50);
+	
     shapes = ss;
 
     ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);

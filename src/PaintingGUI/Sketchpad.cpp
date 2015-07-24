@@ -1,5 +1,6 @@
 #pragma once
 #include "Sketchpad.h"
+#include <qdesktopwidget.h>
 
 using namespace cv;
 
@@ -16,10 +17,16 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 {
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
+	//move window to a decent neighborhood.
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (width + 35), r.top());
+
     setupQt();
     this->paintingName = "unnamed";
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
+	this->width = width;
+	this->height = height;
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -269,7 +276,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
 
 	//robot connections
-	Ava = new CytonRunner();
+	Ava = new CytonRunner(width,height);
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));

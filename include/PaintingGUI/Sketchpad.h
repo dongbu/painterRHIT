@@ -42,6 +42,7 @@ private:
     CVImageWidget *translator;
     DrawWindow *cvWindow;
 	std::string paintingName;
+	int width, height;
 
 	bool connected;
 	Shapes *shapes;
