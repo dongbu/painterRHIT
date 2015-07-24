@@ -1,6 +1,7 @@
 #pragma once
 #include "Sketchpad.h"
 #include <qdesktopwidget.h>
+#include <qprocess.h>
 
 using namespace cv;
 
@@ -11,12 +12,13 @@ using namespace cv;
  * @param ss
  * @param parent
  */
-Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
+Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
+	this->Ava = Ava;
 	//move window to a decent neighborhood.
 	QRect r = QApplication::desktop()->availableGeometry();
 	this->move(r.right() - (width + 35), r.top());
@@ -276,7 +278,6 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
 
 	//robot connections
-	Ava = new CytonRunner(width,height);
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -350,12 +351,13 @@ void Sketchpad::saveClicked() {
  * @brief open functionality.
  */
 void Sketchpad::openClicked() {
-    newClicked();
+    
     QFileDialog directory;
     QStringList filters;
     filters << "Text files (*.xml)";
     directory.setNameFilters(filters);
     if (directory.exec()) {
+		newClicked();
         emit load(directory.selectedFiles().at(0).toStdString());
         emit prodOtherWindows();
         this->paintingName = directory.selectedFiles().at(0).toStdString();
@@ -373,16 +375,18 @@ void Sketchpad::newClicked() {
 
 
 void Sketchpad::connectCytonClicked(){
-	if (!Ava->connect()){
-		return;
-	}
+	QProcess *p = new QProcess();
+	p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
+
 	ui->menuWorkspace->setEnabled(true);
 }
+
 void Sketchpad::connectABBClicked(){
 	printf("setup connection to ABB here\n");
 
 }
 void Sketchpad::loadWorkspaceClicked(){
+	Ava->connect();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Text files (*.xml)";
@@ -395,6 +399,7 @@ void Sketchpad::loadWorkspaceClicked(){
 
 }
 void Sketchpad::createWorkspaceClicked(){
+	Ava->connect();
 	Ava->createWorkspace();
 
 	ui->actionStartup->setEnabled(true);
@@ -422,12 +427,12 @@ void Sketchpad::shutDownClicked(){
 }
 
 void Sketchpad::loadPhotoClicked(){
-	newClicked();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
+		newClicked();
 		cv::Mat image = imread(directory.selectedFiles().at(0).toStdString());
 		cv::resize(image, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 

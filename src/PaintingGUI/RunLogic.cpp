@@ -8,13 +8,15 @@ int COMMAND_DELAY = 10; //(ms)
  * @param height
  * @param shapes
  */
-RunLogic::RunLogic(int width, int height, Shapes *shapes) {
+RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
     this->width = width;
     this->height = height;
     this->shapes = shapes;
+	this->Ava = Ava;
     this->simWin = new DrawWindow(width, height, "simulation window");
     this->simWin->hideWindow();
     stopClicked();
+	connect(Ava, SIGNAL(finishedShape()), this, SLOT(runClicked()));
 }
 
 /**
@@ -114,18 +116,33 @@ void RunLogic::toggleBreakPoint(int index) {
  * @param W
  */
 void RunLogic::drawingThread(DrawWindow *W) {
-    while (running && currentShapeIndex < stopIndex) {
-        if (shapes->at(currentShapeIndex)->isBreakPoint){
-            toggleBreakPoint(currentShapeIndex);
-            running = false;
-            return;
-        }
-        shapes->at(currentShapeIndex)->draw(W);
-        emit setRunColor(currentShapeIndex, true);
-        W->show();
-        currentShapeIndex++;
-        _sleep(COMMAND_DELAY);
-    }
-	if (currentShapeIndex == stopIndex) currentShapeIndex--;
-    running = false;
+	if (running && Ava->connected && currentShapeIndex < stopIndex) {
+		if (shapes->at(currentShapeIndex)->isBreakPoint){
+			toggleBreakPoint(currentShapeIndex);
+			running = false;
+			return;
+		}
+		shapes->at(currentShapeIndex)->draw(W);
+		emit setRunColor(currentShapeIndex, true);
+		W->show();
+		currentShapeIndex++;
+
+		if (currentShapeIndex == stopIndex) currentShapeIndex--;
+		running = false;
+	} else {
+		while (running && currentShapeIndex < stopIndex) {
+			if (shapes->at(currentShapeIndex)->isBreakPoint){
+				toggleBreakPoint(currentShapeIndex);
+				running = false;
+				return;
+			}
+			shapes->at(currentShapeIndex)->draw(W);
+			emit setRunColor(currentShapeIndex, true);
+			W->show();
+			currentShapeIndex++;
+			_sleep(COMMAND_DELAY);
+		}
+		if (currentShapeIndex == stopIndex) currentShapeIndex--;
+		running = false;
+	}
 }

@@ -29,9 +29,12 @@ class Sketchpad : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Sketchpad(int width, int height, Shapes *ss, QWidget *parent = 0);
+    explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent = 0);
     ~Sketchpad();
 	void setWebcam(Webcam *W);
+
+	CytonRunner *Ava;
+
 
 private:
     void getColor();
@@ -57,7 +60,6 @@ private:
 	std::vector<int> rgbColor;
 	int prevX, prevY;
 
-	CytonRunner *Ava;
 	Webcam *Web;
 
 

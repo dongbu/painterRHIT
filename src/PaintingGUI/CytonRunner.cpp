@@ -19,6 +19,7 @@ CytonRunner::CytonRunner(int width, int height, QWidget *parent)
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
+	connected = false;
 
 	//simulation size
 	this->width = width;
@@ -40,10 +41,12 @@ CytonRunner::~CytonRunner()
 bool CytonRunner::connect(){
 	if (init()){
 		printf("established connection to Cyton\n");
+		connected = true;
 		return true;
 	}
 	else{
 		printf("failed to connect to Cyton\n");
+		connected = false;
 		return false;
 	}
 }
@@ -353,9 +356,7 @@ void CytonRunner::paintShape(Shape *s){
 
 		for (int i = 0; i < pathVec.size(); i++){
 			this->stroke(pathVec.at(i));
-		}
-
-		
+		}		
 	}
 	else if (!s->fill){
 		printf("not filled\n");
@@ -366,5 +367,5 @@ void CytonRunner::paintShape(Shape *s){
 		printf("fill is %i\n",s->fill);
 	}
 
-	
+	emit finishedShape();
 }

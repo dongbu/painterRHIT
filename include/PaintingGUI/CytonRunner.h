@@ -57,8 +57,10 @@ public:
 	void drawPoint(cv::Point pt);
 	void stroke(cv::Point pt1, cv::Point pt2);
 	void stroke(std::vector<cv::Point> pts);
-	void paintShape(Shape *s);
 	void setCanvasSize(double width, double height);
+	void paintShape(Shape *s);
+
+	volatile bool connected;
 
 private:
 	Ui::CytonRunner *ui;
@@ -77,5 +79,8 @@ private:
 	double xScale, yScale;
 
 	bool isUp;
+
+signals:
+	void finishedShape();
 };
 
