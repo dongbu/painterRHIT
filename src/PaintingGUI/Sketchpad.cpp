@@ -2,6 +2,7 @@
 #include "Sketchpad.h"
 #include <qdesktopwidget.h>
 #include <qprocess.h>
+#include <qmessagebox.h>
 
 using namespace cv;
 
@@ -376,8 +377,13 @@ void Sketchpad::newClicked() {
 
 void Sketchpad::connectCytonClicked(){
 	QProcess *p = new QProcess();
-	p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
-
+	QMessageBox *m = new QMessageBox();
+	m->setText("Confirm");
+	m->setInformativeText("Launch CytonViewer?");
+	m->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	if (m->exec() == QMessageBox::Yes){
+		p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
+	}
 	ui->menuWorkspace->setEnabled(true);
 }
 

@@ -1,6 +1,8 @@
 #include "CytonRunner.h"
 #include <qmessagebox>
 #include <qpushbutton.h>
+#include <qobject.h>
+#include <QKeyEvent>
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -103,13 +105,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 
 }
-void CytonRunner::createWorkspace(){
-	//QWidget *widget = new QWidget();
-	printf("should show ui here\n");
-	printf("please excuse the lack of showing said ui\n");
 
-
-}
 void CytonRunner::startup(){
 	goToJointHome(1);
 }
@@ -345,13 +341,16 @@ void CytonRunner::paintShape(Shape *s){
 		printf("filled\n");
 		PixelRegion *p = s->toPixelRegion();
 		RegionToPaths RTP = RegionToPaths(width, height, border);
-		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
-		RTP.defineBrush(&brush);
+		RTP.clear();
 		
 		for (int i = 0; i < p->getPoints().size(); i++){
 			cv::Point currentPoint = p->getPoints().at(i);
 			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
 		}
+		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
+		brush.setColor(s->getPenColor());
+		
+		RTP.defineBrush(&brush);
 		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 
 		for (int i = 0; i < pathVec.size(); i++){
@@ -369,3 +368,33 @@ void CytonRunner::paintShape(Shape *s){
 
 	emit finishedShape();
 }
+
+void CytonRunner::createWorkspace(){
+	//QWidget *widget = new QWidget();
+	printf("setup home position\n");
+	//ConfigWindow w;
+	
+	//w.setText("Configure Workspace");
+	//w.setInformativeText("use arrowkeys and u/d to position the robot into it's new home position\n press continue to accept");
+	//if (w.exec()){
+	//	printf("hi\n");
+	//}
+
+}
+
+void CytonRunner::moveDirection(int direction){
+
+}
+
+//will be moved into Helper for ease of use.
+//class ConfigWindow : public QMessageBox{
+//	Q_OBJECT
+//public:
+//	ConfigWindow(){};
+//	~ConfigWindow(){};
+//
+//	void keyPressEvent(QKeyEvent* e){
+//		printf("you pressed: %s", e->text().toStdString().c_str());
+//	};
+//
+//};
