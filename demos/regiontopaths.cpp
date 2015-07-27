@@ -39,17 +39,17 @@ public:
 
   std::string getColorXML() {
     std::string line;
-    line.append(Helpers::string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",color[2],color[1],color[0]));
+    line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",color[2],color[1],color[0]));
     return line;
   }
 
   virtual std::string getXML() {
     std::string line;
-    line.append(Helpers::string_format("<shape type=\"brush\" w=\"%i\" h=\"%i\" style=\"%i\"",width,height,style));
+    line.append(string_format("<shape type=\"brush\" w=\"%i\" h=\"%i\" style=\"%i\"",width,height,style));
     line.append(getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)pixels.size(); i++) {
-      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",pixels[i].x,pixels[i].y));
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",pixels[i].x,pixels[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
