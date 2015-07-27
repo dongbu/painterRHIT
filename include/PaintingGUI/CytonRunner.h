@@ -1,6 +1,7 @@
 #pragma once
 #include "ui_CytonRunner.h"
 #include "shapes.cpp"
+#include "regionToPaths.cpp"
 #include <QObject>
 #include <QMainWindow>
 #include <qwidget.h>
@@ -40,7 +41,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(QWidget *parent = 0);
+	explicit CytonRunner(int width, int height, QWidget *parent = 0);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);
@@ -48,6 +49,7 @@ public:
 	void saveWorkspace();
 	void startup();
 	bool shutdown();
+	void setSimulationSize(int width, int height);
 	void goToPos(double x, double y, double z);
 	void raiseBrush();
 	void lowerBrush();
@@ -55,7 +57,10 @@ public:
 	void drawPoint(cv::Point pt);
 	void stroke(cv::Point pt1, cv::Point pt2);
 	void stroke(std::vector<cv::Point> pts);
+	void setCanvasSize(double width, double height);
 	void paintShape(Shape *s);
+
+	volatile bool connected;
 
 private:
 	Ui::CytonRunner *ui;
@@ -69,7 +74,13 @@ private:
 	double theta, phi, psi;
 	double currentX, currentY;
 	double raiseHeight;
+	int width, height;
+	double cWidth, cHeight;
+	double xScale, yScale;
 
 	bool isUp;
+
+signals:
+	void finishedShape();
 };
 

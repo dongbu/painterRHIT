@@ -1,5 +1,7 @@
 #pragma once
 #include "Sketchpad.h"
+#include <qdesktopwidget.h>
+#include <qprocess.h>
 
 using namespace cv;
 
@@ -10,38 +12,42 @@ using namespace cv;
  * @param ss
  * @param parent
  */
-Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
+Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
+	this->Ava = Ava;
+	//move window to a decent neighborhood.
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (width + 35), r.top());
+
     setupQt();
     this->paintingName = "unnamed";
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
+	this->width = width;
+	this->height = height;
 
     //Linking opencv to Qt.
     shapes = ss;
     this->translator = new CVImageWidget(ui->widget);
     connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-    this->cvWindow = new DrawWindow(height,width,"garbabe_name");
+    this->cvWindow = new DrawWindow(height,width,"garbabe_name",1);
     this->cvWindow->hideWindow();
-
-	//Image set-up
-	Web = new Webcam();
-	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 
     //Drawing set-up logic
     ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
     getColor(); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->DrawAll(cvWindow); //redraw the window
+	shapes->drawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
     this->startNewCommand(); //prep for initial command
 
 	//robot logic
 	//ui->menuRobot->setDisabled(true);
+	connected = false;
 	ui->menuWorkspace->setDisabled(true);
 	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
@@ -60,7 +66,7 @@ void Sketchpad::redraw() {
     startNewCommand();
 
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-    shapes->DrawAll(cvWindow); //redraw the window
+    shapes->drawAll(cvWindow); //redraw the window
     translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
@@ -158,7 +164,7 @@ void Sketchpad::refresh(int x, int y) {
 		reset = true;
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 
-		shapes->DrawAll(cvWindow);
+		shapes->drawAll(cvWindow);
 		flood(Point(x, y));
 	}
 
@@ -167,7 +173,7 @@ void Sketchpad::refresh(int x, int y) {
         shapes->addShape(currentShape);
         startNewCommand();
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-		shapes->DrawAll(cvWindow); //redraw window
+		shapes->drawAll(cvWindow); //redraw window
         emit prodOtherWindows();
     }
     else {
@@ -181,10 +187,10 @@ void Sketchpad::refresh(int x, int y) {
 }
 
 void Sketchpad::flood(Point p) {
+	Point p2 = p;
 	Mat processed;
 	processed = Mat(cvWindow->grid.size().width, cvWindow->grid.size().height, CV_64F, cvScalar(0.));
 	Vec3b floodColor = cvWindow->grid.at<Vec3b>(p);
-	curPixelRegion->addPoint(p.x, p.y);
 
 	std::vector<Point> pointVec;
 	pointVec.push_back(p);
@@ -192,33 +198,34 @@ void Sketchpad::flood(Point p) {
 	{
 		p = pointVec.back();
 		pointVec.pop_back();
-		cvWindow->grid.at<Vec3b>(p);
 		Vec3b curPix = cvWindow->grid.at<Vec3b>(p);
 		bool skip = false;
+		bool notProcessed = processed.at<double>(p.x, p.y - 1) != 1;
 
-		if ((floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2])) {
-			cvWindow->grid.at<Vec3b>(p) = curPix;
+		if (floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2]) {
 			curPixelRegion->addPoint(p.x,p.y);
-		}
-		else skip = true;
+		} else skip = true;
 
-		if (!skip && p.y - 1 > 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
-			processed.at<double>(p.x, p.y - 1) = 1;
+		if (!skip && p.y - 1 >= 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
 			pointVec.push_back(Point(p.x, p.y - 1));
+			processed.at<double>(p.x, p.y-1) = 1;
 		}
-		if (!skip && p.x - 1 > 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
-			processed.at<double>(p.x - 1, p.y) = 1;
+		if (!skip && p.x - 1 >= 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
 			pointVec.push_back(Point(p.x - 1, p.y));
+			processed.at<double>(p.x-1, p.y) = 1;
 		}
 		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //recurse up
-			processed.at<double>(p.x - 1, p.y) = 1;
 			pointVec.push_back(Point(p.x, p.y + 1));
+			processed.at<double>(p.x, p.y+1) = 1;
+
 		}
 		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //recurse right
-			processed.at<double>(p.x + 1, p.y) != 1;
 			pointVec.push_back(Point(p.x + 1, p.y));
+			processed.at<double>(p.x+1, p.y) = 1;
 		}
 	}
+	curPixelRegion->addPoint(p2.x + 1, p2.y + 1);
+
 }
 
 //Tedious functions below here
@@ -271,7 +278,6 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
 
 	//robot connections
-	Ava = new CytonRunner();
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -345,12 +351,13 @@ void Sketchpad::saveClicked() {
  * @brief open functionality.
  */
 void Sketchpad::openClicked() {
-    newClicked();
+    
     QFileDialog directory;
     QStringList filters;
     filters << "Text files (*.xml)";
     directory.setNameFilters(filters);
     if (directory.exec()) {
+		newClicked();
         emit load(directory.selectedFiles().at(0).toStdString());
         emit prodOtherWindows();
         this->paintingName = directory.selectedFiles().at(0).toStdString();
@@ -368,16 +375,18 @@ void Sketchpad::newClicked() {
 
 
 void Sketchpad::connectCytonClicked(){
-	if (!Ava->connect()){
-		return;
-	}
+	QProcess *p = new QProcess();
+	p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
+
 	ui->menuWorkspace->setEnabled(true);
 }
+
 void Sketchpad::connectABBClicked(){
 	printf("setup connection to ABB here\n");
 
 }
 void Sketchpad::loadWorkspaceClicked(){
+	Ava->connect();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Text files (*.xml)";
@@ -390,6 +399,7 @@ void Sketchpad::loadWorkspaceClicked(){
 
 }
 void Sketchpad::createWorkspaceClicked(){
+	Ava->connect();
 	Ava->createWorkspace();
 
 	ui->actionStartup->setEnabled(true);
@@ -398,22 +408,31 @@ void Sketchpad::createWorkspaceClicked(){
 }
 void Sketchpad::startupClicked(){
 	Ava->startup();
+	connected = true;
+	for (int i = 0; i < shapes->length(); i++){
+		printf("%s\n", shapes->at(i)->type.c_str());
+	}
+	for (int i = 0; i < shapes->length(); i++){
+		Ava->paintShape(shapes->at(i));
+	}
+	//emit sendRobot(Ava);
 }
 void Sketchpad::shutDownClicked(){
 	if (Ava->shutdown()){
 		ui->actionShutdown->setDisabled(true);
 		ui->actionStartup->setDisabled(true);
 		ui->menuWorkspace->setDisabled(true);
+		connected = false;
 	}
 }
 
 void Sketchpad::loadPhotoClicked(){
-	newClicked();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
+		newClicked();
 		cv::Mat image = imread(directory.selectedFiles().at(0).toStdString());
 		cv::resize(image, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 
@@ -429,13 +448,14 @@ void Sketchpad::loadPhotoClicked(){
 		IPK.defineShapes(shapes);
 
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-		shapes->DrawAll(cvWindow); //redraw window
+		shapes->drawAll(cvWindow); //redraw window
 		translator->showImage(cvWindow->grid); //actually redraw the window
 		emit prodOtherWindows();
 	}
 }
 
 void Sketchpad::launchWebcam() {
+	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 	this->cvWindow->grid = Web->calibrateWebcam();
 
 	ImageParserContours IPC;
@@ -450,7 +470,10 @@ void Sketchpad::launchWebcam() {
 	IPK.defineShapes(shapes);
 
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->DrawAll(cvWindow); //redraw window
+	shapes->drawAll(cvWindow); //redraw window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	emit prodOtherWindows();
 }
+
+void Sketchpad::setWebcam(Webcam *W) { Web = W; }
+

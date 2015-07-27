@@ -80,7 +80,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>glu32.lib;opengl32.lib;gdi32.lib;user32.lib;$(QTDIR)\lib\qtmain.lib;shell32.lib;$(QTDIR)\lib\Qt5Core.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(QTDIR)\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -144,11 +144,15 @@
     <ClCompile Include="..\src\PaintingGUI\CVImageWidget.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
-    <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
-    <ClCompile Include="..\src\PaintingGUI\RunLogic.cpp" />
-    <ClCompile Include="..\src\PaintingGUI\Sketchpad.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\helpers.cpp" />
     <ClCompile Include="..\src\PaintingGUI\imageparser.cpp" />
     <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\regiontopaths.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\RunLogic.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\shapes.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\Sketchpad.cpp" />
     <ClCompile Include="..\src\PaintingGUI\main.cpp" />
     <ClCompile Include="..\src\PaintingGUI\pugixml.cpp" />
     <ClCompile Include="..\src\PaintingGUI\webcam.cpp" />
@@ -476,7 +480,7 @@ endlocal
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_Win32="msvc2013_opengl" />
+      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_Win32="msvc2013" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

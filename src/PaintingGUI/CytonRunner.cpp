@@ -11,7 +11,7 @@ using namespace Ec;
 using namespace cv;
 
 
-CytonRunner::CytonRunner(QWidget *parent)
+CytonRunner::CytonRunner(int width, int height, QWidget *parent)
 //:QDialog(parent),
 //ui(new Ui::CytonRunner)
 {
@@ -19,8 +19,19 @@ CytonRunner::CytonRunner(QWidget *parent)
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
-}
+	connected = false;
 
+	//simulation size
+	this->width = width;
+	this->height = height;
+
+	//canvas size
+	cWidth = 0.3; //meters
+	cHeight = 0.3; //meters
+	xScale = cWidth / width;
+	yScale = cHeight / height;
+
+}
 
 CytonRunner::~CytonRunner()
 {
@@ -30,12 +41,14 @@ CytonRunner::~CytonRunner()
 bool CytonRunner::connect(){
 	if (init()){
 		printf("established connection to Cyton\n");
+		connected = true;
 		return true;
 	}
 	else{
 		printf("failed to connect to Cyton\n");
+		connected = false;
+		return false;
 	}
-	return false;
 }
 
 
@@ -64,14 +77,10 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
 		double z = temp.attribute("z").as_double();
-		cv::Point3d corner;
-		corner.x = x;
-		corner.y = y;
-		corner.z = z;
+		cv::Point3d corner(x,y,z);
 		canvasCorners.push_back(corner);
 	}
 	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
-		paint;
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
 		double id = temp.attribute("id").as_int();
@@ -128,7 +137,7 @@ bool CytonRunner::shutdown(){
 void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
 
-	std::vector<double> vec = convert(x, y, z);
+	std::vector<double> vec = convert(x*xScale, y*yScale, z);
 	pose.setTranslationX(vec.at(0));
 	pose.setTranslationY(vec.at(1));
 	pose.setTranslationZ(vec.at(2));
@@ -166,13 +175,12 @@ void CytonRunner::goToPos(double x, double y, double z){
 		//get the transformation between the actual and desired 
 		offset = (actualCoord.inverse()) * pose;
 
-		if (offset.approxEq(zero, .00001))
-		{
-			achieved = EcTrue;
-		}
+		if (offset.approxEq(zero, .00001)) achieved = EcTrue;
+
+		currentX = x;
+		currentY = y;
 	}
-	currentX = x;
-	currentY = y;
+
 }
 void CytonRunner::raiseBrush(){
 	if (!isUp){
@@ -181,17 +189,16 @@ void CytonRunner::raiseBrush(){
 	isUp = true;
 }
 void CytonRunner::lowerBrush(){
-	if (isUp){
-		goToPos(currentX + 0.01, currentY + 0.01, 0.05);
-		//almost there, let's not push the tip straight down.
-		goToPos(currentX - 0.01, currentY - 0.01, 0);
-	}
+	if (!isUp) return;
+
+	goToPos(currentX + 0.01, currentY + 0.01, 0.01);
+	//almost there, let's not push the tip straight down.
+	goToPos(currentX - 0.01, currentY - 0.01, 0);
 	isUp = false;
 }
 void CytonRunner::getPaint(int paint_can_id){
 	raiseBrush();
-	double x;
-	double y;
+	double x, y;
 	for (size_t i = 0; i < this->paint.size(); i++){
 		if (this->paint.at(i).first == paint_can_id){
 			x = this->paint.at(i).second.x;
@@ -199,6 +206,8 @@ void CytonRunner::getPaint(int paint_can_id){
 			break;
 		}
 	}
+	lowerBrush();
+	raiseBrush();
 	goToPos(x, y, raiseHeight);
 }
 void CytonRunner::drawPoint(cv::Point pt){
@@ -244,17 +253,13 @@ bool CytonRunner::goToJointHome(int type){
 	retVal &= getJointValues(currentJoints);
 
 	size_t size = currentJoints.size();
-	if (size < jointPosition.size())
-	{
+	if (size < jointPosition.size()) {
 		size = currentJoints.size();
-	}
-	else if (size >= jointPosition.size())
-	{
+	} else if (size >= jointPosition.size()) {
 		size = jointPosition.size();
 	}
 
-	for (size_t ii = 0; ii<size; ++ii)
-	{
+	for (size_t ii = 0; ii<size; ++ii) {
 		currentJoints[ii] = jointPosition[ii];
 	}
 
@@ -270,29 +275,20 @@ bool CytonRunner::goToJointHome(int type){
 	EcU32 interval = 10;
 	EcU32 count = 0;
 
-	while (!positionAchieved && !(count >= timeout / interval))
-	{
+	while (!positionAchieved && !(count >= timeout / interval)) {
 		EcSLEEPMS(interval);
 		count++;
 		getJointValues(currentJoints);
-		for (size_t ii = 0; ii<size; ++ii)
-		{
-
-			if (std::abs(jointPosition[ii] - currentJoints[ii])<angletolerance)
-			{
+		for (size_t ii = 0; ii<size; ++ii) {
+			if (std::abs(jointPosition[ii] - currentJoints[ii])<angletolerance) {
 				jointAchieved[ii] = EcTrue;
 			}
 		}
-
-		for (size_t ii = 0; ii<size; ++ii)
-		{
-			if (!jointAchieved[ii])
-			{
+		for (size_t ii = 0; ii<size; ++ii) {
+			if (!jointAchieved[ii]) {
 				positionAchieved = EcFalse;
 				break;
-			}
-			else
-			{
+			} else {
 				positionAchieved = EcTrue;
 			}
 		}
@@ -328,10 +324,48 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	return temp;
 }
 
-void CytonRunner::paintShape(Shape *s){
-	
-	PolyLine *p = s->convertToPolyLine();
+void CytonRunner::setSimulationSize(int width, int height){
+	this->width = width;
+	this->height = height;
+}
 
-	stroke(p->points);
-	
+void CytonRunner::setCanvasSize(double width, double height){
+	this->cWidth = width;
+	this->cHeight = height;
+	xScale = cWidth / width;
+	yScale = cHeight / height;
+}
+
+void CytonRunner::paintShape(Shape *s){
+	int border = 30;
+	printf("about to draw %s\n", s->type.c_str());
+	printf("press enter to continue\n");
+	std::cin.ignore();
+	if (s->fill){
+		printf("filled\n");
+		PixelRegion *p = s->toPixelRegion();
+		RegionToPaths RTP = RegionToPaths(width, height, border);
+		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
+		RTP.defineBrush(&brush);
+		
+		for (int i = 0; i < p->getPoints().size(); i++){
+			cv::Point currentPoint = p->getPoints().at(i);
+			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
+		}
+		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+
+		for (int i = 0; i < pathVec.size(); i++){
+			this->stroke(pathVec.at(i));
+		}		
+	}
+	else if (!s->fill){
+		printf("not filled\n");
+		PolyLine *p = s->toPolyline();
+		this->stroke(p->getPoints());
+	}
+	else{
+		printf("fill is %i\n",s->fill);
+	}
+
+	emit finishedShape();
 }

@@ -29,8 +29,12 @@ class Sketchpad : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Sketchpad(int width, int height, Shapes *ss, QWidget *parent = 0);
+    explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent = 0);
     ~Sketchpad();
+	void setWebcam(Webcam *W);
+
+	CytonRunner *Ava;
+
 
 private:
     void getColor();
@@ -41,7 +45,9 @@ private:
     CVImageWidget *translator;
     DrawWindow *cvWindow;
 	std::string paintingName;
+	int width, height;
 
+	bool connected;
 	Shapes *shapes;
 	Shape *currentShape;
     PolyLine *curPolyLine;
@@ -54,7 +60,6 @@ private:
 	std::vector<int> rgbColor;
 	int prevX, prevY;
 
-	CytonRunner *Ava;
 	Webcam *Web;
 
 
@@ -84,6 +89,7 @@ signals:
     void prodOtherWindows();
     void load(std::string);
     void save(std::string);
+	void sendRobot(CytonRunner*);
 
 };
 

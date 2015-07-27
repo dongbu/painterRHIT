@@ -3,10 +3,12 @@
 
 #include "../src/PaintingGUI/DrawWindow.cpp"
 #include "../src/PaintingGUI/shapes.cpp"
+#include "CytonRunner.h"
 
 #include <stdio.h>
 #include <iostream>
 #include <qobject.h>
+#include <future>
 
 class RunLogic : public QObject
 
@@ -14,7 +16,7 @@ class RunLogic : public QObject
     Q_OBJECT
 
 public:
-    RunLogic(int width, int height, Shapes *shapes);
+    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
 	DrawWindow *simWin;
 
 private:
@@ -23,8 +25,7 @@ private:
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;
     int width, height;
-    
-
+	CytonRunner *Ava;
 
 public slots:
     void stopClicked();

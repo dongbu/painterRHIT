@@ -8,6 +8,8 @@
 //#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
 #include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
 
+#include <cstdarg> //gunnar needs this to compile (allows my computer to recognize va_start && va_end)
+
 // converts scalar to Vec3b (unknown if these are equivalent)
 cv::Vec3b scalarToVec3b (cv::Scalar s) { 
   cv::Vec3b vec;
@@ -209,4 +211,3 @@ public:
 
   }
 };
-
