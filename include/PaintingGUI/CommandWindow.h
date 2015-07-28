@@ -2,6 +2,7 @@
 #define COMMANDWINDOW_H
 
 #include "ui_commandwindow.h"
+#include "CytonRunner.h"
 #include "../src/PaintingGUI/Shapes.cpp"
 
 namespace Ui {
@@ -16,6 +17,7 @@ public:
     explicit CommandWindow(Shapes *ss, QWidget *parent = 0);
     ~CommandWindow();
     Shapes *shapes;
+	CytonRunner *Ava;
     Ui::CommandWindow *ui;
 
 private slots:
@@ -30,6 +32,7 @@ public slots:
     void recieveBreakPointColor(int index, bool toggle);
     void recieveRunColor(int index, bool toggle);
     void recieveClearRunColors();
+	void recieveRobot(CytonRunner *Ava);
 
 signals:
     void modifiedCommand();

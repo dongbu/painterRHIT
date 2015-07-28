@@ -1,5 +1,8 @@
 #pragma once
 #include "Sketchpad.h"
+#include <qdesktopwidget.h>
+#include <qprocess.h>
+#include <qmessagebox.h>
 
 using namespace cv;
 
@@ -10,16 +13,23 @@ using namespace cv;
  * @param ss
  * @param parent
  */
-Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
+Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Sketchpad)
 {
     //setting up Qt's misc. toolbars & windows.
     ui->setupUi(this);
+	this->Ava = Ava;
+	//move window to a decent neighborhood.
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (width + 35), r.top());
+
     setupQt();
     this->paintingName = "unnamed";
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
+	this->width = width;
+	this->height = height;
 
     //Linking opencv to Qt.
     shapes = ss;
@@ -38,6 +48,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, QWidget *parent) :
 
 	//robot logic
 	//ui->menuRobot->setDisabled(true);
+	connected = false;
 	ui->menuWorkspace->setDisabled(true);
 	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
@@ -268,7 +279,6 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
 
 	//robot connections
-	Ava = new CytonRunner();
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -342,12 +352,13 @@ void Sketchpad::saveClicked() {
  * @brief open functionality.
  */
 void Sketchpad::openClicked() {
-    newClicked();
+    
     QFileDialog directory;
     QStringList filters;
     filters << "Text files (*.xml)";
     directory.setNameFilters(filters);
     if (directory.exec()) {
+		newClicked();
         emit load(directory.selectedFiles().at(0).toStdString());
         emit prodOtherWindows();
         this->paintingName = directory.selectedFiles().at(0).toStdString();
@@ -365,16 +376,23 @@ void Sketchpad::newClicked() {
 
 
 void Sketchpad::connectCytonClicked(){
-	if (!Ava->connect()){
-		return;
+	QProcess *p = new QProcess();
+	QMessageBox *m = new QMessageBox();
+	m->setText("Confirm");
+	m->setInformativeText("Launch CytonViewer?");
+	m->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	if (m->exec() == QMessageBox::Yes){
+		p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
 	}
 	ui->menuWorkspace->setEnabled(true);
 }
+
 void Sketchpad::connectABBClicked(){
 	printf("setup connection to ABB here\n");
 
 }
 void Sketchpad::loadWorkspaceClicked(){
+	Ava->connect();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Text files (*.xml)";
@@ -387,6 +405,7 @@ void Sketchpad::loadWorkspaceClicked(){
 
 }
 void Sketchpad::createWorkspaceClicked(){
+	Ava->connect();
 	Ava->createWorkspace();
 
 	ui->actionStartup->setEnabled(true);
@@ -395,22 +414,31 @@ void Sketchpad::createWorkspaceClicked(){
 }
 void Sketchpad::startupClicked(){
 	Ava->startup();
+	connected = true;
+	for (int i = 0; i < shapes->length(); i++){
+		printf("%s\n", shapes->at(i)->type.c_str());
+	}
+	for (int i = 0; i < shapes->length(); i++){
+		Ava->paintShape(shapes->at(i));
+	}
+	//emit sendRobot(Ava);
 }
 void Sketchpad::shutDownClicked(){
 	if (Ava->shutdown()){
 		ui->actionShutdown->setDisabled(true);
 		ui->actionStartup->setDisabled(true);
 		ui->menuWorkspace->setDisabled(true);
+		connected = false;
 	}
 }
 
 void Sketchpad::loadPhotoClicked(){
-	newClicked();
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
+		newClicked();
 		cv::Mat image = imread(directory.selectedFiles().at(0).toStdString());
 		cv::resize(image, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 

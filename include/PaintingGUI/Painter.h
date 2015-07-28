@@ -36,6 +36,7 @@ private:
     Sketchpad *sketch;
     RunLogic *logic;
 	Webcam *Web;
+	CytonRunner *Ava;
 
 	std::string Painter::string_format(const std::string fmt, ...);
 	std::string Painter::getXMLDim();

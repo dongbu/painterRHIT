@@ -41,7 +41,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(QWidget *parent = 0);
+	explicit CytonRunner(int width, int height, QWidget *parent = 0);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);
@@ -57,8 +57,11 @@ public:
 	void drawPoint(cv::Point pt);
 	void stroke(cv::Point pt1, cv::Point pt2);
 	void stroke(std::vector<cv::Point> pts);
-	void paintShape(Shape *s);
 	void setCanvasSize(double width, double height);
+	void paintShape(Shape *s);
+	void moveDirection(int direction);
+
+	volatile bool connected;
 
 private:
 	Ui::CytonRunner *ui;
@@ -77,5 +80,8 @@ private:
 	double xScale, yScale;
 
 	bool isUp;
+
+signals:
+	void finishedShape();
 };
 

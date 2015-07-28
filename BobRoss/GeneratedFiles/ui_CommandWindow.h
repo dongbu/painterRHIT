@@ -56,7 +56,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(593, 330);
+        CommandWindow->resize(593, 368);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -138,7 +138,7 @@ public:
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 593, 21));
+        menubar->setGeometry(QRect(0, 0, 593, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);

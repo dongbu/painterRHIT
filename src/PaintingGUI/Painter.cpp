@@ -6,6 +6,7 @@
 Painter::Painter() {
     width = 600;
     height = 600;
+	Ava = new CytonRunner(width,height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
 	Web = new Webcam();
@@ -19,6 +20,7 @@ Painter::Painter(Shapes *shapes) {
     this->shapes = shapes;
     width = 600;
     height = 600;
+	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
 	Web = new Webcam();
 }
@@ -46,10 +48,11 @@ void Painter::addShape(Shape *inboundShape) {
 void Painter::setDimensions(int width, int height) {
     this->width = width;
     this->height = height;
-	this->sketch->close();
-	this->commandWin->close();
+	Ava = new CytonRunner(width, height);
 
 	if (stuffshowing){
+		this->sketch->close();
+		this->commandWin->close();
 		showGUI(true);
 	}
 }
@@ -93,7 +96,7 @@ void Painter::load(std::string projectLocation) {
  */
 void Painter::showGUI(bool toggle){
 	stuffshowing = toggle;
-    sketch = new Sketchpad(width, height, shapes);
+    sketch = new Sketchpad(width, height, shapes, Ava);
 	sketch->setWebcam(this->Web);
     launchSimulation();
 
@@ -101,6 +104,7 @@ void Painter::showGUI(bool toggle){
     connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
     connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
     connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
+	connect(sketch, SIGNAL(sendRobot(CytonRunner*)), commandWin, SLOT(recieveRobot(CytonRunner*)));
     connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
     if (toggle){
@@ -117,7 +121,7 @@ void Painter::showGUI(bool toggle){
  */
 void Painter::launchSimulation(){
     commandWin = new CommandWindow(shapes);
-    logic = new RunLogic(width,height,shapes);
+    logic = new RunLogic(width,height,shapes,Ava);
 
     connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
     connect(commandWin->ui->actionForward, SIGNAL(triggered()), logic, SLOT(forwardClicked()));
