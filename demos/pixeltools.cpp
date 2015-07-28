@@ -129,12 +129,6 @@ public:
     }
   }
   
-  // converts scalar to Vec3b
-  cv::Vec3b scalarToVec3b (cv::Scalar s) { 
-    cv::Vec3b vec(s[0],s[1],s[2]);
-    return vec;
-  }
-
   // given a region of pixels, returns the pixels at the border of a colored region (optionally, returns the interior)
   void defineBoundary(std::vector<cv::Point> region, cv::Scalar region_color, 
 		      std::vector<cv::Point> *boundary, std::vector<cv::Point> *interior = NULL) {
@@ -157,7 +151,7 @@ public:
       image.setTo(cv::Scalar(0,0,0));
     }
       
-    cv::Vec3b region_color_vec = scalarToVec3b(region_color);
+    cv::Vec3b region_color_vec(region_color[0],region_color[1],region_color[2]);
     for (int i=0; i<(int)region.size(); i++) {
       image.at<cv::Vec3b>(region[i]) = region_color_vec;
     }
