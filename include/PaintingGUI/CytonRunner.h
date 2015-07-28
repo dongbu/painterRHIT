@@ -59,6 +59,7 @@ public:
 	void stroke(std::vector<cv::Point> pts);
 	void setCanvasSize(double width, double height);
 	void paintShape(Shape *s);
+	void moveDirection(int direction);
 
 	volatile bool connected;
 

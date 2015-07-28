@@ -67,6 +67,8 @@ public:
     pen_color_vec[1]= g;
     pen_color_vec[2]= r;
   }
+  void setPenColor(cv::Vec3b c) { setPenColor(c[2], c[1], c[0]); }
+  void setPenColor(cv::Scalar c) { setPenColor(c[0], c[1], c[2]); }
 
   void drawLine(cv::Point pt1, cv::Point pt2) {
     cv::line( grid, pt1, pt2, pen_color, pen_thickness, line_type );
@@ -75,6 +77,10 @@ public:
   void drawLine(int x1, int y1, int x2, int y2) {
     drawLine(cv::Point(x1,y1),cv::Point(x2,y2));
   }
+  // going to play w/ having window draw lines with brushes
+  //void drawLine(Brush *brush, int x1, int y1, int x2, int y2) {
+  //  brush->drawLine(this, cv::Point(x1,y1),cv::Point(x2,y2));
+  //}
 
   void drawRectangle(cv::Point pt1, cv::Point pt2, int fill=0) {
     int thickness=pen_thickness;
@@ -148,10 +154,38 @@ public:
     if (x>=0 && y>=0 && x<grid.cols && y<grid.rows) drawPixel(cv::Point(x,y)); 
   }
 
+  cv::Vec3b getPixel(cv::Point pt) {
+	  return grid.at<cv::Vec3b>(pt);
+  }
+
+  cv::Vec3b getPixel(int x, int y) {
+	  if (x >= 0 && y >= 0 && x<grid.cols && y<grid.rows) {
+		  return getPixel(cv::Point(x, y));
+	  }
+	  else {
+		  return getPixel(cv::Point(0, 0)); // yah silly 
+	  }
+  }
+
   void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference but I've not figured out how to access vector
     for (unsigned int i=0; i<pixels.size(); i++) {
 	grid.at<cv::Vec3b>(pixels[i]) = pen_color_vec;
       } 
+  }
+
+  // blur the window
+  void blur(int size = 3) {
+	  cv::blur(grid, grid, cv::Size(size, size));
+  }
+
+  // put random specks all over the window 
+  void speckle(double fraction = 0.1) {
+	  cv::RNG rng;
+	  int n = fraction * grid.cols * grid.rows;
+	  for (int i = 0; i<n; i++) {
+		  setPenColor(0, rng.uniform(0, 255), rng.uniform(0, 255));
+		  drawPixel(rng.uniform(0, width), rng.uniform(0, height));
+	  }
   }
     
  void defineMouseCallback (cv::MouseCallback onMouse) {
