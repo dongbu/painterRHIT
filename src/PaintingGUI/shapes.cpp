@@ -241,7 +241,7 @@ public:
 
     cv::Point **ppoints = new cv::Point*[1];
     ppoints[0]=new cv::Point[n];
-    for (int i=0; i<n; i++) { 
+    for (size_t i=0; i<n; i++) { 
       ppoints[0][i] = cv::Point(points[i].y-miny, points[i].x-minx); // dunno why y,x but seems to work
     }
     const cv::Point* ppt[1] = { ppoints[0] };

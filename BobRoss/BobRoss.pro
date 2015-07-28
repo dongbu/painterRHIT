@@ -25,7 +25,9 @@ SOURCES +=\
     ../src/PaintingGUI/RunLogic.cpp \
     ../src/PaintingGUI/shapes.cpp \
     ../src/PaintingGUI/Sketchpad.cpp \
-    ../src/PaintingGUI/webcam.cpp
+    ../src/PaintingGUI/webcam.cpp \
+    workspacewizard.cpp \
+    ../src/PaintingGUI/workspacewizard.cpp
 
 HEADERS  += \
     ../include/PaintingGUI/CommandWindow.h \
@@ -36,12 +38,15 @@ HEADERS  += \
     ../include/PaintingGUI/pugiconfig.hpp \
     ../include/PaintingGUI/pugixml.hpp \
     ../include/PaintingGUI/runLogic.h \
-    ../include/PaintingGUI/Sketchpad.h
+    ../include/PaintingGUI/Sketchpad.h \
+    workspacewizard.h \
+    ../include/PaintingGUI/workspacewizard.h
 
 FORMS    += \
     CommandWindow.ui \
     CytonRunner.ui \
-    Sketchpad.ui
+    Sketchpad.ui \
+    workspacewizard.ui
 
 RESOURCES += \
     myres.qrc

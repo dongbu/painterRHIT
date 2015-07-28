@@ -1,8 +1,8 @@
 #include "CytonRunner.h"
 #include <qmessagebox>
 #include <qpushbutton.h>
-#include <qobject.h>
-#include <QKeyEvent>
+//#include <qobject.h>
+#include "workspacewizard.h";
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -212,12 +212,12 @@ void CytonRunner::drawPoint(cv::Point pt){
 	lowerBrush();
 	raiseBrush();
 }
+
 void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 	raiseBrush();
 	goToPos(pt1.x, pt1.y, raiseHeight);
 	lowerBrush();
 	goToPos(pt2.x, pt2.y, 0);
-
 }
 
 void CytonRunner::stroke(std::vector<cv::Point> pts){
@@ -343,7 +343,7 @@ void CytonRunner::paintShape(Shape *s){
 		RegionToPaths RTP = RegionToPaths(width, height, border);
 		RTP.clear();
 		
-		for (int i = 0; i < p->getPoints().size(); i++){
+		for (size_t i = 0; i < p->getPoints().size(); i++){
 			cv::Point currentPoint = p->getPoints().at(i);
 			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
 		}
@@ -353,7 +353,7 @@ void CytonRunner::paintShape(Shape *s){
 		RTP.defineBrush(&brush);
 		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 
-		for (int i = 0; i < pathVec.size(); i++){
+		for (size_t i = 0; i < pathVec.size(); i++){
 			this->stroke(pathVec.at(i));
 		}		
 	}
@@ -370,31 +370,11 @@ void CytonRunner::paintShape(Shape *s){
 }
 
 void CytonRunner::createWorkspace(){
-	//QWidget *widget = new QWidget();
-	printf("setup home position\n");
-	//ConfigWindow w;
-	
-	//w.setText("Configure Workspace");
-	//w.setInformativeText("use arrowkeys and u/d to position the robot into it's new home position\n press continue to accept");
-	//if (w.exec()){
-	//	printf("hi\n");
-	//}
-
+	printf("hi\n");
+	WorkspaceWizard *w = new WorkspaceWizard();
+	w->show();
 }
 
 void CytonRunner::moveDirection(int direction){
 
 }
-
-//will be moved into Helper for ease of use.
-//class ConfigWindow : public QMessageBox{
-//	Q_OBJECT
-//public:
-//	ConfigWindow(){};
-//	~ConfigWindow(){};
-//
-//	void keyPressEvent(QKeyEvent* e){
-//		printf("you pressed: %s", e->text().toStdString().c_str());
-//	};
-//
-//};

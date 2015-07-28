@@ -125,7 +125,7 @@ public:
     cv::Point **points = new cv::Point*[1];
     points[0]=new cv::Point[n];
 
-    for (int i=0; i<n; i++) {
+    for (size_t i=0; i<n; i++) {
       points[0][i] = poly_points[i];
     }
     const cv::Point* ppt[1] = { points[0] };
