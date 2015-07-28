@@ -11,6 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BobRoss
 TEMPLATE = app
 
+CONFIG += stdafx.h
+PRECOMPILED_HEADER = stdafx.h
+win32-msvc* {
+PRECOMPILED_SOURCE = stdafx.cpp
+}
 
 SOURCES +=\
     ../src/PaintingGUI/CommandWindow.cpp \
@@ -21,12 +26,13 @@ SOURCES +=\
     ../src/PaintingGUI/kmeansSegment.cpp \
     ../src/PaintingGUI/main.cpp \
     ../src/PaintingGUI/Painter.cpp \
+    ../src/PaintingGUI/pixeltools.cpp \
     ../src/PaintingGUI/pugixml.cpp \
+    ../src/PaintingGUI/regiontopaths.cpp \
     ../src/PaintingGUI/RunLogic.cpp \
     ../src/PaintingGUI/shapes.cpp \
     ../src/PaintingGUI/Sketchpad.cpp \
     ../src/PaintingGUI/webcam.cpp \
-    workspacewizard.cpp \
     ../src/PaintingGUI/workspacewizard.cpp
 
 HEADERS  += \
@@ -39,7 +45,6 @@ HEADERS  += \
     ../include/PaintingGUI/pugixml.hpp \
     ../include/PaintingGUI/runLogic.h \
     ../include/PaintingGUI/Sketchpad.h \
-    workspacewizard.h \
     ../include/PaintingGUI/workspacewizard.h
 
 FORMS    += \

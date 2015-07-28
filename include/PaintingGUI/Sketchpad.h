@@ -1,24 +1,13 @@
 #ifndef SKETCHPAD_H
 #define SKETCHPAD_H
 
-#include "ui_Sketchpad.h"
+#include "stdafx.h"
 #include "CVImageWidget.h"
 #include "CytonRunner.h"
 #include "shapes.cpp"
 #include "DrawWindow.cpp"
 #include "imageparser.cpp"
 #include "Webcam.cpp"
-
-#include <QObject>
-#include <QMainWindow>
-#include <vector>
-#include <QComboBox>
-#include <QSpinBox>
-#include <QMouseEvent>
-#include <qvBoxLayout>
-#include <QActionGroup>
-#include <cmath>
-#include <QFileDialog>
 
 namespace Ui {
 class Sketchpad;
@@ -51,8 +40,8 @@ private:
 	Shapes *shapes;
 	Shape *currentShape;
     PolyLine *curPolyLine;
-    Ellipse *curCircle;
-    Rectangle *curRectangle;
+    MyEllipse *curCircle;
+    MyRectangle *curRectangle;
 	PixelRegion *curPixelRegion;
 
 	QComboBox *color;

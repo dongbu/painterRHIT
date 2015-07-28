@@ -1,6 +1,5 @@
 #pragma once
-
-#include <opencv/cv.h>
+#include "stdafx.h"
 #include "kmeansSegment.hpp" //G.H. changed to hpp, because on our conputers, #including a .cpp file that has a header caused multiple
 //definition errors
 #include "drawwindow.cpp"

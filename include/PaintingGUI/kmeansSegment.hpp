@@ -1,6 +1,5 @@
 #pragma once
-
-#include <opencv2/core/core.hpp>
+#include "stdafx.h"
 
 /**
  * @brief simplify the procedures of using cv::kmeans to do color segmentation

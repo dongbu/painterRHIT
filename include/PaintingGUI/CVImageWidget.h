@@ -1,9 +1,5 @@
 #pragma once
-#include <QWidget>
-#include <QImage>
-#include <QPainter>
-#include <opencv2/opencv.hpp>
-#include <QMouseEvent>
+#include "stdafx.h"
 
 class CVImageWidget : public QWidget
 {

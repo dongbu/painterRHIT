@@ -1,9 +1,7 @@
 #pragma once
-
+#include "stdafx.h"
 #include "drawwindow.cpp"
 #include "pixeltools.cpp"
-#include <cstdarg>
-
 
 // Tools to take a set of desired points to paint and returns paths for a brush
 // see regiontopaths_demo.cpp for example use
