@@ -1,7 +1,4 @@
 #include "CytonRunner.h"
-#include <qmessagebox>
-#include <qpushbutton.h>
-//#include <qobject.h>
 #include "workspacewizard.h";
 
 #define FRAME_EE_SET 1

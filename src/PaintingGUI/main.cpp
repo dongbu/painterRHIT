@@ -1,8 +1,7 @@
 //#include <QApplication>
-#include <iostream>
+#include <windows.h>
 #include "Painter.h"
 #include "Shapes.cpp"
-#include <windows.h>
 #include "DrawWindow.cpp"
 
 int main(int argc, char *argv[])

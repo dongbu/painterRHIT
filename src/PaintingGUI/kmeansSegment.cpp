@@ -1,4 +1,5 @@
 #include "kmeansSegment.hpp"
+
 kmeansSegment::kmeansSegment(int cluster_number, cv::TermCriteria criteria, int attempts, int flags)
   : attempts_(attempts), cluster_number_(cluster_number), criteria_(criteria), flags_(flags)
 {

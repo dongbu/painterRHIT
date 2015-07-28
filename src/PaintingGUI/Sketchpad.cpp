@@ -1,8 +1,5 @@
 #pragma once
 #include "Sketchpad.h"
-#include <qdesktopwidget.h>
-#include <qprocess.h>
-#include <qmessagebox.h>
 
 using namespace cv;
 
@@ -83,13 +80,13 @@ void Sketchpad::startNewCommand() {
     }
 
     else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
-        curCircle = new Ellipse();
+        curCircle = new MyEllipse();
         if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
         curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
         this->currentShape = curCircle;
     }
     else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
-        curRectangle = new Rectangle();
+        curRectangle = new MyRectangle();
         if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
         curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
         this->currentShape = curRectangle;

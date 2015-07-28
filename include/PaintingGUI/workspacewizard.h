@@ -1,11 +1,9 @@
 #ifndef WORKSPACEWIZARD_H
 #define WORKSPACEWIZARD_H
 
+#include "stdafx.h"
 #include "ui_workspacewizard.h"
 #include "CytonRunner.h"
-#include <QWidget>
-#include <QKeyEvent>
-#include <qstring.h>
 
 namespace Ui {
 class WorkspaceWizard;

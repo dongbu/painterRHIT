@@ -1,7 +1,7 @@
 #ifndef COMMANDWINDOW_H
 #define COMMANDWINDOW_H
 
-#include "ui_commandwindow.h"
+#include "stdafx.h"
 #include "CytonRunner.h"
 #include "../src/PaintingGUI/Shapes.cpp"
 

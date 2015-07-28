@@ -1,36 +1,7 @@
 #pragma once
-#include "ui_CytonRunner.h"
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
-#include <QObject>
-#include <QMainWindow>
-#include <qwidget.h>
-
-
-#include <control/ecEndEffectorSet.h>
-#include <controlCore/ecFrameEndEffector.h>
-#include <control/ecManipEndEffectorPlace.h>
-#include <foundCommon/ecCoordSysXForm.h>
-#include <foundCore/ecApplication.h>
-#include <foundCore/ecConstants.h>
-#include <foundCore/ecMacros.h>
-#include <foundCore/ecTypes.h>
-#include <manipulation/ecManipulationActionManager.h>
-#include <manipulationDirector/ecManipulationScript.h>
-#include <remoteCommand/ecRemoteCommand.h>
-
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv/highgui.h>
-
-#include <math.h>
-#include <qobject.h>
-#include <iostream>
-#include "pugixml.hpp"
-#include <qdialog.h>
-
-#include <opencv2/opencv.hpp>
-
+#include "stdafx.h"
 
 namespace Ui {
 	class CytonRunner;
