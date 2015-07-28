@@ -4,30 +4,20 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
 #include <fstream>
+#include <cstdarg>
 #include "pugixml.hpp"
-//#include "pugixml.cpp" GH: including both a head and a source is asking for troble.
-//GH: specifically, trouble of a kind that causes linking redundancies that break our code
 #include "drawwindow.cpp"
-#include "helpers.cpp" // string_format
-
-//#include <highgui.h> // WINDOW_AUTOSIZE
-//using namespace std;
-
-class PolyLine;
-class PixelRegion;
 
 class Shape {
 protected:
   cv::Scalar pen_color;
   cv::Vec3b pen_color_vec;
   int r,g,b;
-  
 
 public:
   std::string type;
   int id;
-  bool isBreakPoint = false;
-  bool fill = false;
+  bool isBreakPoint;
 
   void setID(int i) { id = i; }
   int getID(int i=-1) { 
@@ -48,7 +38,7 @@ public:
 
   std::string getColorXML() {
     std::string line;
-    line.append(Helpers::string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",pen_color_vec[2],pen_color_vec[1],pen_color_vec[0]));
+    line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>",pen_color_vec[2],pen_color_vec[1],pen_color_vec[0]));
     return line;
   }
   
@@ -57,27 +47,29 @@ public:
     return line;
   }
 
-  void toggleBreakPoint(bool toggle){
-	  this->isBreakPoint = toggle;
+  // not a beautiful place for this but c'est la vie
+  std::string string_format(const std::string fmt, ...) {
+    int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
+    std::string str;
+    va_list ap;
+    while (1) {     // Maximum two passes on a POSIX system...
+      str.resize(size);
+      va_start(ap, fmt);
+      int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
+      va_end(ap);
+      if (n > -1 && n < size) { str.resize(n); return str; }
+      if (n > -1) size = n + 1; else size *= 2;
+    }
+    return str;
+  }
+
+  void toggleBreakPoint(bool toggle) {
+    isBreakPoint = toggle;
   }
 
   virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); } 
 
-  virtual PolyLine* toPolyline(){
-	  printf("if you are seeing this message, this class cannot convert to polyline\n");
-	  printf("press enter to exit program\n");
-	  std::cin.ignore();
-	  return NULL;
-  }
-
-  virtual PixelRegion* toPixelRegion(){
-	  printf("if you are seeing this message, this class cannot convert to pixelregion\n");
-	  printf("press enter to exit program\n");
-	  std::cin.ignore();
-	  return NULL;
-  }
-
-  Shape() { id = -1; type = "shape"; }
+  Shape() { id = -1; type = "shape"; isBreakPoint = false; }
   ~Shape() { }
 };
 
@@ -89,22 +81,22 @@ public:
   std::vector<cv::Point> points;
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
+
   void setThickness(int t=1) { thickness=t; }
 
-  ////
   virtual std::string getXML() {
     std::string line;
-	line.append(Helpers::string_format("<shape type=\"polyline\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+	line.append(string_format("<shape type=\"polyline\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
 	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
     return line;
   }
-  ////
+
   virtual void draw(DrawWindow *W) {
     cv::Scalar color = getPenColor();
     W->setPenColor(color[0],color[1],color[2]);
@@ -113,17 +105,8 @@ public:
       W->drawLine(points[i].x,points[i].y,points[i+1].x,points[i+1].y);
     }
   }
-  ////
-  virtual PolyLine* toPolyline(){
-	  return this;
-  }
 
-  ////
-  std::vector<cv::Point> getPoints(){
-	  return points;
-  }
-  ////
-  PolyLine() : Shape() { type = "polyline"; thickness = 1; fill = false; }
+  PolyLine() : Shape() { type = "polyline"; thickness = 1; }
 };
 
 
@@ -132,9 +115,9 @@ class PixelRegion: public Shape {
 protected:
   int thickness;
   int style; // 1=square, 2=circle
+  std::vector<cv::Point> points;
 
 public:
-  std::vector<cv::Point> points;
   void addPoint(cv::Point pt) { points.push_back(pt); }
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(int i, int j, int dup_check) { // add point if it doesn't exist yet
@@ -153,11 +136,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-    line.append(Helpers::string_format("<shape type=\"pixelregion\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\" style=\"%i\">",getID(),isBreakPoint, thickness,style));
+    line.append(string_format("<shape type=\"pixelregion\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\" style=\"%i\">",getID(),isBreakPoint, thickness,style));
 	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -185,17 +168,8 @@ public:
       }
     }
   }
-
-  virtual PixelRegion* toPixelRegion(){
-	  return this;
-  }
-
-  std::vector<cv::Point> getPoints(){
-	  return this->points;
-  }
-
   
-  PixelRegion() : Shape() { type = "pixelregion"; style = 1; thickness = 1; fill = true; }
+  PixelRegion() : Shape() { type = "pixelregion"; style=1; thickness=1; }
 };
 
 
@@ -208,18 +182,19 @@ protected:
 public:
   void addPoint(int i, int j) { addPoint(cv::Point(i,j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
+ 
   void setThickness(int t=1) { thickness=t; }
 
   // returns a polyline representation of a PolyPoints (note: just returns the perimeter)
-  virtual PolyLine* toPolyline() { // note: only perimeter
-    PolyLine *PL = new PolyLine();
-    for (int i=0; i<(int)points.size()-1; i++) { PL->addPoint(points[i]); }
-    PL->addPoint(points[0]);
+  PolyLine toPolyline() { // note: only perimeter
+    PolyLine PL;
+    for (int i=0; i<(int)points.size()-1; i++) { PL.addPoint(points[i]); }
+    PL.addPoint(points[0]);
     return PL;
   }
 
   // returns a pixelregion representation of a rectangle
-  virtual PixelRegion* toPixelRegion() {
+  PixelRegion toPixelRegion() {
     // plan is to draw a temp graphic then convert it to pixels (yah ugly... )
     int minx=9999999;
     int miny=9999999;
@@ -248,11 +223,11 @@ public:
     grid.setTo(cv::Scalar(255,255,255));
     fillPoly( grid, ppt, npt, 1, cv::Scalar(0,0,0), 8);
     
-    PixelRegion *PR = new PixelRegion();
+    PixelRegion PR;
     for (int i=0; i<w; i++) {
       for (int j=0; j<h; j++) {
 	if (grid.at<cv::Vec3b>(i,j)[0] == 0) { // i,j is in the region
-	  PR->addPoint(i+minx,j+miny);
+	  PR.addPoint(i+minx,j+miny);
 	}
       }
     }
@@ -264,11 +239,11 @@ public:
 
   virtual std::string getXML() {
     std::string line;
-	line.append(Helpers::string_format("<shape type=\"polypoints\" id=\"%i\" breakPoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+	line.append(string_format("<shape type=\"polypoints\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
 	line.append(Shape::getColorXML());
     line.append("<points>");
     for (int i=0; i<(int)points.size(); i++) {
-      line.append(Helpers::string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
+      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>",points[i].x,points[i].y));
     }
     line.append("</points>");
     line.append("</shape>");
@@ -286,7 +261,7 @@ public:
     W->drawPolyPoints();
   }
 
-  PolyPoints() : Shape() { type = "polyline"; thickness = 1; fill = true; }
+  PolyPoints() : Shape() { type = "polyline"; thickness = 1; }
 };
 
 
@@ -294,7 +269,7 @@ class Rectangle: public Shape {
 protected:
   cv::Point pt1;
   cv::Point pt2;
-  
+  int fill;
 
 public:
   void setCorners(int x1, int y1, int x2, int y2) {
@@ -303,36 +278,36 @@ public:
   }
 
   // returns a polyline representation of a rectangle
-  virtual PolyLine* toPolyline() { // note: only perimeter
-    PolyLine* PL = new PolyLine();
-    PL->addPoint(pt1);
-    PL->addPoint(pt2.x,pt1.y);
-    PL->addPoint(pt2);
-    PL->addPoint(pt1.x,pt2.y);
-    PL->addPoint(pt1);
+  PolyLine toPolyline() { // note: only perimeter
+    PolyLine PL;
+    PL.addPoint(pt1);
+    PL.addPoint(pt2.x,pt1.y);
+    PL.addPoint(pt2);
+    PL.addPoint(pt1.x,pt2.y);
+    PL.addPoint(pt1);
     return PL;
   }
 
   // returns a pixelregion representation of a rectangle
-  virtual PixelRegion* toPixelRegion() {
-    PixelRegion* PR = new PixelRegion();
+  PixelRegion toPixelRegion() {
+    PixelRegion PR;
     for (int i=pt1.x; i<=pt2.x; i++) {
       for (int j=pt1.y; j<=pt2.y; j++) {
 	if (fill==1 || (i==pt1.x || i==pt2.x || j==pt1.y || j==pt2.y)) {
-	  PR->addPoint(i,j);
+	  PR.addPoint(i,j);
 	}
       }
     }
     return PR;
   }
 
-  virtual void setFill(int f = 1) { fill = f; printf("fill set to %i\n", fill); }
+  virtual void setFill(int f=1) { fill=f; }
 
   virtual std::string getXML() {
     std::string line;
-	line.append(Helpers::string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakPoint=\"%i\">", getID(), fill, isBreakPoint));
+	line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakpoint=\"%i\">", getID(), fill, isBreakPoint));
 	line.append(getColorXML());
-	line.append(Helpers::string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
+	line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			      pt1.x,pt1.y,pt2.x,pt2.y));
     line.append("</shape>");
     return line;
@@ -344,14 +319,14 @@ public:
     W->drawRectangle(pt1.x,pt1.y,pt2.x,pt2.y,fill);
   }
 
-  Rectangle() : Shape() { type = "rectangle"; fill = false; }
+  Rectangle() : Shape() { type = "rectangle"; fill = 0; }
 };
 
 class Ellipse : public Shape {
 protected:
   cv::Point pt;
   cv::Size axes;
-  
+  int fill;
 
 public:
   void setData(int x, int y, double r) { // circle
@@ -365,8 +340,8 @@ public:
   }
 
   // returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
-  virtual PolyLine* toPolyline() { // note: only perimeter
-    PolyLine* PL = new PolyLine();
+  PolyLine toPolyline() { // note: only perimeter
+    PolyLine PL;
     double radius = (axes.width + axes.height)/4. + .4; // .25 to help anti-aliasing
     //printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
     int n = radius*2;
@@ -376,15 +351,15 @@ public:
       int x = pt.x+radius*cos(rad);
       int y = pt.y+radius*sin(rad);
       //printf("%i,%i at %f\n",x,y,rad);
-      PL->addPoint(x, y);
+      PL.addPoint(x, y);
     }
-    PL->addPoint(pt.x+radius, pt.y);
+    PL.addPoint(pt.x+radius, pt.y);
     return PL;
   }
 
   // returns a pixelregion representation of a circle  [don't worry about doing a real ellipse for now]
- virtual PixelRegion* toPixelRegion() {
-    PixelRegion* PR = new PixelRegion();
+ PixelRegion toPixelRegion() {
+    PixelRegion PR;
     double radius = (axes.width + axes.height)/4. + .4; // .4 to help anti-aliasing
 
     for (int dx=0; dx<=radius; dx++) {
@@ -396,7 +371,7 @@ public:
 	for (int j=-dy; j<=dy; j++) {
 	  if (i==-dx || i==dx || j==-dy || j==dy) { // just the rectangle
 	    if (fill || (abs(i*j) == dx*dy)) { // if !fill, then just 4 corners
-	      PR->addPoint(pt.x + i,pt.y + j,1);
+	      PR.addPoint(pt.x + i,pt.y + j,1);
 	      //printf(" i,j = %i,%i\n",i,j);
 	    }
 	  }
@@ -406,11 +381,11 @@ public:
     return PR;
   }
 
- virtual void setFill(int f = 1) { fill = f; printf("fill set to %i\n", fill); }
+  virtual void setFill(int f=1) { fill=f; }
 
   virtual std::string getXML() {
     std::string line;
-	line.append(Helpers::string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
+	line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
 		getID(), fill, pt.x, pt.y, axes.width, axes.height, isBreakPoint));
     line.append(getColorXML());
     line.append("</shape>");
@@ -423,7 +398,7 @@ public:
     W->drawEllipse(pt.x,pt.y,axes.width,axes.height,0,fill);
   }
 
-  Ellipse() : Shape() { type = "ellipse"; fill = false; }
+  Ellipse() : Shape() { type = "ellipse"; fill = 0; }
 };
 
 /*******  SHAPES ********/
@@ -585,32 +560,29 @@ public:
     }
   }
 
-  void removeShapeAt(int index){
-	  shapes.erase(shapes.begin() + index);
+  void removeShapeAt(int index) {
+    shapes.erase(shapes.begin() + index);
+  }
+  
+  Shape* at(int position) {
+    return shapes.at(position);
+  }
+  
+  Shape* getById(int id) {
+    for (size_t i = 0; i < shapes.size(); i++) {
+      if (shapes[i]->getID() == id) {
+	return shapes.at(i);
+      }
+    }
   }
 
-  Shape* at(int position){
-	  return shapes.at(position);
-  }
+  // ABC: should be renamed to something like getNumShapes as length is ambiguous
+  int length() { return shapes.size(); }
 
-  Shape* getById(int id){
-	  for (size_t i = 0; i < shapes.size(); i++){
-		  if (shapes[i]->getID() == id){
-			  return shapes.at(i);
-		  }
-	  }
-  }
+  void clear() { shapes.clear(); }
 
-  int length(){
-	  return shapes.size();
-  }
-
-  void clear(){
-	  shapes.clear();
-  }
-
-  void swap(int pos1, int pos2){
-	  std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
+  void swap(int pos1, int pos2) {
+    std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
   }
 
   Shapes() { max_id=0; }

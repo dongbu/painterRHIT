@@ -126,9 +126,6 @@
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\PaintingGUI\helpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +136,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PaintingGUI\regiontopaths.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\pixeltools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

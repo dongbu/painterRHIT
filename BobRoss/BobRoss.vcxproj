@@ -145,10 +145,10 @@
     <ClCompile Include="..\src\PaintingGUI\CommandWindow.cpp" />
     <ClCompile Include="..\src\PaintingGUI\CytonRunner.cpp" />
     <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp" />
-    <ClCompile Include="..\src\PaintingGUI\helpers.cpp" />
     <ClCompile Include="..\src\PaintingGUI\imageparser.cpp" />
     <ClCompile Include="..\src\PaintingGUI\kmeansSegment.cpp" />
     <ClCompile Include="..\src\PaintingGUI\Painter.cpp" />
+    <ClCompile Include="..\src\PaintingGUI\pixeltools.cpp" />
     <ClCompile Include="..\src\PaintingGUI\regiontopaths.cpp" />
     <ClCompile Include="..\src\PaintingGUI\RunLogic.cpp" />
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp" />
