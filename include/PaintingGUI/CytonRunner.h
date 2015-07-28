@@ -38,10 +38,11 @@ private:
 	Ui::CytonRunner *ui;
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
+	std::vector<double> convert(double x, double y, double z);
+
+	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;
 	std::vector<std::pair<int, cv::Point>> paint;
-	std::vector<double> convert(double x, double y, double z);
-	double dx, dy, dz;
 	std::string brushType;
 	double theta, phi, psi;
 	double currentX, currentY;

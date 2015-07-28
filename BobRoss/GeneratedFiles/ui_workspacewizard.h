@@ -13,10 +13,10 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFrame>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -28,8 +28,9 @@ public:
     QPushButton *ForwardButton;
     QPushButton *BackButton;
     QLabel *Directions;
-    QFrame *ItemFrame;
     QPushButton *QuestionButton;
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *ItemLayout;
 
     void setupUi(QWidget *WorkspaceWizard)
     {
@@ -48,14 +49,15 @@ public:
         Directions = new QLabel(WorkspaceWizard);
         Directions->setObjectName(QStringLiteral("Directions"));
         Directions->setGeometry(QRect(10, 50, 361, 91));
-        ItemFrame = new QFrame(WorkspaceWizard);
-        ItemFrame->setObjectName(QStringLiteral("ItemFrame"));
-        ItemFrame->setGeometry(QRect(10, 160, 381, 80));
-        ItemFrame->setFrameShape(QFrame::StyledPanel);
-        ItemFrame->setFrameShadow(QFrame::Raised);
         QuestionButton = new QPushButton(WorkspaceWizard);
         QuestionButton->setObjectName(QStringLiteral("QuestionButton"));
         QuestionButton->setGeometry(QRect(370, 10, 21, 21));
+        verticalLayoutWidget = new QWidget(WorkspaceWizard);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(10, 150, 371, 80));
+        ItemLayout = new QVBoxLayout(verticalLayoutWidget);
+        ItemLayout->setObjectName(QStringLiteral("ItemLayout"));
+        ItemLayout->setContentsMargins(0, 0, 0, 0);
 
         retranslateUi(WorkspaceWizard);
 
