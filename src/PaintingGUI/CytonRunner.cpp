@@ -370,7 +370,7 @@ void CytonRunner::paintShape(Shape *s){
 }
 
 void CytonRunner::createWorkspace(){
-	printf("hi\n");
+	this->goToJointHome(0);
 	WorkspaceWizard *w = new WorkspaceWizard();
 	w->show();
 }
