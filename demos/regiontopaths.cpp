@@ -1,10 +1,28 @@
 #pragma once
 
-#include "helpers.cpp" // string_format
 #include "drawwindow.cpp"
+#include "pixeltools.cpp"
 
 // Tools to take a set of desired points to paint and returns paths for a brush
 // see regiontopaths_demo.cpp for example use
+
+/******************************************************************/
+
+// not a beautiful place for this but c'est la vie
+std::string string_format(const std::string fmt, ...) {
+  int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
+  std::string str;
+  va_list ap;
+  while (1) {     // Maximum two passes on a POSIX system...
+    str.resize(size);
+    va_start(ap, fmt);
+    int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
+    va_end(ap);
+    if (n > -1 && n < size) { str.resize(n); return str; }
+    if (n > -1) size = n + 1; else size *= 2;
+  }
+  return str;
+}
 
 /******************************************************************/
 
@@ -122,6 +140,13 @@ public:
     for (int i=0; i<(int)points->size(); i++) { draw(W,points->at(i)); }
   }
 
+  // returns 0-1 how close color
+  double colorDistance(cv::Scalar c1, cv::Scalar c2) {
+    int norm = std::abs(c1[0]-c2[0]) + std::abs(c1[1]-c2[1]) + std::abs(c1[2]-c2[2]);
+    //printf("N1:%i\n",norm);
+    return (double)norm/(255. * 3.);
+  }
+
   // returns what fraction of brush pixels of grid at a point are close to brush color
   double scorePaintPoint(cv::Mat *grid, cv::Point pt, double max_distance) {
     int num_pixels = (int)pixels.size();
@@ -183,7 +208,7 @@ public:
     brush = cv::Mat::zeros(cv::Size(width,height), CV_8UC3);
     brush.setTo(not_brush_color);
     
-    cv::Vec3b brush_color_vec3b = DrawWindow::scalarToVec3b(brush_color);
+    cv::Vec3b brush_color_vec3b(brush_color[0],brush_color[1],brush_color[2]);
     
     // draw brush (note: this is so we can use arbitrary shaped brushes
     if (type.compare("ellipse")==0) {

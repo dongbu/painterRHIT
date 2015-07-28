@@ -1,7 +1,6 @@
 #include "webcam.cpp"
 #include "drawwindow.cpp"
 #include "shapes.cpp"
-#include "helpers.cpp"
 #include "regiontopaths.cpp"  // brush
 #include <unistd.h> // sleep
 
@@ -52,7 +51,7 @@ int main(void)
   if (0) { // test a line to see if it matches a desired color
     PixelTools Tool;
     std::vector<cv::Point> errors;
-    double qual = Tool.testLineQualityUNUSED(&W.grid,cv::Point(p1x,p1y),cv::Point(p2x,p2y),cv::Scalar(0,0,255),.3,&errors);
+    double qual = Tool.testLineQualityUNUSED(&W.grid,cv::Point(p1x,p1y),cv::Point(p2x,p2y),cv::Vec3b(0,0,255),.3,&errors);
     printf("Line score = %.2f %%\n",100*qual);
     W.setPenColor(0,0,255);
     for (int i=0; i<(int)errors.size(); i++) {

@@ -1,64 +1,7 @@
 #pragma once
 
-// generic helper functions
-
-#include <string>
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-//#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
-#include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
-
-#include <cstdarg> //gunnar needs this to compile (allows my computer to recognize va_start && va_end)
-
-// converts scalar to Vec3b (unknown if these are equivalent)
-cv::Vec3b scalarToVec3b (cv::Scalar s) { 
-  cv::Vec3b vec;
-  vec[0] = s[0];
-  vec[1] = s[1];
-  vec[2] = s[2];
-  return vec;
-}
-
-std::string string_format(const std::string fmt, ...) {
-  int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
-  std::string str;
-  va_list ap;
-  while (1) {     // Maximum two passes on a POSIX system...
-    str.resize(size);
-    va_start(ap, fmt);
-    int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
-    va_end(ap);
-    if (n > -1 && n < size) {  // Everything worked
-      str.resize(n);
-      return str;
-    }
-    if (n > -1)  // Needed size returned
-      size = n + 1;   // For null char
-    else
-      size *= 2;      // Guess at a larger size (OS specific)
-  }
-  return str;
-}
-
-// returns 0-1 how close color
-double colorDistance(cv::Vec3b c1, cv::Vec3b c2) {
-  int norm = std::abs(c1[0]-c2[0]) + std::abs(c1[1]-c2[1]) + std::abs(c1[2]-c2[2]);
-  //printf("N1:%i\n",norm);
-  return (double)norm/(255. * 3.);
-}
-double colorDistance(cv::Scalar c1, cv::Scalar c2) {
-  int norm = std::abs(c1[0]-c2[0]) + std::abs(c1[1]-c2[1]) + std::abs(c1[2]-c2[2]);
-  double close = (double)norm/(255. * 3.);
-  //printf("N2:%i %f\n",norm,close);
-  return close;
-}
-double colorDistance(int r1, int g1, int b1, int r2, int g2, int b2) {
-  int norm = std::abs(r1-r2) + std::abs(g1-g2) + std::abs(b1-b2);
-  return (double)norm/(255. * 3.);
-}
-
-
 // Object to do pixel related things
+
 class PixelTools {
 protected:
 public:
@@ -100,8 +43,15 @@ public:
     return points;
   }
 
+  // returns 0-1 how close color (NOTE: Only used below by testLineQualityUNUSED
+  double colorDistance(cv::Vec3b c1, cv::Vec3b c2) {
+    int norm = std::abs(c1[0]-c2[0]) + std::abs(c1[1]-c2[1]) + std::abs(c1[2]-c2[2]);
+    //printf("N1:%i\n",norm);
+    return (double)norm/(255. * 3.);
+  }
+
   // return what fraction of pixels of a line between two points are inside color closeness 
-  double testLineQualityUNUSED(cv::Mat *grid, cv::Point p1, cv::Point p2, cv::Scalar color, double desired_distance,
+  double testLineQualityUNUSED(cv::Mat *grid, cv::Point p1, cv::Point p2, cv::Vec3b color, double desired_distance,
 			       std::vector<cv::Point> *bad_pixels) {
   
     // get a list of points to be tested
@@ -115,12 +65,13 @@ public:
     for (int i=0; i<(int)points.size(); i++) {
       grid_color = grid->at<cv::Vec3b>(points[i]);
       double distance = colorDistance(grid_color,color);
+
       num_pixels++;
       if (distance>desired_distance) {
 	num_far_color_pixels++;
 	if (bad_pixels) { bad_pixels->push_back(points[i]); }
       }
-      //printf("%i,%i = g[%i %i %i] %f close %i/%i\n",points[i].x,points[i].y,grid_color[0],grid_color[1],grid_color[2],distance,num_far_color_pixels,(int)points.size());
+      //printf("%i,%i = g[%i %i %i] %f close %i/%i\n",points[i].x,points[i].y,grid_color[0],grid_color[1],grid_color[2],distance,num_far_color_pxels,(int)points.size());
     }
   
     if (num_pixels) {
@@ -178,6 +129,12 @@ public:
     }
   }
   
+  // converts scalar to Vec3b
+  cv::Vec3b scalarToVec3b (cv::Scalar s) { 
+    cv::Vec3b vec(s[0],s[1],s[2]);
+    return vec;
+  }
+
   // given a region of pixels, returns the pixels at the border of a colored region (optionally, returns the interior)
   void defineBoundary(std::vector<cv::Point> region, cv::Scalar region_color, 
 		      std::vector<cv::Point> *boundary, std::vector<cv::Point> *interior = NULL) {

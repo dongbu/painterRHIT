@@ -24,15 +24,6 @@ public:
   cv::Mat grid; 
   std::vector<cv::Point> poly_points; // will automatically allocate member if needed
 
-  // little helper function
-  static cv::Vec3b scalarToVec3b(cv::Scalar s) {
-	  cv::Vec3b vec;
-	  vec[0] = s[0];
-	  vec[1] = s[1];
-	  vec[2] = s[2];
-	  return vec;
-  }
-
   void setCanvasColor(int r, int g, int b) {
     canvas_color = cv::Scalar(b,g,r); // yah, in this order
   }
