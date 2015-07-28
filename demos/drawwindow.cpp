@@ -2,8 +2,7 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-//#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
-#include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
+#include <opencv/highgui.h> 
 
 // Packages simple drawing commands for the simulator display window
 class DrawWindow {
