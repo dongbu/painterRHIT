@@ -2,10 +2,7 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-//#include <highgui.h> // WINDOW_AUTOSIZE (this one works with andrew)
-#include <opencv/highgui.h> // WINDOW_AUTOSIZE (this one works with Gunnar)
-
-//using namespace std;
+#include <opencv/highgui.h> 
 
 // Packages simple drawing commands for the simulator display window
 class DrawWindow {
@@ -25,15 +22,6 @@ protected:
 public:
   cv::Mat grid; 
   std::vector<cv::Point> poly_points; // will automatically allocate member if needed
-
-  // little helper function
-  static cv::Vec3b scalarToVec3b(cv::Scalar s) {
-	  cv::Vec3b vec;
-	  vec[0] = s[0];
-	  vec[1] = s[1];
-	  vec[2] = s[2];
-	  return vec;
-  }
 
   void setCanvasColor(int r, int g, int b) {
     canvas_color = cv::Scalar(b,g,r); // yah, in this order
@@ -67,16 +55,17 @@ public:
     pen_color_vec[1]= g;
     pen_color_vec[2]= r;
   }
-  void setPenColor(cv::Vec3b c) { setPenColor(c[2], c[1], c[0]); }
-  void setPenColor(cv::Scalar c) { setPenColor(c[0], c[1], c[2]); }
+  void setPenColor(cv::Vec3b c) { setPenColor(c[2],c[1],c[0]); }
+  void setPenColor(cv::Scalar c) { setPenColor(c[0],c[1],c[2]); }
 
   void drawLine(cv::Point pt1, cv::Point pt2) {
-    cv::line( grid, pt1, pt2, pen_color, pen_thickness, line_type );
+    cv::line(grid, pt1, pt2, pen_color, pen_thickness, line_type );
   }
 
   void drawLine(int x1, int y1, int x2, int y2) {
     drawLine(cv::Point(x1,y1),cv::Point(x2,y2));
   }
+
   // going to play w/ having window draw lines with brushes
   //void drawLine(Brush *brush, int x1, int y1, int x2, int y2) {
   //  brush->drawLine(this, cv::Point(x1,y1),cv::Point(x2,y2));
@@ -155,16 +144,15 @@ public:
   }
 
   cv::Vec3b getPixel(cv::Point pt) {
-	  return grid.at<cv::Vec3b>(pt);
+    return grid.at<cv::Vec3b>(pt);
   }
 
-  cv::Vec3b getPixel(int x, int y) {
-	  if (x >= 0 && y >= 0 && x<grid.cols && y<grid.rows) {
-		  return getPixel(cv::Point(x, y));
-	  }
-	  else {
-		  return getPixel(cv::Point(0, 0)); // yah silly 
-	  }
+  cv::Vec3b getPixel(int x,int y) { 
+    if (x>=0 && y>=0 && x<grid.cols && y<grid.rows) {
+      return getPixel(cv::Point(x,y)); 
+    } else {
+      return getPixel(cv::Point(0,0)); // yah silly 
+    }
   }
 
   void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference but I've not figured out how to access vector
@@ -174,20 +162,20 @@ public:
   }
 
   // blur the window
-  void blur(int size = 3) {
-	  cv::blur(grid, grid, cv::Size(size, size));
+  void blur(int size=3) {
+    cv::blur( grid, grid, cv::Size(size, size) );
   }
 
   // put random specks all over the window 
-  void speckle(double fraction = 0.1) {
-	  cv::RNG rng;
-	  int n = fraction * grid.cols * grid.rows;
-	  for (int i = 0; i<n; i++) {
-		  setPenColor(0, rng.uniform(0, 255), rng.uniform(0, 255));
-		  drawPixel(rng.uniform(0, width), rng.uniform(0, height));
-	  }
+  void speckle(double fraction=0.1) {
+    cv::RNG rng;
+    int n=fraction * grid.cols * grid.rows;
+    for (int i=0; i<n; i++) {
+      setPenColor(0, rng.uniform(0,255), rng.uniform(0,255) );
+      drawPixel(rng.uniform(0,width),rng.uniform(0,height));
+    }
   }
-    
+ 
  void defineMouseCallback (cv::MouseCallback onMouse) {
    cv::setMouseCallback(window_name, onMouse, NULL);
  }
