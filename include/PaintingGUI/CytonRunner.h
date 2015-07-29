@@ -1,7 +1,9 @@
 #pragma once
+#include "stdafx.h"
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
-#include "stdafx.h"
+#include "workspacewizard.h";
+
 
 namespace Ui {
 	class CytonRunner;
@@ -12,7 +14,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(int width, int height, QWidget *parent = 0);
+	explicit CytonRunner(int width, int height);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);
@@ -30,7 +32,6 @@ public:
 	void stroke(std::vector<cv::Point> pts);
 	void setCanvasSize(double width, double height);
 	void paintShape(Shape *s);
-	void moveDirection(int direction);
 
 	volatile bool connected;
 

@@ -21,11 +21,10 @@ private:
     Ui::WorkspaceWizard *ui;
 	int stage, numOfColors;
 	double s1, s2, s3, s4, s5, s6, s7;
-	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;
 	std::vector<std::pair<int, cv::Point>> paint;
-	std::string brushType;
 	QLabel *paintCountLabel;
+	std::string defaultName;
 	
 	void updateText();
 	void rotateBase(int direction);

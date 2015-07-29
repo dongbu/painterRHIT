@@ -1,5 +1,5 @@
 #include "CytonRunner.h"
-#include "workspacewizard.h";
+
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -10,11 +10,7 @@ using namespace Ec;
 using namespace cv;
 
 
-CytonRunner::CytonRunner(int width, int height, QWidget *parent)
-//:QDialog(parent),
-//ui(new Ui::CytonRunner)
-{
-	//ui = Ui::CytonRunner;
+CytonRunner::CytonRunner(int width, int height){
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
@@ -32,10 +28,7 @@ CytonRunner::CytonRunner(int width, int height, QWidget *parent)
 
 }
 
-CytonRunner::~CytonRunner()
-{
-//	delete ui;
-}
+CytonRunner::~CytonRunner(){}
 
 bool CytonRunner::connect(){
 	if (init()){
@@ -370,8 +363,4 @@ void CytonRunner::createWorkspace(){
 	this->goToJointHome(0);
 	WorkspaceWizard *w = new WorkspaceWizard();
 	w->show();
-}
-
-void CytonRunner::moveDirection(int direction){
-
 }

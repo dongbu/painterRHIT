@@ -8,8 +8,10 @@ WorkspaceWizard::WorkspaceWizard(QWidget *parent) :
     ui(new Ui::WorkspaceWizard)
 {
     ui->setupUi(this);
+	s1 = s2 = s3 = s4 = s5 = s6 = s7 = 0;
 	stage = 0;
 	numOfColors = 0;
+	defaultName = "Workspace";
 	ui->QuestionButton->hide();
 	ui->Directions->setWordWrap(true);
 	connect(ui->BackButton, SIGNAL(clicked()), this, SLOT(backPressed()));
@@ -104,18 +106,21 @@ void WorkspaceWizard::updateText(){
 		ui->Title->setText("Setup Bottom Right Canvas Corner");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the bottom right corner of the canvas\norientation does not matter\npress 'e' when finished");
 		ui->ForwardButton->setDisabled(true);
+		paintCountLabel->setText("");
 		break;
 	case 5:
 		numOfColors = 0;
 		ui->Title->setText("Setup Paint Locations");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to put the robot above the paint location\nheight and orientation do not matter\npress 'e' to continue to next color");
 		ui->ItemLayout->addWidget(paintCountLabel);
+		paintCountLabel->setText("Number of Color Locations: 0");
 		ui->ForwardButton->setText("Next");
 		break;
 	case 6:
 		ui->Title->setText("Finish");
-		ui->Directions->setText("All Done!  press finish to load your brand new workspace!");
+		ui->Directions->setText("All Done!\nPut in a file name/location and press finish to load your brand new workspace!");
 		ui->ForwardButton->setText("Finish");
+		paintCountLabel->setText("");
 		break;
 	case 7:
 		finishWizard();
@@ -223,5 +228,46 @@ void WorkspaceWizard::saveInfo(){
 
 void WorkspaceWizard::finishWizard(){
 	close();
-	printf("TODO: actually save all of the users had work instead of just saying that it is saved.\n");
+	std::string line;
+	line.append("<workspace>");
+	line.append("<starting>");
+	line.append(string_format("<rotation s=\"%d\"/>", s1));
+	line.append(string_format("<rotation s=\"%d\"/>", s2));
+	line.append(string_format("<rotation s=\"%d\"/>", s3));
+	line.append(string_format("<rotation s=\"%d\"/>", s4));
+	line.append(string_format("<rotation s=\"%d\"/>", s5));
+	line.append(string_format("<rotation s=\"%d\"/>", s6));
+	line.append(string_format("<rotation s=\"%d\"/>", s7));
+	line.append("</starting>");
+	line.append("<canvas>");
+	for (size_t i = 0; i < canvasCorners.size(); i++){
+		cv::Point3d p = canvasCorners.at(i);
+		line.append(string_format("<corner x=\"%d\" y=\"%d\" z=\"%d\"/>", p.x, p.y, p.z));
+	}
+	line.append("</canvas>");
+	line.append("<paintPickup>");
+	for (size_t i = 0; i < paint.size(); i++){
+		std::pair<int, cv::Point> p = paint.at(i);
+		line.append(string_format("<point x=\"%d\" y=\"%d\" id=\"%i\"/>", p.second.x, p.second.y, p.first));
+	}
+	line.append("</paintPickup>");
+	line.append("</workspace>");
+
+
+}
+
+// not a beautiful place for this but c'est la vie
+std::string string_format(const std::string fmt, ...) {
+	int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
+	std::string str;
+	va_list ap;
+	while (1) {     // Maximum two passes on a POSIX system...
+		str.resize(size);
+		va_start(ap, fmt);
+		int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
+		va_end(ap);
+		if (n > -1 && n < size) { str.resize(n); return str; }
+		if (n > -1) size = n + 1; else size *= 2;
+	}
+	return str;
 }
