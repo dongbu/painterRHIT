@@ -39,6 +39,7 @@ private:
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
 	std::vector<double> convert(double x, double y, double z);
+	void regulateWorkspaceData();
 
 	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;

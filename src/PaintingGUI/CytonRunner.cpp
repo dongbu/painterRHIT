@@ -83,7 +83,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	this->theta = 0;
 	this->psi = 0;
 
-
+	regulateWorkspaceData();
 }
 
 void CytonRunner::startup(){
@@ -277,9 +277,14 @@ bool CytonRunner::goToJointHome(int type){
 //CHECK LATER
 std::vector<double> CytonRunner::convert(double x, double y, double z){
 	std::vector<double> toReturn;
-	toReturn.push_back(canvasCorners.at(0).x + x);
-	toReturn.push_back(canvasCorners.at(0).y + y);
-	toReturn.push_back(canvasCorners.at(0).z + z + 0.04);
+	double minX, minY, minZ;
+	minX = std::min(std::min(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	minY = std::min(std::min(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	minZ = std::min(std::min(canvasCorners.at(0).z, canvasCorners.at(1).z), canvasCorners.at(2).z);
+
+	toReturn.push_back(minX + x);
+	toReturn.push_back(minY + y);
+	toReturn.push_back(minZ + z + 0.04);
 
 	return toReturn;
 
@@ -287,6 +292,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	//double xNew = x*cos(theta) + z*sin(theta) + y*sin(psi) + x*sin(psi) + x1 + dx;
 	//double yNew = y*cos(phi) + z*sin(phi) + y*sin(psi) - x*sin(psi) + y1 + dy;
 	//double zNew = -y*sin(phi) + (z / 2.0)*(cos(phi) + cos(theta)) - x*sin(theta) + z1 + dz;
+
 }
 
 void CytonRunner::setSimulationSize(int width, int height){
@@ -333,4 +339,14 @@ void CytonRunner::createWorkspace(){
 	this->goToJointHome(0);
 	WorkspaceWizard *w = new WorkspaceWizard(this);
 	w->show();
+}
+
+void CytonRunner::regulateWorkspaceData() {
+	double minX, maxX, minY, maxY;
+
+	minX = std::min(std::min(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	minY = std::min(std::min(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	maxX = std::max(std::max(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	maxY = std::max(std::max(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	this->setCanvasSize(maxX - minX, maxY - minY);
 }
