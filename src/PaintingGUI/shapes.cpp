@@ -213,7 +213,7 @@ public:
 
 	// returns a polyline representation of a PolyPoints (note: just returns the perimeter)
 	virtual PolyLine* toPolyline() { // note: only perimeter
-		PolyLine* PL;
+		PolyLine* PL = new PolyLine();
 		for (int i = 0; i < (int)points.size() - 1; i++) { PL->addPoint(points[i]); }
 		PL->addPoint(points[0]);
 		return PL;
@@ -249,7 +249,7 @@ public:
 		grid.setTo(cv::Scalar(255, 255, 255));
 		fillPoly(grid, ppt, npt, 1, cv::Scalar(0, 0, 0), 8);
 
-		PixelRegion* PR;
+		PixelRegion* PR = new PixelRegion();
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
 				if (grid.at<cv::Vec3b>(i, j)[0] == 0) { // i,j is in the region
@@ -304,7 +304,7 @@ public:
 
 	// returns a polyline representation of a rectangle
 	PolyLine* toPolyline() { // note: only perimeter
-		PolyLine* PL;
+		PolyLine* PL = new PolyLine();
 		PL->addPoint(pt1);
 		PL->addPoint(pt2.x, pt1.y);
 		PL->addPoint(pt2);
@@ -315,9 +315,9 @@ public:
 
 	// returns a pixelregion representation of a rectangle
 	virtual PixelRegion* toPixelRegion() {
-		PixelRegion* PR;
-		for (int i = pt1.x; i <= pt2.x; i++) {
-			for (int j = pt1.y; j <= pt2.y; j++) {
+		PixelRegion* PR = new PixelRegion();
+		for (int i = std::min(pt1.x,pt2.x); i <= std::max(pt1.x,pt2.x); i++) {
+			for (int j = std::min(pt1.y,pt2.y); j <= std::max(pt2.y,pt1.y); j++) {
 				if (fill == 1 || (i == pt1.x || i == pt2.x || j == pt1.y || j == pt2.y)) {
 					PR->addPoint(i, j);
 				}
@@ -365,7 +365,7 @@ public:
 
 	// returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
 	virtual PolyLine* toPolyline() { // note: only perimeter
-		PolyLine *PL;
+		PolyLine *PL = new PolyLine();
 		double radius = (axes.width + axes.height) / 4. + .4; // .25 to help anti-aliasing
 		//printf("xy=%i,%i r=%f\n",pt.x,pt.y,radius);
 		int n = radius * 2;
@@ -383,7 +383,7 @@ public:
 
 	// returns a pixelregion representation of a circle  [don't worry about doing a real ellipse for now]
 	virtual PixelRegion* toPixelRegion() {
-		PixelRegion* PR;
+		PixelRegion* PR = new PixelRegion();
 		double radius = (axes.width + axes.height) / 4. + .4; // .4 to help anti-aliasing
 
 		for (int dx = 0; dx <= radius; dx++) {

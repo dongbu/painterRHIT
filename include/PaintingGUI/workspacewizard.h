@@ -31,6 +31,8 @@ private:
 	void moveDirection(int direction);
 	void saveInfo();
 	void finishWizard();
+	std::string string_format(const std::string fmt, ...);
+
 
 protected:
   virtual void  keyPressEvent(QKeyEvent *event);

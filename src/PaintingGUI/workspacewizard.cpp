@@ -257,7 +257,7 @@ void WorkspaceWizard::finishWizard(){
 }
 
 // not a beautiful place for this but c'est la vie
-std::string string_format(const std::string fmt, ...) {
+std::string WorkspaceWizard::string_format(const std::string fmt, ...) {
 	int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
 	std::string str;
 	va_list ap;
