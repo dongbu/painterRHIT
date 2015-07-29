@@ -49,8 +49,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	startJointPosition.clear();
 	canvasCorners.clear();
 	paint.clear();
-	dx = dy = dz = 0;
-	brushType = "";
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file((fileLocation).c_str());
@@ -58,7 +56,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	pugi::xml_node start = doc.child("workspace").child("starting");
 	pugi::xml_node canvas = doc.child("workspace").child("canvas");
 	pugi::xml_node paintPickup = doc.child("workspace").child("paintPickup");
-	pugi::xml_node brush = doc.child("workspace").child("brush");
 
 	for (pugi::xml_node temp = start.first_child(); temp; temp = temp.next_sibling()){
 		double rot = temp.attribute("s").as_double();
@@ -82,12 +79,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		paint.push_back(paintPickup);
 	}
 
-	dx = brush.attribute("dx").as_double();
-	dy = brush.attribute("dy").as_double();
-	dz = brush.attribute("dz").as_double();
-
-	brushType = brush.next_sibling().attribute("type").as_string();
-
 	//figure out roll, pitch, and yaw.  Not used as of yet.
 	this->phi = 0;
 	this->theta = 0;
@@ -110,7 +101,6 @@ bool CytonRunner::shutdown(){
 			startJointPosition.clear();
 			canvasCorners.clear();
 			paint.clear();
-			dx = dy = dz = 0;
 			currentX = currentY = 0;
 			brushType = "";
 			Ec::shutdown();
@@ -282,8 +272,6 @@ bool CytonRunner::goToJointHome(int type){
 	return positionAchieved;
 }
 
-
-
 //returns vector containing x, y, and z appropriate for the canvas's location.
 //after recieving x, y, and z relative to top left corner of canvas.
 //CHECK LATER
@@ -298,9 +286,9 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	//double yNew = y*cos(phi) + z*sin(phi) + y*sin(psi) - x*sin(psi) + y1 + dy;
 	//double zNew = -y*sin(phi) + (z / 2.0)*(cos(phi) + cos(theta)) - x*sin(theta) + z1 + dz;
 
-	double xNew = x + x1 + dx;
-	double yNew = y + y1 + dy;
-	double zNew = z + z1 + dz;
+	double xNew = x + x1;
+	double yNew = y + y1;
+	double zNew = z + z1;
 
 	std::vector<double> temp;
 	temp.push_back(xNew);
@@ -324,28 +312,34 @@ void CytonRunner::setCanvasSize(double width, double height){
 
 void CytonRunner::paintShape(Shape *s){
 	int border = 30;
-	printf("about to draw %s\n", s->type.c_str());
-	printf("press enter to continue\n");
+
+	printf("press key to continue\n");
 	std::cin.ignore();
 	if (s->fill){
-		printf("filled\n");
 		PixelRegion *p = s->toPixelRegion();
+		std::vector<cv::Point> pts = p->getPoints();
+		printf("width, height, border: (%i,%i,%i)\n", width, height, border);
+
 		RegionToPaths RTP = RegionToPaths(width, height, border);
 		RTP.clear();
-		
-		for (size_t i = 0; i < p->getPoints().size(); i++){
-			cv::Point currentPoint = p->getPoints().at(i);
-			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
+
+		for (size_t i = 0; i < pts.size(); i++){
+			RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y);
 		}
-		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
+
+		Brush brush = Brush(30, 20, this->brushType);
 		brush.setColor(s->getPenColor());
-		
+
 		RTP.defineBrush(&brush);
+
+		printf("defining brush strokes\n");
 		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+		printf("pathVec.size(): %i\n", pathVec.size());
 
 		for (size_t i = 0; i < pathVec.size(); i++){
 			this->stroke(pathVec.at(i));
-		}		
+		}
+
 	}
 	else if (!s->fill){
 		printf("not filled\n");
