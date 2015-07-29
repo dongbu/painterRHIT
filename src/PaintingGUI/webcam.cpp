@@ -262,6 +262,7 @@ public:
 		webcam_corner = 0;
 		cam0 = new cv::VideoCapture(0); // open the default camera
 		cam1 = new cv::VideoCapture(1); // open cam 1
+		if (!cam0->isOpened()) return;
 		resetMapping();
 	}
 
