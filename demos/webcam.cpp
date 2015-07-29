@@ -138,9 +138,9 @@ public:
   }
 
   // sets frame to a mapping of the webcam 
-  void getMappedFrame(cv::Mat *mapped_frame) {
+  void getMappedFrame(cv::Mat *mapped_frame, int loops = 0, int blackwhite = 0) {
     cv::Mat webcam;
-    getFrame(&webcam); // get a new frame from camera
+    getFrame(&webcam, loops, blackwhite); // get a new frame from camera
 
     // zoom into the webcam to where ever the desired region
     cv::Mat zoom_lambda( 2, 4, CV_32FC1 );
@@ -176,11 +176,16 @@ public:
     flip_webcam = flip; 
   }
 
-  int getFrame(cv::Mat *frame, int loops=0) {
+  int getFrame(cv::Mat *frame, int loops=0, int blackwhite=0) {
     if (cam_id==0) {
       if(cam0.isOpened()) {  // check if we succeeded
 	cam0 >> *frame;
 	if (flip_webcam) { flip(*frame,*frame,-1); } // horizontal and vertically
+	if (blackwhite) {
+	  cv::Mat temp_webcam;
+	  cvtColor( *frame, temp_webcam, 7); // CV_BGR2GRAY=7 );
+	  *frame=temp_webcam.clone();
+	}
 
 	if (loops>0) {
 	  cv::Mat temp_webcam;

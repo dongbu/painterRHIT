@@ -27,7 +27,7 @@ int main(void)
 {
   // mostly to just have something to cycle waitKey (w/o a window, waitKey doesn't work?)
   DrawWindow INTRO = DrawWindow(400,80,"Webcam Tool Instructions"); 
-  INTRO.drawText(10,10,"m=snap a webcam frame for desired painting");
+  INTRO.drawText(10,10,"s=snap a webcam frame for desired painting");
   INTRO.drawText(10,20,"m=start judging");
   INTRO.drawText(10,30,"c=calibrate webcam(1-4,arrows,s=save,esc=done)");
   INTRO.show(); 

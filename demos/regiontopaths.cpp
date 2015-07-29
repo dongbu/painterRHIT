@@ -338,8 +338,8 @@ public:
       for (int j=0; j<height; j++) {
 	//if (grid[i*height+j] == 1) { W->setPenColor(100,100,100); } // grey
 	if (grid[i*height+j] == 1) { W->setPenColor(0,0,0); } // black
-	if (grid[i*height+j] == 2) { W->setPenColor(150,150,250); } // blue
-	if (grid[i*height+j] == 3) { W->setPenColor(250,150,150); } // red
+	if (grid[i*height+j] == 2) { W->setPenColor(50,250,150); } // blue/green
+	if (grid[i*height+j] == 3) { W->setPenColor(250,50,50); } // red
 	W->drawPixel(i+offsetx,j+offsety);
       }
     }
@@ -381,7 +381,7 @@ public:
     drawBoundaries(W,offsetx,offsety);
   }
 
-  // mostly for debugging... shows the brush strokes in a DrawWindow
+  // draws the brush along each brush stroke line
   void drawBrushStrokes(DrawWindow *W, int offsetx=0, int offsety=0) { 
     offsety=border;
     offsetx=border;
@@ -392,7 +392,7 @@ public:
 	brush->draw(W, strokes[i][j].x+offsetx, strokes[i][j].y+offsety);
       }
     }
-    drawBoundaries(W,offsetx,offsety);
+    //drawBoundaries(W,offsetx,offsety); 
   }
 
   // define one path inside the border of pixels for a region
@@ -532,8 +532,6 @@ public:
   // calculates a vector of candidate brush location points
   void defineBrushStrokes() {
     cv::Point brush_center = brush->getCenter(); 
-
-    printf("BBB:%i %i\n",brush_center.x,brush_center.y);
 
     // make a grid with 1=brush location, 0=otherwise
     int *cgrid = new int [width*height];
@@ -681,5 +679,10 @@ public:
     Tools = PixelTools();
     clear();
   }
+
+  ~RegionToPaths() {
+    delete grid; // don't know if this is needed to reduce memory leak
+  }
+
 };
  
