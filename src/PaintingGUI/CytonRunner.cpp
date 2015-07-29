@@ -202,6 +202,7 @@ void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 
 void CytonRunner::stroke(std::vector<cv::Point> pts){
 	raiseBrush();
+	printf("xScale: %f, yScale: %f", xScale, yScale);
 	goToPos(pts.at(0).x, pts.at(0).y, raiseHeight);
 	lowerBrush();
 	for (size_t i = 0; i < pts.size(); i++){
@@ -284,7 +285,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 
 	toReturn.push_back(minX + x);
 	toReturn.push_back(minY + y);
-	toReturn.push_back(minZ + z + 0.04);
+	toReturn.push_back(minZ + z);
 
 	return toReturn;
 
@@ -303,8 +304,8 @@ void CytonRunner::setSimulationSize(int width, int height){
 void CytonRunner::setCanvasSize(double width, double height){
 	this->cWidth = width;
 	this->cHeight = height;
-	xScale = cWidth / width;
-	yScale = cHeight / height;
+	xScale = cWidth / this->width;
+	yScale = cHeight / this->height;
 }
 
 void CytonRunner::paintShape(Shape *s){
