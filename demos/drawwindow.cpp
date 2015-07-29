@@ -212,8 +212,15 @@ public:
     if (!window_created) { popWindow(); }
     cv::imshow(window_name, grid); 
   }
+  
+  // overrides grid with mat
+  void setMat(cv::Mat mat) {
+    width=mat.cols;
+    height=mat.rows;
+    grid = mat;
+  }
 
-  DrawWindow(int w, int h, std::string name, int hide_window=0) { // constructor
+  DrawWindow(int w, int h, std::string name, int hide_window=0, int blackwhite=0) { // constructor
     width=w;
     height=h;
     window_name = name;
@@ -222,7 +229,11 @@ public:
     winx=0;
     winy=0;
 
-    grid = cv::Mat( height, width, CV_8UC3 ); // 3 channel color
+    if (blackwhite==1) { //
+      grid = cv::Mat( height, width, CV_BGR2GRAY ); // black/white
+    } else {
+      grid = cv::Mat( height, width, CV_8UC3 ); // 3 channel color
+    }
     setLineType("solid");
     setLineThickness(2);
     setPenColor(0,0,0);
