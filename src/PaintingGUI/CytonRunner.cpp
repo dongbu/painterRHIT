@@ -1,6 +1,5 @@
 #include "CytonRunner.h"
 
-
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
 #define POINT_EE_SET 0
@@ -25,7 +24,6 @@ CytonRunner::CytonRunner(int width, int height){
 	cHeight = 0.3; //meters
 	xScale = cWidth / width;
 	yScale = cHeight / height;
-
 }
 
 CytonRunner::~CytonRunner(){}
@@ -114,6 +112,7 @@ void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
 
 	std::vector<double> vec = convert(x*xScale, y*yScale, z);
+
 	pose.setTranslationX(vec.at(0));
 	pose.setTranslationY(vec.at(1));
 	pose.setTranslationZ(vec.at(2));
@@ -276,26 +275,17 @@ bool CytonRunner::goToJointHome(int type){
 //after recieving x, y, and z relative to top left corner of canvas.
 //CHECK LATER
 std::vector<double> CytonRunner::convert(double x, double y, double z){
-	double x1 = canvasCorners.at(0).x;
-	double y1 = canvasCorners.at(0).y;
-	double z1 = canvasCorners.at(0).z;
+	std::vector<double> toReturn;
+	toReturn.push_back(canvasCorners.at(0).x + x);
+	toReturn.push_back(canvasCorners.at(0).y + y);
+	toReturn.push_back(canvasCorners.at(0).z + z + 0.04);
 
+	return toReturn;
 
 	//need to figure out plane transformations
 	//double xNew = x*cos(theta) + z*sin(theta) + y*sin(psi) + x*sin(psi) + x1 + dx;
 	//double yNew = y*cos(phi) + z*sin(phi) + y*sin(psi) - x*sin(psi) + y1 + dy;
 	//double zNew = -y*sin(phi) + (z / 2.0)*(cos(phi) + cos(theta)) - x*sin(theta) + z1 + dz;
-
-	double xNew = x + x1;
-	double yNew = y + y1;
-	double zNew = z + z1;
-
-	std::vector<double> temp;
-	temp.push_back(xNew);
-	temp.push_back(yNew);
-	temp.push_back(zNew);
-
-	return temp;
 }
 
 void CytonRunner::setSimulationSize(int width, int height){
@@ -315,39 +305,24 @@ void CytonRunner::paintShape(Shape *s){
 
 	printf("press key to continue\n");
 	std::cin.ignore();
-	if (s->fill){
+	if (s->fill){ //painting a filled object
+		RegionToPaths RTP = RegionToPaths(width, height, border);
+
 		PixelRegion *p = s->toPixelRegion();
 		std::vector<cv::Point> pts = p->getPoints();
-		printf("width, height, border: (%i,%i,%i)\n", width, height, border);
 
-		RegionToPaths RTP = RegionToPaths(width, height, border);
-		RTP.clear();
+		for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
-		for (size_t i = 0; i < pts.size(); i++){
-			RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y);
-		}
-
-		Brush brush = Brush(30, 20, this->brushType);
-		brush.setColor(s->getPenColor());
-
+		Brush brush = Brush(30, 20, "ellipse");
+		brush.setColor(20, 20, 40);
 		RTP.defineBrush(&brush);
+		RTP.definePaths();
 
-		printf("defining brush strokes\n");
 		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
-		printf("pathVec.size(): %i\n", pathVec.size());
-
-		for (size_t i = 0; i < pathVec.size(); i++){
-			this->stroke(pathVec.at(i));
-		}
-
-	}
-	else if (!s->fill){
-		printf("not filled\n");
+		for (size_t i = 0; i < pathVec.size(); i++){ this->stroke(pathVec.at(i)); }
+	} else { //painting a PolyLine object
 		PolyLine *p = s->toPolyline();
 		this->stroke(p->getPoints());
-	}
-	else{
-		printf("fill is %i\n",s->fill);
 	}
 
 	emit finishedShape();

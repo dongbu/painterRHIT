@@ -1,5 +1,6 @@
 #include "regiontopaths.cpp"
 #include <ctime> // for random number generator
+#include "shapes.cpp"
 
 // demo to create paths for a brush in a region
 
@@ -46,10 +47,6 @@ int main(int argc, char** argv) {
 	int h = 300;
 	int border = 30; // extend paintable region outside the canvas so can draw over the edges
 
-	//if (argv[1]) { w = atoi(argv[1]); }
-	//if (argv[2]) { h = atoi(argv[2]); }
-	//if (argv[3]) { int seed = atoi(argv[3]); rng(seed); }
-
 	DrawWindow W = DrawWindow(w + 2 * border, h + 2 * border, "Region"); // w,h
 	W.moveWindow(0, 50);
 
@@ -60,9 +57,38 @@ int main(int argc, char** argv) {
 
 	int done = 0;
 	while (!done) {
+		//GUNNAR'S WORK HERE
+		RTP.clear();
+		Rectangle *r = new MyRectangle(100, 100, 200, 200, 1);
+		PixelRegion *p = r->toPixelRegion();
+		std::vector<cv::Point> pts = p->getPoints();
+		RegionToPaths RTP = RegionToPaths(600, 600, 30);
+		Brush brush = Brush(30, 20);
 
 		RTP.clear();
-		defineDemoRegion(&RTP, w, h);
+
+		for (int i = 0; i < pts.size(); i++){
+			RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y);
+		}
+
+		brush.setColor(s->getPenColor());
+		RTP.defineBrush(&brush);
+
+		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+
+		printf(“pathVec.size() : %i\f”, pathVec), pathVec.size());
+
+
+
+
+
+
+
+
+
+
+		//GUNNAR'S WORK HERE
+		//defineDemoRegion(&RTP, w, h);
 
 		W.clearWindow(230, 230, 230); // default background is white
 		W.setPenColor(0, 0, 0);
@@ -77,7 +103,6 @@ int main(int argc, char** argv) {
 		BP.drawRectangle(border - 4, border - 4, border + w + 4, border + h + 4, 0); // draw outline of canvas
 		BP.show();
 
-		//Brush brush = Brush(30,20,"rectangle");
 		Brush brush = Brush(30, 20, "ellipse");
 		brush.setColor(20, 20, 40);
 		RTP.defineBrush(&brush);
@@ -114,52 +139,53 @@ int main(int argc, char** argv) {
 		}
 		BP.show();
 
-		DrawWindow P = DrawWindow(w + 2 * border, h + 2 * border, "Brush Painting"); // w,h
-		P.moveWindow(w + 2 * border, 50);
-		P.clearWindow(230, 230, 230); // default background is white
-		P.speckle(0.04);
-		P.blur(5);
-		P.setPenColor(0, 0, 0);
-		P.setLineThickness(1);
-		P.drawRectangle(border - 4, border - 4, border + w + 4, border + h + 4, 0); // draw outline of canvas
-		P.show();
 
-		brush.setColor(0, 0, 250);
-		brush.setDrawOffset(border, border);
-		brush.setDrawMode("paint");
+	//	DrawWindow P = DrawWindow(w + 2 * border, h + 2 * border, "Brush Painting"); // w,h
+	//	P.moveWindow(w + 2 * border, 50);
+	//	P.clearWindow(230, 230, 230); // default background is white
+	//	P.speckle(0.04);
+	//	P.blur(5);
+	//	P.setPenColor(0, 0, 0);
+	//	P.setLineThickness(1);
+	//	P.drawRectangle(border - 4, border - 4, border + w + 4, border + h + 4, 0); // draw outline of canvas
+	//	P.show();
 
-		PixelTools Tool;
-		for (int i = 0; i < (int)brush_strokes.size(); i++) {
-			std::vector<cv::Point> stroke = brush_strokes[i];
-			printf("Painting stroke %i\n", i);
-			int done = 0;
-			int loop = 0;
-			while (!done) {
-				loop++;
-				brush.loadPaintPixel(50);
-				brush.drawContiguousPoints(&P, &stroke);
+	//	brush.setColor(0, 0, 250);
+	//	brush.setDrawOffset(border, border);
+	//	brush.setDrawMode("paint");
 
-				// draw a yellow rectangle at the beginning of the stroke
-				cv::Point pt = stroke[0];
-				P.setPenColor(255, 255, 0);
-				P.drawRectangle(pt.x - 1 + border, pt.y - 1 + border, pt.x + 1 + border, pt.y + 1 + border, 1);
+	//	PixelTools Tool;
+	//	for (int i = 0; i < (int)brush_strokes.size(); i++) {
+	//		std::vector<cv::Point> stroke = brush_strokes[i];
+	//		printf("Painting stroke %i\n", i);
+	//		int done = 0;
+	//		int loop = 0;
+	//		while (!done) {
+	//			loop++;
+	//			brush.loadPaintPixel(50);
+	//			brush.drawContiguousPoints(&P, &stroke);
 
-				std::vector<cv::Point> errors;
-				double score = brush.scorePaintPoints(&P, &stroke, &errors, .1, .1);
-				printf(" Loop %i - %i points, paint score: %.2f\n", loop, (int)stroke.size(), 100 * score);
-				if (score < 0.99) { stroke = errors; }
-				if (score > 0.99 || loop>12) { done = 1; }
-				P.show();
-				int wait = 1;
-				while (wait) {
-					int k = cv::waitKey(33);
-					if (k > 0) { wait = 0; }
-				}
-			}
-		}
-		brush.setDrawOffset(0, 0);
-		P.show();
-		printf("Done painting\n");
+	//			// draw a yellow rectangle at the beginning of the stroke
+	//			cv::Point pt = stroke[0];
+	//			P.setPenColor(255, 255, 0);
+	//			P.drawRectangle(pt.x - 1 + border, pt.y - 1 + border, pt.x + 1 + border, pt.y + 1 + border, 1);
+
+	//			std::vector<cv::Point> errors;
+	//			double score = brush.scorePaintPoints(&P, &stroke, &errors, .1, .1);
+	//			printf(" Loop %i - %i points, paint score: %.2f\n", loop, (int)stroke.size(), 100 * score);
+	//			if (score < 0.99) { stroke = errors; }
+	//			if (score > 0.99 || loop>12) { done = 1; }
+	//			P.show();
+	//			int wait = 1;
+	//			while (wait) {
+	//				int k = cv::waitKey(33);
+	//				if (k > 0) { wait = 0; }
+	//			}
+	//		}
+	//	}
+	//	brush.setDrawOffset(0, 0);
+	//	P.show();
+	//	printf("Done painting\n");
 
 		int wait = 1;
 		while (wait) {
