@@ -1,35 +1,7 @@
 #pragma once
-#include "ui_CytonRunner.h"
+#include "stdafx.h"
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
-#include <QObject>
-#include <QMainWindow>
-#include <qwidget.h>
-
-
-#include <control/ecEndEffectorSet.h>
-#include <controlCore/ecFrameEndEffector.h>
-#include <control/ecManipEndEffectorPlace.h>
-#include <foundCommon/ecCoordSysXForm.h>
-#include <foundCore/ecApplication.h>
-#include <foundCore/ecConstants.h>
-#include <foundCore/ecMacros.h>
-#include <foundCore/ecTypes.h>
-#include <manipulation/ecManipulationActionManager.h>
-#include <manipulationDirector/ecManipulationScript.h>
-#include <remoteCommand/ecRemoteCommand.h>
-
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv/highgui.h>
-
-#include <math.h>
-#include <qobject.h>
-#include <iostream>
-#include "pugixml.hpp"
-#include <qdialog.h>
-
-#include <opencv2/opencv.hpp>
 
 
 namespace Ui {
@@ -41,7 +13,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(int width, int height, QWidget *parent = 0);
+	explicit CytonRunner(int width, int height);
 	~CytonRunner();
 	bool connect();
 	void loadWorkspace(std::string fileLocation);
@@ -59,7 +31,6 @@ public:
 	void stroke(std::vector<cv::Point> pts);
 	void setCanvasSize(double width, double height);
 	void paintShape(Shape *s);
-	void moveDirection(int direction);
 
 	volatile bool connected;
 
@@ -67,10 +38,12 @@ private:
 	Ui::CytonRunner *ui;
 	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
+	std::vector<double> convert(double x, double y, double z);
+	void regulateWorkspaceData();
+
+	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;
 	std::vector<std::pair<int, cv::Point>> paint;
-	std::vector<double> convert(double x, double y, double z);
-	double dx, dy, dz;
 	std::string brushType;
 	double theta, phi, psi;
 	double currentX, currentY;

@@ -1,13 +1,10 @@
 #ifndef PAINTER_H
 #define PAINTER_H
+#include "stdafx.h"
 
 #include "CommandWindow.h"
 #include "SketchPad.h"
 #include "RunLogic.h"
-
-#include <stdio.h>
-#include <iostream>
-#include <qobject.h>
 
 class Painter : public QObject
 

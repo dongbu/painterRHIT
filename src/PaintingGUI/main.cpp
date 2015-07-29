@@ -1,8 +1,7 @@
 //#include <QApplication>
-#include <iostream>
+#include <windows.h>
 #include "Painter.h"
 #include "Shapes.cpp"
-#include <windows.h>
 #include "DrawWindow.cpp"
 
 int main(int argc, char *argv[])
@@ -11,7 +10,7 @@ int main(int argc, char *argv[])
 
     AllocConsole();
 
-    SetConsoleTitleA("Robot Artist V2.0.0 (7/22/15)");
+    SetConsoleTitleA("Robot Artist v2 (7/29/15)");
     freopen("conin$", "r", stdin);
     freopen("conout$", "w", stdout);
     freopen("conout$", "w", stderr);

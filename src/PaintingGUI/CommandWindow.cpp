@@ -1,6 +1,4 @@
-
 #include "CommandWindow.h"
-#include <qdesktopwidget.h>
 
 ///Public methods below here
 /**

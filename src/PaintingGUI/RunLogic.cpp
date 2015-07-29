@@ -14,8 +14,8 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
     this->shapes = shapes;
 	this->Ava = Ava;
     this->simWin = new DrawWindow(width, height, "simulation window");
-    this->simWin->hideWindow();
     stopClicked();
+	simWin->hideWindow();
 	connect(Ava, SIGNAL(finishedShape()), this, SLOT(runClicked()));
 }
 
@@ -30,10 +30,10 @@ void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
 void RunLogic::stopClicked() {
     running = false;
     simWin->clearWindow(255, 255, 255); //white
+	simWin->show();
     currentShapeIndex = 0;
     stopIndex = shapes->length();
     emit clearRunColors();
-
 }
 /**
  * @brief pauses simulation.
@@ -54,10 +54,14 @@ void RunLogic::forwardClicked() {
  */
 void RunLogic::backwardClicked() {
     this->simWin->showWindow();
+	running = false;
     emit setRunColor(currentShapeIndex, false);
 	simWin->clearWindow(255, 255, 255); //white
-    if (currentShapeIndex <= 0) return;
-    running = false;
+	if (currentShapeIndex <= 0) {
+		simWin->show();
+		return;
+	}
+
 	int temp = currentShapeIndex;
 	for (int i = 0; i < temp; i++) {
 		runOnly(i);

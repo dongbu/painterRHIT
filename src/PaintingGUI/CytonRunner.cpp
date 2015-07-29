@@ -1,8 +1,5 @@
 #include "CytonRunner.h"
-#include <qmessagebox>
-#include <qpushbutton.h>
-#include <qobject.h>
-#include <QKeyEvent>
+#include "workspacewizard.h"
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -13,11 +10,7 @@ using namespace Ec;
 using namespace cv;
 
 
-CytonRunner::CytonRunner(int width, int height, QWidget *parent)
-//:QDialog(parent),
-//ui(new Ui::CytonRunner)
-{
-	//ui = Ui::CytonRunner;
+CytonRunner::CytonRunner(int width, int height){
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.1;
@@ -32,13 +25,9 @@ CytonRunner::CytonRunner(int width, int height, QWidget *parent)
 	cHeight = 0.3; //meters
 	xScale = cWidth / width;
 	yScale = cHeight / height;
-
 }
 
-CytonRunner::~CytonRunner()
-{
-//	delete ui;
-}
+CytonRunner::~CytonRunner(){}
 
 bool CytonRunner::connect(){
 	if (init()){
@@ -59,8 +48,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	startJointPosition.clear();
 	canvasCorners.clear();
 	paint.clear();
-	dx = dy = dz = 0;
-	brushType = "";
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file((fileLocation).c_str());
@@ -68,7 +55,6 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	pugi::xml_node start = doc.child("workspace").child("starting");
 	pugi::xml_node canvas = doc.child("workspace").child("canvas");
 	pugi::xml_node paintPickup = doc.child("workspace").child("paintPickup");
-	pugi::xml_node brush = doc.child("workspace").child("brush");
 
 	for (pugi::xml_node temp = start.first_child(); temp; temp = temp.next_sibling()){
 		double rot = temp.attribute("s").as_double();
@@ -92,18 +78,12 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 		paint.push_back(paintPickup);
 	}
 
-	dx = brush.attribute("dx").as_double();
-	dy = brush.attribute("dy").as_double();
-	dz = brush.attribute("dz").as_double();
-
-	brushType = brush.next_sibling().attribute("type").as_string();
-
 	//figure out roll, pitch, and yaw.  Not used as of yet.
 	this->phi = 0;
 	this->theta = 0;
 	this->psi = 0;
 
-
+	regulateWorkspaceData();
 }
 
 void CytonRunner::startup(){
@@ -120,7 +100,6 @@ bool CytonRunner::shutdown(){
 			startJointPosition.clear();
 			canvasCorners.clear();
 			paint.clear();
-			dx = dy = dz = 0;
 			currentX = currentY = 0;
 			brushType = "";
 			Ec::shutdown();
@@ -134,6 +113,7 @@ void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
 
 	std::vector<double> vec = convert(x*xScale, y*yScale, z);
+
 	pose.setTranslationX(vec.at(0));
 	pose.setTranslationY(vec.at(1));
 	pose.setTranslationZ(vec.at(2));
@@ -212,12 +192,12 @@ void CytonRunner::drawPoint(cv::Point pt){
 	lowerBrush();
 	raiseBrush();
 }
+
 void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 	raiseBrush();
 	goToPos(pt1.x, pt1.y, raiseHeight);
 	lowerBrush();
 	goToPos(pt2.x, pt2.y, 0);
-
 }
 
 void CytonRunner::stroke(std::vector<cv::Point> pts){
@@ -292,32 +272,27 @@ bool CytonRunner::goToJointHome(int type){
 	return positionAchieved;
 }
 
-
-
 //returns vector containing x, y, and z appropriate for the canvas's location.
 //after recieving x, y, and z relative to top left corner of canvas.
 //CHECK LATER
 std::vector<double> CytonRunner::convert(double x, double y, double z){
-	double x1 = canvasCorners.at(0).x;
-	double y1 = canvasCorners.at(0).y;
-	double z1 = canvasCorners.at(0).z;
+	std::vector<double> toReturn;
+	double minX, minY, minZ;
+	minX = std::min(std::min(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	minY = std::min(std::min(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	minZ = std::min(std::min(canvasCorners.at(0).z, canvasCorners.at(1).z), canvasCorners.at(2).z);
 
+	toReturn.push_back(minX + x);
+	toReturn.push_back(minY + y);
+	toReturn.push_back(minZ + z + 0.04);
+
+	return toReturn;
 
 	//need to figure out plane transformations
 	//double xNew = x*cos(theta) + z*sin(theta) + y*sin(psi) + x*sin(psi) + x1 + dx;
 	//double yNew = y*cos(phi) + z*sin(phi) + y*sin(psi) - x*sin(psi) + y1 + dy;
 	//double zNew = -y*sin(phi) + (z / 2.0)*(cos(phi) + cos(theta)) - x*sin(theta) + z1 + dz;
 
-	double xNew = x + x1 + dx;
-	double yNew = y + y1 + dy;
-	double zNew = z + z1 + dz;
-
-	std::vector<double> temp;
-	temp.push_back(xNew);
-	temp.push_back(yNew);
-	temp.push_back(zNew);
-
-	return temp;
 }
 
 void CytonRunner::setSimulationSize(int width, int height){
@@ -334,67 +309,44 @@ void CytonRunner::setCanvasSize(double width, double height){
 
 void CytonRunner::paintShape(Shape *s){
 	int border = 30;
-	printf("about to draw %s\n", s->type.c_str());
+
 	printf("press enter to continue\n");
 	std::cin.ignore();
-	if (s->fill){
-		printf("filled\n");
-		PixelRegion *p = s->toPixelRegion();
+	if (s->fill){ //painting a filled object
 		RegionToPaths RTP = RegionToPaths(width, height, border);
-		RTP.clear();
-		
-		for (int i = 0; i < p->getPoints().size(); i++){
-			cv::Point currentPoint = p->getPoints().at(i);
-			RTP.addDesiredPixel(currentPoint.x, currentPoint.y);
-		}
-		Brush brush = Brush(this->dx * 2, this->dy * 2, this->brushType);
-		brush.setColor(s->getPenColor());
-		
-		RTP.defineBrush(&brush);
-		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 
-		for (int i = 0; i < pathVec.size(); i++){
-			this->stroke(pathVec.at(i));
-		}		
-	}
-	else if (!s->fill){
-		printf("not filled\n");
+		PixelRegion *p = s->toPixelRegion();
+		std::vector<cv::Point> pts = p->getPoints();
+
+		for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
+
+		Brush brush = Brush(30, 20, "ellipse");
+		brush.setColor(20, 20, 40);
+		RTP.defineBrush(&brush);
+		RTP.definePaths();
+
+		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+		for (size_t i = 0; i < pathVec.size(); i++){ this->stroke(pathVec.at(i)); }
+	} else { //painting a PolyLine object
 		PolyLine *p = s->toPolyline();
 		this->stroke(p->getPoints());
-	}
-	else{
-		printf("fill is %i\n",s->fill);
 	}
 
 	emit finishedShape();
 }
 
 void CytonRunner::createWorkspace(){
-	//QWidget *widget = new QWidget();
-	printf("setup home position\n");
-	//ConfigWindow w;
-	
-	//w.setText("Configure Workspace");
-	//w.setInformativeText("use arrowkeys and u/d to position the robot into it's new home position\n press continue to accept");
-	//if (w.exec()){
-	//	printf("hi\n");
-	//}
-
+	this->goToJointHome(0);
+	WorkspaceWizard *w = new WorkspaceWizard(this);
+	w->show();
 }
 
-void CytonRunner::moveDirection(int direction){
+void CytonRunner::regulateWorkspaceData() {
+	double minX, maxX, minY, maxY;
 
+	minX = std::min(std::min(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	minY = std::min(std::min(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	maxX = std::max(std::max(canvasCorners.at(0).x, canvasCorners.at(1).x), canvasCorners.at(2).x);
+	maxY = std::max(std::max(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
+	this->setCanvasSize(maxX - minX, maxY - minY);
 }
-
-//will be moved into Helper for ease of use.
-//class ConfigWindow : public QMessageBox{
-//	Q_OBJECT
-//public:
-//	ConfigWindow(){};
-//	~ConfigWindow(){};
-//
-//	void keyPressEvent(QKeyEvent* e){
-//		printf("you pressed: %s", e->text().toStdString().c_str());
-//	};
-//
-//};
