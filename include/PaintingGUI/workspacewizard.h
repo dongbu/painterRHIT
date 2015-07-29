@@ -22,9 +22,12 @@ private:
 	int stage, numOfColors;
 	double s1, s2, s3, s4, s5, s6, s7;
 	std::vector<cv::Point3d> canvasCorners;
-	std::vector<std::pair<int, cv::Point>> paint;
+	std::vector<std::pair<int, cv::Point2d>> paint;
 	QLabel *paintCountLabel;
-	std::string defaultName;
+	QLineEdit* nameEdit;
+	std::string workspaceName;
+	QPushButton* browse;
+	QSlider* scaleSlide;
 	
 	void updateText();
 	void rotateBase(int direction);
@@ -40,6 +43,8 @@ protected:
 private slots:
   void forwardPressed();
   void backPressed();
+  void browsePressed();
+  void helpPressed();
 };
 
 #endif // WORKSPACEWIZARD_H
