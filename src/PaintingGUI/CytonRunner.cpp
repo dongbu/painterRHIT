@@ -1,4 +1,5 @@
 #include "CytonRunner.h"
+#include "workspacewizard.h"
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -303,7 +304,7 @@ void CytonRunner::setCanvasSize(double width, double height){
 void CytonRunner::paintShape(Shape *s){
 	int border = 30;
 
-	printf("press key to continue\n");
+	printf("press enter to continue\n");
 	std::cin.ignore();
 	if (s->fill){ //painting a filled object
 		RegionToPaths RTP = RegionToPaths(width, height, border);
@@ -330,6 +331,6 @@ void CytonRunner::paintShape(Shape *s){
 
 void CytonRunner::createWorkspace(){
 	this->goToJointHome(0);
-	WorkspaceWizard *w = new WorkspaceWizard();
+	WorkspaceWizard *w = new WorkspaceWizard(this);
 	w->show();
 }

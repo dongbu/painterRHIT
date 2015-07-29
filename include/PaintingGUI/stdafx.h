@@ -18,6 +18,9 @@
 #include <qpushbutton.h>
 #include <qdesktopwidget.h>
 #include <qprocess.h>
+#include <QGraphicsScene.h>
+#include <qgraphicsview.h>
+#include <QGraphicsPixmapItem>
 
 #include "ui_Sketchpad.h"
 #include "ui_commandwindow.h"

@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "workspacewizard.h"
+#include "CytonRunner.h"
 
 using namespace Ec;
 
-WorkspaceWizard::WorkspaceWizard(QWidget *parent) :
+WorkspaceWizard::WorkspaceWizard(CytonRunner *Ava, QWidget *parent) :
 QWidget(parent),
 ui(new Ui::WorkspaceWizard)
 {
@@ -13,10 +14,11 @@ ui(new Ui::WorkspaceWizard)
 	numOfColors = 0;
 	workspaceName = "Desktop/Workspace";
 	ui->QuestionButton->hide();
+	ui->QuestionButton->setText("Help");
 	ui->QuestionButton->setToolTip("help");
 	ui->Directions->setWordWrap(true);
 
-
+	this->Ava = Ava;
 	paintCountLabel = new QLabel("");
 	nameEdit = new QLineEdit();
 	nameEdit->setClearButtonEnabled(true);
@@ -169,6 +171,7 @@ void WorkspaceWizard::updateText(){
 		browse->setVisible(true);
 		ui->QuestionButton->hide();
 		paintCountLabel->setText("Please fill out file path below");
+		scaleSlide->setVisible(false);
 		break;
 	case 7:
 		finishWizard();
@@ -315,6 +318,8 @@ void WorkspaceWizard::finishWizard(){
 	myfile << line;
 	myfile.close();
 
+	Ava->loadWorkspace(saveName);
+	
 	delete nameEdit;
 	delete paintCountLabel;
 	delete browse;
@@ -360,9 +365,16 @@ void WorkspaceWizard::browsePressed(){
 }
 
 void WorkspaceWizard::helpPressed(){
-	QMessageBox box;
-	box.setInformativeText("<img src='C:/Users/doughezj/Pictures/workspaceHelp.png'/>");
-	if (box.exec()){
-		printf("goodbye\n");
+	QDialog d;
+	QGraphicsScene scene;
+	QGraphicsView view(&scene);
+	QGraphicsPixmapItem item(QPixmap("C:/Users/doughezj/Pictures/workspaceHelp.png"));
+	scene.addItem(&item);
+	QVBoxLayout *l = new QVBoxLayout();
+	l->addWidget(&view);
+	d.setLayout(l);
+
+	if (d.exec()){
+		printf("goodbye again\n");
 	}
 }

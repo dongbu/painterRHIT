@@ -2,8 +2,8 @@
 #define WORKSPACEWIZARD_H
 
 #include "stdafx.h"
-#include "ui_workspacewizard.h"
 #include "CytonRunner.h"
+#include "ui_workspacewizard.h"
 
 namespace Ui {
 class WorkspaceWizard;
@@ -14,7 +14,7 @@ class WorkspaceWizard : public QWidget
     Q_OBJECT
 
 public:
-    explicit WorkspaceWizard(QWidget *parent = 0);
+    explicit WorkspaceWizard(CytonRunner *Ava, QWidget *parent = 0);
     ~WorkspaceWizard();
 
 private:
@@ -28,6 +28,7 @@ private:
 	std::string workspaceName;
 	QPushButton* browse;
 	QSlider* scaleSlide;
+	CytonRunner* Ava;
 	
 	void updateText();
 	void rotateBase(int direction);

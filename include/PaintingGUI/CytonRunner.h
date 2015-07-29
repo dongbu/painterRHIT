@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
-#include "workspacewizard.h";
 
 
 namespace Ui {
