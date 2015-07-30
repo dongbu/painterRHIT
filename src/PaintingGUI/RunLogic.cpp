@@ -1,7 +1,7 @@
 #include "RunLogic.h"
 #include <windows.h>
 
-long COMMAND_DELAY = 10; //(ms)
+int COMMAND_DELAY = 10; //(ms)
 
 /**
  * @brief constructor
@@ -54,6 +54,8 @@ void RunLogic::forwardClicked() {
  * @brief steps backwards.
  */
 void RunLogic::backwardClicked() {
+	if (currentShapeIndex == 0 && stopIndex == 0) return;
+
     this->simWin->showWindow();
 	running = false;
     emit setRunColor(currentShapeIndex, false);

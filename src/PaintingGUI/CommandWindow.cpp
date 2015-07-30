@@ -47,6 +47,8 @@ void CommandWindow::moveUpClicked() {
  * @brief move command down in window (and vec)
  */
 void CommandWindow::moveDownClicked() {
+	if (ui->listWidget->count() <= 0 || ui->listWidget->currentIndex().row() == ui->listWidget->count() - 1) return;
+
     int currentIndex = ui->listWidget->currentIndex().row();
     if (currentIndex < ui->listWidget->count()){
         shapes->swap(currentIndex, currentIndex + 1);
@@ -58,6 +60,7 @@ void CommandWindow::moveDownClicked() {
  * @brief remove command from window (and vec)
  */
 void CommandWindow::deleteCommandClicked() {
+	if (ui->listWidget->count() <= 0) return;
     int currentIndex = ui->listWidget->currentIndex().row();
     shapes->removeShapeAt(currentIndex);
     populate();

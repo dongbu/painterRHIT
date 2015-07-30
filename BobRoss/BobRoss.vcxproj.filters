@@ -147,6 +147,9 @@
     <ClCompile Include="..\src\PaintingGUI\shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\PaintingGUI\drawwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\PaintingGUI\CVImageWidget.h">
