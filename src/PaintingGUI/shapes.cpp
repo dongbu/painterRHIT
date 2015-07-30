@@ -317,8 +317,8 @@ public:
 	// returns a pixelregion representation of a rectangle
 	virtual PixelRegion* toPixelRegion() {
 		PixelRegion* PR = new PixelRegion();
-		for (int i = std::min(pt1.x,pt2.x); i <= std::max(pt1.x,pt2.x); i++) {
-			for (int j = std::min(pt1.y,pt2.y); j <= std::max(pt2.y,pt1.y); j++) {
+		for (int i = std::min(pt1.x, pt2.x); i <= std::max(pt1.x, pt2.x); i++) {
+			for (int j = std::min(pt1.y, pt2.y); j <= std::max(pt2.y, pt1.y); j++) {
 				if (fill == 1 || (i == pt1.x || i == pt2.x || j == pt1.y || j == pt2.y)) {
 					PR->addPoint(i, j);
 				}

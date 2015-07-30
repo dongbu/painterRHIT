@@ -1,7 +1,7 @@
 #include "kmeansSegment.hpp"
 
 kmeansSegment::kmeansSegment(int cluster_number, cv::TermCriteria criteria, int attempts, int flags)
-  : attempts_(attempts), cluster_number_(cluster_number), criteria_(criteria), flags_(flags)
+	: attempts_(attempts), cluster_number_(cluster_number), criteria_(criteria), flags_(flags)
 {
 }
 
@@ -12,11 +12,11 @@ kmeansSegment::kmeansSegment(int cluster_number, cv::TermCriteria criteria, int 
  */
 cv::Mat kmeansSegment::segment(cv::Mat const &input)
 {
-  kmeans_sample(input, samples_);
-  cv::kmeans(samples_, cluster_number_, labels_, criteria_, attempts_, flags_, centers_);
-  results_.create(input.size(), input.type());
-  kmeans_result(results_, labels_, centers_);
-  return results_;
+	kmeans_sample(input, samples_);
+	cv::kmeans(samples_, cluster_number_, labels_, criteria_, attempts_, flags_, centers_);
+	results_.create(input.size(), input.type());
+	kmeans_result(results_, labels_, centers_);
+	return results_;
 }
 /**
  * @brief do color segmentation by cv::kmeans
@@ -40,12 +40,12 @@ cv::Mat kmeansSegment::segment(cv::Mat const &input)
  */
 cv::Mat kmeansSegment::segment(cv::Mat const &input, int cluster_number, cv::TermCriteria criteria, int attempts, int flags)
 {
-  attempts_ = attempts;
-  cluster_number_ = cluster_number;
-  criteria_ = criteria;
-  flags_ = flags;
-  segment(input);
-  return results_;
+	attempts_ = attempts;
+	cluster_number_ = cluster_number;
+	criteria_ = criteria;
+	flags_ = flags;
+	segment(input);
+	return results_;
 }
 /**********************************************************
  ****************** implementation ************************
@@ -58,18 +58,18 @@ cv::Mat kmeansSegment::segment(cv::Mat const &input, int cluster_number, cv::Ter
  */
 void kmeansSegment::kmeans_result(cv::Mat &inout, cv::Mat const &labels, cv::Mat const &centers)
 {
-  for( int row = 0; row != inout.rows; ++row){
-    auto inout_ptr = inout.ptr<uchar>(row);
-    auto labels_ptr = labels.ptr<int>(row * inout.cols);
-    for( int col = 0; col != inout.cols; ++col){
-      int const cluster_idx = labels_ptr[col];
-      auto centers_ptr = centers.ptr<float>(cluster_idx);
-      for(int ch = 0; ch != inout.channels(); ++ch){
-	inout_ptr[ch] = centers_ptr[ch];
-      }
-      inout_ptr += inout.channels();
-    }
-  }
+	for (int row = 0; row != inout.rows; ++row){
+		auto inout_ptr = inout.ptr<uchar>(row);
+		auto labels_ptr = labels.ptr<int>(row * inout.cols);
+		for (int col = 0; col != inout.cols; ++col){
+			int const cluster_idx = labels_ptr[col];
+			auto centers_ptr = centers.ptr<float>(cluster_idx);
+			for (int ch = 0; ch != inout.channels(); ++ch){
+				inout_ptr[ch] = centers_ptr[ch];
+			}
+			inout_ptr += inout.channels();
+		}
+	}
 }
 /**
  * @brief generate kmeans sample needed by cv::kmenas, only suit for two dimensions images
@@ -78,17 +78,17 @@ void kmeansSegment::kmeans_result(cv::Mat &inout, cv::Mat const &labels, cv::Mat
  */
 void kmeansSegment::kmeans_sample(cv::Mat const &input, cv::Mat &output)
 {
-  if(output.type() != CV_32F || output.rows != static_cast<int>(input.total()) || output.channels() != input.channels()){
-    output.create(input.total(), input.channels(), CV_32F);
-  }
-  auto output_ptr = output.ptr<float>(0);
-  for( int row = 0; row != input.rows; ++row){
-    auto input_ptr = input.ptr<uchar>(row);
-    for( int col = 0; col != input.cols; ++col){
-      for( int ch = 0; ch != input.channels(); ++ch){
-	*output_ptr = *input_ptr;
-	++output_ptr; ++input_ptr;
-      }
-    }
-  }
+	if (output.type() != CV_32F || output.rows != static_cast<int>(input.total()) || output.channels() != input.channels()){
+		output.create(input.total(), input.channels(), CV_32F);
+	}
+	auto output_ptr = output.ptr<float>(0);
+	for (int row = 0; row != input.rows; ++row){
+		auto input_ptr = input.ptr<uchar>(row);
+		for (int col = 0; col != input.cols; ++col){
+			for (int ch = 0; ch != input.channels(); ++ch){
+				*output_ptr = *input_ptr;
+				++output_ptr; ++input_ptr;
+			}
+		}
+	}
 }

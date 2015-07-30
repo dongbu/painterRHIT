@@ -1,4 +1,3 @@
-//#include <QApplication>
 #include <windows.h>
 #include "Painter.h"
 #include "Shapes.cpp"
@@ -8,6 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+	//console window//
     AllocConsole();
 
     SetConsoleTitleA("Robot Artist v2 (7/29/15)");
@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 
     Painter *painter = new Painter();
     painter->showGUI(true);
+	//console window//
 
     return a.exec();
 }

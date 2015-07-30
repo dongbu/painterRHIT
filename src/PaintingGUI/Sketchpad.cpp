@@ -11,37 +11,37 @@ using namespace cv;
  * @param parent
  */
 Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::Sketchpad)
+QMainWindow(parent),
+ui(new Ui::Sketchpad)
 {
-    //setting up Qt's misc. toolbars & windows.
-    ui->setupUi(this);
+	//setting up Qt's misc. toolbars & windows.
+	ui->setupUi(this);
 	this->Ava = Ava;
 	//move window to a decent neighborhood.
 	QRect r = QApplication::desktop()->availableGeometry();
 	this->move(r.right() - (width + 35), r.top());
 
-    setupQt();
-    this->paintingName = "unnamed";
+	setupQt();
+	this->paintingName = "unnamed";
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
 	this->width = width;
 	this->height = height;
 
-    //Linking opencv to Qt.
-    shapes = ss;
-    this->translator = new CVImageWidget(ui->widget);
-    connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-    this->cvWindow = new DrawWindow(height,width,"garbabe_name",1);
-    this->cvWindow->hideWindow();
+	//Linking opencv to Qt.
+	shapes = ss;
+	this->translator = new CVImageWidget(ui->widget);
+	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
+	this->cvWindow = new DrawWindow(height, width, "garbabe_name", 1);
+	this->cvWindow->hideWindow();
 
-    //Drawing set-up logic
-    ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
-    getColor(); //sets class's color
+	//Drawing set-up logic
+	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
+	getColor(); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(cvWindow); //redraw the window
-    translator->showImage(cvWindow->grid); //actually redraw the window
-    this->startNewCommand(); //prep for initial command
+	translator->showImage(cvWindow->grid); //actually redraw the window
+	this->startNewCommand(); //prep for initial command
 
 	//robot logic
 	//ui->menuRobot->setDisabled(true);
@@ -56,41 +56,44 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidge
  */
 Sketchpad::~Sketchpad()
 {
-    delete ui;
+	delete ui;
 }
 
+//redraws everything on the grid.
 void Sketchpad::redraw() {
-    getColor();
-    startNewCommand();
+	getColor();
+	startNewCommand();
 
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-    shapes->drawAll(cvWindow); //redraw the window
-    translator->showImage(cvWindow->grid); //actually redraw the window
+	shapes->drawAll(cvWindow); //redraw the window
+	translator->showImage(cvWindow->grid); //actually redraw the window
 }
 
+//begin a new command on the sketchpad.
 void Sketchpad::startNewCommand() {
-    prevX = -10;
-    prevY = -10;
+	prevX = -10;
+	prevY = -10;
 
-    if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
-        curPolyLine = new PolyLine();
-        curPolyLine->setThickness(thickness->text().toInt());
-        curPolyLine->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-        this->currentShape = curPolyLine;
-    }
+	if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
+		curPolyLine = new PolyLine();
+		curPolyLine->setThickness(thickness->text().toInt());
+		curPolyLine->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curPolyLine;
+	}
 
-    else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
-        curCircle = new MyEllipse();
-        if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
-        curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-        this->currentShape = curCircle;
-    }
-    else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
-        curRectangle = new MyRectangle();
-        if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
-        curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-        this->currentShape = curRectangle;
-	} else if (ui->actionActionFill->isChecked()) {
+	else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
+		curCircle = new MyEllipse();
+		if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
+		curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curCircle;
+	}
+	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
+		curRectangle = new MyRectangle();
+		if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
+		curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		this->currentShape = curRectangle;
+	}
+	else if (ui->actionActionFill->isChecked()) {
 		curPixelRegion = new PixelRegion();
 		curPixelRegion->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 		this->currentShape = curPixelRegion;
@@ -104,58 +107,61 @@ void Sketchpad::startNewCommand() {
  * @param y
  */
 void Sketchpad::refresh(int x, int y) {
-    //DRAW CLICK CIRCLE//
-    cvWindow->setPenColor(200, 200, 200);
-    cvWindow->setLineThickness(2);
-    cvWindow->drawCircle(cvPoint(x, y), 6);
-    bool reset = false;
+	//DRAW CLICK CIRCLE//
+	cvWindow->setPenColor(200, 200, 200);
+	cvWindow->setLineThickness(2);
+	cvWindow->drawCircle(cvPoint(x, y), 6);
+	bool reset = false;
 
-    //DRAW POLYLINE//
-    if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
-        if (abs(x - prevX) < 6 && abs(y - prevY) < 6) {	//finish old line
-            reset = true;
-            //actually, we were drawing a polyshape
-            if (ui->actionDraw_Filled_Polygon->isChecked()) {
-                PolyPoints *pp = new PolyPoints();
-                pp->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
-                pp->setThickness(4);
-                for (size_t i = 0; i < curPolyLine->points.size(); i++) {
-                    pp->addPoint(curPolyLine->points.at(i).x,curPolyLine->points.at(i).y);
-                }
-                pp->addPoint(x, y);
-                this->currentShape = pp;
-            }
-        } else { //continue prev. lines
-            curPolyLine->addPoint(x, y);
-        }
-    }
+	//DRAW POLYLINE//
+	if (ui->actionDraw_Line->isChecked() || ui->actionDraw_Filled_Polygon->isChecked()) {
+		if (abs(x - prevX) < 6 && abs(y - prevY) < 6) {	//finish old line
+			reset = true;
+			//actually, we were drawing a polyshape
+			if (ui->actionDraw_Filled_Polygon->isChecked()) {
+				PolyPoints *pp = new PolyPoints();
+				pp->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+				pp->setThickness(4);
+				for (size_t i = 0; i < curPolyLine->points.size(); i++) {
+					pp->addPoint(curPolyLine->points.at(i).x, curPolyLine->points.at(i).y);
+				}
+				pp->addPoint(x, y);
+				this->currentShape = pp;
+			}
+		}
+		else { //continue prev. lines
+			curPolyLine->addPoint(x, y);
+		}
+	}
 
-    //DRAW CIRCLE//
-    else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
-        if (prevX == -10) { //first point clicked
-            prevX = x;
-            prevY = y;
-            translator->showImage(cvWindow->grid);
-            return;
-        } else { //second point clicked
-            int radius = sqrt((x - prevX)*(x - prevX) + (y - prevY)*(y - prevY));
-            curCircle->setData(prevX, prevY, 2*radius);
-            reset = true;
-        }
-    }
+	//DRAW CIRCLE//
+	else if (ui->actionDraw_Circle->isChecked() || ui->actionDraw_Filled_Circle->isChecked()) {
+		if (prevX == -10) { //first point clicked
+			prevX = x;
+			prevY = y;
+			translator->showImage(cvWindow->grid);
+			return;
+		}
+		else { //second point clicked
+			int radius = sqrt((x - prevX)*(x - prevX) + (y - prevY)*(y - prevY));
+			curCircle->setData(prevX, prevY, 2 * radius);
+			reset = true;
+		}
+	}
 
-    //DRAW RECTANGLE
-    else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
-        if (prevX == -10) { //first point clicked
-            prevX = x;
-            prevY = y;
-            translator->showImage(cvWindow->grid);
-            return;
-        } else { //second point clicked
-            curRectangle->setCorners(x, y, prevX, prevY);
-            reset = true;
-        }
-    }
+	//DRAW RECTANGLE
+	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
+		if (prevX == -10) { //first point clicked
+			prevX = x;
+			prevY = y;
+			translator->showImage(cvWindow->grid);
+			return;
+		}
+		else { //second point clicked
+			curRectangle->setCorners(x, y, prevX, prevY);
+			reset = true;
+		}
+	}
 
 	//DRAW PIXELREGION (fill)
 	else if (ui->actionActionFill->isChecked()) {
@@ -166,24 +172,25 @@ void Sketchpad::refresh(int x, int y) {
 		flood(Point(x, y));
 	}
 
-    //DELETE CLICK CIRCLES
-    if (reset) {
-        shapes->addShape(currentShape);
-        startNewCommand();
+	//DELETE CLICK CIRCLES
+	if (reset) {
+		shapes->addShape(currentShape);
+		startNewCommand();
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 		shapes->drawAll(cvWindow); //redraw window
-        emit prodOtherWindows();
-    }
-    else {
-        currentShape->draw(cvWindow);
-        prevX = x; //iterate
-        prevY = y; //iterate
-    }
+		emit prodOtherWindows();
+	}
+	else {
+		currentShape->draw(cvWindow);
+		prevX = x; //iterate
+		prevY = y; //iterate
+	}
 
-    translator->showImage(cvWindow->grid); //actually redraw the window
+	translator->showImage(cvWindow->grid); //actually redraw the window
 
 }
 
+//fills in a region (essentially the bucket from MS Paint)
 void Sketchpad::flood(Point p) {
 	Point p2 = p;
 	Mat processed;
@@ -200,25 +207,26 @@ void Sketchpad::flood(Point p) {
 		bool skip = false;
 
 		if (floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2]) {
-			curPixelRegion->addPoint(p.x,p.y);
-		} else skip = true;
+			curPixelRegion->addPoint(p.x, p.y);
+		}
+		else skip = true;
 
 		if (!skip && p.y - 1 >= 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
 			pointVec.push_back(Point(p.x, p.y - 1));
-			processed.at<double>(p.x, p.y-1) = 1;
+			processed.at<double>(p.x, p.y - 1) = 1;
 		}
 		if (!skip && p.x - 1 >= 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
 			pointVec.push_back(Point(p.x - 1, p.y));
-			processed.at<double>(p.x-1, p.y) = 1;
+			processed.at<double>(p.x - 1, p.y) = 1;
 		}
 		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //recurse up
 			pointVec.push_back(Point(p.x, p.y + 1));
-			processed.at<double>(p.x, p.y+1) = 1;
+			processed.at<double>(p.x, p.y + 1) = 1;
 
 		}
 		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //recurse right
 			pointVec.push_back(Point(p.x + 1, p.y));
-			processed.at<double>(p.x+1, p.y) = 1;
+			processed.at<double>(p.x + 1, p.y) = 1;
 		}
 	}
 	curPixelRegion->addPoint(p2.x + 1, p2.y + 1);
@@ -231,44 +239,44 @@ void Sketchpad::flood(Point p) {
  */
 void Sketchpad::setupQt() {
 	//shape connections
-    QActionGroup *actionGroup = new QActionGroup(this);
-    actionGroup->addAction(ui->actionDraw_Square);
-    actionGroup->addAction(ui->actionDraw_Circle);
-    actionGroup->addAction(ui->actionDraw_Line);
-    actionGroup->addAction(ui->actionDraw_Filled_Circle);
-    actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
-    actionGroup->addAction(ui->actionDraw_Filled_Polygon);
+	QActionGroup *actionGroup = new QActionGroup(this);
+	actionGroup->addAction(ui->actionDraw_Square);
+	actionGroup->addAction(ui->actionDraw_Circle);
+	actionGroup->addAction(ui->actionDraw_Line);
+	actionGroup->addAction(ui->actionDraw_Filled_Circle);
+	actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
+	actionGroup->addAction(ui->actionDraw_Filled_Polygon);
 	actionGroup->addAction(ui->actionActionFill);
-    ui->actionDraw_Square->setCheckable(true);
-    ui->actionDraw_Circle->setCheckable(true);
-    ui->actionDraw_Line->setCheckable(true);
-    ui->actionDraw_Filled_Rectangle->setCheckable(true);
-    ui->actionDraw_Filled_Circle->setCheckable(true);
-    ui->actionDraw_Filled_Polygon->setCheckable(true);
+	ui->actionDraw_Square->setCheckable(true);
+	ui->actionDraw_Circle->setCheckable(true);
+	ui->actionDraw_Line->setCheckable(true);
+	ui->actionDraw_Filled_Rectangle->setCheckable(true);
+	ui->actionDraw_Filled_Circle->setCheckable(true);
+	ui->actionDraw_Filled_Polygon->setCheckable(true);
 	ui->actionActionFill->setCheckable(true);
-    connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
+	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
 
 	//shape modifier creation && connections
-    color = new QComboBox();
+	color = new QComboBox();
 	thickness = new QSpinBox();
-    QStringList colors;
-    colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
-    color->addItems(colors);
-    thickness->setFixedWidth(60);
-    thickness->setMinimum(1);
-    thickness->setMaximum(25);
-    thickness->setSingleStep(1);
-    thickness->setValue(4);
-    ui->toolBar_2->addWidget(color);
-    ui->toolBar_2->addWidget(thickness);
-    connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
-    connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
+	QStringList colors;
+	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	color->addItems(colors);
+	thickness->setFixedWidth(60);
+	thickness->setMinimum(1);
+	thickness->setMaximum(25);
+	thickness->setSingleStep(1);
+	thickness->setValue(4);
+	ui->toolBar_2->addWidget(color);
+	ui->toolBar_2->addWidget(thickness);
+	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
+	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
 
 	//load/save connections
-    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
-    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
-    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
-    connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
+	connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
+	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
+	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
+	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
 
 	//image connections
 	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
@@ -287,38 +295,44 @@ void Sketchpad::setupQt() {
  * @brief transforms a text color into useable rgb code.
  */
 void Sketchpad::getColor() {
-    QString col = this->color->currentText();
-    std::vector<int> toReplace;
-    if (col == "black") {
-        toReplace.push_back(0);
-        toReplace.push_back(0);
-        toReplace.push_back(0);
-    } else if (col == "orange") {
-        toReplace.push_back(30);
-        toReplace.push_back(144);
-        toReplace.push_back(255);
-    } else if (col == "yellow") {
-        toReplace.push_back(0);
-        toReplace.push_back(255);
-        toReplace.push_back(255);
-    } else if (col == "green") {
-        toReplace.push_back(34);
-        toReplace.push_back(139);
-        toReplace.push_back(34);
-    } else if (col == "red") {
-        toReplace.push_back(34);
-        toReplace.push_back(34);
-        toReplace.push_back(178);
-    } else if (col == "blue") {
-        toReplace.push_back(255);
-        toReplace.push_back(144);
-        toReplace.push_back(30);
-    } else if (col == "purple") {
-        toReplace.push_back(240);
-        toReplace.push_back(32);
-        toReplace.push_back(160);
-    }
-    this->rgbColor = toReplace;
+	QString col = this->color->currentText();
+	std::vector<int> toReplace;
+	if (col == "black") {
+		toReplace.push_back(0);
+		toReplace.push_back(0);
+		toReplace.push_back(0);
+	}
+	else if (col == "orange") {
+		toReplace.push_back(30);
+		toReplace.push_back(144);
+		toReplace.push_back(255);
+	}
+	else if (col == "yellow") {
+		toReplace.push_back(0);
+		toReplace.push_back(255);
+		toReplace.push_back(255);
+	}
+	else if (col == "green") {
+		toReplace.push_back(34);
+		toReplace.push_back(139);
+		toReplace.push_back(34);
+	}
+	else if (col == "red") {
+		toReplace.push_back(34);
+		toReplace.push_back(34);
+		toReplace.push_back(178);
+	}
+	else if (col == "blue") {
+		toReplace.push_back(255);
+		toReplace.push_back(144);
+		toReplace.push_back(30);
+	}
+	else if (col == "purple") {
+		toReplace.push_back(240);
+		toReplace.push_back(32);
+		toReplace.push_back(160);
+	}
+	this->rgbColor = toReplace;
 }
 
 //Functions primarily relating to other classes are below here
@@ -326,34 +340,34 @@ void Sketchpad::getColor() {
  * @brief saveAs functionality.
  */
 void Sketchpad::saveAsClicked() {
-    QFileDialog saveDirectory;
-    QStringList filters;
-    saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
-    filters << "Text files (*.xml)";
-    saveDirectory.setNameFilters(filters);
-    if (saveDirectory.exec()) {
-        paintingName = saveDirectory.selectedFiles().at(0).toStdString();
-        emit save(paintingName);
-    }
+	QFileDialog saveDirectory;
+	QStringList filters;
+	saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
+	filters << "Text files (*.xml)";
+	saveDirectory.setNameFilters(filters);
+	if (saveDirectory.exec()) {
+		paintingName = saveDirectory.selectedFiles().at(0).toStdString();
+		emit save(paintingName);
+	}
 }
 /**
  * @brief save functionality.
  */
 void Sketchpad::saveClicked() {
-    if (paintingName == "unnamed") saveAsClicked();
-    else emit save(paintingName);
+	if (paintingName == "unnamed") saveAsClicked();
+	else emit save(paintingName);
 }
 
 /**
  * @brief open functionality.
  */
 void Sketchpad::openClicked() {
-    
-    QFileDialog directory;
-    QStringList filters;
-    filters << "Text files (*.xml)";
-    directory.setNameFilters(filters);
-    if (directory.exec()) {
+
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
 		pugi::xml_document doc;
 		pugi::xml_parse_result result = doc.load_file((directory.selectedFiles().at(0).toStdString()).c_str());
 		if (!doc.child("robot").empty()){
@@ -365,19 +379,19 @@ void Sketchpad::openClicked() {
 		else{
 			printf("robot is empty\n");
 		}
-    }
+	}
 }
 /**
  * @brief New project functionality.
  */
 void Sketchpad::newClicked() {
-    this->shapes->clear();
-    this->paintingName = "unnamed";
-    this->redraw();
-    emit prodOtherWindows();
+	this->shapes->clear();
+	this->paintingName = "unnamed";
+	this->redraw();
+	emit prodOtherWindows();
 }
 
-
+//"connects" to the cyton.  Actually just starts the necessary side program if accepted.
 void Sketchpad::connectCytonClicked(){
 	QProcess *p = new QProcess();
 	QMessageBox *m = new QMessageBox();
@@ -390,10 +404,13 @@ void Sketchpad::connectCytonClicked(){
 	ui->menuWorkspace->setEnabled(true);
 }
 
+//will eventually connect to the ABB
 void Sketchpad::connectABBClicked(){
 	printf("setup connection to ABB here\n");
 
 }
+
+//connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
 	Ava->connect();
 	QFileDialog directory;
@@ -408,6 +425,7 @@ void Sketchpad::loadWorkspaceClicked(){
 	}
 
 }
+//connects to the cyton and tells it to create a workspace.
 void Sketchpad::createWorkspaceClicked(){
 	Ava->connect();
 	Ava->createWorkspace();
@@ -416,10 +434,12 @@ void Sketchpad::createWorkspaceClicked(){
 	ui->actionShutdown->setEnabled(true);
 
 }
+//tells the cyton to start
 void Sketchpad::startupClicked(){
 	Ava->startup();
 	connected = true;
 }
+//tells the cyton to shut down.
 void Sketchpad::shutDownClicked(){
 	if (Ava->shutdown()){
 		ui->actionShutdown->setDisabled(true);
@@ -429,6 +449,8 @@ void Sketchpad::shutDownClicked(){
 	}
 }
 
+//allows you to load a file into the sketchpad window.
+//these pictures are converted automatically to strokes.
 void Sketchpad::loadPhotoClicked(){
 	QFileDialog directory;
 	QStringList filters;
@@ -457,6 +479,8 @@ void Sketchpad::loadPhotoClicked(){
 	}
 }
 
+//launches the webcam and shows the result.
+//clicking yields resizing.
 void Sketchpad::launchWebcam() {
 	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
 	this->cvWindow->grid = Web->calibrateWebcam();
@@ -478,5 +502,6 @@ void Sketchpad::launchWebcam() {
 	emit prodOtherWindows();
 }
 
+//sets the webcam.
 void Sketchpad::setWebcam(Webcam *W) { Web = W; }
 

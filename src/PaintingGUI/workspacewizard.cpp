@@ -4,21 +4,25 @@
 
 using namespace Ec;
 
+/*
+* Constructor for window that can be used to create/setup a workspace.
+*/
 WorkspaceWizard::WorkspaceWizard(CytonRunner *Ava, QWidget *parent) :
 QWidget(parent),
 ui(new Ui::WorkspaceWizard)
 {
 	ui->setupUi(this);
+	//starting rotation points
 	s1 = s2 = s3 = s4 = s5 = s6 = s7 = 0;
+
 	stage = 0;
 	numOfColors = 0;
 	workspaceName = "Desktop/Workspace";
+
+	//ui setup
 	ui->QuestionButton->hide();
-	ui->QuestionButton->setText("Help");
 	ui->QuestionButton->setToolTip("help");
 	ui->Directions->setWordWrap(true);
-
-	this->Ava = Ava;
 	paintCountLabel = new QLabel("");
 	nameEdit = new QLineEdit();
 	nameEdit->setClearButtonEnabled(true);
@@ -37,6 +41,9 @@ ui(new Ui::WorkspaceWizard)
 	scaleSlide->setVisible(false);
 	ui->ItemLayout->addWidget(scaleSlide);
 
+	//instance of the robot that is involved with this.
+	this->Ava = Ava;
+
 	//start off with empty variables in place
 	canvasCorners.push_back(cv::Point3d(0, 0, 0));
 	canvasCorners.push_back(cv::Point3d(0, 0, 0));
@@ -50,12 +57,16 @@ ui(new Ui::WorkspaceWizard)
 
 }
 
-WorkspaceWizard::~WorkspaceWizard()
-{
+/*
+* Virtual deconstructor
+*/
+WorkspaceWizard::~WorkspaceWizard(){
 	delete ui;
 }
 
-
+/*
+recieves keypress input and performs the specified actions (if appropriate)
+*/
 void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 	if (stage == 1 || stage == 2 || stage == 3 || stage == 4 || stage == 5){
 		QString pressedKey = event->text();
@@ -97,6 +108,9 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 	}
 }
 
+/*
+slot for "back" button.  closes if on the first window (stage 0)
+*/
 void WorkspaceWizard::backPressed(){
 	if (stage == 0){
 		this->close();
@@ -105,15 +119,22 @@ void WorkspaceWizard::backPressed(){
 	updateText();
 }
 
+/*
+slot for the "Next" button.  closes and saves if on the last window (stage 6)
+*/
 void WorkspaceWizard::forwardPressed(){
 	stage++;
 	updateText();
 }
 
+/*
+updates the label text and button text etc, of the main window.
+Also hides and shows things as appropriate.
+*/
 void WorkspaceWizard::updateText(){
 	QString labelString;
 	switch (stage){
-	case 0:
+	case 0: //welcome to the wizard stage
 		ui->BackButton->setText("Cancel");
 		ui->Title->setText("Welcome to the Workspace Wizard");
 		ui->Directions->setText("Press \"Next\" to continue");
@@ -122,37 +143,37 @@ void WorkspaceWizard::updateText(){
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(false);
 		break;
-	case 1:
+	case 1: //setup home position
 		ui->BackButton->setText("Back");
 		ui->Title->setText("Setup Start Position");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u','j', 'm', and 'n' to put the robot into a stable position \npress 'e' when finished");
+		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u','j', 'm', and 'n' to put the robot into a stable home position \npress 'e' when finished");
 		ui->QuestionButton->show();
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		break;
-	case 2:
+	case 2: //setup canvas corner one
 		ui->Title->setText("Setup Top Left Canvas Corner");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the top left corner of the canvas \norientation does not matter\npress 'e' when finished");
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		break;
-	case 3:
+	case 3: //setup canvas corner two
 		ui->Title->setText("Setup Top Right Canvas Corner");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the top right corner of the canvas\norientation does not matter\npress 'e' when finished");
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		break;
-	case 4:
+	case 4: //setup canvas corner 3
 		ui->Title->setText("Setup Bottom Right Canvas Corner");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the bottom right corner of the canvas\norientation does not matter\npress 'e' when finished");
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		break;
-	case 5:
+	case 5: //setup as many paint locations as necessary.
 		numOfColors = 0;
 		ui->Title->setText("Setup Paint Locations");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to put the robot gripper tip above the paint location\nheight and orientation do not matter\npress 'e' to continue to next color");
@@ -163,7 +184,7 @@ void WorkspaceWizard::updateText(){
 		ui->QuestionButton->show();
 		scaleSlide->setVisible(true);
 		break;
-	case 6:
+	case 6: //finish it all off.
 		ui->Title->setText("Finish");
 		ui->Directions->setText("All Done!\nPut in a file name/location and press finish to load your brand new workspace!");
 		ui->ForwardButton->setText("Finish");
@@ -173,10 +194,10 @@ void WorkspaceWizard::updateText(){
 		paintCountLabel->setText("Please fill out file path below");
 		scaleSlide->setVisible(false);
 		break;
-	case 7:
+	case 7: //things are finished, we need to save now.
 		finishWizard();
 		break;
-	default:
+	default: //should never hit default.
 		ui->Title->setText("ERROR");
 		ui->Directions->setText("ERROR");
 		break;
@@ -184,6 +205,7 @@ void WorkspaceWizard::updateText(){
 }
 
 /*
+rotates the base of the robot
 0: clockwise
 1: counter-clockwise
 */
@@ -191,10 +213,10 @@ void WorkspaceWizard::rotateBase(int direction){
 	EcRealVector currentJoints;
 	getJointValues(currentJoints);
 	if (direction == 0){
-		currentJoints[0] += (double)scaleSlide->value()/1000.0;
+		currentJoints[0] += (double)scaleSlide->value() / 1000.0;
 	}
 	else if (direction == 1){
-		currentJoints[0] -= (double)scaleSlide->value()/1000.0;
+		currentJoints[0] -= (double)scaleSlide->value() / 1000.0;
 	}
 	else{
 		return;
@@ -205,6 +227,7 @@ void WorkspaceWizard::rotateBase(int direction){
 
 
 /*
+//moves the robot gripper tip in the specified direction.
 0: forward -y
 1: left +x
 2: backwards +y
@@ -224,12 +247,12 @@ void WorkspaceWizard::moveDirection(int direction){
 	double y = trans.y();
 	double z = trans.z();
 	switch (direction){
-	case 0: y -= (double)scaleSlide->value()/1000.0; break;
-	case 1: x += (double)scaleSlide->value()/1000.0; break;
-	case 2: y += (double)scaleSlide->value()/1000.0; break;
-	case 3: x -= (double)scaleSlide->value()/1000.0; break;
-	case 4: z += (double)scaleSlide->value()/1000.0; break;
-	case 5: z -= (double)scaleSlide->value()/1000.0; break;
+	case 0: y -= (double)scaleSlide->value() / 1000.0; break;
+	case 1: x += (double)scaleSlide->value() / 1000.0; break;
+	case 2: y += (double)scaleSlide->value() / 1000.0; break;
+	case 3: x -= (double)scaleSlide->value() / 1000.0; break;
+	case 4: z += (double)scaleSlide->value() / 1000.0; break;
+	case 5: z -= (double)scaleSlide->value() / 1000.0; break;
 	}
 
 	EcCoordinateSystemTransformation pose;
@@ -238,7 +261,7 @@ void WorkspaceWizard::moveDirection(int direction){
 	pose.setTranslationZ(z);
 
 	printf("x: %f, y: %f, z: %f moving at %f step speed\n", x, y, z, (double)scaleSlide->value() / 1000.0);
-	
+
 	EcOrientation orientation;
 	orientation.setFrom123Euler(0, 0, 0);
 	pose.setOrientation(orientation);
@@ -249,6 +272,10 @@ void WorkspaceWizard::moveDirection(int direction){
 	setDesiredPlacement(desiredPlacement, 0, 0);
 }
 
+/*
+obtains the necessary information from the robot
+and stores them as field variables.
+*/
 void WorkspaceWizard::saveInfo(){
 	EcManipulatorEndEffectorPlacement actualEEPlacement;
 	EcCoordinateSystemTransformation actualCoord;
@@ -283,6 +310,10 @@ void WorkspaceWizard::saveInfo(){
 	}
 }
 
+/*
+closes the window and saves all of the important information in an xml file.
+Also loads said xml file.
+*/
 void WorkspaceWizard::finishWizard(){
 	close();
 
@@ -319,7 +350,7 @@ void WorkspaceWizard::finishWizard(){
 	myfile.close();
 
 	Ava->loadWorkspace(saveName);
-	
+
 	delete nameEdit;
 	delete paintCountLabel;
 	delete browse;
@@ -328,6 +359,9 @@ void WorkspaceWizard::finishWizard(){
 
 }
 
+/*
+does the same thing here as everywhere else.
+*/
 // not a beautiful place for this but c'est la vie
 std::string WorkspaceWizard::string_format(const std::string fmt, ...) {
 	int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
@@ -344,6 +378,9 @@ std::string WorkspaceWizard::string_format(const std::string fmt, ...) {
 	return str;
 }
 
+/*
+opens a file directory to select the name (and location) to save the new xml.
+*/
 void WorkspaceWizard::browsePressed(){
 	QFileDialog directory;
 	directory.setDirectory("Libraries/Documents");
@@ -364,11 +401,15 @@ void WorkspaceWizard::browsePressed(){
 	}
 }
 
+/*
+slot for help button.
+shows a quick (and hastily made) diagram of how to use the keys to move the robot.
+*/
 void WorkspaceWizard::helpPressed(){
 	QDialog d;
 	QGraphicsScene scene;
 	QGraphicsView view(&scene);
-	QGraphicsPixmapItem item(QPixmap("C:/Users/doughezj/Pictures/workspaceHelp.png"));
+	QGraphicsPixmapItem item(QPixmap("workspaceHelp.png"));
 	scene.addItem(&item);
 	QVBoxLayout *l = new QVBoxLayout();
 	l->addWidget(&view);

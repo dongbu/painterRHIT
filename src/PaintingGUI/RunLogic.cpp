@@ -10,12 +10,12 @@ int COMMAND_DELAY = 10; //(ms)
  * @param shapes
  */
 RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
-    this->width = width;
-    this->height = height;
-    this->shapes = shapes;
+	this->width = width;
+	this->height = height;
+	this->shapes = shapes;
 	this->Ava = Ava;
-    this->simWin = new DrawWindow(width, height, "simulation window");
-    stopClicked();
+	this->simWin = new DrawWindow(width, height, "simulation window");
+	stopClicked();
 	simWin->hideWindow();
 	connect(Ava, SIGNAL(finishedShape()), this, SLOT(runClicked()));
 }
@@ -29,12 +29,12 @@ void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
  * @brief stops and clears simulation.
  */
 void RunLogic::stopClicked() {
-    running = false;
-    simWin->clearWindow(255, 255, 255); //white
+	running = false;
+	simWin->clearWindow(255, 255, 255); //white
 	simWin->show();
-    currentShapeIndex = 0;
-    stopIndex = shapes->length();
-    emit clearRunColors();
+	currentShapeIndex = 0;
+	stopIndex = shapes->length();
+	emit clearRunColors();
 }
 /**
  * @brief pauses simulation.
@@ -45,10 +45,10 @@ void RunLogic::pauseClicked() { running = false; }
  * @brief steps forward.
  */
 void RunLogic::forwardClicked() {
-    this->simWin->showWindow();
-    if (currentShapeIndex >= shapes->length()) return;
-    running = false;
-    runOnly(currentShapeIndex);
+	this->simWin->showWindow();
+	if (currentShapeIndex >= shapes->length()) return;
+	running = false;
+	runOnly(currentShapeIndex);
 }
 /**
  * @brief steps backwards.
@@ -56,9 +56,9 @@ void RunLogic::forwardClicked() {
 void RunLogic::backwardClicked() {
 	if (currentShapeIndex == 0 && stopIndex == 0) return;
 
-    this->simWin->showWindow();
+	this->simWin->showWindow();
 	running = false;
-    emit setRunColor(currentShapeIndex, false);
+	emit setRunColor(currentShapeIndex, false);
 	simWin->clearWindow(255, 255, 255); //white
 	if (currentShapeIndex <= 0) {
 		simWin->show();
@@ -75,10 +75,10 @@ void RunLogic::backwardClicked() {
  * @brief runs simulation.
  */
 void RunLogic::runClicked() {
-    this->simWin->showWindow();
-    if (running) return; //don't start multiple window threads (that's bad...)
-    running = true;
-    auto d1 = std::async(&RunLogic::drawingThread, this, simWin);
+	this->simWin->showWindow();
+	if (running) return; //don't start multiple window threads (that's bad...)
+	running = true;
+	auto d1 = std::async(&RunLogic::drawingThread, this, simWin);
 }
 
 /**
@@ -86,36 +86,36 @@ void RunLogic::runClicked() {
  * @param index
  */
 void RunLogic::runFrom(int index) {
-    this->simWin->showWindow();
-    currentShapeIndex = index;
-    stopIndex = shapes->length();
-    runClicked();
+	this->simWin->showWindow();
+	currentShapeIndex = index;
+	stopIndex = shapes->length();
+	runClicked();
 }
 /**
  * @brief runs only the specified command.
  * @param index
  */
 void RunLogic::runOnly(int index) {
-    this->simWin->showWindow();
-    shapes->at(index)->draw(simWin);
+	this->simWin->showWindow();
+	shapes->at(index)->draw(simWin);
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
-    emit(setRunColor(index, true));
-    simWin->show();
+	emit(setRunColor(index, true));
+	simWin->show();
 }
 /**
  * @brief toggles breakpoint on specified index.
  * @param index
  */
 void RunLogic::toggleBreakPoint(int index) {
-    if (shapes->at(index)->isBreakPoint){
-        shapes->at(index)->toggleBreakPoint(false);
-        emit setBreakPointColor(index, false);
-    }
-    else{
-        shapes->at(index)->toggleBreakPoint(true);
-        emit setBreakPointColor(index, true);
-    }
+	if (shapes->at(index)->isBreakPoint){
+		shapes->at(index)->toggleBreakPoint(false);
+		emit setBreakPointColor(index, false);
+	}
+	else{
+		shapes->at(index)->toggleBreakPoint(true);
+		emit setBreakPointColor(index, true);
+	}
 
 }
 /**
@@ -136,7 +136,8 @@ void RunLogic::drawingThread(DrawWindow *W) {
 		currentShapeIndex++;
 
 		if (currentShapeIndex == stopIndex) currentShapeIndex--;
-	} else {
+	}
+	else {
 		while (running && currentShapeIndex < stopIndex) {
 			if (shapes->at(currentShapeIndex)->isBreakPoint){
 				toggleBreakPoint(currentShapeIndex);
@@ -148,7 +149,7 @@ void RunLogic::drawingThread(DrawWindow *W) {
 			W->show();
 			currentShapeIndex++;
 			Sleep(COMMAND_DELAY);
-			
+
 		}
 		if (currentShapeIndex == stopIndex) currentShapeIndex--;
 		running = false;

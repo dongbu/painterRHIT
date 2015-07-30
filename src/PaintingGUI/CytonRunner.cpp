@@ -9,7 +9,7 @@
 using namespace Ec;
 using namespace cv;
 
-
+//constructor for cyton robot object
 CytonRunner::CytonRunner(int width, int height){
 	currentX = 0;
 	currentY = 0;
@@ -27,8 +27,10 @@ CytonRunner::CytonRunner(int width, int height){
 	yScale = cHeight / height;
 }
 
+//deconstructor
 CytonRunner::~CytonRunner(){}
 
+//connects to the robot itself and returns success
 bool CytonRunner::connect(){
 	if (init()){
 		printf("established connection to Cyton\n");
@@ -42,7 +44,7 @@ bool CytonRunner::connect(){
 	}
 }
 
-
+//loads a workspace from an xml.
 bool CytonRunner::loadWorkspace(std::string fileLocation){
 	//clear all variables.
 	startJointPosition.clear();
@@ -70,7 +72,7 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
 		double z = temp.attribute("z").as_double();
-		cv::Point3d corner(x,y,z);
+		cv::Point3d corner(x, y, z);
 		canvasCorners.push_back(corner);
 	}
 	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
@@ -92,9 +94,12 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 	return true;
 }
 
+//puts the robot into it's starting position.
 void CytonRunner::startup(){
 	goToJointHome(1);
 }
+
+//puts the robot into a safe position and closes everything.
 bool CytonRunner::shutdown(){
 	QMessageBox message;
 	message.setInformativeText("Please clear away any and all paints before continuing");
@@ -115,6 +120,7 @@ bool CytonRunner::shutdown(){
 	}
 	return false;
 }
+// sends the robot to the specified coordinates
 void CytonRunner::goToPos(double x, double y, double z){
 	EcCoordinateSystemTransformation pose;
 
@@ -164,12 +170,14 @@ void CytonRunner::goToPos(double x, double y, double z){
 	}
 
 }
+//have the robot rise straight up.
 void CytonRunner::raiseBrush(){
 	if (!isUp){
 		goToPos(currentX, currentY, raiseHeight);
 	}
 	isUp = true;
 }
+//have the robot lower itself to the canvas/paper/medium.
 void CytonRunner::lowerBrush(){
 	if (!isUp) return;
 
@@ -178,6 +186,7 @@ void CytonRunner::lowerBrush(){
 	goToPos(currentX - 0.01, currentY - 0.01, 0);
 	isUp = false;
 }
+//have the robot retrieve paint from the paint locations.
 void CytonRunner::getPaint(int paint_can_id){
 	raiseBrush();
 	double x, y;
@@ -192,6 +201,7 @@ void CytonRunner::getPaint(int paint_can_id){
 	raiseBrush();
 	goToPos(x, y, raiseHeight);
 }
+//have the robot draw a single point.
 void CytonRunner::drawPoint(cv::Point pt){
 	raiseBrush();
 	goToPos(pt.x, pt.y, raiseHeight);
@@ -199,6 +209,7 @@ void CytonRunner::drawPoint(cv::Point pt){
 	raiseBrush();
 }
 
+//have the robot draw a line between two points (a stroke one might say)
 void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 	raiseBrush();
 	goToPos(pt1.x, pt1.y, raiseHeight);
@@ -206,6 +217,7 @@ void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 	goToPos(pt2.x, pt2.y, 0);
 }
 
+//have the robot draw a multitude of strokes.
 void CytonRunner::stroke(std::vector<cv::Point> pts){
 	raiseBrush();
 	printf("xScale: %f, yScale: %f", xScale, yScale);
@@ -215,7 +227,7 @@ void CytonRunner::stroke(std::vector<cv::Point> pts){
 		goToPos(pts.at(i).x, pts.at(i).y, 0);
 	}
 	raiseBrush();
-	
+
 }
 
 bool CytonRunner::goToJointHome(int type){
@@ -238,11 +250,12 @@ bool CytonRunner::goToJointHome(int type){
 	size_t size = currentJoints.size();
 	if (size < jointPosition.size()) {
 		size = currentJoints.size();
-	} else if (size >= jointPosition.size()) {
+	}
+	else if (size >= jointPosition.size()) {
 		size = jointPosition.size();
 	}
 
-	for (size_t ii = 0; ii<size; ++ii) {
+	for (size_t ii = 0; ii < size; ++ii) {
 		currentJoints[ii] = jointPosition[ii];
 	}
 
@@ -262,16 +275,17 @@ bool CytonRunner::goToJointHome(int type){
 		EcSLEEPMS(interval);
 		count++;
 		getJointValues(currentJoints);
-		for (size_t ii = 0; ii<size; ++ii) {
-			if (std::abs(jointPosition[ii] - currentJoints[ii])<angletolerance) {
+		for (size_t ii = 0; ii < size; ++ii) {
+			if (std::abs(jointPosition[ii] - currentJoints[ii]) < angletolerance) {
 				jointAchieved[ii] = EcTrue;
 			}
 		}
-		for (size_t ii = 0; ii<size; ++ii) {
+		for (size_t ii = 0; ii < size; ++ii) {
 			if (!jointAchieved[ii]) {
 				positionAchieved = EcFalse;
 				break;
-			} else {
+			}
+			else {
 				positionAchieved = EcTrue;
 			}
 		}
@@ -331,7 +345,8 @@ void CytonRunner::paintShape(Shape *s){
 
 		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 		for (size_t i = 0; i < pathVec.size(); i++){ this->stroke(pathVec.at(i)); }
-	} else { //painting a PolyLine object
+	}
+	else { //painting a PolyLine object
 		PolyLine *p = s->toPolyline();
 		this->stroke(p->getPoints());
 	}
@@ -339,12 +354,14 @@ void CytonRunner::paintShape(Shape *s){
 	emit finishedShape();
 }
 
+//used to startup the workspace wizard.
 void CytonRunner::createWorkspace(){
 	this->goToJointHome(0);
 	WorkspaceWizard *w = new WorkspaceWizard(this);
 	w->show();
 }
 
+//fixes the robot to paint things in the canvas region.
 void CytonRunner::regulateWorkspaceData() {
 	double minX, maxX, minY, maxY;
 
