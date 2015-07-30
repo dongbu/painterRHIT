@@ -198,7 +198,6 @@ void Sketchpad::flood(Point p) {
 		pointVec.pop_back();
 		Vec3b curPix = cvWindow->grid.at<Vec3b>(p);
 		bool skip = false;
-		bool notProcessed = processed.at<double>(p.x, p.y - 1) != 1;
 
 		if (floodColor[0] == curPix[0] && floodColor[1] == curPix[1] && floodColor[2] == curPix[2]) {
 			curPixelRegion->addPoint(p.x,p.y);
@@ -355,10 +354,17 @@ void Sketchpad::openClicked() {
     filters << "Text files (*.xml)";
     directory.setNameFilters(filters);
     if (directory.exec()) {
-		newClicked();
-        emit load(directory.selectedFiles().at(0).toStdString());
-        emit prodOtherWindows();
-        this->paintingName = directory.selectedFiles().at(0).toStdString();
+		pugi::xml_document doc;
+		pugi::xml_parse_result result = doc.load_file((directory.selectedFiles().at(0).toStdString()).c_str());
+		if (!doc.child("robot").empty()){
+			newClicked();
+			emit load(directory.selectedFiles().at(0).toStdString());
+			emit prodOtherWindows();
+			this->paintingName = directory.selectedFiles().at(0).toStdString();
+		}
+		else{
+			printf("robot is empty\n");
+		}
     }
 }
 /**
@@ -395,9 +401,10 @@ void Sketchpad::loadWorkspaceClicked(){
 	filters << "Text files (*.xml)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
-		Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString());
-		ui->actionStartup->setEnabled(true);
-		ui->actionShutdown->setEnabled(true);
+		if (Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString())){
+			ui->actionStartup->setEnabled(true);
+			ui->actionShutdown->setEnabled(true);
+		}
 	}
 
 }
@@ -412,13 +419,6 @@ void Sketchpad::createWorkspaceClicked(){
 void Sketchpad::startupClicked(){
 	Ava->startup();
 	connected = true;
-	for (int i = 0; i < shapes->length(); i++){
-		printf("%s\n", shapes->at(i)->type.c_str());
-	}
-	for (int i = 0; i < shapes->length(); i++){
-		Ava->paintShape(shapes->at(i));
-	}
-	//emit sendRobot(Ava);
 }
 void Sketchpad::shutDownClicked(){
 	if (Ava->shutdown()){

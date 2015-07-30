@@ -16,7 +16,7 @@ public:
 	explicit CytonRunner(int width, int height);
 	~CytonRunner();
 	bool connect();
-	void loadWorkspace(std::string fileLocation);
+	bool loadWorkspace(std::string fileLocation);
 	void createWorkspace();
 	void saveWorkspace();
 	void startup();

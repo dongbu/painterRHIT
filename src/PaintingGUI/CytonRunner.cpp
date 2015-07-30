@@ -43,7 +43,7 @@ bool CytonRunner::connect(){
 }
 
 
-void CytonRunner::loadWorkspace(std::string fileLocation){
+bool CytonRunner::loadWorkspace(std::string fileLocation){
 	//clear all variables.
 	startJointPosition.clear();
 	canvasCorners.clear();
@@ -51,6 +51,11 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file((fileLocation).c_str());
+
+	if (doc.child("workspace").empty()){
+		printf("rejecting workspace\n");
+		return false; //check to make sure the file is proper.
+	}
 
 	pugi::xml_node start = doc.child("workspace").child("starting");
 	pugi::xml_node canvas = doc.child("workspace").child("canvas");
@@ -84,6 +89,7 @@ void CytonRunner::loadWorkspace(std::string fileLocation){
 	this->psi = 0;
 
 	regulateWorkspaceData();
+	return true;
 }
 
 void CytonRunner::startup(){
@@ -310,9 +316,6 @@ void CytonRunner::setCanvasSize(double width, double height){
 
 void CytonRunner::paintShape(Shape *s){
 	int border = 30;
-
-	printf("press enter to continue\n");
-	std::cin.ignore();
 	if (s->fill){ //painting a filled object
 		RegionToPaths RTP = RegionToPaths(width, height, border);
 

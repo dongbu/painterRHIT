@@ -1,6 +1,7 @@
 #include "RunLogic.h"
+#include <windows.h>
 
-int COMMAND_DELAY = 10; //(ms)
+long COMMAND_DELAY = 10; //(ms)
 
 /**
  * @brief constructor
@@ -121,18 +122,18 @@ void RunLogic::toggleBreakPoint(int index) {
  */
 void RunLogic::drawingThread(DrawWindow *W) {
 	if (running && Ava->connected && currentShapeIndex < stopIndex) {
+		running = false;
 		if (shapes->at(currentShapeIndex)->isBreakPoint){
 			toggleBreakPoint(currentShapeIndex);
-			running = false;
 			return;
 		}
 		shapes->at(currentShapeIndex)->draw(W);
+		Ava->paintShape(shapes->at(currentShapeIndex));
 		emit setRunColor(currentShapeIndex, true);
 		W->show();
 		currentShapeIndex++;
 
 		if (currentShapeIndex == stopIndex) currentShapeIndex--;
-		running = false;
 	} else {
 		while (running && currentShapeIndex < stopIndex) {
 			if (shapes->at(currentShapeIndex)->isBreakPoint){
@@ -144,7 +145,8 @@ void RunLogic::drawingThread(DrawWindow *W) {
 			emit setRunColor(currentShapeIndex, true);
 			W->show();
 			currentShapeIndex++;
-			_sleep(COMMAND_DELAY);
+			Sleep(COMMAND_DELAY);
+			
 		}
 		if (currentShapeIndex == stopIndex) currentShapeIndex--;
 		running = false;

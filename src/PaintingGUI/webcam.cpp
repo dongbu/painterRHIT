@@ -57,6 +57,7 @@ public:
 
 	// used by calibrateWebcam to have user click on the 4 corners of webcam's desired region
 	static void zoomMouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
+		if (flags){}
 		Webcam *self = static_cast<Webcam*>(userdata);
 		if (event == cv::EVENT_LBUTTONDOWN) {
 			self->zoomQuad[self->webcam_corner].x = x*2 ;

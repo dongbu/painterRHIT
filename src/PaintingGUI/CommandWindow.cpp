@@ -33,9 +33,6 @@ CommandWindow::~CommandWindow()
 }
 
 ///Slots below here///
-void CommandWindow::recieveRobot(CytonRunner *Ava){
-	this->Ava = Ava;
-}
 /**
  * @brief move command up in window (and vec)
  */

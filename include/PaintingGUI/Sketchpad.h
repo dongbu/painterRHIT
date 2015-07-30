@@ -78,7 +78,6 @@ signals:
     void prodOtherWindows();
     void load(std::string);
     void save(std::string);
-	void sendRobot(CytonRunner*);
 
 };
 

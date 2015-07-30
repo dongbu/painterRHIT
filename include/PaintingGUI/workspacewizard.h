@@ -19,7 +19,8 @@ public:
 
 private:
     Ui::WorkspaceWizard *ui;
-	int stage, numOfColors;
+	int stage;
+	size_t numOfColors;
 	double s1, s2, s3, s4, s5, s6, s7;
 	std::vector<cv::Point3d> canvasCorners;
 	std::vector<std::pair<int, cv::Point2d>> paint;

@@ -170,7 +170,7 @@ public:
 // Takes an image and returns contour lines via Canny filter
 class ImageParserContours: public ImageParser {
 protected:
-  int min_contour_length;
+  size_t min_contour_length;
   int canny_threshold;
   std::vector<std::vector<cv::Point> > contours;
   std::vector<cv::Vec4i> hierarchy;
@@ -443,7 +443,7 @@ public:
 		   region[0].x,region[0].y,
 		   colors[c][0],colors[c][1],colors[c][2],region.size());
 	  }
-	  if (region.size()>=min_region_pixels) {
+	  if (region.size()>=(unsigned)min_region_pixels) {
 	    for (size_t i=0; i<region.size(); i++) {
 	      if (i<10) {
 		if (debug) {
