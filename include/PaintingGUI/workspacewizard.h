@@ -47,6 +47,7 @@ private slots:
   void backPressed();
   void browsePressed();
   void helpPressed();
+
 };
 
 #endif // WORKSPACEWIZARD_H

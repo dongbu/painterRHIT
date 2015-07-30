@@ -31,6 +31,7 @@ public:
 	void stroke(std::vector<cv::Point> pts);
 	void setCanvasSize(double width, double height);
 	void paintShape(Shape *s);
+	void tellFinished();
 
 	volatile bool connected;
 
@@ -56,5 +57,6 @@ private:
 
 signals:
 	void finishedShape();
+	void finishedSettingWorkspace();
 };
 

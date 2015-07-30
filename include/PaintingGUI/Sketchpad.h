@@ -73,6 +73,7 @@ private slots:
 
 public slots:
     void redraw();
+	void fixCytonButtons();
 
 signals:
     void prodOtherWindows();

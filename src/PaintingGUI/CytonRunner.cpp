@@ -371,3 +371,8 @@ void CytonRunner::regulateWorkspaceData() {
 	maxY = std::max(std::max(canvasCorners.at(0).y, canvasCorners.at(1).y), canvasCorners.at(2).y);
 	this->setCanvasSize(maxX - minX, maxY - minY);
 }
+
+//
+void CytonRunner::tellFinished(){
+	emit finishedSettingWorkspace();
+}

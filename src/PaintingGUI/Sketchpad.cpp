@@ -49,6 +49,7 @@ ui(new Ui::Sketchpad)
 	ui->menuWorkspace->setDisabled(true);
 	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
+	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(fixCytonButtons()));
 }
 
 /**
@@ -430,9 +431,6 @@ void Sketchpad::createWorkspaceClicked(){
 	Ava->connect();
 	Ava->createWorkspace();
 
-	ui->actionStartup->setEnabled(true);
-	ui->actionShutdown->setEnabled(true);
-
 }
 //tells the cyton to start
 void Sketchpad::startupClicked(){
@@ -505,3 +503,8 @@ void Sketchpad::launchWebcam() {
 //sets the webcam.
 void Sketchpad::setWebcam(Webcam *W) { Web = W; }
 
+//updates the buttons to their proper states
+void Sketchpad::fixCytonButtons(){
+	ui->actionStartup->setEnabled(true);
+	ui->actionShutdown->setEnabled(true);
+}

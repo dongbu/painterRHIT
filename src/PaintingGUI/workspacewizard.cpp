@@ -356,6 +356,7 @@ void WorkspaceWizard::finishWizard(){
 	delete browse;
 	delete scaleSlide;
 
+	Ava->tellFinished();
 
 }
 
