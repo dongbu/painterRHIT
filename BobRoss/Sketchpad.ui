@@ -52,21 +52,12 @@
     </property>
     <widget class="QMenu" name="menuWorkspace">
      <property name="title">
-      <string>workspace</string>
+      <string>Canvas</string>
      </property>
-     <addaction name="actionLoad"/>
      <addaction name="actionCreate"/>
+     <addaction name="actionLoad"/>
     </widget>
-    <widget class="QMenu" name="menuConnect">
-     <property name="title">
-      <string>connect</string>
-     </property>
-     <addaction name="actionCyton"/>
-     <addaction name="actionABB"/>
-    </widget>
-    <addaction name="menuConnect"/>
     <addaction name="menuWorkspace"/>
-    <addaction name="actionStartup"/>
     <addaction name="actionShutdown"/>
    </widget>
    <widget class="QMenu" name="menuImage">
@@ -152,20 +143,6 @@
     <string>Draw Line</string>
    </property>
   </action>
-  <action name="actionDraw_Function">
-   <property name="icon">
-    <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/function.png</normaloff>:/Icon Storage/function.png</iconset>
-   </property>
-   <property name="text">
-    <string>Draw Function</string>
-   </property>
-  </action>
-  <action name="actionConnect">
-   <property name="text">
-    <string>Connect</string>
-   </property>
-  </action>
   <action name="actionSave_As">
    <property name="icon">
     <iconset resource="myres.qrc">
@@ -214,11 +191,6 @@
     <string>Draw Filled Polygon</string>
    </property>
   </action>
-  <action name="actionStartup">
-   <property name="text">
-    <string>startup</string>
-   </property>
-  </action>
   <action name="actionShutdown">
    <property name="text">
     <string>shutdown</string>
@@ -232,16 +204,6 @@
   <action name="actionCreate">
    <property name="text">
     <string>create</string>
-   </property>
-  </action>
-  <action name="actionCyton">
-   <property name="text">
-    <string>Cyton</string>
-   </property>
-  </action>
-  <action name="actionABB">
-   <property name="text">
-    <string>ABB</string>
    </property>
   </action>
   <action name="actionActionFill">

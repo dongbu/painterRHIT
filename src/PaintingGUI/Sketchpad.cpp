@@ -8,32 +8,29 @@ using namespace cv;
  * @param width
  * @param height
  * @param ss
+ * @param W
  * @param parent
  */
-Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent) :
+Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
-	//setting up Qt's misc. toolbars & windows.
-	ui->setupUi(this);
-	this->Ava = Ava;
-	//move window to a decent neighborhood.
-	QRect r = QApplication::desktop()->availableGeometry();
-	this->move(r.right() - (width + 35), r.top());
-
-	setupQt();
-	this->paintingName = "unnamed";
-	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	this->setFixedWidth(width + 20);
+	//settting class variables
 	this->width = width;
 	this->height = height;
+	this->shapes = ss;
+	this->Ava = Ava;
+	this->Web = W;
+	this->paintingNamePath = "unpathed";
+
+	//setting up Qt's misc. toolbars & windows.
+	ui->setupUi(this);
+	setupQt();
 
 	//Linking opencv to Qt.
-	shapes = ss;
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
 	this->cvWindow = new DrawWindow(height, width, "garbabe_name", 1);
-	this->cvWindow->hideWindow();
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -46,10 +43,67 @@ ui(new Ui::Sketchpad)
 	//robot logic
 	//ui->menuRobot->setDisabled(true);
 	connected = false;
-	ui->menuWorkspace->setDisabled(true);
-	ui->actionStartup->setDisabled(true);
 	ui->actionShutdown->setDisabled(true);
-	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(fixCytonButtons()));
+	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(completeConnection()));
+}
+
+/**
+* @brief sets up the Qt ui with all buttons, actions, etc.
+*/
+void Sketchpad::setupQt() {
+	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(width + 20);
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (width + 35), r.top());
+
+	//shape connections
+	QActionGroup *actionGroup = new QActionGroup(this);
+	actionGroup->addAction(ui->actionDraw_Square);
+	actionGroup->addAction(ui->actionDraw_Circle);
+	actionGroup->addAction(ui->actionDraw_Line);
+	actionGroup->addAction(ui->actionDraw_Filled_Circle);
+	actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
+	actionGroup->addAction(ui->actionDraw_Filled_Polygon);
+	actionGroup->addAction(ui->actionActionFill);
+	ui->actionDraw_Square->setCheckable(true);
+	ui->actionDraw_Circle->setCheckable(true);
+	ui->actionDraw_Line->setCheckable(true);
+	ui->actionDraw_Filled_Rectangle->setCheckable(true);
+	ui->actionDraw_Filled_Circle->setCheckable(true);
+	ui->actionDraw_Filled_Polygon->setCheckable(true);
+	ui->actionActionFill->setCheckable(true);
+	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
+
+	//shape modifier creation && connections
+	color = new QComboBox();
+	thickness = new QSpinBox();
+	QStringList colors;
+	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	color->addItems(colors);
+	thickness->setFixedWidth(60);
+	thickness->setMinimum(1);
+	thickness->setMaximum(25);
+	thickness->setSingleStep(1);
+	thickness->setValue(4);
+	ui->toolBar_2->addWidget(color);
+	ui->toolBar_2->addWidget(thickness);
+	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
+	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
+
+	//load/save connections
+	connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
+	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
+	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
+	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
+
+	//image connections
+	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
+	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
+
+	//robot connections
+	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
+	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
+	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
 }
 
 /**
@@ -234,64 +288,6 @@ void Sketchpad::flood(Point p) {
 
 }
 
-//Tedious functions below here
-/**
- * @brief sets up the Qt ui with all buttons, actions, etc.
- */
-void Sketchpad::setupQt() {
-	//shape connections
-	QActionGroup *actionGroup = new QActionGroup(this);
-	actionGroup->addAction(ui->actionDraw_Square);
-	actionGroup->addAction(ui->actionDraw_Circle);
-	actionGroup->addAction(ui->actionDraw_Line);
-	actionGroup->addAction(ui->actionDraw_Filled_Circle);
-	actionGroup->addAction(ui->actionDraw_Filled_Rectangle);
-	actionGroup->addAction(ui->actionDraw_Filled_Polygon);
-	actionGroup->addAction(ui->actionActionFill);
-	ui->actionDraw_Square->setCheckable(true);
-	ui->actionDraw_Circle->setCheckable(true);
-	ui->actionDraw_Line->setCheckable(true);
-	ui->actionDraw_Filled_Rectangle->setCheckable(true);
-	ui->actionDraw_Filled_Circle->setCheckable(true);
-	ui->actionDraw_Filled_Polygon->setCheckable(true);
-	ui->actionActionFill->setCheckable(true);
-	connect(actionGroup, SIGNAL(triggered(QAction *)), this, SLOT(startNewCommand()));
-
-	//shape modifier creation && connections
-	color = new QComboBox();
-	thickness = new QSpinBox();
-	QStringList colors;
-	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
-	color->addItems(colors);
-	thickness->setFixedWidth(60);
-	thickness->setMinimum(1);
-	thickness->setMaximum(25);
-	thickness->setSingleStep(1);
-	thickness->setValue(4);
-	ui->toolBar_2->addWidget(color);
-	ui->toolBar_2->addWidget(thickness);
-	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
-	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
-
-	//load/save connections
-	connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
-	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openClicked()));
-	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClicked()));
-	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
-
-	//image connections
-	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
-	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
-
-	//robot connections
-	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(connectCytonClicked()));
-	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(connectABBClicked()));
-	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
-	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
-	connect(ui->actionStartup, SIGNAL(triggered()), this, SLOT(startupClicked()));
-	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
-}
-
 /**
  * @brief transforms a text color into useable rgb code.
  */
@@ -336,117 +332,6 @@ void Sketchpad::getColor() {
 	this->rgbColor = toReplace;
 }
 
-//Functions primarily relating to other classes are below here
-/**
- * @brief saveAs functionality.
- */
-void Sketchpad::saveAsClicked() {
-	QFileDialog saveDirectory;
-	QStringList filters;
-	saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
-	filters << "Text files (*.xml)";
-	saveDirectory.setNameFilters(filters);
-	if (saveDirectory.exec()) {
-		paintingName = saveDirectory.selectedFiles().at(0).toStdString();
-		emit save(paintingName);
-	}
-}
-/**
- * @brief save functionality.
- */
-void Sketchpad::saveClicked() {
-	if (paintingName == "unnamed") saveAsClicked();
-	else emit save(paintingName);
-}
-
-/**
- * @brief open functionality.
- */
-void Sketchpad::openClicked() {
-
-	QFileDialog directory;
-	QStringList filters;
-	filters << "Text files (*.xml)";
-	directory.setNameFilters(filters);
-	if (directory.exec()) {
-		pugi::xml_document doc;
-		pugi::xml_parse_result result = doc.load_file((directory.selectedFiles().at(0).toStdString()).c_str());
-		if (!doc.child("robot").empty()){
-			newClicked();
-			emit load(directory.selectedFiles().at(0).toStdString());
-			emit prodOtherWindows();
-			this->paintingName = directory.selectedFiles().at(0).toStdString();
-		}
-		else{
-			printf("robot is empty\n");
-		}
-	}
-}
-/**
- * @brief New project functionality.
- */
-void Sketchpad::newClicked() {
-	this->shapes->clear();
-	this->paintingName = "unnamed";
-	this->redraw();
-	emit prodOtherWindows();
-}
-
-//"connects" to the cyton.  Actually just starts the necessary side program if accepted.
-void Sketchpad::connectCytonClicked(){
-	QProcess *p = new QProcess();
-	QMessageBox *m = new QMessageBox();
-	m->setText("Confirm");
-	m->setInformativeText("Launch CytonViewer?");
-	m->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	if (m->exec() == QMessageBox::Yes){
-		p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
-	}
-	ui->menuWorkspace->setEnabled(true);
-}
-
-//will eventually connect to the ABB
-void Sketchpad::connectABBClicked(){
-	printf("setup connection to ABB here\n");
-
-}
-
-//connects to the cyton and brings up a dialog to load a workspace.
-void Sketchpad::loadWorkspaceClicked(){
-	Ava->connect();
-	QFileDialog directory;
-	QStringList filters;
-	filters << "Text files (*.xml)";
-	directory.setNameFilters(filters);
-	if (directory.exec()) {
-		if (Ava->loadWorkspace(directory.selectedFiles().at(0).toStdString())){
-			ui->actionStartup->setEnabled(true);
-			ui->actionShutdown->setEnabled(true);
-		}
-	}
-
-}
-//connects to the cyton and tells it to create a workspace.
-void Sketchpad::createWorkspaceClicked(){
-	Ava->connect();
-	Ava->createWorkspace();
-
-}
-//tells the cyton to start
-void Sketchpad::startupClicked(){
-	Ava->startup();
-	connected = true;
-}
-//tells the cyton to shut down.
-void Sketchpad::shutDownClicked(){
-	if (Ava->shutdown()){
-		ui->actionShutdown->setDisabled(true);
-		ui->actionStartup->setDisabled(true);
-		ui->menuWorkspace->setDisabled(true);
-		connected = false;
-	}
-}
-
 //allows you to load a file into the sketchpad window.
 //these pictures are converted automatically to strokes.
 void Sketchpad::loadPhotoClicked(){
@@ -454,27 +339,7 @@ void Sketchpad::loadPhotoClicked(){
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
-	if (directory.exec()) {
-		newClicked();
-		cv::Mat image = imread(directory.selectedFiles().at(0).toStdString());
-		cv::resize(image, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
-
-		ImageParserContours IPC;
-		IPC.setMinContourLength(5);
-		IPC.setCannyThreshold(50);
-		IPC.parseImage(cvWindow->grid);
-		IPC.defineShapes(shapes);
-
-		ImageParserKmeans IPK;
-		IPK.setMinPixelsInRegion(5);
-		IPK.parseImage(cvWindow->grid);
-		IPK.defineShapes(shapes);
-
-		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-		shapes->drawAll(cvWindow); //redraw window
-		translator->showImage(cvWindow->grid); //actually redraw the window
-		emit prodOtherWindows();
-	}
+	if (directory.exec()) emit loadPhoto(directory.selectedFiles().at(0).toStdString());
 }
 
 //launches the webcam and shows the result.
@@ -500,11 +365,101 @@ void Sketchpad::launchWebcam() {
 	emit prodOtherWindows();
 }
 
-//sets the webcam.
-void Sketchpad::setWebcam(Webcam *W) { Web = W; }
+////Functions primarily relating to other classes are below here////
 
-//updates the buttons to their proper states
-void Sketchpad::fixCytonButtons(){
-	ui->actionStartup->setEnabled(true);
+/**
+ * @brief saveAs functionality.
+ */
+void Sketchpad::saveAsClicked() {
+	QFileDialog saveDirectory;
+	QStringList filters;
+	saveDirectory.setAcceptMode(QFileDialog::AcceptSave);
+	filters << "Text files (*.xml)";
+	saveDirectory.setNameFilters(filters);
+	if (saveDirectory.exec()) {
+		paintingNamePath = saveDirectory.selectedFiles().at(0).toStdString();
+		emit save(paintingNamePath);
+	}
+}
+/**
+ * @brief save functionality.
+ */
+void Sketchpad::saveClicked() {
+	if (paintingNamePath == "unpathed") saveAsClicked();
+	else emit save(paintingNamePath);
+}
+
+/**
+ * @brief open functionality.
+ */
+void Sketchpad::openClicked() {
+
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		pugi::xml_document doc;
+		pugi::xml_parse_result result = doc.load_file((directory.selectedFiles().at(0).toStdString()).c_str());
+		if (!doc.child("robot").empty()){
+			newClicked();
+			emit load(directory.selectedFiles().at(0).toStdString());
+			emit prodOtherWindows();
+			this->paintingNamePath = directory.selectedFiles().at(0).toStdString();
+		} else printf("the robot is empty.\n");
+	}
+}
+/**
+ * @brief New project functionality.
+ */
+void Sketchpad::newClicked() {
+	this->shapes->clear();
+	this->paintingNamePath = "unpathed";
+	this->redraw();
+	emit prodOtherWindows();
+}
+
+//connects to the cyton and brings up a dialog to load a workspace.
+void Sketchpad::loadWorkspaceClicked(){
+	//QProcess *p = new QProcess();
+	//p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
+
+	QMessageBox *m = new QMessageBox();
+	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
+	m->setStandardButtons(QMessageBox::Ok);
+	if (m->exec() != QMessageBox::Ok) return;
+
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Text files (*.xml)";
+	directory.setNameFilters(filters);
+
+	if (directory.exec() == 0) return;
+	emit loadRobot(directory.selectedFiles().at(0).toStdString());
+}
+
+//connects to the cyton and tells it to create a workspace.
+void Sketchpad::createWorkspaceClicked(){
+	QMessageBox *m = new QMessageBox();
+	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
+	m->setStandardButtons(QMessageBox::Ok);
+	if (m->exec() != QMessageBox::Ok) return;
+
+	Ava->connect();
+	Ava->createWorkspace();
+}
+
+//helper method to assist in creating workspaces
+void Sketchpad::completeConnection() {
+	Ava->startup();
+	connected = true;
 	ui->actionShutdown->setEnabled(true);
+}
+
+//tells the cyton to shut down.
+void Sketchpad::shutDownClicked(){
+	if (Ava->shutdown()){
+		ui->actionShutdown->setDisabled(true);
+		connected = false;
+	}
 }

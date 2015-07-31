@@ -5,6 +5,7 @@
 #include "CommandWindow.h"
 #include "SketchPad.h"
 #include "RunLogic.h"
+#include "imageparser.cpp"
 
 class Painter : public QObject
 
@@ -18,11 +19,8 @@ public:
     void addShape(Shape *inboundShape);
     void addShapes(Shapes *inboundShapes);
     void setDimensions(int width, int height);
-    void setName(std::string ProjectName);
-    void setLocation(std::string ProjectLocation);
     void showGUI(bool toggle);
     void launchSimulation();
-
 
 private:
     Shapes *shapes;
@@ -35,7 +33,6 @@ private:
 	Webcam *Web;
 	CytonRunner *Ava;
 
-	std::string Painter::string_format(const std::string fmt, ...);
 	std::string Painter::getXMLDim();
 	std::string Painter::getXMLWeb();
 
@@ -44,6 +41,9 @@ private:
 public slots:
     void save(std::string projectLocation);
     void load(std::string projectLocation);
+	void loadRobot(std::string robotLocation);
+	void loadPhoto(std::string photoLocation);
+
 };
 
 #endif // PAINTER_H

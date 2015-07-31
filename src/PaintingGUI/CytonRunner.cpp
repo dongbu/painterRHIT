@@ -372,7 +372,4 @@ void CytonRunner::regulateWorkspaceData() {
 	this->setCanvasSize(maxX - minX, maxY - minY);
 }
 
-//
-void CytonRunner::tellFinished(){
-	emit finishedSettingWorkspace();
-}
+void CytonRunner::tellFinished() { emit finishedSettingWorkspace(); }

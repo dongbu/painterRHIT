@@ -8,6 +8,7 @@
 #include "DrawWindow.cpp"
 #include "imageparser.cpp"
 #include "Webcam.cpp"
+#include "WorkspaceWizard.h"
 
 namespace Ui {
 class Sketchpad;
@@ -18,25 +19,23 @@ class Sketchpad : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, QWidget *parent = 0);
+	explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
     ~Sketchpad();
-	void setWebcam(Webcam *W);
 
 	CytonRunner *Ava;
-
+	bool connected;
+	Ui::Sketchpad *ui;
+	DrawWindow *cvWindow;
+	CVImageWidget *translator;
 
 private:
     void getColor();
     void setupQt();
 	void flood(cv::Point p);
 
-    Ui::Sketchpad *ui;
-    CVImageWidget *translator;
-    DrawWindow *cvWindow;
-	std::string paintingName;
+	std::string paintingNamePath;
 	int width, height;
 
-	bool connected;
 	Shapes *shapes;
 	Shape *currentShape;
     PolyLine *curPolyLine;
@@ -59,26 +58,25 @@ private slots:
     void saveAsClicked();
     void saveClicked();
     void openClicked();
-    void newClicked();
 
 	void loadPhotoClicked();
 	void launchWebcam();
 
-	void connectCytonClicked();
-	void connectABBClicked();
 	void loadWorkspaceClicked();
 	void createWorkspaceClicked();
-	void startupClicked();
 	void shutDownClicked();
+	void completeConnection();
 
 public slots:
     void redraw();
-	void fixCytonButtons();
+	void newClicked();
 
 signals:
     void prodOtherWindows();
+	void save(std::string);
     void load(std::string);
-    void save(std::string);
+	void loadRobot(std::string);
+	void loadPhoto(std::string);
 
 };
 

@@ -89,6 +89,43 @@ void Painter::load(std::string projectLocation) {
 	this->sketch->redraw();
 }
 
+void Painter::loadRobot(std::string robotLocation) {
+	if (!Ava->loadWorkspace(robotLocation)) return;
+
+	Ava->connect();
+	Ava->startup();
+	if (stuffshowing) {
+		this->sketch->connected = true;
+		this->sketch->ui->actionShutdown->setEnabled(true);
+	}
+}
+
+void Painter::loadPhoto(std::string photoLocation) {
+	if (!stuffshowing) showGUI(false);
+	sketch->newClicked();
+
+	cv::Mat image = cv::imread(photoLocation);
+	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+
+	ImageParserContours IPC;
+	IPC.setMinContourLength(5);
+	IPC.setCannyThreshold(50);
+	IPC.parseImage(sketch->cvWindow->grid);
+	IPC.defineShapes(shapes);
+
+	cv::Mat *temp =  new cv::Mat();
+
+	ImageParserKmeans IPK;
+	IPK.setMinPixelsInRegion(5);
+	IPK.parseImage(sketch->cvWindow->grid);
+	IPK.defineShapes(shapes);
+
+	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(sketch->cvWindow); //redraw window
+	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->prodOtherWindows();
+}
+
 //Functions pertaining to GUI are below//
 /**
  * @brief display the GUI
@@ -96,12 +133,13 @@ void Painter::load(std::string projectLocation) {
  */
 void Painter::showGUI(bool toggle){
 	stuffshowing = toggle;
-	sketch = new Sketchpad(width, height, shapes, Ava);
-	sketch->setWebcam(this->Web);
+	sketch = new Sketchpad(width, height, shapes, Ava, Web);
 	launchSimulation();
 
-	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
+	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
+	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
+	connect(sketch, SIGNAL(loadPhoto(std::string)), this, SLOT(loadPhoto(std::string)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));

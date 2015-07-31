@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 
     Painter *painter = new Painter();
     painter->showGUI(true);
+	painter->loadPhoto("../../demos/images/lena.jpg");
 	//console window//
 
     return a.exec();
