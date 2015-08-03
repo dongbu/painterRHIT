@@ -138,7 +138,7 @@ public:
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 593, 26));
+        menubar->setGeometry(QRect(0, 0, 593, 21));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);
@@ -177,15 +177,15 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionStop->setToolTip(QApplication::translate("CommandWindow", "stops the simulation", 0));
 #endif // QT_NO_TOOLTIP
-        actionForward->setText(QApplication::translate("CommandWindow", "forward", 0));
+        actionForward->setText(QApplication::translate("CommandWindow", "Forward", 0));
 #ifndef QT_NO_TOOLTIP
         actionForward->setToolTip(QApplication::translate("CommandWindow", "steps forward", 0));
 #endif // QT_NO_TOOLTIP
-        actionBackward->setText(QApplication::translate("CommandWindow", "backward", 0));
+        actionBackward->setText(QApplication::translate("CommandWindow", "Backward", 0));
 #ifndef QT_NO_TOOLTIP
         actionBackward->setToolTip(QApplication::translate("CommandWindow", "step backward", 0));
 #endif // QT_NO_TOOLTIP
-        actionPause->setText(QApplication::translate("CommandWindow", "pause", 0));
+        actionPause->setText(QApplication::translate("CommandWindow", "Pause", 0));
 #ifndef QT_NO_TOOLTIP
         actionPause->setToolTip(QApplication::translate("CommandWindow", "pause simulation", 0));
 #endif // QT_NO_TOOLTIP
@@ -193,7 +193,7 @@ public:
         DeleteCommand->setText(QApplication::translate("CommandWindow", "Delete", 0));
         MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
         MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));
-        menuSimulator->setTitle(QApplication::translate("CommandWindow", "simulator", 0));
+        menuSimulator->setTitle(QApplication::translate("CommandWindow", "Simulator", 0));
         toolBar->setWindowTitle(QApplication::translate("CommandWindow", "toolBar", 0));
     } // retranslateUi
 

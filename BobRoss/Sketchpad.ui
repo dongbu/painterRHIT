@@ -34,12 +34,12 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>file</string>
+     <string>File</string>
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -48,7 +48,7 @@
    </widget>
    <widget class="QMenu" name="menuRobot">
     <property name="title">
-     <string>robot</string>
+     <string>Robot</string>
     </property>
     <widget class="QMenu" name="menuWorkspace">
      <property name="title">
@@ -62,7 +62,7 @@
    </widget>
    <widget class="QMenu" name="menuImage">
     <property name="title">
-     <string>image</string>
+     <string>Image</string>
     </property>
     <addaction name="actionLoad_Photo"/>
     <addaction name="actionLaunch_webcam"/>
@@ -193,7 +193,7 @@
   </action>
   <action name="actionShutdown">
    <property name="text">
-    <string>shutdown</string>
+    <string>Shutdown</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -236,7 +236,7 @@
      <normaloff>:/Icon Storage/webcam.png</normaloff>:/Icon Storage/webcam.png</iconset>
    </property>
    <property name="text">
-    <string>launch webcam</string>
+    <string>Launch Webcam</string>
    </property>
    <property name="toolTip">
     <string>launch webcam</string>

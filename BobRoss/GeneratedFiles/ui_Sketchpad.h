@@ -135,7 +135,7 @@ public:
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 924, 26));
+        menubar->setGeometry(QRect(0, 0, 924, 21));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuRobot = new QMenu(menubar);
@@ -196,7 +196,7 @@ public:
         actionDraw_Filled_Circle->setText(QApplication::translate("Sketchpad", "Draw Filled Circle", 0));
         actionDraw_Filled_Rectangle->setText(QApplication::translate("Sketchpad", "Draw Filled Rectangle", 0));
         actionDraw_Filled_Polygon->setText(QApplication::translate("Sketchpad", "Draw Filled Polygon", 0));
-        actionShutdown->setText(QApplication::translate("Sketchpad", "shutdown", 0));
+        actionShutdown->setText(QApplication::translate("Sketchpad", "Shutdown", 0));
         actionLoad->setText(QApplication::translate("Sketchpad", "load", 0));
         actionCreate->setText(QApplication::translate("Sketchpad", "create", 0));
         actionActionFill->setText(QApplication::translate("Sketchpad", "actionFill", 0));
@@ -207,14 +207,14 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionLoad_Photo->setToolTip(QApplication::translate("Sketchpad", "Load photo", 0));
 #endif // QT_NO_TOOLTIP
-        actionLaunch_webcam->setText(QApplication::translate("Sketchpad", "launch webcam", 0));
+        actionLaunch_webcam->setText(QApplication::translate("Sketchpad", "Launch Webcam", 0));
 #ifndef QT_NO_TOOLTIP
         actionLaunch_webcam->setToolTip(QApplication::translate("Sketchpad", "launch webcam", 0));
 #endif // QT_NO_TOOLTIP
-        menuFile->setTitle(QApplication::translate("Sketchpad", "file", 0));
-        menuRobot->setTitle(QApplication::translate("Sketchpad", "robot", 0));
+        menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
+        menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
-        menuImage->setTitle(QApplication::translate("Sketchpad", "image", 0));
+        menuImage->setTitle(QApplication::translate("Sketchpad", "Image", 0));
         toolBar_2->setWindowTitle(QApplication::translate("Sketchpad", "toolBar_2", 0));
     } // retranslateUi
 

@@ -155,6 +155,7 @@
     <ClCompile Include="..\src\GUI_Classes\Painter.cpp" />
     <ClCompile Include="..\src\GUI_Classes\RunLogic.cpp" />
     <ClCompile Include="..\src\GUI_Classes\Sketchpad.cpp" />
+    <ClCompile Include="..\src\Libraries\drawwindow.cpp" />
     <ClCompile Include="..\src\Libraries\imageparser.cpp" />
     <ClCompile Include="..\src\Libraries\kmeansSegment.cpp" />
     <ClCompile Include="..\src\GUI_Classes\main.cpp" />

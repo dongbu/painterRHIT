@@ -14,7 +14,7 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	this->height = height;
 	this->shapes = shapes;
 	this->Ava = Ava;
-	this->simWin = new DrawWindow(width, height, "simulation window");
+	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	stopClicked();
 	simWin->hideWindow();
 	connect(Ava, SIGNAL(finishedShape()), this, SLOT(runClicked()));
