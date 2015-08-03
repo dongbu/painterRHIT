@@ -12,6 +12,7 @@ QWidget(parent),
 ui(new Ui::WorkspaceWizard)
 {
 	ui->setupUi(this);
+	this->setWindowTitle("Workspace Wizard");
 	//starting rotation points
 	s1 = s2 = s3 = s4 = s5 = s6 = s7 = 0;
 
@@ -54,6 +55,9 @@ ui(new Ui::WorkspaceWizard)
 	connect(ui->ForwardButton, SIGNAL(clicked()), this, SLOT(forwardPressed()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(browsePressed()));
 	connect(ui->QuestionButton, SIGNAL(clicked()), this, SLOT(helpPressed()));
+
+
+	forwardPressed(); //prevent "welcome" page from showing.
 
 }
 
@@ -112,7 +116,7 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 slot for "back" button.  closes if on the first window (stage 0)
 */
 void WorkspaceWizard::backPressed(){
-	if (stage == 0){
+	if (stage == 1){
 		this->close();
 	}
 	stage--;
@@ -134,17 +138,8 @@ Also hides and shows things as appropriate.
 void WorkspaceWizard::updateText(){
 	QString labelString;
 	switch (stage){
-	case 0: //welcome to the wizard stage
-		ui->BackButton->setText("Cancel");
-		ui->Title->setText("Welcome to the Workspace Wizard");
-		ui->Directions->setText("Press \"Next\" to continue");
-		ui->QuestionButton->hide();
-		ui->ForwardButton->setEnabled(true);
-		paintCountLabel->setText("");
-		scaleSlide->setVisible(false);
-		break;
 	case 1: //setup home position
-		ui->BackButton->setText("Back");
+		ui->BackButton->setText("Cancel");
 		ui->Title->setText("Setup Start Position");
 		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u','j', 'm', and 'n' to put the robot into a stable home position \npress 'e' when finished");
 		ui->QuestionButton->show();
