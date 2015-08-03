@@ -176,9 +176,6 @@
     <CustomBuild Include="GeneratedFiles\ui_CommandWindow.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_CytonRunner.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_Sketchpad.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
@@ -320,9 +317,6 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CytonRunner.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Sketchpad.ui">

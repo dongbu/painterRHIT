@@ -22,11 +22,11 @@
 #include <QGraphicsScene.h>
 #include <qgraphicsview.h>
 #include <QGraphicsPixmapItem>
+#include <qlineedit.h>
 
 //auto-generated methods to include
 #include "ui_Sketchpad.h"
 #include "ui_commandwindow.h"
-#include "ui_CytonRunner.h"
 
 //std methods to include
 #include <vector>
