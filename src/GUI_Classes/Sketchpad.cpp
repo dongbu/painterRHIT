@@ -97,7 +97,8 @@ void Sketchpad::setupQt() {
 	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
 
 	//image connections
-	connect(ui->actionLoad_Photo, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
+	connect(ui->actionLoad_Photo_Canny, SIGNAL(triggered()), this, SLOT(loadPhotoCannyClicked()));
+	connect(ui->actionLoad_Photo_Kmeans, SIGNAL(triggered()), this, SLOT(loadPhotoKmeansClicked()));
 	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
 
 	//robot connections
@@ -334,12 +335,21 @@ void Sketchpad::getColor() {
 
 //allows you to load a file into the sketchpad window.
 //these pictures are converted automatically to strokes.
-void Sketchpad::loadPhotoClicked(){
+
+void Sketchpad::loadPhotoCannyClicked(){
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
-	if (directory.exec()) emit loadPhoto(directory.selectedFiles().at(0).toStdString());
+	if (directory.exec()) emit loadPhotoCanny(directory.selectedFiles().at(0).toStdString());
+}
+
+void Sketchpad::loadPhotoKmeansClicked(){
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Images (*.png *.xpm *.jpg)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) emit loadPhotoKmeans(directory.selectedFiles().at(0).toStdString());
 }
 
 //launches the webcam and shows the result.

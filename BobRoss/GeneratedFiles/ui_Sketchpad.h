@@ -40,8 +40,9 @@ public:
     QAction *actionLoad;
     QAction *actionCreate;
     QAction *actionActionFill;
-    QAction *actionLoad_Photo;
     QAction *actionLaunch_webcam;
+    QAction *actionLoad_Photo_Canny;
+    QAction *actionLoad_Photo_Kmeans;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -116,16 +117,19 @@ public:
         QIcon icon9;
         icon9.addFile(QStringLiteral(":/Icon Storage/fill.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionActionFill->setIcon(icon9);
-        actionLoad_Photo = new QAction(Sketchpad);
-        actionLoad_Photo->setObjectName(QStringLiteral("actionLoad_Photo"));
-        QIcon icon10;
-        icon10.addFile(QStringLiteral(":/Icon Storage/camera.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionLoad_Photo->setIcon(icon10);
         actionLaunch_webcam = new QAction(Sketchpad);
         actionLaunch_webcam->setObjectName(QStringLiteral("actionLaunch_webcam"));
+        QIcon icon10;
+        icon10.addFile(QStringLiteral(":/Icon Storage/webcam.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionLaunch_webcam->setIcon(icon10);
+        actionLoad_Photo_Canny = new QAction(Sketchpad);
+        actionLoad_Photo_Canny->setObjectName(QStringLiteral("actionLoad_Photo_Canny"));
         QIcon icon11;
-        icon11.addFile(QStringLiteral(":/Icon Storage/webcam.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionLaunch_webcam->setIcon(icon11);
+        icon11.addFile(QStringLiteral(":/Icon Storage/camera.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionLoad_Photo_Canny->setIcon(icon11);
+        actionLoad_Photo_Kmeans = new QAction(Sketchpad);
+        actionLoad_Photo_Kmeans->setObjectName(QStringLiteral("actionLoad_Photo_Kmeans"));
+        actionLoad_Photo_Kmeans->setIcon(icon11);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -163,7 +167,8 @@ public:
         menuRobot->addAction(actionShutdown);
         menuWorkspace->addAction(actionCreate);
         menuWorkspace->addAction(actionLoad);
-        menuImage->addAction(actionLoad_Photo);
+        menuImage->addAction(actionLoad_Photo_Canny);
+        menuImage->addAction(actionLoad_Photo_Kmeans);
         menuImage->addAction(actionLaunch_webcam);
         toolBar_2->addAction(actionActionFill);
         toolBar_2->addAction(actionDraw_Filled_Rectangle);
@@ -203,14 +208,12 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionActionFill->setToolTip(QApplication::translate("Sketchpad", "Fill Region", 0));
 #endif // QT_NO_TOOLTIP
-        actionLoad_Photo->setText(QApplication::translate("Sketchpad", "Load Photo", 0));
-#ifndef QT_NO_TOOLTIP
-        actionLoad_Photo->setToolTip(QApplication::translate("Sketchpad", "Load photo", 0));
-#endif // QT_NO_TOOLTIP
         actionLaunch_webcam->setText(QApplication::translate("Sketchpad", "Launch Webcam", 0));
 #ifndef QT_NO_TOOLTIP
         actionLaunch_webcam->setToolTip(QApplication::translate("Sketchpad", "launch webcam", 0));
 #endif // QT_NO_TOOLTIP
+        actionLoad_Photo_Canny->setText(QApplication::translate("Sketchpad", "Load Photo Canny", 0));
+        actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Load Photo Kmeans", 0));
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));

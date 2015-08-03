@@ -43,6 +43,8 @@ public slots:
     void load(std::string projectLocation);
 	void loadRobot(std::string robotLocation);
 	void loadPhoto(std::string photoLocation);
+	void loadPhotoCanny(std::string photoLocation);
+	void loadPhotoKmeans(std::string photoLocation);
 
 };
 

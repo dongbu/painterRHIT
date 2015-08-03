@@ -59,7 +59,8 @@ private slots:
     void saveClicked();
     void openClicked();
 
-	void loadPhotoClicked();
+	void loadPhotoCannyClicked();
+	void loadPhotoKmeansClicked();
 	void launchWebcam();
 
 	void loadWorkspaceClicked();
@@ -76,7 +77,8 @@ signals:
 	void save(std::string);
     void load(std::string);
 	void loadRobot(std::string);
-	void loadPhoto(std::string);
+	void loadPhotoCanny(std::string);
+	void loadPhotoKmeans(std::string);
 
 };
 

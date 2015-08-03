@@ -64,7 +64,8 @@
     <property name="title">
      <string>Image</string>
     </property>
-    <addaction name="actionLoad_Photo"/>
+    <addaction name="actionLoad_Photo_Canny"/>
+    <addaction name="actionLoad_Photo_Kmeans"/>
     <addaction name="actionLaunch_webcam"/>
    </widget>
    <addaction name="menuFile"/>
@@ -218,18 +219,6 @@
     <string>Fill Region</string>
    </property>
   </action>
-  <action name="actionLoad_Photo">
-   <property name="icon">
-    <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
-   </property>
-   <property name="text">
-    <string>Load Photo</string>
-   </property>
-   <property name="toolTip">
-    <string>Load photo</string>
-   </property>
-  </action>
   <action name="actionLaunch_webcam">
    <property name="icon">
     <iconset resource="myres.qrc">
@@ -240,6 +229,24 @@
    </property>
    <property name="toolTip">
     <string>launch webcam</string>
+   </property>
+  </action>
+  <action name="actionLoad_Photo_Canny">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Photo Canny</string>
+   </property>
+  </action>
+  <action name="actionLoad_Photo_Kmeans">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Photo Kmeans</string>
    </property>
   </action>
  </widget>

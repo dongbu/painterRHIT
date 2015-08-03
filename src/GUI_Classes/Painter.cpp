@@ -100,8 +100,8 @@ void Painter::loadRobot(std::string robotLocation) {
 }
 
 void Painter::loadPhoto(std::string photoLocation) {
-	if (!stuffshowing) showGUI(false);
-	sketch->newClicked();
+	//if (!stuffshowing) showGUI(false);
+	//sketch->newClicked();
 
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
@@ -112,7 +112,37 @@ void Painter::loadPhoto(std::string photoLocation) {
 	IPC.parseImage(sketch->cvWindow->grid);
 	IPC.defineShapes(shapes);
 
-	cv::Mat *temp =  new cv::Mat();
+
+	ImageParserKmeans IPK;
+	IPK.setMinPixelsInRegion(5);
+	IPK.parseImage(sketch->cvWindow->grid);
+	IPK.defineShapes(shapes);
+
+	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(sketch->cvWindow); //redraw window
+	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->prodOtherWindows();
+}
+
+void Painter::loadPhotoCanny(std::string photoLocation){
+	cv::Mat image = cv::imread(photoLocation);
+	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+
+	ImageParserContours IPC;
+	IPC.setMinContourLength(5);
+	IPC.setCannyThreshold(50);
+	IPC.parseImage(sketch->cvWindow->grid);
+	IPC.defineShapes(shapes);
+
+	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(sketch->cvWindow); //redraw window
+	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->prodOtherWindows();
+
+}
+void Painter::loadPhotoKmeans(std::string photoLocation){
+	cv::Mat image = cv::imread(photoLocation);
+	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserKmeans IPK;
 	IPK.setMinPixelsInRegion(5);
@@ -138,7 +168,8 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
 	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
-	connect(sketch, SIGNAL(loadPhoto(std::string)), this, SLOT(loadPhoto(std::string)));
+	connect(sketch, SIGNAL(loadPhotoCanny(std::string)), this, SLOT(loadPhotoCanny(std::string)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(std::string)), this, SLOT(loadPhotoKmeans(std::string)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew,SIGNAL(triggered()), logic, SLOT(reset()));
