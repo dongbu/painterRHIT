@@ -2,8 +2,8 @@
 #define RUNLOGIC_H
 
 #include "stdafx.h"
-#include "../src/PaintingGUI/DrawWindow.cpp"
-#include "../src/PaintingGUI/shapes.cpp"
+#include "DrawWindow.cpp"
+#include "Shapes.cpp"
 #include "CytonRunner.h"
 
 class RunLogic : public QObject

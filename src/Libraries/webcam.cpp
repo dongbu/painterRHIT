@@ -1,9 +1,13 @@
 #pragma once
-#include "stdafx.h"
+
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 // Packages simple drawing commands for the simulator display window
 class Webcam {
 protected:
+	// put up here so that the webcam is always on (if not, takes time to warm up)
+	// G.H. moved here so that VisualStudio could compile.
 	cv::VideoCapture *cam0; // open the default camera
 	cv::VideoCapture *cam1; // open cam 1
 
@@ -25,17 +29,15 @@ public:
 		canvasQuad[1] = cv::Point2f(map_width, 0);
 		canvasQuad[2] = cv::Point2f(map_width, map_height);
 		canvasQuad[3] = cv::Point2f(0, map_height);
-
 		cv::Mat frame;
 		getFrame(&frame); // get a new frame from camera
+
 		zoomQuad[0] = cv::Point2f(0, 0);
 		zoomQuad[1] = cv::Point2f(frame.cols - 0, 0);
 		zoomQuad[2] = cv::Point2f(frame.cols - 0, frame.rows - 0);
 		zoomQuad[3] = cv::Point2f(0, frame.rows - 0);
-
 	}
 
-	//sets the zoom of the webcam (the name kinda gives it away)
 	void setWebcamZoom(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
 		zoomQuad[0] = cv::Point2f(x1, y1);
 		zoomQuad[1] = cv::Point2f(x2, y2);
@@ -43,7 +45,6 @@ public:
 		zoomQuad[3] = cv::Point2f(x4, y4);
 	}
 
-	//recieves the zoom
 	double * getWebcamZoom() {
 		static double map[8];
 		map[0] = zoomQuad[0].x;
@@ -59,95 +60,71 @@ public:
 
 	// used by calibrateWebcam to have user click on the 4 corners of webcam's desired region
 	static void zoomMouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
-		if (flags){}
 		Webcam *self = static_cast<Webcam*>(userdata);
 		if (event == cv::EVENT_LBUTTONDOWN) {
+			printf("Setting zoom corner %d to %i,%i\n", self->webcam_corner, x, y);
 			self->zoomQuad[self->webcam_corner].x = x * 2;
 			self->zoomQuad[self->webcam_corner].y = y * 2;
-			self->webcam_corner++;
 		}
-	}
-
-	// turns the clicked points into a usable square
-	void correctZoomQuad() {
-		float minX, maxX, minY, maxY;
-		minX = minY = std::max(map_width, map_height);
-		maxX = minY = 0;
-
-		for (int i = 0; i < 4; i++) {
-			if (zoomQuad[i].x < minX) minX = zoomQuad[i].x;
-			if (zoomQuad[i].x > maxX) maxX = zoomQuad[i].x;
-			if (zoomQuad[i].y < minY) minY = zoomQuad[i].y;
-			if (zoomQuad[i].y > maxY) maxY = zoomQuad[i].y;
-		}
-
-		zoomQuad[0].x = maxX;
-		zoomQuad[0].y = minY;
-		zoomQuad[1].x = minX;
-		zoomQuad[1].y = minY;
-		zoomQuad[2].x = minX;
-		zoomQuad[2].y = maxY;
-		zoomQuad[3].x = maxX;
-		zoomQuad[3].y = maxY;
-
 	}
 
 	// sets the desired region of the webcam 
-	cv::Mat calibrateWebcam(int skip_reset = 0) {
+	void calibrateWebcam(int skip_reset = 0) {
 		cv::Mat webcam;
-		cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels (what we're returning)
+		cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
 		//    cv::Mat canvas; // this is the "canvas"
-		//char mapped_name[] = "Mapped Webcam"; //REMEMBER ME
+		char mapped_name[] = "Mapped Webcam";
 		char webcam_name[] = "Webcam";
+		int debug = 1;
+
 		cv::namedWindow(webcam_name, 1);
 		cv::moveWindow(webcam_name, 20, 20);
 		cv::setMouseCallback(webcam_name, zoomMouseCallBackFunc, this);
 
-		//cv::namedWindow(mapped_name, 1); //REMEMBER ME
+		cv::namedWindow(mapped_name, 1);
 
 		if (!skip_reset) { resetMapping(); }
 
 		cv::Mat scaledWebcam;
 		webcam_corner = 0;
 		int done = 0;
-
 		while (!done) {
 			getFrame(&webcam, 3); // get a new frame from camera (blend 3 frames for better clarity)
+
 			cv::resize(webcam, scaledWebcam, cv::Size(), 0.5, 0.5);
-			//cv::imshow(webcam_name, scaledWebcam); //REMEMBER ME
-			//getMappedFrame(&mapped_webcam); //REMEMBER ME
-			//cv::imshow(mapped_name, mapped_webcam); //REMEMBER ME
+			cv::imshow(webcam_name, scaledWebcam);
+			cv::moveWindow(mapped_name, 40 + scaledWebcam.cols, 20);
+
+			getMappedFrame(&mapped_webcam);
+			cv::imshow(mapped_name, mapped_webcam);
 
 			int k = cv::waitKey(33);
-			if (k == 27 || k == int('x')) done = 1; // Esc key to stop
-			else if (webcam_corner == 1) { //one point clicked
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[0].x / 2, zoomQuad[0].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-			}
-			else if (webcam_corner == 2) { //two points clicked
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[0].x / 2, zoomQuad[0].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[1].x / 2, zoomQuad[1].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-			}
-			else if (webcam_corner == 3) { //three points clicked
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[0].x / 2, zoomQuad[0].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[1].x / 2, zoomQuad[1].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[2].x / 2, zoomQuad[2].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-			}
-			else if (webcam_corner == 4) { //four points clicked
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[0].x / 2, zoomQuad[0].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[1].x / 2, zoomQuad[1].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[2].x / 2, zoomQuad[2].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
-				cv::circle(scaledWebcam, cv::Point(zoomQuad[3].x / 2, zoomQuad[3].y / 2), 5, cv::Scalar(0, 255, 0), 2, 8);
+			if (k == 27 || k == int('x')) { // Esc key to stop
 				done = 1;
 			}
-			cv::imshow(webcam_name, scaledWebcam);
+			else if (k == int('1')) {
+				webcam_corner = 0;
+				if (debug) printf("Click on the desired region's upper left corner\n");
+			}
+			else if (k == int('2')) {
+				webcam_corner = 1;
+				if (debug) printf("Click on the desired region's upper right corner\n");
+			}
+			else if (k == int('3')) {
+				webcam_corner = 2;
+				if (debug) printf("Click on the desired region's lower right corner\n");
+			}
+			else if (k == int('4')) {
+				webcam_corner = 3;
+				if (debug) printf("Click on the desired region's lower left corner\n");
+			}
+			else if (k == int('x')) {
+				done = 1;
+			}
 		}
-
-		cv::destroyWindow(webcam_name); //delete webcam window
-
-		//		if (webcam_corner != 4) return; //make sure we didn't quit halfway through.
-		//correctZoomQuad();				//turning given points into an acutal square
-		getMappedFrame(&mapped_webcam); //generating return
-		return mapped_webcam;			//bail.  baIL.  BAIL!
+		printf("Webcam calibration matrix defined.\n");
+		cv::destroyWindow(mapped_name);
+		cv::destroyWindow(webcam_name);
 	}
 
 	// returns a 2x4 array which is the mapping of a frame to the canvas mapping
@@ -164,21 +141,16 @@ public:
 	}
 
 	// sets frame to a mapping of the webcam 
-	void getMappedFrame(cv::Mat *mapped_frame) {
+	void getMappedFrame(cv::Mat *mapped_frame, int loops = 0, int blackwhite = 0) {
 		cv::Mat webcam;
-		getFrame(&webcam); // get a new frame from camera
-
+		getFrame(&webcam, loops, blackwhite); // get a new frame from camera
 
 		// zoom into the webcam to where ever the desired region
-
 		cv::Mat zoom_lambda(2, 4, CV_32FC1);
-
 		// Set the lambda matrix the same type and size as webcam
 		zoom_lambda = cv::Mat::zeros(webcam.rows, webcam.cols, webcam.type());
-
 		// Get the Perspective Transform Matrix i.e. lambda
 		zoom_lambda = cv::getPerspectiveTransform(zoomQuad, webcamQuad);
-
 		// Apply the Perspective Transform just found to the src image
 		cv::warpPerspective(webcam, webcam, zoom_lambda, webcam.size());
 
@@ -187,36 +159,36 @@ public:
 
 		cv::Mat webcam_lambda = getMapLambda(&webcam);
 
-
 		// Apply the Perspective Transform just found to the src image
 		cv::warpPerspective(webcam, *mapped_frame, webcam_lambda, mapped_frame->size());
 	}
 
-	//sets a default frame to a mapping of the webcam.
 	cv::Mat getMappedFrame() {
 		cv::Mat mappedFrame;
 		getMappedFrame(&mappedFrame);
 		return mappedFrame;
 	}
 
-	//sets the size of the map.
 	void setMapSize(int w, int h) { // this is the projection of the webcam to an arbitrary size
 		map_height = h;
 		map_width = w;
 		resetMapping();
 	}
 
-	//do you want your webcam to be a camera, or a mirror?
 	void setFlip(int flip) { // set 1 to flip over the webcam
 		flip_webcam = flip;
 	}
 
-	//get the frame
-	int getFrame(cv::Mat *frame, int loops = 0) {
+	int getFrame(cv::Mat *frame, int loops = 0, int blackwhite = 0) {
 		if (cam_id == 0) {
 			if (cam0->isOpened()) {  // check if we succeeded
 				cam0->read(*frame);
 				if (flip_webcam) { flip(*frame, *frame, -1); } // horizontal and vertically
+				if (blackwhite) {
+					cv::Mat temp_webcam;
+					cvtColor(*frame, temp_webcam, 7); // CV_BGR2GRAY=7 );
+					*frame = temp_webcam.clone();
+				}
 
 				if (loops > 0) {
 					cv::Mat temp_webcam;
@@ -261,10 +233,10 @@ public:
 		return 0;
 	}
 
-	Webcam() { // constructor
+	Webcam(int width, int height) { // constructor
 		cam_id = 0;
-		map_width = 600;
-		map_height = 400;
+		map_width = width;
+		map_height = height;
 		flip_webcam = 0;
 		webcam_corner = 0;
 		cam0 = new cv::VideoCapture(0); // open the default camera
@@ -272,8 +244,7 @@ public:
 		if (!cam0->isOpened()) return;
 		resetMapping();
 	}
-	
-	//deconstructor
+
 	~Webcam() {
 	}
 

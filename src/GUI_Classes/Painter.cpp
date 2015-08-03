@@ -9,8 +9,7 @@ Painter::Painter() {
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
-	Web = new Webcam();
-
+	Web = new Webcam(width, height);
 }
 /**
  * @brief constructor with shapes.
@@ -22,7 +21,7 @@ Painter::Painter(Shapes *shapes) {
 	height = 600;
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
-	Web = new Webcam();
+	Web = new Webcam(width,height);
 }
 /**
  * @brief add list of shapes to painter.

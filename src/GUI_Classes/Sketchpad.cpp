@@ -345,24 +345,24 @@ void Sketchpad::loadPhotoClicked(){
 //launches the webcam and shows the result.
 //clicking yields resizing.
 void Sketchpad::launchWebcam() {
-	Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
-	this->cvWindow->grid = Web->calibrateWebcam();
+	//Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
+	//this->cvWindow->grid = Web->calibrateWebcam();
 
-	ImageParserContours IPC;
-	IPC.setMinContourLength(5);
-	IPC.setCannyThreshold(50);
-	IPC.parseImage(cvWindow->grid);
-	IPC.defineShapes(shapes);
+	//ImageParserContours IPC;
+	//IPC.setMinContourLength(5);
+	//IPC.setCannyThreshold(50);
+	//IPC.parseImage(cvWindow->grid);
+	//IPC.defineShapes(shapes);
 
-	ImageParserKmeans IPK;
-	IPK.setMinPixelsInRegion(5);
-	IPK.parseImage(cvWindow->grid);
-	IPK.defineShapes(shapes);
+	//ImageParserKmeans IPK;
+	//IPK.setMinPixelsInRegion(5);
+	//IPK.parseImage(cvWindow->grid);
+	//IPK.defineShapes(shapes);
 
-	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->drawAll(cvWindow); //redraw window
-	translator->showImage(cvWindow->grid); //actually redraw the window
-	emit prodOtherWindows();
+	//cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	//shapes->drawAll(cvWindow); //redraw window
+	//translator->showImage(cvWindow->grid); //actually redraw the window
+	//emit prodOtherWindows();
 }
 
 ////Functions primarily relating to other classes are below here////

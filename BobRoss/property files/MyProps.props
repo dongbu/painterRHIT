@@ -5,10 +5,10 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\src\PaintingGUI\;..\include\PaintingGUI\;C:\Qt\5.4\msvc2013\include; %(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include\GUI_Classes\;..\src\Libraries\;..\include\Libraries\;C:\Qt\5.4\msvc2013\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\src\PaintingGUI; C:\opencv\build\x86\vc12\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\src\Libraries;C:\opencv\build\x86\vc12\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>boost_system-vc120-mt-1_57.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>

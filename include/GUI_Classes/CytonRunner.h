@@ -3,7 +3,6 @@
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
 
-
 namespace Ui {
 	class CytonRunner;
 }

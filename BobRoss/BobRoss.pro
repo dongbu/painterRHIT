@@ -18,34 +18,36 @@ PRECOMPILED_SOURCE = stdafx.cpp
 }
 
 SOURCES +=\
-    ../src/PaintingGUI/CommandWindow.cpp \
-    ../src/PaintingGUI/CVImageWidget.cpp \
-    ../src/PaintingGUI/CytonRunner.cpp \
-    ../src/PaintingGUI/drawwindow.cpp \
-    ../src/PaintingGUI/imageparser.cpp \
-    ../src/PaintingGUI/kmeansSegment.cpp \
-    ../src/PaintingGUI/main.cpp \
-    ../src/PaintingGUI/Painter.cpp \
-    ../src/PaintingGUI/pixeltools.cpp \
-    ../src/PaintingGUI/pugixml.cpp \
-    ../src/PaintingGUI/regiontopaths.cpp \
-    ../src/PaintingGUI/RunLogic.cpp \
-    ../src/PaintingGUI/shapes.cpp \
-    ../src/PaintingGUI/Sketchpad.cpp \
-    ../src/PaintingGUI/webcam.cpp \
-    ../src/PaintingGUI/workspacewizard.cpp
+    ../src/GUI_Classes/CommandWindow.cpp \
+    ../src/GUI_Classes/CytonRunner.cpp \
+    ../src/GUI_Classes/main.cpp \
+    ../src/GUI_Classes/Painter.cpp \
+    ../src/GUI_Classes/RunLogic.cpp \
+    ../src/GUI_Classes/Sketchpad.cpp \
+    ../src/GUI_Classes/stdafx.cpp \
+    ../src/GUI_Classes/workspacewizard.cpp \
+    ../src/Libraries/CVImageWidget.cpp \
+    ../src/Libraries/drawwindow.cpp \
+    ../src/Libraries/imageparser.cpp \
+    ../src/Libraries/kmeansSegment.cpp \
+    ../src/Libraries/pixeltools.cpp \
+    ../src/Libraries/pugixml.cpp \
+    ../src/Libraries/regiontopaths.cpp \
+    ../src/Libraries/shapes.cpp \
+    ../src/Libraries/webcam.cpp
 
 HEADERS  += \
-    ../include/PaintingGUI/CommandWindow.h \
-    ../include/PaintingGUI/CVImageWidget.h \
-    ../include/PaintingGUI/CytonRunner.h \
-    ../include/PaintingGUI/kmeansSegment.hpp \
-    ../include/PaintingGUI/Painter.h \
-    ../include/PaintingGUI/pugiconfig.hpp \
-    ../include/PaintingGUI/pugixml.hpp \
-    ../include/PaintingGUI/runLogic.h \
-    ../include/PaintingGUI/Sketchpad.h \
-    ../include/PaintingGUI/workspacewizard.h
+    ../include/GUI_Classes/CommandWindow.h \
+    ../include/GUI_Classes/CytonRunner.h \
+    ../include/GUI_Classes/Painter.h \
+    ../include/GUI_Classes/runLogic.h \
+    ../include/GUI_Classes/Sketchpad.h \
+    ../include/GUI_Classes/stdafx.h \
+    ../include/GUI_Classes/workspacewizard.h \
+    ../include/Libraries/CVImageWidget.h \
+    ../include/Libraries/kmeansSegment.hpp \
+    ../include/Libraries/pugiconfig.hpp \
+    ../include/Libraries/pugixml.hpp
 
 FORMS    += \
     CommandWindow.ui \

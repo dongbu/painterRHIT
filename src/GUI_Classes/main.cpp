@@ -1,7 +1,8 @@
-#include <windows.h>
+#include "stdafx.h"
+
 #include "Painter.h"
-#include "Shapes.cpp"
-#include "DrawWindow.cpp"
+#include <windows.h>
+
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
 
     Painter *painter = new Painter();
     painter->showGUI(true);
-	painter->loadPhoto("../../demos/images/lena.jpg");
+	painter->loadPhoto("../../images/lena.jpg");
 	//console window//
 
     return a.exec();

@@ -1,12 +1,7 @@
 #pragma once
 
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <iostream>
-#include <fstream>
-#include <cstdarg>
-#include "pugixml.hpp"
 #include "drawwindow.cpp"
+#include "pugixml.hpp"
 
 class PolyLine;
 class PixelRegion;
@@ -71,7 +66,7 @@ public:
 		isBreakPoint = toggle;
 	}
 
-	virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); }
+	virtual void draw(DrawWindow *W) { if (W) printf("hey, you should know how to draw yourself\n"); }
 
 	virtual PolyLine* toPolyline(){
 		printf("if you are seeing this message, this class cannot convert to polyline\n");
@@ -142,6 +137,7 @@ public:
 	void addPoint(cv::Point pt) { points.push_back(pt); }
 	void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
 	void addPoint(int i, int j, int dup_check) { // add point if it doesn't exist yet
+		if (dup_check){}
 		int found = 0;
 		for (int n = 0; n < (int)points.size(); n++) {
 			if (points[n].x == i && points[n].y == j) {
@@ -321,8 +317,8 @@ public:
 	// returns a pixelregion representation of a rectangle
 	virtual PixelRegion* toPixelRegion() {
 		PixelRegion* PR = new PixelRegion();
-		for (int i = std::min(pt1.x,pt2.x); i <= std::max(pt1.x,pt2.x); i++) {
-			for (int j = std::min(pt1.y,pt2.y); j <= std::max(pt2.y,pt1.y); j++) {
+		for (int i = std::min(pt1.x, pt2.x); i <= std::max(pt1.x, pt2.x); i++) {
+			for (int j = std::min(pt1.y, pt2.y); j <= std::max(pt2.y, pt1.y); j++) {
 				if (fill == 1 || (i == pt1.x || i == pt2.x || j == pt1.y || j == pt2.y)) {
 					PR->addPoint(i, j);
 				}

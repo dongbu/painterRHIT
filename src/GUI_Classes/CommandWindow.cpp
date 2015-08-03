@@ -1,6 +1,5 @@
 #include "CommandWindow.h"
 
-///Public methods below here
 /**
  * @brief constructor
  * @param ss
@@ -32,7 +31,6 @@ CommandWindow::~CommandWindow()
 	delete ui;
 }
 
-///Slots below here///
 /**
  * @brief move command up in window (and vec)
  */

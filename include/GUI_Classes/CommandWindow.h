@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "CytonRunner.h"
-#include "../src/PaintingGUI/Shapes.cpp"
+#include "Shapes.cpp"
 
 namespace Ui {
 class CommandWindow;
