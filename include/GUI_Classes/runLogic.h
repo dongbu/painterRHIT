@@ -33,6 +33,7 @@ public slots:
     void runOnly(int index);
     void toggleBreakPoint(int index);
     void shapesChanged();
+	void reset();
 
 signals:
     void setBreakPointColor(int index, bool toggle);

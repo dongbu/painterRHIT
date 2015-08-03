@@ -416,6 +416,7 @@ void Sketchpad::newClicked() {
 	this->shapes->clear();
 	this->paintingNamePath = "unpathed";
 	this->redraw();
+	
 	emit prodOtherWindows();
 }
 

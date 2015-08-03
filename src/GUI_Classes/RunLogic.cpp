@@ -155,3 +155,11 @@ void RunLogic::drawingThread(DrawWindow *W) {
 		running = false;
 	}
 }
+
+
+void RunLogic::reset(){
+	shapes->clear();
+	stopClicked();
+	simWin = new DrawWindow(width, height, "Simulation Window");
+	//simWin->hideWindow();
+}

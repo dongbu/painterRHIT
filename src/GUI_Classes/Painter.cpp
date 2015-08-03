@@ -141,6 +141,7 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(loadPhoto(std::string)), this, SLOT(loadPhoto(std::string)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
+	connect(sketch->ui->actionNew,SIGNAL(triggered()), logic, SLOT(reset()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
 	if (toggle){

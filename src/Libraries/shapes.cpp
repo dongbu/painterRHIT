@@ -435,6 +435,9 @@ protected:
 
 public:
 	void addShape(Shape *shape) {
+		if (shapes.size() <= 0){
+			max_id = 0;
+		}
 		int id = shape->getID();
 		if (id < 0) {
 			max_id++;
