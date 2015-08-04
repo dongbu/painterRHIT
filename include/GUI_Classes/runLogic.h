@@ -22,6 +22,7 @@ private:
     Shapes *shapes;
     int width, height;
 	CytonRunner *Ava;
+	int stepTaken; //0 for back, 1 for forward, 2 for neither.
 
 public slots:
     void stopClicked();

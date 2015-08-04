@@ -294,6 +294,7 @@ public:
 
 class MyRectangle : public Shape {
 protected:
+	int thickness;
 	cv::Point pt1;
 	cv::Point pt2;
 
@@ -302,6 +303,8 @@ public:
 		pt1 = cv::Point(x1, y1);
 		pt2 = cv::Point(x2, y2);
 	}
+
+	void setThickness(int t = 1) { thickness = t; }
 
 	// returns a polyline representation of a rectangle
 	PolyLine* toPolyline() { // note: only perimeter
@@ -342,6 +345,7 @@ public:
 	virtual void draw(DrawWindow *W) {
 		cv::Scalar color = getPenColor();
 		W->setPenColor(color[0], color[1], color[2]);
+		W->setLineThickness(thickness);
 		W->drawRectangle(pt1.x, pt1.y, pt2.x, pt2.y, fill);
 	}
 
@@ -350,6 +354,7 @@ public:
 
 class MyEllipse : public Shape {
 protected:
+	int thickness;
 	cv::Point pt;
 	cv::Size axes;
 
@@ -363,6 +368,8 @@ public:
 		pt = cv::Point(x, y);
 		axes = cv::Size(width, height);
 	}
+
+	void setThickness(int t = 1) { thickness = t; }
 
 	// returns a polyline representation of a circle [don't worry about doing a real ellipse for now]
 	virtual PolyLine* toPolyline() { // note: only perimeter
@@ -420,6 +427,7 @@ public:
 	virtual void draw(DrawWindow *W) {
 		cv::Scalar color = getPenColor();
 		W->setPenColor(color[0], color[1], color[2]);
+		W->setLineThickness(thickness);
 		W->drawEllipse(pt.x, pt.y, axes.width, axes.height, 0, fill);
 	}
 

@@ -46,7 +46,9 @@ void RunLogic::pauseClicked() { running = false; }
  */
 void RunLogic::forwardClicked() {
 	this->simWin->showWindow();
+	printf("going forward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
 	if (currentShapeIndex >= shapes->length()) return;
+
 	running = false;
 	runOnly(currentShapeIndex);
 }
@@ -54,6 +56,7 @@ void RunLogic::forwardClicked() {
  * @brief steps backwards.
  */
 void RunLogic::backwardClicked() {
+	printf("going backward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
 	if (currentShapeIndex == 0 && stopIndex == 0) return;
 
 	this->simWin->showWindow();
@@ -100,6 +103,7 @@ void RunLogic::runOnly(int index) {
 	shapes->at(index)->draw(simWin);
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
+
 	emit(setRunColor(index, true));
 	simWin->show();
 }

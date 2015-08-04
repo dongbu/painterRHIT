@@ -11,14 +11,14 @@ int main(int argc, char *argv[])
 	//console window//
     AllocConsole();
 
-    SetConsoleTitleA("Robot Artist v3 (8/3/15)");
+    SetConsoleTitleA("Robot Artist v3 (8/4/15)");
     freopen("conin$", "r", stdin);
     freopen("conout$", "w", stdout);
     freopen("conout$", "w", stderr);
 
     Painter *painter = new Painter();
     painter->showGUI(true);
-	painter->loadPhoto("../../images/lena.jpg");
+	//painter->loadPhoto("../../images/lena.jpg");
 	//console window//
 
     return a.exec();
