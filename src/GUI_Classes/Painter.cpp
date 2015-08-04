@@ -48,6 +48,7 @@ void Painter::setDimensions(int width, int height) {
 	this->width = width;
 	this->height = height;
 	Ava = new CytonRunner(width, height);
+	Web = new Webcam(width, height);
 
 	if (stuffshowing){
 		this->sketch->close();
@@ -220,7 +221,7 @@ std::string Painter::getXMLWeb() {
 	double * zoom = Web->getWebcamZoom();
 	line = "<zoom x0=\"" + std::to_string(zoom[0]) + "\" y0=\"" + std::to_string(zoom[1]) + "\" x1=\"" + std::to_string(zoom[2])
 		+ "\" y1=\"" + std::to_string(zoom[3]) + "\" x2=\"" + std::to_string(zoom[4]) + "\" y2=\"" + std::to_string(zoom[5])
-		+ "\" x4=\"" + std::to_string(zoom[6]) + "\" y4=\"" + std::to_string(zoom[7]) + "\">\n";
+		+ "\" x3=\"" + std::to_string(zoom[6]) + "\" y3=\"" + std::to_string(zoom[7]) + "\">\n";
 	line.append("</zoom>/n");
 	return line;
 }

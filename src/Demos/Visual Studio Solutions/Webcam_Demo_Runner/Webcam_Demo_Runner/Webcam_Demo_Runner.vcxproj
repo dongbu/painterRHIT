@@ -10,10 +10,23 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\drawwindow.cpp" />
+    <ClCompile Include="..\pixeltools.cpp" />
+    <ClCompile Include="..\pugixml.cpp" />
+    <ClCompile Include="..\regiontopaths.cpp" />
+    <ClCompile Include="..\shapes.cpp" />
+    <ClCompile Include="..\webcam.cpp" />
+    <ClCompile Include="..\webcam_painter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\pugiconfig.hpp" />
+    <ClInclude Include="..\pugixml.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C647D278-2962-4A3F-AA70-46A07B1B9920}</ProjectGuid>
+    <ProjectGuid>{ACB3890C-224D-4912-B98F-D03E383462FE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>CalibrateWebcam</RootNamespace>
+    <RootNamespace>Webcam_Demo_Runner</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -37,7 +50,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\property files\OpenCV.props" />
+    <Import Project="..\..\..\..\..\BobRoss\property files\OpenCV.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -78,9 +91,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\webcam_demo.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

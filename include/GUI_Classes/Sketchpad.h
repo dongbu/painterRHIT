@@ -61,7 +61,10 @@ private slots:
 
 	void loadPhotoCannyClicked();
 	void loadPhotoKmeansClicked();
-	void launchWebcam();
+
+	void calibrateWebcam();
+	void viewWebcam();
+	void switchWebcam();
 
 	void loadWorkspaceClicked();
 	void createWorkspaceClicked();

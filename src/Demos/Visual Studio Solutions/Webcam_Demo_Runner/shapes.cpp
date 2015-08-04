@@ -3,6 +3,7 @@
 #include "drawwindow.cpp"
 #include "pugixml.hpp"
 #include <iostream>
+#include <cstdarg>
 
 class PolyLine;
 class PixelRegion;

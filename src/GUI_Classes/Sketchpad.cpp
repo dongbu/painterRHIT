@@ -99,7 +99,9 @@ void Sketchpad::setupQt() {
 	//image connections
 	connect(ui->actionLoad_Photo_Canny, SIGNAL(triggered()), this, SLOT(loadPhotoCannyClicked()));
 	connect(ui->actionLoad_Photo_Kmeans, SIGNAL(triggered()), this, SLOT(loadPhotoKmeansClicked()));
-	connect(ui->actionLaunch_webcam, SIGNAL(triggered()), this, SLOT(launchWebcam()));
+	connect(ui->actionCalibrate, SIGNAL(triggered()), this, SLOT(calibrateWebcam()));
+	connect(ui->actionView, SIGNAL(triggered()), this, SLOT(viewWebcam()));
+	connect(ui->actionSwitch, SIGNAL(triggered()), this, SLOT(switchWebcam()));
 
 	//robot connections
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -356,26 +358,11 @@ void Sketchpad::loadPhotoKmeansClicked(){
 
 //launches the webcam and shows the result.
 //clicking yields resizing.
-void Sketchpad::launchWebcam() {
-	//Web->setMapSize(cvWindow->grid.size().width, cvWindow->grid.size().height);
-	//this->cvWindow->grid = Web->calibrateWebcam();
+void Sketchpad::calibrateWebcam() { Web->calibrateWebcam(); }
 
-	//ImageParserContours IPC;
-	//IPC.setMinContourLength(5);
-	//IPC.setCannyThreshold(50);
-	//IPC.parseImage(cvWindow->grid);
-	//IPC.defineShapes(shapes);
+void Sketchpad::viewWebcam() { Web->showWebcam(); }
 
-	//ImageParserKmeans IPK;
-	//IPK.setMinPixelsInRegion(5);
-	//IPK.parseImage(cvWindow->grid);
-	//IPK.defineShapes(shapes);
-
-	//cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	//shapes->drawAll(cvWindow); //redraw window
-	//translator->showImage(cvWindow->grid); //actually redraw the window
-	//emit prodOtherWindows();
-}
+void Sketchpad::switchWebcam() { Web->switchWebcam(); }
 
 ////Functions primarily relating to other classes are below here////
 
@@ -428,7 +415,6 @@ void Sketchpad::newClicked() {
 	this->shapes->clear();
 	this->paintingNamePath = "unpathed";
 	this->redraw();
-	
 	emit prodOtherWindows();
 }
 

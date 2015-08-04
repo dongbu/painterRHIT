@@ -19,5 +19,12 @@
         <file>Icon Storage/fill.png</file>
         <file>Icon Storage/camera.png</file>
         <file>Icon Storage/webcam.png</file>
+        <file>Icon Storage/canvas.png</file>
+        <file>Icon Storage/OffButton.png</file>
+        <file>Icon Storage/wrench.png</file>
+        <file>Icon Storage/eyeball.png</file>
+        <file>Icon Storage/trace.png</file>
+        <file>Icon Storage/splatter.png</file>
+        <file>Icon Storage/switch.png</file>
     </qresource>
 </RCC>

@@ -16,7 +16,6 @@ protected:
 	int cam_id;
 	int flip_webcam;
 	int webcam_corner;
-	int currentCamera;
 	cv::Point2f webcamQuad[4]; // four corners of webcam input
 	cv::Point2f zoomQuad[4]; // four corners of which region of the webcam is desired
 	cv::Point2f canvasQuad[4]; // four corners of desired mapped output
@@ -128,23 +127,6 @@ public:
 		cv::destroyWindow(webcam_name);
 	}
 
-	void showWebcam() {
-		cv::Mat mapped_webcam;
-
-		char mapped_name[] = "Mapped Webcam";
-		cv::namedWindow(mapped_name, 1);
-
-		int done = 0;
-		while (!done) {
-			getMappedFrame(&mapped_webcam);
-			cv::imshow(mapped_name, mapped_webcam);
-			int k = cv::waitKey(33); //stall
-			if (k == 27 || k == int('x')) done = 1; //escape position
-		}
-
-		cv::destroyWindow(mapped_name);
-	}
-
 	// returns a 2x4 array which is the mapping of a frame to the canvas mapping
 	cv::Mat getMapLambda(cv::Mat *frame) {
 		cv::Mat frame_lambda(2, 4, CV_32FC1);
@@ -251,24 +233,14 @@ public:
 		return 0;
 	}
 
-	void switchWebcam() {
-		currentCamera++;
-		cam1 = new cv::VideoCapture(currentCamera);
-		if (cam1->isOpened()) cam0 = cam1;
-		else {
-			cam0 = new cv::VideoCapture(0);
-			currentCamera = 0;
-		}
-	}
-
 	Webcam(int width = 600, int height = 600) { // constructor
 		cam_id = 0;
 		map_width = width;
 		map_height = height;
 		flip_webcam = 0;
 		webcam_corner = 0;
-		currentCamera = 0;
-		cam0 = new cv::VideoCapture(currentCamera); // open the default camera
+		cam0 = new cv::VideoCapture(0); // open the default camera
+		cam1 = new cv::VideoCapture(1); // open cam 1
 		if (!cam0->isOpened()) return;
 		resetMapping();
 	}

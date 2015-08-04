@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -66,11 +66,19 @@
     </property>
     <addaction name="actionLoad_Photo_Canny"/>
     <addaction name="actionLoad_Photo_Kmeans"/>
-    <addaction name="actionLaunch_webcam"/>
+   </widget>
+   <widget class="QMenu" name="menuWebcam">
+    <property name="title">
+     <string>Webcam</string>
+    </property>
+    <addaction name="actionCalibrate"/>
+    <addaction name="actionView"/>
+    <addaction name="actionSwitch"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
    <addaction name="menuImage"/>
+   <addaction name="menuWebcam"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar_2">
@@ -193,16 +201,28 @@
    </property>
   </action>
   <action name="actionShutdown">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/OffButton.png</normaloff>:/Icon Storage/OffButton.png</iconset>
+   </property>
    <property name="text">
     <string>Shutdown</string>
    </property>
   </action>
   <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/open.png</normaloff>:/Icon Storage/open.png</iconset>
+   </property>
    <property name="text">
     <string>load</string>
    </property>
   </action>
   <action name="actionCreate">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/new.png</normaloff>:/Icon Storage/new.png</iconset>
+   </property>
    <property name="text">
     <string>create</string>
    </property>
@@ -219,13 +239,13 @@
     <string>Fill Region</string>
    </property>
   </action>
-  <action name="actionLaunch_webcam">
+  <action name="actionCalibrate">
    <property name="icon">
     <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/webcam.png</normaloff>:/Icon Storage/webcam.png</iconset>
+     <normaloff>:/Icon Storage/wrench.png</normaloff>:/Icon Storage/wrench.png</iconset>
    </property>
    <property name="text">
-    <string>Launch Webcam</string>
+    <string>Calibrate</string>
    </property>
    <property name="toolTip">
     <string>launch webcam</string>
@@ -234,7 +254,7 @@
   <action name="actionLoad_Photo_Canny">
    <property name="icon">
     <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
+     <normaloff>:/Icon Storage/trace.png</normaloff>:/Icon Storage/trace.png</iconset>
    </property>
    <property name="text">
     <string>Load Photo Canny</string>
@@ -243,10 +263,28 @@
   <action name="actionLoad_Photo_Kmeans">
    <property name="icon">
     <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/camera.png</normaloff>:/Icon Storage/camera.png</iconset>
+     <normaloff>:/Icon Storage/splatter.png</normaloff>:/Icon Storage/splatter.png</iconset>
    </property>
    <property name="text">
     <string>Load Photo Kmeans</string>
+   </property>
+  </action>
+  <action name="actionView">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/eyeball.png</normaloff>:/Icon Storage/eyeball.png</iconset>
+   </property>
+   <property name="text">
+    <string>View</string>
+   </property>
+  </action>
+  <action name="actionSwitch">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/switch.png</normaloff>:/Icon Storage/switch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Switch Webcam</string>
    </property>
   </action>
  </widget>
