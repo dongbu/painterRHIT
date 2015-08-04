@@ -29,6 +29,7 @@ void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
  * @brief stops and clears simulation.
  */
 void RunLogic::stopClicked() {
+	stepTaken = 2;
 	running = false;
 	simWin->clearWindow(255, 255, 255); //white
 	simWin->show();
@@ -45,34 +46,48 @@ void RunLogic::pauseClicked() { running = false; }
  * @brief steps forward.
  */
 void RunLogic::forwardClicked() {
-	this->simWin->showWindow();
-	printf("going forward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
-	if (currentShapeIndex >= shapes->length()) return;
 
+	this->simWin->showWindow();
+	if (stepTaken == 0){
+		currentShapeIndex++;
+	}
+	if (currentShapeIndex >= shapes->length()){ 
+		stepTaken = 2;
+		return; 
+	}
+	
+	printf("going forward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
 	running = false;
 	runOnly(currentShapeIndex);
+	stepTaken = 1;
 }
 /**
  * @brief steps backwards.
  */
 void RunLogic::backwardClicked() {
-	printf("going backward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
-	if (currentShapeIndex == 0 && stopIndex == 0) return;
+
+	
+	if (currentShapeIndex == 0 && stopIndex == 0){
+		stepTaken = 2;
+		return;
+	}
 
 	this->simWin->showWindow();
 	running = false;
 	emit setRunColor(currentShapeIndex, false);
 	simWin->clearWindow(255, 255, 255); //white
 	if (currentShapeIndex <= 0) {
+		stepTaken = 2;
 		simWin->show();
 		return;
 	}
-
+	printf("going backward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
 	int temp = currentShapeIndex;
 	for (int i = 0; i < temp; i++) {
 		runOnly(i);
 		currentShapeIndex--;
 	}
+	stepTaken = 0;
 }
 /**
  * @brief runs simulation.
@@ -82,6 +97,7 @@ void RunLogic::runClicked() {
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
 	auto d1 = std::async(&RunLogic::drawingThread, this, simWin);
+	stepTaken = 2;
 }
 
 /**
@@ -93,6 +109,7 @@ void RunLogic::runFrom(int index) {
 	currentShapeIndex = index;
 	stopIndex = shapes->length();
 	runClicked();
+	stepTaken = 2;
 }
 /**
  * @brief runs only the specified command.
@@ -163,6 +180,7 @@ void RunLogic::drawingThread(DrawWindow *W) {
 
 
 void RunLogic::reset(){
+	stepTaken = 2;
 	shapes->clear();
 	stopClicked();
 	simWin = new DrawWindow(width, height, "Simulation Window");
