@@ -141,12 +141,14 @@ void Sketchpad::startNewCommand() {
 		curCircle = new MyEllipse();
 		if (ui->actionDraw_Filled_Circle->isChecked()) curCircle->setFill(1);
 		curCircle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		curCircle->setThickness(thickness->text().toInt());
 		this->currentShape = curCircle;
 	}
 	else if (ui->actionDraw_Square->isChecked() || ui->actionDraw_Filled_Rectangle->isChecked()) {
 		curRectangle = new MyRectangle();
 		if (ui->actionDraw_Filled_Rectangle->isChecked()) curRectangle->setFill(1);
 		curRectangle->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
+		curRectangle->setThickness(thickness->text().toInt());
 		this->currentShape = curRectangle;
 	}
 	else if (ui->actionActionFill->isChecked()) {
