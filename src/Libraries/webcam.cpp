@@ -233,7 +233,7 @@ public:
 		return 0;
 	}
 
-	Webcam(int width, int height) { // constructor
+	Webcam(int width = 600, int height = 600) { // constructor
 		cam_id = 0;
 		map_width = width;
 		map_height = height;

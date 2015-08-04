@@ -227,7 +227,6 @@ void CytonRunner::stroke(std::vector<cv::Point> pts){
 		goToPos(pts.at(i).x, pts.at(i).y, 0);
 	}
 	raiseBrush();
-
 }
 
 bool CytonRunner::goToJointHome(int type){
@@ -306,6 +305,10 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 	toReturn.push_back(minX + x);
 	toReturn.push_back(minY + y);
 	toReturn.push_back(minZ + z);
+
+	printf("(minX, minY, minZ): (%f,%f,%f)\n", minX, minY, minZ);
+	printf("(x,y,z): (%f,%f,%f)\n", toReturn.at(0), toReturn.at(1), toReturn.at(2));
+	printf("\n");
 
 	return toReturn;
 

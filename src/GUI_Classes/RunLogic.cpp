@@ -124,6 +124,7 @@ void RunLogic::toggleBreakPoint(int index) {
  */
 void RunLogic::drawingThread(DrawWindow *W) {
 	if (running && Ava->connected && currentShapeIndex < stopIndex) {
+		printf("Drawing shape at index %i\n", currentShapeIndex);
 		running = false;
 		if (shapes->at(currentShapeIndex)->isBreakPoint){
 			toggleBreakPoint(currentShapeIndex);
@@ -135,7 +136,7 @@ void RunLogic::drawingThread(DrawWindow *W) {
 		W->show();
 		currentShapeIndex++;
 
-		if (currentShapeIndex == stopIndex) currentShapeIndex--;
+		//if (currentShapeIndex == stopIndex) currentShapeIndex--;
 	}
 	else {
 		while (running && currentShapeIndex < stopIndex) {

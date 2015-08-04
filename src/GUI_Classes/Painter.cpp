@@ -112,7 +112,6 @@ void Painter::loadPhoto(std::string photoLocation) {
 	IPC.parseImage(sketch->cvWindow->grid);
 	IPC.defineShapes(shapes);
 
-
 	ImageParserKmeans IPK;
 	IPK.setMinPixelsInRegion(5);
 	IPK.parseImage(sketch->cvWindow->grid);
