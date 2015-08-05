@@ -26,5 +26,6 @@
         <file>Icon Storage/trace.png</file>
         <file>Icon Storage/splatter.png</file>
         <file>Icon Storage/switch.png</file>
+        <file>Icon Storage/gavel.png</file>
     </qresource>
 </RCC>

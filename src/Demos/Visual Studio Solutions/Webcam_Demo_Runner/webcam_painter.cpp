@@ -2,7 +2,6 @@
 #include "drawwindow.cpp"
 #include "shapes.cpp"
 #include "regiontopaths.cpp"
-//#include <unistd.h> // sleep
 
 // use webcam to determine where best to paint given a paint color
 

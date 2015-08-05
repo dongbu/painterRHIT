@@ -45,6 +45,7 @@ public:
     QAction *actionLoad_Photo_Kmeans;
     QAction *actionView;
     QAction *actionSwitch;
+    QAction *actionJudge;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -150,6 +151,11 @@ public:
         QIcon icon15;
         icon15.addFile(QStringLiteral(":/Icon Storage/switch.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionSwitch->setIcon(icon15);
+        actionJudge = new QAction(Sketchpad);
+        actionJudge->setObjectName(QStringLiteral("actionJudge"));
+        QIcon icon16;
+        icon16.addFile(QStringLiteral(":/Icon Storage/gavel.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionJudge->setIcon(icon16);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -195,6 +201,7 @@ public:
         menuWebcam->addAction(actionCalibrate);
         menuWebcam->addAction(actionView);
         menuWebcam->addAction(actionSwitch);
+        menuWebcam->addAction(actionJudge);
         toolBar_2->addAction(actionActionFill);
         toolBar_2->addAction(actionDraw_Filled_Rectangle);
         toolBar_2->addAction(actionDraw_Filled_Circle);
@@ -241,6 +248,7 @@ public:
         actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Load Photo Kmeans", 0));
         actionView->setText(QApplication::translate("Sketchpad", "View", 0));
         actionSwitch->setText(QApplication::translate("Sketchpad", "Switch Webcam", 0));
+        actionJudge->setText(QApplication::translate("Sketchpad", "Judge", 0));
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));

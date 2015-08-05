@@ -27,13 +27,13 @@
     <ClCompile Include="..\drawwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\webcam_painter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\regiontopaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\pixeltools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\webcam_judge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

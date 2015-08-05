@@ -2,6 +2,8 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "DrawWindow.cpp"
+#include "windows.h"
 
 // Packages simple drawing commands for the simulator display window
 class Webcam {
@@ -258,6 +260,71 @@ public:
 		else {
 			cam0 = new cv::VideoCapture(0);
 			currentCamera = 0;
+		}
+	}
+
+	int colorCloseness(cv::Vec3b c1, cv::Vec3b c2) {
+		return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1]) + abs(c1[2] - c2[2]);
+	}
+
+	void judge(cv::Mat ideal) {
+		int width, height, done;
+
+		width = ideal.size().width;
+		height = ideal.size().height;
+		done = 0;
+
+		DrawWindow EW = DrawWindow(width, height, "Governator");
+		cv::Mat toGovernate = cv::Mat();
+
+		done = 0;
+		while (!done) {
+			getMappedFrame(&toGovernate);
+			EW.grid = toGovernate;
+
+			int right = 0;
+			int wrong = 0;
+
+			for (int i = 0; i < width; i++) { //loop rows
+				for (int j = 0; j < height; j++) { //loop columns
+					cv::Vec3b desired_color = ideal.at<cv::Vec3b>(i, j); //what we're aiming for
+
+					//don't paint over canvas we didn't put art on
+					if (desired_color[0] != 255 && desired_color[1] != 255 && desired_color[2] != 255) {
+						cv::Vec3b desired_color = ideal.at<cv::Vec3b>(i, j); //what we're aiming for
+						cv::Vec3b webcam_color = toGovernate.at<cv::Vec3b>(i, j); //what the webcam sees
+
+						int closeness = colorCloseness(desired_color, webcam_color);
+						int cdiff = desired_color[0] - webcam_color[0] + desired_color[1] - webcam_color[1] + desired_color[2] - webcam_color[2];
+
+						if (cdiff > 255) { cdiff = 255; }  //too far off?  just set to pure blue
+						if (cdiff < -255) { cdiff = -255; } //too far off?  just set to pure red
+
+						if (cdiff >= 0) {
+							EW.setPenColor(0, 0, cdiff); //blue
+						}
+						else {
+							EW.setPenColor(-cdiff, 0, 0); //red
+						}
+
+						EW.drawPixel(j, i); //for whatever reason, we're 90 degrees off.  (rotate, please).
+						if (closeness < 50) { right++; }
+						else  { wrong++; }
+					}
+				}
+			}
+
+			EW.setPenColor(200, 200, 200);
+			EW.drawRectangle(0, 0, 200, 12, 1);
+			EW.setPenColor(0, 0, 0);
+			char text[50];
+			sprintf(text, "%.0f%%  OK:%i TODO:%i", (double)100.*right / (right + wrong), right, wrong);
+			EW.drawText(10, 10, text);
+			EW.show();
+			//Sleep(1); //why is this here?  Look into it later, I guess.
+
+			int k = cv::waitKey(33);
+			if (k == 27 || k == int('m')) { done = 1; }
 		}
 	}
 

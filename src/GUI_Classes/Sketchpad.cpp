@@ -102,6 +102,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionCalibrate, SIGNAL(triggered()), this, SLOT(calibrateWebcam()));
 	connect(ui->actionView, SIGNAL(triggered()), this, SLOT(viewWebcam()));
 	connect(ui->actionSwitch, SIGNAL(triggered()), this, SLOT(switchWebcam()));
+	connect(ui->actionJudge, SIGNAL(triggered()), this, SLOT(judgeWebcam()));
 
 	//robot connections
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -356,13 +357,14 @@ void Sketchpad::loadPhotoKmeansClicked(){
 	if (directory.exec()) emit loadPhotoKmeans(directory.selectedFiles().at(0).toStdString());
 }
 
-//launches the webcam and shows the result.
 //clicking yields resizing.
 void Sketchpad::calibrateWebcam() { Web->calibrateWebcam(); }
 
 void Sketchpad::viewWebcam() { Web->showWebcam(); }
 
 void Sketchpad::switchWebcam() { Web->switchWebcam(); }
+
+void Sketchpad::judgeWebcam() {	Web->judge(this->cvWindow->grid); }
 
 ////Functions primarily relating to other classes are below here////
 
@@ -405,7 +407,8 @@ void Sketchpad::openClicked() {
 			emit load(directory.selectedFiles().at(0).toStdString());
 			emit prodOtherWindows();
 			this->paintingNamePath = directory.selectedFiles().at(0).toStdString();
-		} else printf("the robot is empty.\n");
+		}
+		else printf("the robot is empty.\n");
 	}
 }
 /**

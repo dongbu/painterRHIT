@@ -74,6 +74,7 @@
     <addaction name="actionCalibrate"/>
     <addaction name="actionView"/>
     <addaction name="actionSwitch"/>
+    <addaction name="actionJudge"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
@@ -285,6 +286,15 @@
    </property>
    <property name="text">
     <string>Switch Webcam</string>
+   </property>
+  </action>
+  <action name="actionJudge">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/gavel.png</normaloff>:/Icon Storage/gavel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Judge</string>
    </property>
   </action>
  </widget>
