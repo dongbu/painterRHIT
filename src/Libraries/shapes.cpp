@@ -335,7 +335,7 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakpoint=\"%i\">", getID(), fill, isBreakPoint));
+		line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), fill, isBreakPoint,thickness));
 		line.append(getColorXML());
 		line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			pt1.x, pt1.y, pt2.x, pt2.y));
@@ -418,8 +418,8 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
-			getID(), fill, pt.x, pt.y, axes.width, axes.height, isBreakPoint));
+		line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakpoint=\"%i\" thickness=\"%i\">",
+			getID(), fill, pt.x, pt.y, axes.width, axes.height, isBreakPoint,thickness));
 		line.append(getColorXML());
 		line.append("</shape>");
 		return line;
@@ -543,7 +543,6 @@ public:
 				R->setID(id);
 				if (breakPoint == 1) R->toggleBreakPoint(true);
 
-
 				pugi::xml_node corners = shape.child("corners");
 				int pt1x = corners.attribute("pt1x").as_int();
 				int pt1y = corners.attribute("pt1y").as_int();
@@ -553,6 +552,8 @@ public:
 				R->setCorners(pt1x, pt1y, pt2x, pt2y);
 				int fill = shape.attribute("fill").as_int();
 				R->setFill(fill);
+				if (!fill) { R->setThickness(shape.attribute("thickness").as_int()); }
+				else { R->setThickness(1); }
 				addShape(R);
 			}
 
@@ -570,13 +571,15 @@ public:
 				E->setData(x, y, w, h);
 				int fill = shape.attribute("fill").as_int();
 				E->setFill(fill);
+				if (!fill) { E->setThickness(shape.attribute("thickness").as_int()); }
+				else { E->setThickness(1); }
 				addShape(E);
 			}
 		}
 	}
 
 	void drawAll(DrawWindow *W) {
-		for (int i = 0; i < (int)shapes.size(); i++) {
+		for (int i = 0; i < shapes.size(); i++) {
 			shapes[i]->draw(W);
 		}
 	}

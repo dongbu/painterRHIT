@@ -30,6 +30,7 @@ private:
 	QPushButton* browse;
 	QSlider* scaleSlide;
 	CytonRunner* Ava;
+	bool moving;
 	
 	void updateText();
 	void rotateBase(int direction);

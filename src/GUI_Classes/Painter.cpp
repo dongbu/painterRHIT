@@ -85,7 +85,6 @@ void Painter::load(std::string projectLocation) {
 	pugi::xml_node canvasInfo = doc.child("robot").child("canvas");
 	pugi::xml_node webcamInfo = doc.child("robot").child("zoom");
 	this->parseXML(&canvasInfo, &webcamInfo);
-	printf("%s\n", result.description());
 	this->sketch->redraw();
 }
 
@@ -101,9 +100,6 @@ void Painter::loadRobot(std::string robotLocation) {
 }
 
 void Painter::loadPhoto(std::string photoLocation) {
-	//if (!stuffshowing) showGUI(false);
-	//sketch->newClicked();
-
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
@@ -242,5 +238,6 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 	int y3 = webcamInfo->attribute("y3").as_int();
 
 	this->setDimensions(w, h);
+
 	this->Web->setWebcamZoom(x0, y0, x1, y1, x2, y2, x3, y3);
 }

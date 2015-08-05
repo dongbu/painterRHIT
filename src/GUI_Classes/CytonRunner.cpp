@@ -219,8 +219,8 @@ void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
 
 //have the robot draw a multitude of strokes.
 void CytonRunner::stroke(std::vector<cv::Point> pts){
+	printf("stroking...\n");
 	raiseBrush();
-	printf("xScale: %f, yScale: %f", xScale, yScale);
 	goToPos(pts.at(0).x, pts.at(0).y, raiseHeight);
 	lowerBrush();
 	for (size_t i = 0; i < pts.size(); i++){
@@ -304,11 +304,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 
 	toReturn.push_back(minX + x);
 	toReturn.push_back(minY + y);
-	toReturn.push_back(minZ + z);
-
-	printf("(minX, minY, minZ): (%f,%f,%f)\n", minX, minY, minZ);
-	printf("(x,y,z): (%f,%f,%f)\n", toReturn.at(0), toReturn.at(1), toReturn.at(2));
-	printf("\n");
+	toReturn.push_back(minZ + z + 0.01);
 
 	return toReturn;
 

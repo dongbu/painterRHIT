@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "workspacewizard.h"
 #include "CytonRunner.h"
+#include "windows.h"
 
 using namespace Ec;
 
@@ -19,6 +20,7 @@ ui(new Ui::WorkspaceWizard)
 	stage = 0;
 	numOfColors = 0;
 	workspaceName = "Desktop/Workspace";
+	moving = false;
 
 	//ui setup
 	ui->QuestionButton->hide();
@@ -72,6 +74,9 @@ WorkspaceWizard::~WorkspaceWizard(){
 recieves keypress input and performs the specified actions (if appropriate)
 */
 void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
+	if (moving) return;
+	Sleep(27);
+
 	if (stage == 1 || stage == 2 || stage == 3 || stage == 4 || stage == 5){
 		QString pressedKey = event->text();
 		if (pressedKey == "w"){
@@ -205,6 +210,8 @@ rotates the base of the robot
 1: counter-clockwise
 */
 void WorkspaceWizard::rotateBase(int direction){
+	moving = true;
+
 	EcRealVector currentJoints;
 	getJointValues(currentJoints);
 	if (direction == 0){
@@ -218,6 +225,7 @@ void WorkspaceWizard::rotateBase(int direction){
 	}
 	setJointValues(currentJoints);
 
+	moving = false;
 }
 
 
@@ -231,6 +239,7 @@ void WorkspaceWizard::rotateBase(int direction){
 5: down -z
 */
 void WorkspaceWizard::moveDirection(int direction){
+	moving = true;
 
 	EcManipulatorEndEffectorPlacement actualEEPlacement;
 	EcCoordinateSystemTransformation actualCoord;
@@ -265,6 +274,8 @@ void WorkspaceWizard::moveDirection(int direction){
 	EcEndEffectorPlacement desiredPlacement(pose);
 
 	setDesiredPlacement(desiredPlacement, 0, 0);
+
+	moving = false;
 }
 
 /*
