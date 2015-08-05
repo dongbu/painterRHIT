@@ -304,7 +304,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 
 	toReturn.push_back(minX + x);
 	toReturn.push_back(minY + y);
-	toReturn.push_back(minZ + z + 0.01);
+	toReturn.push_back(minZ + z + 0.02);
 
 	return toReturn;
 
