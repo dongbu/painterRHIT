@@ -141,6 +141,7 @@ cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserKmeans IPK;
+	IPK.setNumColors(colorCount);
 	IPK.setMinPixelsInRegion(minRegionSize);
 	IPK.parseImage(sketch->cvWindow->grid);
 	IPK.defineShapes(shapes);
