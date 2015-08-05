@@ -30,7 +30,7 @@ ui(new Ui::Sketchpad)
 	//Linking opencv to Qt.
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-	this->cvWindow = new DrawWindow(height, width, "garbabe_name", 1);
+	this->cvWindow = new DrawWindow(width, height, "garbabe_name", 1);
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
