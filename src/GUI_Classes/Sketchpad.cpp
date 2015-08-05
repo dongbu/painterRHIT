@@ -103,6 +103,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionView, SIGNAL(triggered()), this, SLOT(viewWebcam()));
 	connect(ui->actionSwitch, SIGNAL(triggered()), this, SLOT(switchWebcam()));
 	connect(ui->actionJudge, SIGNAL(triggered()), this, SLOT(judgeWebcam()));
+	connect(ui->actionSnap_Webcam_Picture, SIGNAL(triggered()), this, SLOT(loadWebcamPicture()));
 
 	//robot connections
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
@@ -365,6 +366,20 @@ void Sketchpad::viewWebcam() { Web->showWebcam(); }
 void Sketchpad::switchWebcam() { Web->switchWebcam(); }
 
 void Sketchpad::judgeWebcam() {	Web->judge(this->cvWindow->grid); }
+
+void Sketchpad::loadWebcamPicture() {
+	cvWindow->grid = Web->getWebcamSnap(cvWindow->grid);
+
+	ImageParserKmeans IPK;
+	IPK.setMinPixelsInRegion(5);
+	IPK.parseImage(cvWindow->grid);
+	IPK.defineShapes(shapes);
+
+	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(cvWindow); //redraw window
+	translator->showImage(cvWindow->grid); //actually redraw the window
+	prodOtherWindows();
+}
 
 ////Functions primarily relating to other classes are below here////
 

@@ -66,6 +66,7 @@ private slots:
 	void viewWebcam();
 	void switchWebcam();
 	void judgeWebcam();
+	void loadWebcamPicture();
 
 	void loadWorkspaceClicked();
 	void createWorkspaceClicked();

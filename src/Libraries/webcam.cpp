@@ -147,6 +147,37 @@ public:
 		cv::destroyWindow(mapped_name);
 	}
 
+	cv::Mat getWebcamSnap(cv::Mat grid) {
+		cv::Mat mapped_webcam;
+
+		char mapped_name[] = "Mapped Webcam";
+		cv::namedWindow(mapped_name, 1);
+
+		int done = 0;
+		int frozen = 0;
+
+		//If s is pressed, frames stop updating.
+		while (!done) {
+			if (!frozen) {
+				getMappedFrame(&mapped_webcam);
+				cv::imshow(mapped_name, mapped_webcam);
+			}
+
+			int k = cv::waitKey(33); //stall
+			if (k == int('s')) {
+				frozen = 1;
+				getMappedFrame(&mapped_webcam);
+				grid = mapped_webcam;
+				cv::imshow(mapped_name, mapped_webcam);
+			}
+
+			if (k == 27 || k == int('x')) done = 1; //escape position
+		}
+
+		cv::destroyWindow(mapped_name);
+		return grid;
+	}
+
 	// returns a 2x4 array which is the mapping of a frame to the canvas mapping
 	cv::Mat getMapLambda(cv::Mat *frame) {
 		cv::Mat frame_lambda(2, 4, CV_32FC1);

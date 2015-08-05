@@ -66,6 +66,7 @@
     </property>
     <addaction name="actionLoad_Photo_Canny"/>
     <addaction name="actionLoad_Photo_Kmeans"/>
+    <addaction name="actionSnap_Webcam_Picture"/>
    </widget>
    <widget class="QMenu" name="menuWebcam">
     <property name="title">
@@ -295,6 +296,15 @@
    </property>
    <property name="text">
     <string>Judge</string>
+   </property>
+  </action>
+  <action name="actionSnap_Webcam_Picture">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/webcam.png</normaloff>:/Icon Storage/webcam.png</iconset>
+   </property>
+   <property name="text">
+    <string>Snap Webcam Picture</string>
    </property>
   </action>
  </widget>
