@@ -120,13 +120,13 @@ void Painter::loadPhoto(std::string photoLocation) {
 	sketch->prodOtherWindows();
 }
 
-void Painter::loadPhotoCanny(std::string photoLocation){
+void Painter::loadPhotoCanny(std::string photoLocation,int threshold,int min_line_length){
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserContours IPC;
-	IPC.setMinContourLength(5);
-	IPC.setCannyThreshold(50);
+	IPC.setMinContourLength(min_line_length);
+	IPC.setCannyThreshold(threshold);
 	IPC.parseImage(sketch->cvWindow->grid);
 	IPC.defineShapes(shapes);
 
@@ -136,12 +136,12 @@ void Painter::loadPhotoCanny(std::string photoLocation){
 	sketch->prodOtherWindows();
 
 }
-void Painter::loadPhotoKmeans(std::string photoLocation){
-	cv::Mat image = cv::imread(photoLocation);
+void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize) {
+cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserKmeans IPK;
-	IPK.setMinPixelsInRegion(5);
+	IPK.setMinPixelsInRegion(minRegionSize);
 	IPK.parseImage(sketch->cvWindow->grid);
 	IPK.defineShapes(shapes);
 
@@ -164,8 +164,8 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
 	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
-	connect(sketch, SIGNAL(loadPhotoCanny(std::string)), this, SLOT(loadPhotoCanny(std::string)));
-	connect(sketch, SIGNAL(loadPhotoKmeans(std::string)), this, SLOT(loadPhotoKmeans(std::string)));
+	connect(sketch, SIGNAL(loadPhotoCanny(std::string,int,int)), this, SLOT(loadPhotoCanny(std::string,int,int)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(std::string,int,int)), this, SLOT(loadPhotoKmeans(std::string,int,int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew,SIGNAL(triggered()), logic, SLOT(reset()));

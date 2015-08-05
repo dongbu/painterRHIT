@@ -343,19 +343,29 @@ void Sketchpad::getColor() {
 //these pictures are converted automatically to strokes.
 
 void Sketchpad::loadPhotoCannyClicked(){
+	int threshold = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", 50, 1, 100);
+	if (!threshold) { return; }
+	int min_line_length = QInputDialog::getInt(this, "Load Canny", "Minimum Line Length (pixels)", 5, 1, 100);
+	if (!min_line_length) { return; }
+
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
-	if (directory.exec()) emit loadPhotoCanny(directory.selectedFiles().at(0).toStdString());
+	if (directory.exec()) emit loadPhotoCanny(directory.selectedFiles().at(0).toStdString(), threshold, min_line_length);
 }
 
 void Sketchpad::loadPhotoKmeansClicked(){
+	int colorCount = QInputDialog::getInt(this, "Load kMeans", "Color Count", 2, 2, 64);
+	if (!colorCount) { return; }
+	int minRegionSize = QInputDialog::getInt(this, "Load kMeans", "Minimum regions size (pixels)", 5, 1, 500);
+	if (!minRegionSize) { return; }
+
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
-	if (directory.exec()) emit loadPhotoKmeans(directory.selectedFiles().at(0).toStdString());
+	if (directory.exec()) emit loadPhotoKmeans(directory.selectedFiles().at(0).toStdString(), colorCount, minRegionSize);
 }
 
 //clicking yields resizing.
