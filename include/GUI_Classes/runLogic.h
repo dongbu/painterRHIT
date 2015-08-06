@@ -16,8 +16,7 @@ public:
 	DrawWindow *simWin;
 
 private:
-	void SimulationThread(DrawWindow *W);
-	void RobotThread(DrawWindow *W);
+	void DrawingThread(DrawWindow *W);
     volatile bool running;
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;

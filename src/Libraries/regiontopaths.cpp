@@ -657,16 +657,22 @@ public:
 
 	// set which pixel you don't want covered
 	void addUntouchablePixel(int i, int j) {
+		if (i*height + j > width*height - 1) { return; }
+		if (i*height + j < 0) { printf("less than 0.\n"); }
 		grid[i*height + j] = 3;
 	}
 
 	// set which pixel you could paint if need b/c it will be painted over later
 	void addOverpaintablePixel(int i, int j) {
+		if (i*height + j > width*height - 1) { return; }
+		if (i*height + j < 0) { printf("less than 0.\n"); }
 		grid[i*height + j] = 2;
 	}
 
 	// set which pixel you want painted
 	void addDesiredPixel(int i, int j) {
+		if (i*height + j > width*height - 1) { return; }
+		if (i*height + j < 0) { printf("less than 0.\n"); }
 		grid[i*height + j] = 1;
 	}
 

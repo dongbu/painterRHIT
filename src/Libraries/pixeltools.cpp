@@ -28,9 +28,6 @@ public:
 		else { // not a point
 			int done = 0;
 
-			if (p1x > p2x) { int t = p1x; p1x = p2x; p2x = t; }
-			if (p1y > p2y) { int t = p1y; p1y = p2y; p2y = t; }
-
 			if (p1x != p2x) { // not vertical
 				double slope = (double)(p2y - p1y) / double(p2x - p1x);
 				if (fabs(slope) < 1) { // not steep line - just skim along x axis

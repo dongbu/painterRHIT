@@ -95,9 +95,7 @@ void RunLogic::runClicked() {
 	this->simWin->showWindow();
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
-	if (!Ava->connected) { auto d1 = std::async(&RunLogic::SimulationThread, this, simWin); }
-	else { auto d1 = std::async(&RunLogic::RobotThread, this, simWin); }
-
+	auto d1 = std::async(&RunLogic::DrawingThread, this, simWin);
 	stepTaken = 2;
 }
 
@@ -138,29 +136,8 @@ void RunLogic::toggleBreakPoint(int index) {
 		emit setRunColor(index, "white");
 	}
 }
-/**
- * @brief thread for actual drawing.
- * @param W
- */
-void RunLogic::SimulationThread(DrawWindow *W) {
-	while (running && currentShapeIndex < stopIndex) {
-		if (shapes->at(currentShapeIndex)->isBreakPoint){
-			toggleBreakPoint(currentShapeIndex);
-			running = false;
-			return;
-		}
-		shapes->at(currentShapeIndex)->draw(W);
-		emit setRunColor(currentShapeIndex, "green");
-		W->show();
-		currentShapeIndex++;
-		Sleep(COMMAND_DELAY);
-	}
-	if (currentShapeIndex == stopIndex) currentShapeIndex--;
-	running = false;
-}
 
-
-void RunLogic::RobotThread(DrawWindow *W){
+void RunLogic::DrawingThread(DrawWindow *W){
 	while (running && currentShapeIndex < stopIndex) {
 		printf("current shape, stop index (%i,%i)\n", currentShapeIndex, stopIndex);
 		//Updating index
@@ -179,24 +156,26 @@ void RunLogic::RobotThread(DrawWindow *W){
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
+			printf("checkpoint 1\n");
 			RTP.defineBrush(Ava->curBrush);
 			RTP.definePaths();
+
 			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
-				if (!running) { return; }
 				int prevX = pathVec.at(i).at(0).x;
 				int prevY = pathVec.at(i).at(0).y;
 				for (size_t j = 1; j < pathVec.at(i).size(); j++) { //running through points in one stroke
+					if (!running) { return; }
 					emit setRunColor(currentShapeIndex, "yellow");
-
-					Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j));
+					if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j)); }
 					Ava->curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
 					prevX = pathVec.at(i).at(j).x;
 					prevY = pathVec.at(i).at(j).y;
 
 					W->show();
+					if (!Ava->connected) { Sleep(COMMAND_DELAY); }
 				}
-				Ava->strokeInProgress = false;
+				if (Ava->connected) { Ava->strokeInProgress = false; }
 			}
 		} else { //painting polyline object
 			std::vector<cv::Point> pts = s->toPolyline()->points;
@@ -207,18 +186,24 @@ void RunLogic::RobotThread(DrawWindow *W){
 				if (!running) { return; }
 				emit setRunColor(currentShapeIndex, "yellow");
 
-				Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+				if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pts.at(i)); }
 				Ava->curBrush->drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
 				prevX = pts.at(i).x;
 				prevY = pts.at(i).y;
 
 				W->show();
+				if (!Ava->connected) { Sleep(COMMAND_DELAY); }
 			}
-			Ava->strokeInProgress = false;
+			if (Ava->connected) { Ava->strokeInProgress = false; }
 		}
 		emit setRunColor(currentShapeIndex, "green");
 		currentShapeIndex++;
 	}
+
+	if (currentShapeIndex == stopIndex) currentShapeIndex--;
+	running = false;
+
+
 }
 
 void RunLogic::reset(){
