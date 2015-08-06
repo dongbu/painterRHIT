@@ -202,9 +202,10 @@ void CytonRunner::getPaint(int paint_can_id){
 			break;
 		}
 	}
+	goToPos(x, y, raiseHeight);
 	lowerBrush();
 	raiseBrush();
-	goToPos(x, y, raiseHeight);
+	
 }
 //have the robot draw a single point.
 void CytonRunner::drawPoint(cv::Point pt){
@@ -358,3 +359,27 @@ void CytonRunner::regulateWorkspaceData() {
 }
 
 void CytonRunner::tellFinished() { emit finishedSettingWorkspace(); }
+
+void CytonRunner::changePaint(int new_paint_can_id){
+	if (paint.size() > 0){
+		getPaint(paint.at(0).first); //paint at 0 is water
+	}
+	lowerBrush();
+	double x = paint.at(0).second.x;
+	double y = paint.at(0).second.y;
+	double z = 0.2;
+
+	for (int i = -1; i < 2; i++){
+		for (double k = 0; k <= 2 * M_PI; k+= 0.1){
+			goToPos(x + 0.02*i*sin(k), y + 0.02*i*cos(k), z+ 0.01*cos(i) + 0.01*sin(k));
+		}
+	}
+	goToPos(x, y, z);
+	raiseBrush();
+	if (new_paint_can_id > paint.size()){
+		getPaint(new_paint_can_id);
+	}
+	else{
+		printf("paint can id out of bounds\n");
+	}
+}
