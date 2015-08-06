@@ -150,6 +150,9 @@
     <ClCompile Include="..\src\Libraries\drawwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Libraries\pixeltools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">

@@ -24,6 +24,7 @@
 #include <QGraphicsPixmapItem>
 #include <qlineedit.h>
 #include <QInputDialog>
+#include <qstring.h>
 
 //auto-generated methods to include
 #include "ui_Sketchpad.h"

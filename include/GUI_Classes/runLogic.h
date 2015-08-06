@@ -16,7 +16,8 @@ public:
 	DrawWindow *simWin;
 
 private:
-    void drawingThread(DrawWindow *W);
+	void SimulationThread(DrawWindow *W);
+	void RobotThread(DrawWindow *W);
     volatile bool running;
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;
@@ -37,8 +38,7 @@ public slots:
 	void reset();
 
 signals:
-    void setBreakPointColor(int index, bool toggle);
-    void setRunColor(int index, bool runToggle);
+    void setRunColor(int index, QString runToggle);
     void clearRunColors();
 };
 

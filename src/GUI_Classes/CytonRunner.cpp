@@ -15,6 +15,7 @@ CytonRunner::CytonRunner(int width, int height){
 	currentY = 0;
 	raiseHeight = 0.1;
 	connected = false;
+	strokeInProgress = false;
 
 	//simulation size
 	this->width = width;
@@ -25,6 +26,10 @@ CytonRunner::CytonRunner(int width, int height){
 	cHeight = 0.3; //meters
 	xScale = cWidth / width;
 	yScale = cHeight / height;
+
+	//current brush
+	curBrush = new Brush(10, 10, "ellipse");
+	curBrush->setColor(200, 200, 200);
 }
 
 //deconstructor
@@ -211,18 +216,25 @@ void CytonRunner::drawPoint(cv::Point pt){
 
 //have the robot draw a line between two points (a stroke one might say)
 void CytonRunner::stroke(cv::Point pt1, cv::Point pt2){
-	raiseBrush();
-	goToPos(pt1.x, pt1.y, raiseHeight);
-	lowerBrush();
-	goToPos(pt2.x, pt2.y, 0);
+	if (!strokeInProgress) {
+		raiseBrush();
+		goToPos(pt1.x, pt1.y, raiseHeight);
+		lowerBrush();
+		goToPos(pt2.x, pt2.y, 0);
+		strokeInProgress = true;
+	}
+	else {
+		goToPos(pt1.x, pt1.y, 0);
+		goToPos(pt2.x, pt2.y, 0);
+	}
 }
 
 //have the robot draw a multitude of strokes.
 void CytonRunner::stroke(std::vector<cv::Point> pts){
-	printf("stroking...\n");
 	raiseBrush();
 	goToPos(pts.at(0).x, pts.at(0).y, raiseHeight);
 	lowerBrush();
+
 	for (size_t i = 0; i < pts.size(); i++){
 		goToPos(pts.at(i).x, pts.at(i).y, 0);
 	}
@@ -325,32 +337,6 @@ void CytonRunner::setCanvasSize(double width, double height){
 	this->cHeight = height;
 	xScale = cWidth / this->width;
 	yScale = cHeight / this->height;
-}
-
-void CytonRunner::paintShape(Shape *s){
-	int border = 30;
-	if (s->fill){ //painting a filled object
-		RegionToPaths RTP = RegionToPaths(width, height, border);
-
-		PixelRegion *p = s->toPixelRegion();
-		std::vector<cv::Point> pts = p->getPoints();
-
-		for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
-
-		Brush brush = Brush(30, 20, "ellipse");
-		brush.setColor(20, 20, 40);
-		RTP.defineBrush(&brush);
-		RTP.definePaths();
-
-		std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
-		for (size_t i = 0; i < pathVec.size(); i++){ this->stroke(pathVec.at(i)); }
-	}
-	else { //painting a PolyLine object
-		PolyLine *p = s->toPolyline();
-		this->stroke(p->getPoints());
-	}
-
-	emit finishedShape();
 }
 
 //used to startup the workspace wizard.

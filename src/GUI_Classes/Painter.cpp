@@ -197,8 +197,7 @@ void Painter::launchSimulation(){
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
 	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(toggleBreakPoint(int)));
 	connect(commandWin, SIGNAL(modifiedCommand()), logic, SLOT(shapesChanged()));
-	connect(logic, SIGNAL(setBreakPointColor(int, bool)), commandWin, SLOT(recieveBreakPointColor(int, bool)));
-	connect(logic, SIGNAL(setRunColor(int, bool)), commandWin, SLOT(recieveRunColor(int, bool)));
+	connect(logic, SIGNAL(setRunColor(int, QString)), commandWin, SLOT(recieveRunColor(int, QString)));
 	connect(logic, SIGNAL(clearRunColors()), commandWin, SLOT(recieveClearRunColors()));
 }
 

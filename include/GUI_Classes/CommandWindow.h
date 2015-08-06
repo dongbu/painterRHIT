@@ -28,8 +28,7 @@ private slots:
 
 public slots:
     void populate();
-    void recieveBreakPointColor(int index, bool toggle);
-    void recieveRunColor(int index, bool toggle);
+	void recieveRunColor(int index, QString toggle);
     void recieveClearRunColors();
 
 signals:

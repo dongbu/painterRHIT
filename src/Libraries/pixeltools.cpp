@@ -44,7 +44,7 @@ public:
 			if (!done && p1y != p2y) { // not horizontal - steep line - skip along y axis
 				double slope = (double)(p2x - p1x) / double(p2y - p1y);
 				for (int j = p1y; j <= p2y; j++) {
-					int i = slope * (double)(j - p1y);
+					int i = p1x + slope * (double)(j - p1y);
 					points.push_back(cv::Point(i, j));
 				}
 			}

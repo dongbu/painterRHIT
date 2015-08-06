@@ -51,12 +51,11 @@ void RunLogic::forwardClicked() {
 	if (stepTaken == 0){
 		currentShapeIndex++;
 	}
-	if (currentShapeIndex >= shapes->length()){ 
+	if (currentShapeIndex >= shapes->length()){
 		stepTaken = 2;
-		return; 
+		return;
 	}
-	
-	printf("going forward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
+
 	running = false;
 	runOnly(currentShapeIndex);
 	stepTaken = 1;
@@ -66,7 +65,7 @@ void RunLogic::forwardClicked() {
  */
 void RunLogic::backwardClicked() {
 
-	
+
 	if (currentShapeIndex == 0 && stopIndex == 0){
 		stepTaken = 2;
 		return;
@@ -74,7 +73,7 @@ void RunLogic::backwardClicked() {
 
 	this->simWin->showWindow();
 	running = false;
-	emit setRunColor(currentShapeIndex, false);
+	emit setRunColor(currentShapeIndex, "white");
 	simWin->clearWindow(255, 255, 255); //white
 	if (currentShapeIndex <= 0) {
 		stepTaken = 2;
@@ -96,7 +95,9 @@ void RunLogic::runClicked() {
 	this->simWin->showWindow();
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
-	auto d1 = std::async(&RunLogic::drawingThread, this, simWin);
+	if (!Ava->connected) { auto d1 = std::async(&RunLogic::SimulationThread, this, simWin); }
+	else { auto d1 = std::async(&RunLogic::RobotThread, this, simWin); }
+
 	stepTaken = 2;
 }
 
@@ -121,7 +122,7 @@ void RunLogic::runOnly(int index) {
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 
-	emit(setRunColor(index, true));
+	emit(setRunColor(index, "green"));
 	simWin->show();
 }
 /**
@@ -129,55 +130,96 @@ void RunLogic::runOnly(int index) {
  * @param index
  */
 void RunLogic::toggleBreakPoint(int index) {
-	if (shapes->at(index)->isBreakPoint){
-		shapes->at(index)->toggleBreakPoint(false);
-		emit setBreakPointColor(index, false);
-	}
-	else{
+	if (!shapes->at(index)->isBreakPoint) {
 		shapes->at(index)->toggleBreakPoint(true);
-		emit setBreakPointColor(index, true);
+		emit setRunColor(index, "red");
+	} else {
+		shapes->at(index)->toggleBreakPoint(false);
+		emit setRunColor(index, "white");
 	}
-
 }
 /**
  * @brief thread for actual drawing.
  * @param W
  */
-void RunLogic::drawingThread(DrawWindow *W) {
-	if (running && Ava->connected && currentShapeIndex < stopIndex) {
-		printf("Drawing shape at index %i\n", currentShapeIndex);
-		running = false;
+void RunLogic::SimulationThread(DrawWindow *W) {
+	while (running && currentShapeIndex < stopIndex) {
 		if (shapes->at(currentShapeIndex)->isBreakPoint){
 			toggleBreakPoint(currentShapeIndex);
+			running = false;
 			return;
 		}
 		shapes->at(currentShapeIndex)->draw(W);
-		Ava->paintShape(shapes->at(currentShapeIndex));
-		emit setRunColor(currentShapeIndex, true);
+		emit setRunColor(currentShapeIndex, "green");
 		W->show();
 		currentShapeIndex++;
-
-		//if (currentShapeIndex == stopIndex) currentShapeIndex--;
+		Sleep(COMMAND_DELAY);
 	}
-	else {
-		while (running && currentShapeIndex < stopIndex) {
-			if (shapes->at(currentShapeIndex)->isBreakPoint){
-				toggleBreakPoint(currentShapeIndex);
-				running = false;
-				return;
-			}
-			shapes->at(currentShapeIndex)->draw(W);
-			emit setRunColor(currentShapeIndex, true);
-			W->show();
-			currentShapeIndex++;
-			Sleep(COMMAND_DELAY);
-
-		}
-		if (currentShapeIndex == stopIndex) currentShapeIndex--;
-		running = false;
-	}
+	if (currentShapeIndex == stopIndex) currentShapeIndex--;
+	running = false;
 }
 
+
+void RunLogic::RobotThread(DrawWindow *W){
+	while (running && currentShapeIndex < stopIndex) {
+		printf("current shape, stop index (%i,%i)\n", currentShapeIndex, stopIndex);
+		//Updating index
+		Shape *s = this->shapes->at(currentShapeIndex);
+
+		//handling breakpoint
+		if (s->isBreakPoint) {
+			toggleBreakPoint(currentShapeIndex);
+			running = false;
+			return;
+		}
+
+		//drawing shape on robot && simulator
+		if (s->fill) { //painting filled region
+			RegionToPaths RTP = RegionToPaths(width, height, 30);
+			PixelRegion *p = s->toPixelRegion();
+			std::vector<cv::Point> pts = p->getPoints();
+			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
+			RTP.defineBrush(Ava->curBrush);
+			RTP.definePaths();
+			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
+				if (!running) { return; }
+				int prevX = pathVec.at(i).at(0).x;
+				int prevY = pathVec.at(i).at(0).y;
+				for (size_t j = 1; j < pathVec.at(i).size(); j++) { //running through points in one stroke
+					emit setRunColor(currentShapeIndex, "yellow");
+
+					Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j));
+					Ava->curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
+					prevX = pathVec.at(i).at(j).x;
+					prevY = pathVec.at(i).at(j).y;
+
+					W->show();
+				}
+				Ava->strokeInProgress = false;
+			}
+		} else { //painting polyline object
+			std::vector<cv::Point> pts = s->toPolyline()->points;
+
+			int prevX = pts.at(0).x;
+			int prevY = pts.at(0).y;
+			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
+				if (!running) { return; }
+				emit setRunColor(currentShapeIndex, "yellow");
+
+				Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+				Ava->curBrush->drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+				prevX = pts.at(i).x;
+				prevY = pts.at(i).y;
+
+				W->show();
+			}
+			Ava->strokeInProgress = false;
+		}
+		emit setRunColor(currentShapeIndex, "green");
+		currentShapeIndex++;
+	}
+}
 
 void RunLogic::reset(){
 	stepTaken = 2;

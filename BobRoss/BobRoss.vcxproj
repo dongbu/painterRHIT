@@ -159,6 +159,7 @@
     <ClCompile Include="..\src\Libraries\imageparser.cpp" />
     <ClCompile Include="..\src\Libraries\kmeansSegment.cpp" />
     <ClCompile Include="..\src\GUI_Classes\main.cpp" />
+    <ClCompile Include="..\src\Libraries\pixeltools.cpp" />
     <ClCompile Include="..\src\Libraries\pugixml.cpp" />
     <ClCompile Include="..\src\Libraries\regiontopaths.cpp" />
     <ClCompile Include="..\src\GUI_Classes\stdafx.cpp">

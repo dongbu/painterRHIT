@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+
 #include "shapes.cpp"
 #include "regionToPaths.cpp"
 
@@ -29,10 +30,11 @@ public:
 	void stroke(cv::Point pt1, cv::Point pt2);
 	void stroke(std::vector<cv::Point> pts);
 	void setCanvasSize(double width, double height);
-	void paintShape(Shape *s);
 	void tellFinished();
+	bool strokeInProgress;
 
 	volatile bool connected;
+	Brush *curBrush;
 
 private:
 	Ui::CytonRunner *ui;

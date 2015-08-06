@@ -100,33 +100,25 @@ void CommandWindow::menuSort(QAction *a) {
 }
 
 /**
- * @brief toggle breakpoint identifier
- * @param index
- * @param toggle
- */
-void CommandWindow::recieveBreakPointColor(int index, bool toggle){
-	if (toggle){
-		ui->listWidget->item(index)->setTextColor("red");
-	}
-	else{
-		ui->listWidget->item(index)->setTextColor("black");
-	}
-}
-
-/**
  * @brief toggle identifier for already run commands.
  * @param index
  * @param runToggle
  */
-void CommandWindow::recieveRunColor(int index, bool runToggle){
+void CommandWindow::recieveRunColor(int index, QString runToggle){
 	if (index >= ui->listWidget->count()){
 		index = ui->listWidget->count() - 1;
 	}
-	if (runToggle){
+	if (runToggle == "green"){
 		ui->listWidget->item(index)->setBackgroundColor("green");
 	}
-	else{
+	else if (runToggle == "yellow") {
+		ui->listWidget->item(index)->setBackgroundColor("yellow");
+	}
+	else if (runToggle == "white") {
 		ui->listWidget->item(index)->setBackgroundColor("white");
+	}
+	else if (runToggle == "red") {
+		ui->listWidget->item(index)->setBackgroundColor("red");
 	}
 }
 
