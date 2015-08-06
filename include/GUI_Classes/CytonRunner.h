@@ -32,7 +32,7 @@ public:
 	void setCanvasSize(double width, double height);
 	void tellFinished();
 	bool strokeInProgress;
-
+	void changePaint(int new_paint_can_id);
 	volatile bool connected;
 	Brush *curBrush;
 

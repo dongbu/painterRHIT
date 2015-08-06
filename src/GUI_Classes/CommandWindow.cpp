@@ -73,6 +73,9 @@ void CommandWindow::populate(){
 	for (int i = 0; i < shapes->length(); i++){
 		QString name = QString::fromStdString(shapes->at(i)->type) + QString::number(shapes->at(i)->getID());
 		ui->listWidget->addItem(new QListWidgetItem(name));
+		if (shapes->at(i)->isBreakPoint){
+			recieveRunColor(i, "red");
+		}
 	}
 }
 /**
