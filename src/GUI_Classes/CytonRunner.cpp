@@ -28,7 +28,7 @@ CytonRunner::CytonRunner(int width, int height){
 	yScale = cHeight / height;
 
 	//current brush
-	curBrush = new Brush(10, 10, "ellipse");
+	curBrush = new Brush(30, 20, "ellipse");
 	curBrush->setColor(200, 200, 200);
 }
 

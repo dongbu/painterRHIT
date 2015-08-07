@@ -17,7 +17,6 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	stopClicked();
 	simWin->hideWindow();
-	connect(Ava, SIGNAL(finishedShape()), this, SLOT(runClicked()));
 }
 
 /**
@@ -139,7 +138,6 @@ void RunLogic::toggleBreakPoint(int index) {
 
 void RunLogic::DrawingThread(DrawWindow *W){
 	while (running && currentShapeIndex < stopIndex) {
-		printf("current shape, stop index (%i,%i)\n", currentShapeIndex, stopIndex);
 		//Updating index
 		Shape *s = this->shapes->at(currentShapeIndex);
 
@@ -150,17 +148,23 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			return;
 		}
 
-		//drawing shape on robot && simulator
 		if (s->fill) { //painting filled region
+			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
-			printf("checkpoint 1\n");
-			RTP.defineBrush(Ava->curBrush);
+			if (Ava->connected) { //connected, fill
+				curBrush = this->Ava->curBrush;
+				RTP.defineBrush(this->Ava->curBrush);
+			} else { //not connected, fill
+				curBrush = new Brush(15, 10, "ellipse");
+				curBrush->setColor(s->getPenColor());
+				RTP.defineBrush(curBrush);
+			}
 			RTP.definePaths();
-
 			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
+
 			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
 				int prevX = pathVec.at(i).at(0).x;
 				int prevY = pathVec.at(i).at(0).y;
@@ -168,7 +172,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 					if (!running) { return; }
 					emit setRunColor(currentShapeIndex, "yellow");
 					if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j)); }
-					Ava->curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
+					curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
 					prevX = pathVec.at(i).at(j).x;
 					prevY = pathVec.at(i).at(j).y;
 
@@ -186,8 +190,15 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				if (!running) { return; }
 				emit setRunColor(currentShapeIndex, "yellow");
 
-				if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pts.at(i)); }
-				Ava->curBrush->drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+				if (Ava->connected) { //connected, polyline
+					Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+					Ava->curBrush->drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+
+				} else { //not connected, polyline
+					Brush curBrush = Brush(15, 10, "ellipse");
+					curBrush.setColor(s->getPenColor());
+					curBrush.drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+				}
 				prevX = pts.at(i).x;
 				prevY = pts.at(i).y;
 
