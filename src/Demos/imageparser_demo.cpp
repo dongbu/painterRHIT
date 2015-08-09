@@ -2,7 +2,7 @@
 
 int main(void)
 {
-  char* g_image_filename="images/lena.jpg";
+  std::string g_image_filename="images/lena.jpg";
   //char* g_image_filename="images/eggs-512.jpg";
   cv::Mat src = cv::imread( g_image_filename, 1 );
   if (src.empty()) {
@@ -11,6 +11,7 @@ int main(void)
   }  
 
   DrawWindow WIPC = DrawWindow(src.cols,src.rows,"IPC countours"); // w,h
+  WIPC.moveWindow(0,20);
   Shapes SIPC;
   ImageParserContours IPC;
   if (1) {
@@ -30,7 +31,9 @@ int main(void)
 
   Shapes SIPK;
   ImageParserKmeans IPK;
-  DrawWindow WIPK = DrawWindow(src.cols,src.rows,"IPK pixel regions"); // w,h
+  DrawWindow WIPK = DrawWindow(src.cols,src.rows,"IPK grouped pixel regions"); // w,h
+  WIPK.moveWindow(1*src.cols,20);
+
   if (1) {
     //IPK.setDebug(1);
     IPK.setMinPixelsInRegion(5);
@@ -43,6 +46,20 @@ int main(void)
     WIPK.clearWindow(230,230,230); // default background is white
     SIPK.drawAll(&WIPK);
     WIPK.show();
+  }
+
+
+  Shapes SIPK2;
+  ImageParserKmeans IPK2;
+  DrawWindow WIPK2 = DrawWindow(src.cols,src.rows,"IPK split pixel regions"); // w,h
+  WIPK2.moveWindow(2*src.cols,20);
+  
+  if (1) {
+    IPK2.parseImage(src,0);
+    IPK2.defineShapes(&SIPK2);
+    WIPK2.clearWindow(230,230,230); // default background is white
+    SIPK2.drawAll(&WIPK2);
+    WIPK2.show();
   }
 
   while (1) {

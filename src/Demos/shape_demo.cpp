@@ -51,8 +51,8 @@ int main(void)
   S.addShape(PP);
   
   // test overwriting with pixel region
-  PixelRegion PPtoPR = PP->toPixelRegion();
-  PPtoPR.setPenColor(0,255,255);
+  PixelRegion *PPtoPR = PP->toPixelRegion();
+  PPtoPR->setPenColor(0,255,255);
   //S.addShape(&PPtoPR);
 
   // add pixel region
@@ -64,42 +64,42 @@ int main(void)
   S.addShape(PR);
 
   // add rectangle
-  Rectangle *R = new Rectangle();
+  RectangleShape *R = new RectangleShape();
   R->setCorners(20,20,50,60);
   R->setPenColor(200,0,0);
   S.addShape(R);
 
-  R = new Rectangle();
+  R = new RectangleShape();
   R->setCorners(w-100,20,w-50,260);
   R->setPenColor(200,0,220);
   R->setFill(1);
   S.addShape(R);
 
-  PolyLine RtoPL = R->toPolyline();
-  RtoPL.setPenColor(0,255,0);
-  S.addShape(&RtoPL);
+  PolyLine *RtoPL = R->toPolyline();
+  RtoPL->setPenColor(0,255,0);
+  S.addShape(RtoPL);
 
   // test overwriting with pixel region
-  PixelRegion RtoPR = R->toPixelRegion();
-  RtoPR.setPenColor(0,255,255);
+  PixelRegion *RtoPR = R->toPixelRegion();
+  RtoPR->setPenColor(0,255,255);
   //  S.addShape(&RtoPR);
 
   // add circle
-  Ellipse *E = new Ellipse();
+  EllipseShape *E = new EllipseShape();
   E->setFill(1);
   E->setPenColor(200,0,0);
   E->setData(30,200,20.0); // circle
   S.addShape(E);
 
-  PolyLine EtoPL = E->toPolyline();
-  EtoPL.setPenColor(0,255,0);
-  S.addShape(&EtoPL);
+  PolyLine *EtoPL = E->toPolyline();
+  EtoPL->setPenColor(0,255,0);
+  S.addShape(EtoPL);
 
-  PixelRegion EtoPR = E->toPixelRegion();
-  EtoPR.setPenColor(255,255,0);
-  S.addShape(&EtoPR);
+  PixelRegion *EtoPR = E->toPixelRegion();
+  EtoPR->setPenColor(255,255,0);
+  S.addShape(EtoPR);
 
-  E = new Ellipse();
+  E = new EllipseShape();
   E->setData(130,200,20.0,40.);
   S.addShape(E);
 

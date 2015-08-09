@@ -1,7 +1,7 @@
 #pragma once
 
 #include <opencv/cv.h>
-#include "kmeansSegment.hpp" //G.H. changed to hpp, because on our conputers, #including a .cpp file that has a header caused multiple
+#include "kmeansSegment.cpp" //G.H. changed to hpp, because on our conputers, #including a .cpp file that has a header caused multiple
 //definition errors
 #include "drawwindow.cpp"
 #include "shapes.cpp"
@@ -21,142 +21,142 @@ public:
 
   // given an image, look for single pixels surrounded by another color... replace by neighbor's
   void reduceSpecsInImage(cv::Mat *image, float min_neighbor_percent = .61) {
-	  cv::Vec3b neighbor_colors[8]; // index lookup of colors, 8=max number of neighbors
-	  int neighbor_counts[8]; //
-	  int n_changed = 0; // how many pixels were changed
-	  int debug = 0;
+    cv::Vec3b neighbor_colors[8]; // index lookup of colors, 8=max number of neighbors
+    int neighbor_counts[8]; //
+    int n_changed = 0; // how many pixels were changed
+    int debug = 0;
 
-	  for (int i = 0; i<image->cols; i++) {
-		  for (int j = 0; j<image->rows; j++) {
-			  //      if (n_changed>10) { debug = 0; }
+    for (int i = 0; i<image->cols; i++) {
+      for (int j = 0; j<image->rows; j++) {
+	//      if (n_changed>10) { debug = 0; }
 
-			  cv::Vec3b color = image->at<cv::Vec3b>(cv::Point(i, j));
+	cv::Vec3b color = image->at<cv::Vec3b>(cv::Point(i, j));
 
-			  // zero out counts of previous pixel test
-			  for (int n = 0; n<8; n++) { neighbor_counts[n] = 0; }
-			  int n_colors_found = 0;
+	// zero out counts of previous pixel test
+	for (int n = 0; n<8; n++) { neighbor_counts[n] = 0; }
+	int n_colors_found = 0;
 
-			  // count how many of each color of the neighbors of i,j
-			  int left = std::max(i - 1, 0);
-			  int right = std::min(i + 1, image->cols - 1);
-			  int top = std::max(j - 1, 0);
-			  int bottom = std::min(j + 1, image->rows - 1);
-			  int pixels = (1 + right - left)*(1 + bottom - top) - 1; // how many neighbor pixels to compare
+	// count how many of each color of the neighbors of i,j
+	int left = std::max(i - 1, 0);
+	int right = std::min(i + 1, image->cols - 1);
+	int top = std::max(j - 1, 0);
+	int bottom = std::min(j + 1, image->rows - 1);
+	int pixels = (1 + right - left)*(1 + bottom - top) - 1; // how many neighbor pixels to compare
 
-			  if (debug) printf("[%i,%i](%d,%d,%d) (%d-%d x %d-%d)=%d neighbors\n", i, j, color[0], color[1], color[2], left, right, top, bottom, pixels);
+	if (debug) printf("[%i,%i](%d,%d,%d) (%d-%d x %d-%d)=%d neighbors\n", i, j, color[0], color[1], color[2], left, right, top, bottom, pixels);
 
-			  for (int n = left; n <= right; n++) {
-				  for (int m = top; m <= bottom; m++) {
-					  if (n != i || m != j) {
-						  // try to look up the color id of the neighbor
-						  cv::Vec3b neighbor_color = image->at<cv::Vec3b>(cv::Point(n, m));
-						  int color_id = -1;
-						  for (int id = 0; id<n_colors_found; id++) {
-							  if (neighbor_color[0] == neighbor_colors[id][0] &&
-								  neighbor_color[1] == neighbor_colors[id][1] &&
-								  neighbor_color[2] == neighbor_colors[id][2]) {
-								  color_id = id;
-							  }
-						  }
-						  if (color_id == -1) { // neighbor pixel is a new color
-							  color_id = n_colors_found;
-							  neighbor_colors[color_id] = neighbor_color;
-							  n_colors_found++;
-							  if (debug) printf(" color[%d,%d] id %d = (%d,%d,%d)\n", n, m, color_id, neighbor_color[0], neighbor_color[1], neighbor_color[2]);
-						  }
-						  neighbor_counts[color_id]++;
-					  }
-				  }
-			  }
-
-			  // find the max number of a given color
-			  int max = 0;
-			  int max_color_id = 0;
-			  for (int id = 0; id<n_colors_found; id++) {
-				  if (neighbor_counts[id]>max) {
-					  max = neighbor_counts[id];
-					  max_color_id = id;
-				  }
-				  if (debug) printf(" id %d appears %d times\n", id, neighbor_counts[id]);
-			  }
-
-			  // if a lot of the neighbors are a different color than i,j, then change the color
-			  float percent_max = (float)max / pixels;
-			  if (debug) printf(" max color id %d has %d times (%3.2f percent) = (%d,%d,%d)\n", max_color_id, max, percent_max * 100,
-				  neighbor_colors[max_color_id][0], neighbor_colors[max_color_id][1], neighbor_colors[max_color_id][2]);
-
-			  float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-			  if (percent_max + r*0.15>min_neighbor_percent && (color[0] != neighbor_colors[max_color_id][0] ||
-				  color[1] != neighbor_colors[max_color_id][1] ||
-				  color[2] != neighbor_colors[max_color_id][2])) {
-				  if (debug) printf(" - UPDATE color\n");
-				  // debug
-				  //neighbor_colors[max_color_id][0]=0;
-				  //neighbor_colors[max_color_id][1]=255;
-				  //neighbor_colors[max_color_id][2]=0;
-				  image->at<cv::Vec3b>(cv::Point(i, j)) = neighbor_colors[max_color_id];
-				  n_changed++;
-			  }
-		  }
+	for (int n = left; n <= right; n++) {
+	  for (int m = top; m <= bottom; m++) {
+	    if (n != i || m != j) {
+	      // try to look up the color id of the neighbor
+	      cv::Vec3b neighbor_color = image->at<cv::Vec3b>(cv::Point(n, m));
+	      int color_id = -1;
+	      for (int id = 0; id<n_colors_found; id++) {
+		if (neighbor_color[0] == neighbor_colors[id][0] &&
+		    neighbor_color[1] == neighbor_colors[id][1] &&
+		    neighbor_color[2] == neighbor_colors[id][2]) {
+		  color_id = id;
+		}
+	      }
+	      if (color_id == -1) { // neighbor pixel is a new color
+		color_id = n_colors_found;
+		neighbor_colors[color_id] = neighbor_color;
+		n_colors_found++;
+		if (debug) printf(" color[%d,%d] id %d = (%d,%d,%d)\n", n, m, color_id, neighbor_color[0], neighbor_color[1], neighbor_color[2]);
+	      }
+	      neighbor_counts[color_id]++;
+	    }
 	  }
-	  if (debug) printf("Despecked %d pixels\n", n_changed);
+	}
+
+	// find the max number of a given color
+	int max = 0;
+	int max_color_id = 0;
+	for (int id = 0; id<n_colors_found; id++) {
+	  if (neighbor_counts[id]>max) {
+	    max = neighbor_counts[id];
+	    max_color_id = id;
+	  }
+	  if (debug) printf(" id %d appears %d times\n", id, neighbor_counts[id]);
+	}
+
+	// if a lot of the neighbors are a different color than i,j, then change the color
+	float percent_max = (float)max / pixels;
+	if (debug) printf(" max color id %d has %d times (%3.2f percent) = (%d,%d,%d)\n", max_color_id, max, percent_max * 100,
+			  neighbor_colors[max_color_id][0], neighbor_colors[max_color_id][1], neighbor_colors[max_color_id][2]);
+
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	if (percent_max + r*0.15>min_neighbor_percent && (color[0] != neighbor_colors[max_color_id][0] ||
+							  color[1] != neighbor_colors[max_color_id][1] ||
+							  color[2] != neighbor_colors[max_color_id][2])) {
+	  if (debug) printf(" - UPDATE color\n");
+	  // debug
+	  //neighbor_colors[max_color_id][0]=0;
+	  //neighbor_colors[max_color_id][1]=255;
+	  //neighbor_colors[max_color_id][2]=0;
+	  image->at<cv::Vec3b>(cv::Point(i, j)) = neighbor_colors[max_color_id];
+	  n_changed++;
+	}
+      }
+    }
+    if (debug) printf("Despecked %d pixels\n", n_changed);
   }
 
 
   // given an image, return a sorted list of colors (darkest first)
   void sortColorsInImage(cv::Mat *image, std::vector<cv::Vec3b>& sorted_colors) {
-	  cv::Vec3b colors[2048]; // max number of colors
-	  long colors_count[2048] = { 0 };
-	  int n_colors = 0;
+    cv::Vec3b colors[2048]; // max number of colors
+    long colors_count[2048] = { 0 };
+    int n_colors = 0;
 
-	  // scan image and count colors
-	  for (int i = 0; i<image->cols; i++) {
-		  for (int j = 0; j<image->rows; j++) {
-			  int found = -1;
-			  //cv::Vec3b color = kmeans_image.at<cv::Vec3b>(cv::Point(i,j));
-			  cv::Vec3b color = image->at<cv::Vec3b>(cv::Point(i, j));
-			  for (int k = 0; k<n_colors; k++) {
-				  if (color[0] == colors[k][0] && color[1] == colors[k][1] && color[2] == colors[k][2]) {
-					  found = k;
-					  colors_count[k]++;
-					  continue;
-				  }
-			  }
-			  if (found == -1) {
-				  colors[n_colors] = color;
-				  n_colors++;
-			  }
-		  }
+    // scan image and count colors
+    for (int i = 0; i<image->cols; i++) {
+      for (int j = 0; j<image->rows; j++) {
+	int found = -1;
+	//cv::Vec3b color = kmeans_image.at<cv::Vec3b>(cv::Point(i,j));
+	cv::Vec3b color = image->at<cv::Vec3b>(cv::Point(i, j));
+	for (int k = 0; k<n_colors; k++) {
+	  if (color[0] == colors[k][0] && color[1] == colors[k][1] && color[2] == colors[k][2]) {
+	    found = k;
+	    colors_count[k]++;
+	    continue;
 	  }
+	}
+	if (found == -1) {
+	  colors[n_colors] = color;
+	  n_colors++;
+	}
+      }
+    }
 
-	  for (int i = 0; i<n_colors; i++) {
-		  //printf("%d: [%d,%d,%d] = %ld NORM:%f\n",i,colors[i][0],colors[i][1],colors[i][2],colors_count[i],norm(colors[i]));
-	  }
+    for (int i = 0; i<n_colors; i++) {
+      //printf("%d: [%d,%d,%d] = %ld NORM:%f\n",i,colors[i][0],colors[i][1],colors[i][2],colors_count[i],norm(colors[i]));
+    }
 
-	  // create a sorted list
-	  int* used_colors = new int[n_colors]; // don't forget to delete this later
-	  for (int i = 0; i < n_colors; i++) { used_colors[i] = 0; }
+    // create a sorted list
+    int* used_colors = new int[n_colors]; // don't forget to delete this later
+    for (int i = 0; i < n_colors; i++) { used_colors[i] = 0; }
 
-	  for (int i = 0; i<n_colors; i++) {
-		  // find the darkest unused color
-		  int darkest = 255 * 255 * 255;
-		  int darkest_index = -1;
-		  for (int j = 0; j<n_colors; j++) {
-			  if (!used_colors[j] && norm(colors[j]) <= darkest) {
-				  darkest = norm(colors[j]);
-				  darkest_index = j;
-			  }
-		  }
-		  if (darkest_index >= 0) { // should always be true
-			  used_colors[darkest_index] = 1;
-			  sorted_colors.push_back(colors[darkest_index]);
-		  }
-	  }
-	  delete[] used_colors;
+    for (int i = 0; i<n_colors; i++) {
+      // find the darkest unused color
+      int darkest = 255 * 255 * 255;
+      int darkest_index = -1;
+      for (int j = 0; j<n_colors; j++) {
+	if (!used_colors[j] && norm(colors[j]) <= darkest) {
+	  darkest = norm(colors[j]);
+	  darkest_index = j;
+	}
+      }
+      if (darkest_index >= 0) { // should always be true
+	used_colors[darkest_index] = 1;
+	sorted_colors.push_back(colors[darkest_index]);
+      }
+    }
+    delete[] used_colors;
 
-	  for (int i = 0; i<n_colors; i++) {
-		  //printf("SORTED %d: [%d,%d,%d] = NORM:%f\n",i,sorted_colors[i][0],sorted_colors[i][1],sorted_colors[i][2],norm(sorted_colors[i]));
-	  }
+    for (int i = 0; i<n_colors; i++) {
+      //printf("SORTED %d: [%d,%d,%d] = NORM:%f\n",i,sorted_colors[i][0],sorted_colors[i][1],sorted_colors[i][2],norm(sorted_colors[i]));
+    }
   }
 
 
@@ -283,6 +283,7 @@ protected:
   int colors; // number of colors
   int blur_loops; // for kmeans
   int min_region_pixels; // smallest number of pixels to be in a region
+  int reduce_specs_loops;
   cv::Mat kmeans_image;
   std::vector<std::vector<cv::Point> > regions; // array of arrays of pixels in a region
   std::vector<cv::Vec3b> region_colors;
@@ -291,8 +292,9 @@ public:
   void setNumColors(int num) { colors = num; }
   void setBlurLoops(int num) { blur_loops = num; }
   void setMinPixelsInRegion(int min=5) { min_region_pixels=min; }
+  void setReduceSpecsLoops(int num) { reduce_specs_loops = num; }
 
-  int parseImage(cv::Mat image) {
+  int parseImage(cv::Mat image, int group_same_color_regions = 1) {
     kmeansSegment kmeans(colors);
     // KMEANS_RANDOM_CENTERS Select random initial centers in each attempt.
     // KMEANS_PP_CENTERS Use kmeans++ center initialization by Arthur and Vassilvitskii [Arthur2007].
@@ -324,7 +326,7 @@ public:
       cv::imshow( "kmeans_window", kmeans_image );
     }
 
-    for (int i=0; i<20; i++) {
+    for (int i=0; i<reduce_specs_loops; i++) {
       reduceSpecsInImage(&kmeans_image);
     }
 
@@ -333,8 +335,13 @@ public:
       cv::moveWindow("kmeans_window_despeck",100,100);
       cv::imshow( "kmeans_window_despeck", kmeans_image );
     }
-      
-    defineRegionsInImage(&kmeans_image);
+    
+    if (group_same_color_regions) {
+      defineSameColorRegionsInImage(&kmeans_image);
+    } else {
+      defineContiquousRegionsInImage(&kmeans_image);
+    }
+
     if (debug) {
       cv::namedWindow( "kmeans_window_regions", CV_WINDOW_AUTOSIZE );
       cv::moveWindow("kmeans_window_regions",700,100);
@@ -344,9 +351,28 @@ public:
     return 1;
   }
 
-  // given an image, return a list of contiguous regions in pixels (e.g., if an image has
+  // given an image, defines list of lists of pixels that are the same color
+  void defineSameColorRegionsInImage(cv::Mat *image) {
+    std::vector<cv::Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
+    sortColorsInImage(image,colors); // prints out which colors are in image
+    for (int c=0; c<colors.size(); c++) {
+      std::vector<cv::Point> region; // points in this region (auto expands array if needed)
+      for (int i=0; i<image->cols; i++) {
+	for (int j=0; j<image->rows; j++) {
+	  cv::Vec3b color = image->at<cv::Vec3b>(cv::Point(i,j));
+	  if (color[0] == colors[c][0] && color[1] == colors[c][1] && color[2] == colors[c][2]) {
+	    region.push_back(cv::Point(i,j));
+	  }
+	}
+      }
+      regions.push_back(region);
+      region_colors.push_back(colors[c]);
+    }
+  }
+
+  // given an image, defines a list of lists of contiguous regions in pixels (e.g., if an image has
   // 3 separate regions of red, each region will be a different list of pixels)
-  void defineRegionsInImage(cv::Mat *image) {
+  void defineContiquousRegionsInImage(cv::Mat *image) {
     cv::RNG rng(12345);
     int debug = 0;
     //cv::Mat done_image = image->clone();
@@ -584,6 +610,6 @@ public:
     }
   }
 
-  ImageParserKmeans() : ImageParser() { colors = 10; min_region_pixels = 10; }
+  ImageParserKmeans() : ImageParser() { colors = 10; min_region_pixels = 10; reduce_specs_loops = 10; }
 };
 

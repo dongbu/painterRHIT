@@ -38,12 +38,12 @@ int main(void)
 
   DrawWindow DW = DrawWindow(width,height,"Desired Painting"); 
   Shapes S;
-  MyRectangle *R = new MyRectangle();
+  RectangleShape *R = new RectangleShape();
   //R->setPenColor(0,0,0);
   R->setFill(1);
   R->setCorners(.4*width,.2*height,.65*width,.9*height);
   S.addShape(R);
-  R = new MyRectangle();
+  R = new RectangleShape();
   //R->setPenColor(0,0,0);
   R->setFill(1);
   R->setCorners(.2*width,.5*height,.8*width,.7*height);

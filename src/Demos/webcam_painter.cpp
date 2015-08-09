@@ -20,6 +20,20 @@ void thresh_callback(int, void* ) { }
 
 int main(void)
 {
+
+  std::vector<cv::Point> b;
+  for (int i=0; i<10; i++) {
+    uint64 start=GetTimeMs64();
+    for (int j=0; j<100000; j++) {
+      b.push_back(cv::Point(1,1));
+    }
+    while(b.size()) { b.pop_back(); }
+
+    uint64 end=GetTimeMs64();
+    printf("TIME %llu ms\n",end-start);
+  }
+
+
   // mostly to just have something to cycle waitKey (w/o a window, waitKey doesn't work?)
   DrawWindow INTRO = DrawWindow(400,80,"Webcam Tool Instructions"); 
   cv::createTrackbar( "Paint Brush Threshold:", "Webcam Tool Instructions", &g_brush_thresh, g_brush_max_thresh, thresh_callback );
@@ -65,10 +79,22 @@ int main(void)
   DrawWindow MW = DrawWindow(width,height,"Mapped Webcam",0);
   MW.moveWindow(1*(width+5)+20,150 + 0*(height+15));
 
+  RegionToPaths RTP = RegionToPaths(width,height,border);
+
   while (1) {   
     int k = cv::waitKey(33);
     //if (k>0) { printf("key = %d\n",k); }
     if (k==27) { return(0); }  // Esc key to stop
+
+    if (k == int('1')) { brush.setColor(0,0,0); printf("Brush to 0\n");  }
+    if (k == int('2')) { brush.setColor(40,40,40);  printf("Brush to 40\n"); }
+    if (k == int('3')) { brush.setColor(80,80,80);  printf("Brush to 80\n"); }
+    if (k == int('4')) { brush.setColor(120,120,120);  printf("Brush to 120\n"); }
+    if (k == int('5')) { brush.setColor(160,160,160);  printf("Brush to 160\n"); }
+    if (k == int('6')) { brush.setColor(200,200,200);  printf("Brush to 200\n"); }
+    if (k == int('7')) { brush.setColor(230,230,230);  printf("Brush to 23\n"); }
+    if (k == int('8')) { brush.setColor(255,255,255);  printf("Brush to 255\n"); }
+
     if (k == int('c')) { W.calibrateWebcam(); }
     if (k == int('e')) { W.calibrateWebcam(1); }
     
@@ -81,14 +107,21 @@ int main(void)
       BSW.show();
     }
 
-    if (k == int('p')) { // paint
+    if (k == int('n')) {  // get new canvas to paint
+      BSW.setCanvasColor(230,230,230);
+      BSW.clearWindow();
+      BSW.show();
+    }
+
+    if (k == int('l')) { // get lines to paint
       // get webcam
+      printf("IMA1\n");
+
       W.getMappedFrame(&frame);
       MW.setMat(frame);
       MW.show();
 
       // find which pixels (region) could be painted that are most off - insert in region
-      RegionToPaths RTP = RegionToPaths(width,height,border);
       RTP.clear();
 
       EW.setCanvasColor(230,230,230);
@@ -126,20 +159,29 @@ int main(void)
 	}
       }
 
+      printf("IMA4\n");
       RTP.putGridOnWindow(&PW,border,border);
       PW.show();
       BW.show();
       EW.show();
+      printf("IMA5\n");
 
       // find brush strokes to cover that region
       RTP.defineBrush(&brush);
+      printf("IMA6\n");
       RTP.definePaths();
+      printf("IMA7\n");
+    }
 
+    if (k == int('p')) { // paint
       // paint
+      printf("IMA8.0\n");
       RTP.defineBrushStrokes();
+      printf("IMA8.1\n");
       RTP.drawBrushStrokes(&BSW);
      
       BSW.show();
+      printf("IMA9\n");
     }
   }
 }
