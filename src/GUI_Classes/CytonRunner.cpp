@@ -376,7 +376,7 @@ void CytonRunner::changePaint(int new_paint_can_id){
 	}
 	goToPos(x, y, z);
 	raiseBrush();
-	if (new_paint_can_id > paint.size()){
+	if ((unsigned)new_paint_can_id > paint.size()){
 		getPaint(new_paint_can_id);
 	}
 	else{

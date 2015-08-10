@@ -209,19 +209,19 @@ public:
   void defineShapes(Shapes *S) {
     // simplify contours
     std::vector<std::vector<cv::Point> > contours_poly( contours.size() ); 
-    for( int i = 0; i< contours.size(); i++ ) {
+    for( size_t i = 0; i< contours.size(); i++ ) {
       approxPolyDP( cv::Mat(contours[i]), contours_poly[i], 1.1, true ); 
     }
 
     cv::RNG rng(12345);
-    for( int i = 0; i< contours.size(); i++ ) {
+    for(size_t i = 0; i< contours.size(); i++ ) {
       PolyLine *PL = new PolyLine();
       PL->setPenColor(0,0,0);
       if (use_random_colors) { PL->setPenColor(rng.uniform(100,200),rng.uniform(100,200),rng.uniform(100,200)); }
 
-      if (contours_poly[i].size()>min_contour_length) {
+      if ((signed)contours_poly[i].size()>min_contour_length) {
 	// printf("Contour:%i [%lu points]\n",i,contours_poly[i].size());
-	for (int j=0; j<contours_poly[i].size();j++) {
+	for (size_t j=0; j<contours_poly[i].size();j++) {
 	  //printf("(%i,%i)",contours[i][j].x,contours[i][j].y);
 	  //if (j!=contours_poly[i].size()-1) { printf(","); }
 	  PL->addPoint(contours_poly[i][j].x,contours_poly[i][j].y);
@@ -235,7 +235,7 @@ public:
   void draw() {
     // simplified contours
     std::vector<std::vector<cv::Point> > contours_poly( contours.size() ); 
-    for( int i = 0; i< contours.size(); i++ ) {
+    for(size_t i = 0; i< contours.size(); i++ ) {
       approxPolyDP( cv::Mat(contours[i]), contours_poly[i], 1.1, true ); 
     }
     /// Draw contours
@@ -244,11 +244,11 @@ public:
     drawing.setTo(cv::Scalar(200,200,200)); // b,g,r); 
 
     cv::RNG rng(12345);
-    for( int i = 0; i< contours.size(); i++ ) {
+    for(size_t i = 0; i< contours.size(); i++ ) {
       cv::Scalar color = cv::Scalar(255,255,255);
       if (use_random_colors) { color = cv::Scalar(rng.uniform(100,200),rng.uniform(100,200),rng.uniform(100,200)); }
       
-      if (contours_poly[i].size()>min_contour_length) {
+      if ((signed)contours_poly[i].size()>min_contour_length) {
 	num_drawn++;
 	drawContours( drawing, contours_poly, i, color, 1, 8, hierarchy, 0, cv::Point() );      
       }
@@ -256,7 +256,7 @@ public:
       // test printing out some contour points
       if (i%8==3) {
 	printf("Contour:%i [%lu points]\n",i,contours_poly[i].size());
-	for (int j=0; j<contours_poly[i].size();j++) {
+	for (size_t j=0; j<contours_poly[i].size();j++) {
 	  printf("(%i,%i)",contours[i][j].x,contours[i][j].y);
 	  if (j!=contours_poly[i].size()-1) { printf(","); }
 	}
@@ -320,7 +320,7 @@ public:
 
     std::vector<cv::Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
     sortColorsInImage(&kmeans_image,colors); // prints out which colors are in image
-    for (int i=0; i<colors.size(); i++) {
+    for (size_t i=0; i<colors.size(); i++) {
       if (debug) printf("Defined color #%d: [%d,%d,%d] = brightness norm:%f\n",i,colors[i][0],colors[i][1],colors[i][2],norm(colors[i]));
     }
 
@@ -360,7 +360,7 @@ public:
   void defineSameColorRegionsInImage(cv::Mat *image) {
     std::vector<cv::Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
     sortColorsInImage(image,colors); // prints out which colors are in image
-    for (int c=0; c<colors.size(); c++) {
+    for (size_t c=0; c<colors.size(); c++) {
       std::vector<cv::Point> region; // points in this region (auto expands array if needed)
       for (int i=0; i<image->cols; i++) {
 	for (int j=0; j<image->rows; j++) {
@@ -391,7 +391,7 @@ public:
 
     std::vector<cv::Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
     sortColorsInImage(image,colors); // prints out which colors are in image
-    for (int c=0; c<colors.size(); c++) {
+    for (size_t c=0; c<colors.size(); c++) {
 
       if (debug) printf("Finding regions of color:(%d,%d,%d)\n",colors[c][0],colors[c][1],colors[c][2]);
       int start_i=0; // where left off looking for a color
@@ -475,8 +475,8 @@ public:
 		   region[0].x,region[0].y,
 		   colors[c][0],colors[c][1],colors[c][2],region.size());
 	  }
-	  if (region.size()>=min_region_pixels) {
-	    for (int i=0; i<region.size(); i++) {
+	  if ((signed)region.size()>=min_region_pixels) {
+	    for (size_t i=0; i<region.size(); i++) {
 	      if (i<10) {
 		if (debug) {
 		  printf("(%d,%d)",region[i].x,region[i].y);
@@ -491,7 +491,7 @@ public:
 	    set_color[0]=0;
 	    set_color[1]=255;
 	    set_color[2]=0;
-	    for (int i=0; i<region.size(); i++) { image->at<cv::Vec3b>(cv::Point(region[i].x,region[i].y))=set_color; }
+	    for (size_t i=0; i<region.size(); i++) { image->at<cv::Vec3b>(cv::Point(region[i].x,region[i].y))=set_color; }
 	    num_regions--;
 	  }
 	  while(region.size()) { region.pop_back(); }
@@ -561,7 +561,7 @@ public:
 		// remove the point from the original tiny region
 		//printf("BEFORE %lu\n",regions[region_id].size());
 		//int remove_index=-1;
-		for (int p=0; p<=regions[region_id].size(); p++) {
+		for (size_t p=0; p<=regions[region_id].size(); p++) {
 		  //printf("x=%i y=%i\n",regions[region_id][p].x,regions[region_id][p].y);
 		  //if (regions[region_id][p].x==i && regions[region_id][p].y==j) { remove_index=p; }
 		}
@@ -585,7 +585,7 @@ public:
     cv::RNG rng(12345);
     DrawWindow W = DrawWindow(kmeans_image.cols,kmeans_image.rows,"Regions"); // w,h
     W.clearWindow(0,255,0);
-    for (int r=0; r<regions.size(); r++) {
+    for (size_t r=0; r<regions.size(); r++) {
       int num_pixels=regions[r].size();
       if (num_pixels>=min_region_pixels) {
 	W.setPenColor(region_colors[r][2],region_colors[r][1],region_colors[r][0]);
@@ -600,14 +600,14 @@ public:
 
   void defineShapes(Shapes *S) {
     cv::RNG rng(12345);
-    for (int r=0; r<regions.size(); r++) {      
+    for (size_t r=0; r<regions.size(); r++) {      
       int num_pixels=regions[r].size();
       if (num_pixels>=min_region_pixels) {
 	PixelRegion *PR = new PixelRegion();
 	PR->setPenColor(region_colors[r][0],region_colors[r][1],region_colors[r][2]);
 	if (use_random_colors) { PR->setPenColor(rng.uniform(100,200),rng.uniform(100,200),rng.uniform(100,200)); }
 
-	for (int p=0; p<regions[r].size(); p++) {
+	for (size_t p=0; p<regions[r].size(); p++) {
 	  PR->addPoint(regions[r][p].x,regions[r][p].y);
 	}     
 	S->addShape(PR);

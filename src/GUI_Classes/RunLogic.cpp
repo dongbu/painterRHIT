@@ -153,8 +153,8 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
-			for (size_t j = 0; j < simWin->grid.size().height; j++) {
-				for (size_t k = 0; k < simWin->grid.size().width; k++) {
+			for (int j = 0; j < simWin->grid.size().height; j++) {
+				for (int k = 0; k < simWin->grid.size().width; k++) {
 					RTP.addOverpaintablePixel(j, k);
 				}
 			}
