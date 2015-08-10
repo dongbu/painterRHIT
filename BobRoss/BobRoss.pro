@@ -34,7 +34,8 @@ SOURCES +=\
     ../src/Libraries/pugixml.cpp \
     ../src/Libraries/regiontopaths.cpp \
     ../src/Libraries/shapes.cpp \
-    ../src/Libraries/webcam.cpp
+    ../src/Libraries/webcam.cpp \
+    ../src/GUI_Classes/StartWindow.cpp
 
 HEADERS  += \
     ../include/GUI_Classes/CommandWindow.h \
@@ -47,13 +48,15 @@ HEADERS  += \
     ../include/Libraries/CVImageWidget.h \
     ../include/Libraries/kmeansSegment.hpp \
     ../include/Libraries/pugiconfig.hpp \
-    ../include/Libraries/pugixml.hpp
+    ../include/Libraries/pugixml.hpp \
+    ../include/GUI_Classes/StartWindow.h
 
 FORMS    += \
     CommandWindow.ui \
     CytonRunner.ui \
     Sketchpad.ui \
-    workspacewizard.ui
+    workspacewizard.ui \
+    StartWindow.ui
 
 RESOURCES += \
     myres.qrc
