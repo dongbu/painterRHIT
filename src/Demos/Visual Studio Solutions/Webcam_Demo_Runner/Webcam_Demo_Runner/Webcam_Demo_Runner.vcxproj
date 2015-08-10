@@ -17,7 +17,7 @@
     <ClCompile Include="..\regiontopaths.cpp" />
     <ClCompile Include="..\shapes.cpp" />
     <ClCompile Include="..\webcam.cpp" />
-    <ClCompile Include="..\webcam_judge.cpp" />
+    <ClCompile Include="..\webcam_demo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\pugiconfig.hpp" />

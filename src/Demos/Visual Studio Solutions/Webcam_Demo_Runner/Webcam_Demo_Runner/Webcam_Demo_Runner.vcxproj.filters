@@ -33,7 +33,7 @@
     <ClCompile Include="..\pixeltools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\webcam_judge.cpp">
+    <ClCompile Include="..\webcam_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

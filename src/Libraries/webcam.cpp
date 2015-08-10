@@ -4,6 +4,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "DrawWindow.cpp"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 // Packages simple drawing commands for the simulator display window
 class Webcam {
 protected:
@@ -85,7 +89,9 @@ public:
 		cv::Mat scaledWebcam;
 		webcam_corner = 0;
 		int done = 0;
-		while (!done) {
+		HWND hwnd1 = (HWND)cvGetWindowHandle("Mapped Webcam");
+		HWND hwnd2 = (HWND)cvGetWindowHandle("Webcam");
+		while (!done && IsWindowVisible(hwnd1) && IsWindowVisible(hwnd2)) {
 			getFrame(&webcam, 3); // get a new frame from camera (blend 3 frames for better clarity)
 
 			cv::resize(webcam, scaledWebcam, cv::Size(), 0.5, 0.5);
@@ -218,7 +224,8 @@ public:
 		cv::namedWindow(mapped_name, 1);
 
 		int done = 0;
-		while (!done) {
+		HWND hwnd = (HWND)cvGetWindowHandle("Mapped Webcam");
+		while (!done && IsWindowVisible(hwnd)) {
 			getMappedFrame(&mapped_webcam);
 			cv::imshow(mapped_name, mapped_webcam);
 			int k = cv::waitKey(33); //stall
@@ -229,6 +236,7 @@ public:
 	}
 
 	cv::Mat getWebcamSnap(cv::Mat grid) {
+		printf("Press any key to take a picture \n");
 		cv::Mat mapped_webcam;
 
 		char mapped_name[] = "Mapped Webcam";
@@ -237,15 +245,16 @@ public:
 		int done = 0;
 		int frozen = 0;
 
-		//If s is pressed, frames stop updating.
-		while (!done) {
+		//If any key is pressed, frames stop updating.
+		HWND hwnd = (HWND)cvGetWindowHandle("Mapped Webcam");
+		while (!done && IsWindowVisible(hwnd)) {
 			if (!frozen) {
 				getMappedFrame(&mapped_webcam);
 				cv::imshow(mapped_name, mapped_webcam);
 			}
 
-			int k = cv::waitKey(33); //stall
-			if (k == int('s')) {
+			int k = cv::waitKey(27); //stall
+			if (k != -1) {
 				frozen = 1;
 				getMappedFrame(&mapped_webcam);
 				grid = mapped_webcam;
@@ -253,8 +262,15 @@ public:
 			}
 			if (k == 27 || k == int('x')) done = 1; //escape position	  
 		}
-		cv::destroyWindow(mapped_name);
-		return grid;
+		if (frozen == 0) {
+			printf("No picture saved\n");
+			return cv::Mat(1,1,1);
+		}
+		else {
+			printf("picture saved\n");
+			cv::destroyWindow(mapped_name);
+			return grid;
+		}
 
 	}
 
@@ -274,18 +290,21 @@ public:
 
 	void judge(cv::Mat ideal) {
 		int width, height, done;
+		int r, b;
+		cv::Vec3b pen_color_vec;
 
 		width = ideal.size().width;
 		height = ideal.size().height;
 		done = 0;
 
-		DrawWindow EW = DrawWindow(width, height, "Governator");
 		cv::Mat toGovernate = cv::Mat();
+		char mapped_name[] = "Mapped Webcam";
+		cv::namedWindow(mapped_name, 1);
 
 		done = 0;
-		while (!done) {
+		HWND hwnd = (HWND)cvGetWindowHandle("Mapped Webcam");
+		while (!done && IsWindowVisible(hwnd)) {
 			getMappedFrame(&toGovernate);
-			EW.grid = toGovernate;
 
 			int right = 0;
 			int wrong = 0;
@@ -306,15 +325,18 @@ public:
 						if (cdiff < -255) { cdiff = -255; } //too far off?  just set to pure red
 
 						if (cdiff >= 0) {
-							EW.setPenColor(0, 0, cdiff); //blue
-
+							pen_color_vec[0] = cdiff; //blue
+							pen_color_vec[1] = 0; //green
+							pen_color_vec[2] = 0; //red
 						}
 						else {
-							EW.setPenColor(-cdiff, 0, 0); //red
-
+							pen_color_vec[0] = 0; //blue
+							pen_color_vec[1] = 0; //greeen
+							pen_color_vec[2] = -cdiff; //red
 						}
 
-						EW.drawPixel(j, i); //for whatever reason, we're 90 degrees off.  (rotate, please).
+						toGovernate.at<cv::Vec3b>(cv::Point(j,i)) = pen_color_vec;
+
 						if (closeness < 50) { right++; }
 						else  { wrong++; }
 
@@ -324,23 +346,18 @@ public:
 
 			}
 
-			EW.setPenColor(200, 200, 200);
-			EW.drawRectangle(0, 0, 200, 12, 1);
-			EW.setPenColor(0, 0, 0);
+			//status text in top left corner.
+			cv::rectangle(toGovernate, cv::Point(0, 0), cv::Point(200, 12), cv::Scalar(200, 200, 200), -1);
 			char text[50];
 			sprintf(text, "%.0f%%  OK:%i TODO:%i", (double)100.*right / (right + wrong), right, wrong);
-			EW.drawText(10, 10, text);
-			EW.show();
-			//Sleep(1); //why is this here?  Look into it later, I guess.
+			cv::putText(toGovernate, text, cv::Point(10, 10), cv::FONT_HERSHEY_DUPLEX, 0.3, cv::Scalar(0, 0, 0), 1, CV_AA);
+			cv::imshow(mapped_name, toGovernate);
 
 			int k = cv::waitKey(33);
 			if (k == 27 || k == int('m')) { done = 1; }
 
 		}
 	}
-
-
-
 
 	Webcam(int width = 600, int height = 600) { // constructor
 		cam_id = 0;

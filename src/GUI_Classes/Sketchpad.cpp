@@ -378,7 +378,9 @@ void Sketchpad::switchWebcam() { Web->switchWebcam(); }
 void Sketchpad::judgeWebcam() {	Web->judge(this->cvWindow->grid); }
 
 void Sketchpad::loadWebcamPicture() {
-	cvWindow->grid = Web->getWebcamSnap(cvWindow->grid);
+	cv::Mat tempMat = Web->getWebcamSnap(cvWindow->grid);
+	if (tempMat.size().height == 1 && tempMat.size().width == 1) {return;}
+	cvWindow->grid = tempMat;
 
 	ImageParserKmeans IPK;
 	IPK.setMinPixelsInRegion(5);
