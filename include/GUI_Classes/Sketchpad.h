@@ -39,8 +39,8 @@ private:
 	Shapes *shapes;
 	Shape *currentShape;
     PolyLine *curPolyLine;
-    MyEllipse *curCircle;
-    MyRectangle *curRectangle;
+    EllipseShape *curCircle;
+	RectangleShape *curRectangle;
 	PixelRegion *curPixelRegion;
 
 	QComboBox *color;

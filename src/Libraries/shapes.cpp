@@ -19,6 +19,7 @@ protected:
   cv::Scalar pen_color;
   cv::Vec3b pen_color_vec;
   int r, g, b;
+  int thickness = 0;
 
 public:
   std::string type;
@@ -38,6 +39,8 @@ public:
     pen_color_vec[1] = g = pen_color[1];
     pen_color_vec[2] = r = pen_color[2];
   }
+
+  void setThickness(int t = 1) { thickness = t; }
 
   cv::Scalar getPenColor() {
     return pen_color;
@@ -92,14 +95,11 @@ public:
 
 class PolyLine : public Shape {
 protected:
-  int thickness;
 
 public:
   std::vector<cv::Point> points;
   void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
-
-  void setThickness(int t = 1) { thickness = t; }
 
   virtual std::string getXML() {
     std::string line;
@@ -137,7 +137,6 @@ public:
 // bunch of pixels
 class PixelRegion : public Shape {
 protected:
-  int thickness;
   int style; // 1=square, 2=circle
   std::vector<cv::Point> points;
 
@@ -155,7 +154,6 @@ public:
     if (!found) addPoint(cv::Point(i, j));
   }
 
-  void setThickness(int t = 1) { thickness = t; }
   void setStyle(int s = 1) { style = s; }
 
   virtual std::string getXML() {
@@ -210,14 +208,11 @@ public:
 // filled in region bounded by points
 class PolyPoints : public Shape {
 protected:
-  int thickness;
   std::vector<cv::Point> points;
 
 public:
   void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
   void addPoint(cv::Point pt) { points.push_back(pt); }
-
-  void setThickness(int t = 1) { thickness = t; }
 
   // returns a polyline representation of a PolyPoints (note: just returns the perimeter)
   virtual PolyLine* toPolyline() { // note: only perimeter

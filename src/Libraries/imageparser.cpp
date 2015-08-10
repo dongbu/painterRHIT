@@ -1,8 +1,13 @@
 #pragma once
 
 #include <opencv/cv.h>
-#include "kmeansSegment.cpp" //G.H. changed to hpp, because on our conputers, #including a .cpp file that has a header caused multiple
-//definition errors
+
+#ifdef __APPLE__
+#include "kmeansSegment.cpp"
+#endif
+
+#include "kmeansSegment.hpp"
+
 #include "drawwindow.cpp"
 #include "shapes.cpp"
 

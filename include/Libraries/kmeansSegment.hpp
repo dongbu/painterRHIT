@@ -1,5 +1,4 @@
 #pragma once
-//#include "stdafx.h"
 
 /**
  * @brief simplify the procedures of using cv::kmeans to do color segmentation
