@@ -8,6 +8,8 @@ StartWindow::StartWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+	maxLength = 800;
+
 	//all connections for start window
 	connect(ui->width, SIGNAL(editingFinished()), this, SLOT(updateExample()));
 	connect(ui->height, SIGNAL(editingFinished()), this, SLOT(updateExample()));
@@ -21,8 +23,8 @@ StartWindow::StartWindow(QWidget *parent) :
 	ui->kMeanCheck->hide();
 	ui->cannyCheck->hide();
 	ui->cameraRadio->setChecked(true);
-	ui->width->setValidator(new QIntValidator(1, 800, this));
-	ui->height->setValidator(new QIntValidator(1, 800, this));
+	ui->width->setValidator(new QIntValidator(10, maxLength, this));
+	ui->height->setValidator(new QIntValidator(10, maxLength, this));
 }
 
 StartWindow::~StartWindow()
@@ -32,13 +34,19 @@ StartWindow::~StartWindow()
 
 
 void StartWindow::updateExample(){
-	int w = 1;
-	int h = 1;
+	int w = 10;
+	int h = 10;
 	if (ui->width->text() != ""){
 		w = (ui->width->text().toInt()/4);
+		if (w < 10){
+			w = 10;
+		}
 	}
 	if (ui->height->text() != ""){
 		h = (ui->height->text().toInt()/4);
+		if (h < 10){
+			h = 10;
+		}
 	}
 	ui->example->setFixedHeight(h);
 	ui->example->setFixedWidth(w);
@@ -54,23 +62,87 @@ void StartWindow::loadClicked(){
 void StartWindow::newClicked(){
 	if (ui->cameraRadio->isChecked()){
 		printf("do something here\n");
-	}
-	else if (ui->sketchRadio->isChecked()){
 		Painter *painter = new Painter();
-		int w = 1;
-		int h = 1;
+		int w = 10;
+		int h = 10;
 		if (ui->width->text() != ""){
 			w = (ui->width->text().toInt());
+			if (w < 10){
+				w = 10;
+			}
 		}
 		if (ui->height->text() != ""){
 			h = (ui->height->text().toInt());
+			if (h < 10){
+				h = 10;
+			}
+		}
+		painter->setDimensions(w, h);
+		painter->showGUI(true);
+		painter->sketch->calibrateWebcam();
+		this->close();
+	}
+	else if (ui->sketchRadio->isChecked()){
+		Painter *painter = new Painter();
+		int w = 10;
+		int h = 10;
+		if (ui->width->text() != ""){
+			w = (ui->width->text().toInt());
+			if (w < 10){
+				w = 10;
+			}
+		}
+		if (ui->height->text() != ""){
+			h = (ui->height->text().toInt());
+			if (h < 10){
+				h = 10;
+			}
 		}
 		painter->setDimensions(w, h);
 		painter->showGUI(true);
 		this->close();
 	}
 	else if (ui->imageRadio->isChecked()){
-		printf("do something here\n");
+		bool kmeans = ui->kMeanCheck->isChecked();
+		bool canny = ui->cannyCheck->isChecked();
+		if (!kmeans && !canny){
+			return;
+		}
+		Painter *painter = new Painter();
+
+		QFileDialog directory;
+		QStringList filters;
+		filters << "Images (*.png *.xpm *.jpg)";
+		directory.setNameFilters(filters);
+		if (directory.exec()){
+			cv::Mat image = cv::imread(directory.selectedFiles().at(0).toStdString());
+			int w = image.size().width;
+			int h = image.size().height;
+			if (w >= h){
+				if (w > maxLength){
+					double scale = 800.0 / ((double)(w));
+					w = 800;
+					h = h*scale;
+				}
+			}
+			else{
+				if (h > maxLength){
+					double scale = 800.0 / ((double)(h));
+					h = 800;
+					w = w*scale;
+				}
+			}
+			painter->setDimensions(w, h);
+			painter->showGUI(false);
+			if (kmeans){
+				painter->sketch->loadPhotoKmeansClicked(directory.selectedFiles().at(0).toStdString());
+			}
+			if (canny){
+				painter->sketch->loadPhotoCannyClicked(directory.selectedFiles().at(0).toStdString());
+			}
+			painter->showGUI(true);
+			this->close();
+		}
 	}
 }
 void StartWindow::radioChanged(){

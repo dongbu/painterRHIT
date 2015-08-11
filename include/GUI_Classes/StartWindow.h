@@ -17,6 +17,7 @@ public:
 
 private:
     Ui::StartWindow *ui;
+	int maxLength;
 	
 private slots:
 	void updateExample();

@@ -21,7 +21,7 @@ Painter::Painter(Shapes *shapes) {
 	height = 600;
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
-	Web = new Webcam(width,height);
+	Web = new Webcam(width, height);
 }
 /**
  * @brief add list of shapes to painter.
@@ -120,7 +120,7 @@ void Painter::loadPhoto(std::string photoLocation) {
 	sketch->prodOtherWindows();
 }
 
-void Painter::loadPhotoCanny(std::string photoLocation,int threshold,int min_line_length){
+void Painter::loadPhotoCanny(std::string photoLocation, int threshold, int min_line_length){
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
@@ -137,7 +137,7 @@ void Painter::loadPhotoCanny(std::string photoLocation,int threshold,int min_lin
 
 }
 void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize) {
-cv::Mat image = cv::imread(photoLocation);
+	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserKmeans IPK;
@@ -165,11 +165,11 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
 	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
-	connect(sketch, SIGNAL(loadPhotoCanny(std::string,int,int)), this, SLOT(loadPhotoCanny(std::string,int,int)));
-	connect(sketch, SIGNAL(loadPhotoKmeans(std::string,int,int)), this, SLOT(loadPhotoKmeans(std::string,int,int)));
+	connect(sketch, SIGNAL(loadPhotoCanny(std::string, int, int)), this, SLOT(loadPhotoCanny(std::string, int, int)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(std::string, int, int)), this, SLOT(loadPhotoKmeans(std::string, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
-	connect(sketch->ui->actionNew,SIGNAL(triggered()), logic, SLOT(reset()));
+	connect(sketch->ui->actionNew, SIGNAL(triggered()), logic, SLOT(reset()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
 	if (toggle){

@@ -58,10 +58,6 @@ private slots:
     void saveAsClicked();
     void saveClicked();
 
-	void loadPhotoCannyClicked();
-	void loadPhotoKmeansClicked();
-
-	void calibrateWebcam();
 	void viewWebcam();
 	void switchWebcam();
 	void judgeWebcam();
@@ -76,6 +72,11 @@ public slots:
     void redraw();
 	void newClicked();
 	bool openClicked();
+
+	void loadPhotoCannyClicked(std::string loc = "");
+	void loadPhotoKmeansClicked(std::string loc = "");
+
+	void calibrateWebcam();
 
 signals:
     void prodOtherWindows();
