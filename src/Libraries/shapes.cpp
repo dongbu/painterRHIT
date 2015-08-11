@@ -35,9 +35,9 @@ public:
 
   void setPenColor(int r, int g, int b) {
     pen_color = cv::Scalar(b, g, r); // yah, in this order
-    pen_color_vec[0] = b = pen_color[0]; // yes, ugly :(
-    pen_color_vec[1] = g = pen_color[1];
-    pen_color_vec[2] = r = pen_color[2];
+    pen_color_vec[0] = b;// = pen_color[0]; // yes, ugly :(
+    pen_color_vec[1] = g;// = pen_color[1];
+    pen_color_vec[2] = r;// = pen_color[2];
   }
 
   void setThickness(int t = 1) { thickness = t; }
@@ -572,9 +572,20 @@ public:
   }
 
   // draw only one command by its shape id
-  void drawOne(DrawWindow *W, int id = 0) {
+  // optional ugly hack to specify an override color [b/c can't figure out how to SS.at(id).setColor(r,g,b)]
+  void drawOne(DrawWindow *W, int id = 0, int r=-1, int g=-1, int b=-1) {
     for (int i = 0; i < (int)shapes.size(); i++) {
-      if (shapes[i]->getID() == id) { shapes[i]->draw(W); }
+      cv::Scalar color; 
+      if (shapes[i]->getID() == id) { 
+	if (r>-1 && g>-1 && b>-1) { // save and set color
+	  color = shapes[i]->getPenColor();
+	  shapes[i]->setPenColor(b,g,r);
+	}
+	shapes[i]->draw(W); 
+	if (r>-1 && g>-1 && b>-1) { // put back color
+	  shapes[i]->setPenColor(color[2],color[1],color[0]);
+	}
+      }
     }
   }
 

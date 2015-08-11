@@ -150,6 +150,14 @@ int main(void)
     int k = cv::waitKey(33);
     //if (k>0) { printf("key = %d\n",k); }
     if (k==27) { return(0); }  // Esc key to stop
+
+    if (k == int('n')) {
+      
+
+      
+
+    }
+
   }
 
 }

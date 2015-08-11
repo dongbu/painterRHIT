@@ -10,6 +10,10 @@ int main(void)
     return -1;
   }  
 
+  int max_dim=300;
+  double scale = (double) max_dim / (double) fmax(src.cols,src.rows);
+  cv::resize(src, src, cv::Size(), scale, scale);
+
   DrawWindow WIPC = DrawWindow(src.cols,src.rows,"IPC countours"); // w,h
   WIPC.moveWindow(0,20);
   Shapes SIPC;
