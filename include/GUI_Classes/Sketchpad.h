@@ -11,16 +11,16 @@
 #include "WorkspaceWizard.h"
 
 namespace Ui {
-class Sketchpad;
+	class Sketchpad;
 }
 
 class Sketchpad : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
 	explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
-    ~Sketchpad();
+	~Sketchpad();
 
 	CytonRunner *Ava;
 	bool connected;
@@ -29,8 +29,8 @@ public:
 	CVImageWidget *translator;
 
 private:
-    void getColor();
-    void setupQt();
+	void getColor();
+	void setupQt();
 	void flood(cv::Point p);
 
 	std::string paintingNamePath;
@@ -38,8 +38,8 @@ private:
 
 	Shapes *shapes;
 	Shape *currentShape;
-    PolyLine *curPolyLine;
-    EllipseShape *curCircle;
+	PolyLine *curPolyLine;
+	EllipseShape *curCircle;
 	RectangleShape *curRectangle;
 	PixelRegion *curPixelRegion;
 
@@ -52,16 +52,16 @@ private:
 
 
 private slots:
-    void refresh(int x, int y);
-    void startNewCommand();
+	void refresh(int x, int y);
+	void startNewCommand();
 
-    void saveAsClicked();
-    void saveClicked();
+	void saveAsClicked();
+	void saveClicked();
 
 	void viewWebcam();
 	void switchWebcam();
 	void judgeWebcam();
-	void loadWebcamPicture();
+	void calibrateWebcam();
 
 	void loadWorkspaceClicked();
 	void createWorkspaceClicked();
@@ -69,22 +69,22 @@ private slots:
 	void completeConnection();
 
 public slots:
-    void redraw();
+	void redraw();
 	void newClicked();
 	bool openClicked();
+
+	void loadWebcamPicture();
 
 	void loadPhotoCannyClicked(std::string loc = "");
 	void loadPhotoKmeansClicked(std::string loc = "");
 
-	void calibrateWebcam();
-
 signals:
-    void prodOtherWindows();
+	void prodOtherWindows();
 	void save(std::string);
-    void load(std::string);
+	void load(std::string);
 	void loadRobot(std::string);
-	void loadPhotoCanny(std::string,int,int);
-	void loadPhotoKmeans(std::string,int,int);
+	void loadPhotoCanny(std::string, int, int);
+	void loadPhotoKmeans(std::string, int, int);
 };
 
 #endif // SKETCHPAD_H

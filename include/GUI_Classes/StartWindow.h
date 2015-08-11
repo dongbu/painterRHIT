@@ -24,6 +24,7 @@ private slots:
 	void loadClicked();
 	void newClicked();
 	void radioChanged();
+	void checkboxChanged();
 
 
 };

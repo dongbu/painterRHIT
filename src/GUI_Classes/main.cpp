@@ -8,24 +8,22 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+	QApplication a(argc, argv);
 
+	//console window//
+	AllocConsole();
+
+	SetConsoleTitleA("Robot Artist v3 (8/11/15)");
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+	//console window//
+
+	//actual program//
 	StartWindow w;
 	w.show();
-	
-
-	//console window//
-    AllocConsole();
-
-    SetConsoleTitleA("Robot Artist v3 (8/10/15)");
-    freopen("conin$", "r", stdin);
-    freopen("conout$", "w", stdout);
-    freopen("conout$", "w", stderr);
-
-    //Painter *painter = new Painter();
-    //painter->showGUI(true);
-	//painter->loadPhoto("../../images/lena.jpg");
-	//console window//
 	w.raise();
-    return a.exec();
+	//actual program//
+
+	return a.exec();
 }
