@@ -11,6 +11,7 @@ ui(new Ui::StartWindow)
 	maxLength = 800;
 
 	ui->sketchRadio->setChecked(true);
+	this->setWindowTitle("Startup");
 
 	//all connections for start window
 	connect(ui->width, SIGNAL(editingFinished()), this, SLOT(updateExample()));
@@ -35,7 +36,7 @@ ui(new Ui::StartWindow)
 	ui->MRSEdit->hide();
 	ui->MRSLabel->hide();
 
-	//force things to be appropriate
+	//force things to be appropriate numbers
 	ui->width->setValidator(new QIntValidator(10, maxLength, this));
 	ui->height->setValidator(new QIntValidator(10, maxLength, this));
 	ui->CCEdit->setValidator(new QIntValidator(1, 64, this));
@@ -78,6 +79,11 @@ void StartWindow::loadClicked(){
 }
 void StartWindow::newClicked(){
 	if (ui->cameraRadio->isChecked()){
+		bool kmeans = ui->kMeanCheck->isChecked();
+		bool canny = ui->cannyCheck->isChecked();
+		if (!kmeans && !canny){
+			return;
+		}
 		Painter *painter = new Painter();
 		int w = 10;
 		int h = 10;
@@ -93,9 +99,34 @@ void StartWindow::newClicked(){
 				h = 10;
 			}
 		}
+		cv::Mat temp = cv::Mat(cv::Size(w,h), 0);
+		cv::Mat img;
 		painter->setDimensions(w, h);
+		painter->showGUI(false);
+		img = painter->Web->getWebcamSnap(temp);
+		if (canny){
+			int t = 0;
+			int mll = 0;
+			if (ui->TEdit->text() != ""){
+				t = ui->TEdit->text().toInt();
+			}
+			if (ui->MLLEdit->text() != ""){
+				mll = ui->MLLEdit->text().toInt();
+			}
+			painter->loadPhotoCanny(img, t, mll);
+		}
+		if (kmeans){
+			int cc = 0;
+			int mrs = 0;
+			if (ui->CCEdit->text() != ""){
+				cc = ui->CCEdit->text().toInt();
+			}
+			if (ui->MRSEdit->text() != ""){
+				mrs = ui->MRSEdit->text().toInt();
+			}
+			painter->loadPhotoKmeans(img, cc, mrs);
+		}
 		painter->showGUI(true);
-		painter->sketch->loadWebcamPicture();
 		this->close();
 	}
 	else if (ui->sketchRadio->isChecked()){
@@ -136,25 +167,39 @@ void StartWindow::newClicked(){
 			int h = image.size().height;
 			if (w >= h){
 				if (w > maxLength){
-					double scale = 800.0 / ((double)(w));
-					w = 800;
+					double scale = (double)maxLength / ((double)(w));
+					w = maxLength;
 					h = h*scale;
 				}
 			}
-			else{
-				if (h > maxLength){
-					double scale = 800.0 / ((double)(h));
-					h = 800;
+			else if (h > maxLength){
+					double scale = (double)maxLength / ((double)(h));
+					h = maxLength;
 					w = w*scale;
 				}
-			}
 			painter->setDimensions(w, h);
 			painter->showGUI(false);
 			if (kmeans){
-				painter->sketch->loadPhotoKmeansClicked(directory.selectedFiles().at(0).toStdString());
+				int cc = 0;
+				int mrs = 0;
+				if (ui->CCEdit->text() != ""){
+					cc = ui->CCEdit->text().toInt();
+				}
+				if (ui->MRSEdit->text() != ""){
+					mrs = ui->MRSEdit->text().toInt();
+				}
+				painter->sketch->loadPhotoKmeansClicked(directory.selectedFiles().at(0).toStdString(), cc, mrs);
 			}
 			if (canny){
-				painter->sketch->loadPhotoCannyClicked(directory.selectedFiles().at(0).toStdString());
+				int t = 0;
+				int mll = 0;
+				if (ui->TEdit->text() != ""){
+					t = ui->TEdit->text().toInt();
+				}
+				if (ui->MLLEdit->text() != ""){
+					mll = ui->MLLEdit->text().toInt();
+				}
+				painter->sketch->loadPhotoCannyClicked(directory.selectedFiles().at(0).toStdString(), t, mll);
 			}
 			painter->showGUI(true);
 			this->close();

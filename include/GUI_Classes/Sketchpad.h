@@ -75,8 +75,8 @@ public slots:
 
 	void loadWebcamPicture();
 
-	void loadPhotoCannyClicked(std::string loc = "");
-	void loadPhotoKmeansClicked(std::string loc = "");
+	void loadPhotoCannyClicked(std::string loc = "", int t = 0, int mll = 0);
+	void loadPhotoKmeansClicked(std::string loc = "", int cc = 0, int mrs = 0);
 
 signals:
 	void prodOtherWindows();
