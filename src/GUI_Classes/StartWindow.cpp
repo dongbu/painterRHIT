@@ -99,11 +99,14 @@ void StartWindow::newClicked(){
 				h = 10;
 			}
 		}
-		cv::Mat temp = cv::Mat(cv::Size(w,h), 0);
+		cv::Mat temp = cv::Mat(cv::Size(w, h), 0);
 		cv::Mat img;
 		painter->setDimensions(w, h);
 		painter->showGUI(false);
 		img = painter->Web->getWebcamSnap(temp);
+		if (img.size().height <= 1 || img.size().width <= 1){
+			return;
+		}
 		if (canny){
 			int t = 0;
 			int mll = 0;
@@ -171,10 +174,10 @@ void StartWindow::newClicked(){
 				}
 			}
 			else if (h > maxLength){
-					double scale = (double)maxLength / ((double)(h));
-					h = maxLength;
-					w = w*scale;
-				}
+				double scale = (double)maxLength / ((double)(h));
+				h = maxLength;
+				w = w*scale;
+			}
 			painter->setDimensions(w, h);
 			painter->showGUI(false);
 			if (kmeans){

@@ -205,7 +205,7 @@ void CytonRunner::getPaint(int paint_can_id){
 	goToPos(x, y, raiseHeight);
 	lowerBrush();
 	raiseBrush();
-	
+
 }
 //have the robot draw a single point.
 void CytonRunner::drawPoint(cv::Point pt){
@@ -370,8 +370,8 @@ void CytonRunner::changePaint(int new_paint_can_id){
 	double z = 0.2;
 
 	for (int i = -1; i < 2; i++){
-		for (double k = 0; k <= 2 * M_PI; k+= 0.1){
-			goToPos(x + 0.02*i*sin(k), y + 0.02*i*cos(k), z+ 0.01*cos(i) + 0.01*sin(k));
+		for (double k = 0; k <= 2 * M_PI; k += 0.1){
+			goToPos(x + 0.02*i*sin(k), y + 0.02*i*cos(k), z + 0.01*cos(i) + 0.01*sin(k));
 		}
 	}
 	goToPos(x, y, z);

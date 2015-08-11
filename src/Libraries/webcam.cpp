@@ -72,7 +72,7 @@ public:
 
 	// sets the desired region of the webcam 
 	void calibrateWebcam(int skip_reset = 0) {
-		printf("Type %i, then click the calibration window.\n",this->webcam_corner + 1);
+		printf("Type %i, then click the calibration window.\n", this->webcam_corner + 1);
 		cv::Mat webcam;
 		cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
 		//    cv::Mat canvas; // this is the "canvas"
@@ -266,7 +266,7 @@ public:
 		}
 		if (frozen == 0) {
 			printf("No picture saved\n");
-			return cv::Mat(1,1,1);
+			return cv::Mat(1, 1, 1);
 		}
 		else {
 			printf("picture saved\n");
@@ -337,7 +337,7 @@ public:
 							pen_color_vec[2] = -cdiff; //red
 						}
 
-						toGovernate.at<cv::Vec3b>(cv::Point(j,i)) = pen_color_vec;
+						toGovernate.at<cv::Vec3b>(cv::Point(j, i)) = pen_color_vec;
 
 						if (closeness < 50) { right++; }
 						else  { wrong++; }

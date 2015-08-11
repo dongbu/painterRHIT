@@ -100,7 +100,7 @@ public:
         TitleLabel->setGeometry(QRect(240, 10, 71, 16));
         CCLabel = new QLabel(StartWindow);
         CCLabel->setObjectName(QStringLiteral("CCLabel"));
-        CCLabel->setGeometry(QRect(420, 120, 61, 16));
+        CCLabel->setGeometry(QRect(420, 120, 91, 16));
         MRSLabel = new QLabel(StartWindow);
         MRSLabel->setObjectName(QStringLiteral("MRSLabel"));
         MRSLabel->setGeometry(QRect(420, 150, 141, 16));
@@ -131,7 +131,7 @@ public:
     void retranslateUi(QWidget *StartWindow)
     {
         StartWindow->setWindowTitle(QApplication::translate("StartWindow", "Form", 0));
-        newButton->setText(QApplication::translate("StartWindow", "New", 0));
+        newButton->setText(QApplication::translate("StartWindow", "Start", 0));
         loadButton->setText(QApplication::translate("StartWindow", "Load", 0));
         cameraRadio->setText(QApplication::translate("StartWindow", "Camera", 0));
         sketchRadio->setText(QApplication::translate("StartWindow", "Sketch", 0));
@@ -141,7 +141,7 @@ public:
         width->setText(QApplication::translate("StartWindow", "600", 0));
         height->setText(QApplication::translate("StartWindow", "600", 0));
         X->setText(QApplication::translate("StartWindow", "X", 0));
-        aspectRatioLabel->setText(QApplication::translate("StartWindow", "Aspect Ration", 0));
+        aspectRatioLabel->setText(QApplication::translate("StartWindow", "Aspect Ratio", 0));
         TitleLabel->setText(QApplication::translate("StartWindow", "Drawing Type", 0));
         CCLabel->setText(QApplication::translate("StartWindow", "Color Count", 0));
         MRSLabel->setText(QApplication::translate("StartWindow", "Minimum Region Size (pixels)", 0));

@@ -32,7 +32,7 @@ public:
 
 			if (p1x != p2x) { // not vertical
 				if (fabs(dydx) < 1) { // not steep line - just skim along x axis
-					for (int i = std::min(p1x,p2x); i <= std::max(p1x,p2x); i++) {
+					for (int i = std::min(p1x, p2x); i <= std::max(p1x, p2x); i++) {
 						int j = p1y + dydx * (double)(i - p1x);
 						points.push_back(cv::Point(i, j));
 					}
@@ -40,7 +40,7 @@ public:
 				}
 			}
 			if (!done && p1y != p2y) { // not horizontal - steep line - skip along y axis
-				for (int j = std::min(p1y,p2y); j <= std::max(p1y,p2y); j++) {
+				for (int j = std::min(p1y, p2y); j <= std::max(p1y, p2y); j++) {
 					int i = p1x + dxdy * (double)(j - p1y);
 					points.push_back(cv::Point(i, j));
 				}

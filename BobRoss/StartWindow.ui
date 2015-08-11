@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>New</string>
+    <string>Start</string>
    </property>
   </widget>
   <widget class="QPushButton" name="loadButton">
@@ -153,7 +153,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Aspect Ration</string>
+    <string>Aspect Ratio</string>
    </property>
   </widget>
   <widget class="QFrame" name="example">
@@ -195,7 +195,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(24
     <rect>
      <x>420</x>
      <y>120</y>
-     <width>61</width>
+     <width>91</width>
      <height>16</height>
     </rect>
    </property>
