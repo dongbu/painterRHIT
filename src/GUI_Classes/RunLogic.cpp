@@ -149,6 +149,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 		}
 
 		if (s->fill) { //painting filled region
+			emit setRunColor(currentShapeIndex, "yellow");
 			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
@@ -177,7 +178,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				int prevY = pathVec.at(i).at(0).y;
 				for (size_t j = 1; j < pathVec.at(i).size(); j++) { //running through points in one stroke
 					if (!running) { return; }
-					emit setRunColor(currentShapeIndex, "yellow");
 					if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j)); }
 					curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
 					prevX = pathVec.at(i).at(j).x;
@@ -189,13 +189,13 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				if (Ava->connected) { Ava->strokeInProgress = false; }
 			}
 		} else { //painting polyline object
+			emit setRunColor(currentShapeIndex, "yellow");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
 			int prevX = pts.at(0).x;
 			int prevY = pts.at(0).y;
 			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
 				if (!running) { return; }
-				emit setRunColor(currentShapeIndex, "yellow");
 
 				if (Ava->connected) { //connected, polyline
 					Ava->stroke(cv::Point(prevX, prevY), pts.at(i));

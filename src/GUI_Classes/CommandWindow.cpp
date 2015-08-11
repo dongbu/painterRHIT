@@ -15,7 +15,10 @@ ui(new Ui::CommandWindow)
 
 	shapes = ss;
 
-	ui->tableWidget->setColumnCount(2);
+	ui->tableWidget->setColumnCount(3);
+	ui->tableWidget->setColumnWidth(0, 35);  //color collumn
+	ui->tableWidget->setColumnWidth(1, 50);  //breakpoint collumn
+	ui->tableWidget->setColumnWidth(2, 130); //command type collumn
 	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
@@ -37,12 +40,12 @@ CommandWindow::~CommandWindow()
  */
 void CommandWindow::moveUpClicked() {
 	int currentIndex = ui->tableWidget->currentRow();
-	if (currentIndex < 0 || (currentIndex == 0 && ui->tableWidget->rowCount() == 1)) return;
+	if (currentIndex <= 0) return;
 	if (currentIndex > 0){
 		shapes->swap(currentIndex, currentIndex - 1);
 		populate();
 	}
-	ui->tableWidget->setCurrentCell(currentIndex - 1, 0);
+	ui->tableWidget->setCurrentCell(currentIndex - 1, 2);
 }
 /**
  * @brief move command down in window (and vec)
@@ -55,7 +58,7 @@ void CommandWindow::moveDownClicked() {
 		shapes->swap(ui->tableWidget->currentRow(), ui->tableWidget->currentRow() + 1);
 		populate();
 	}
-	ui->tableWidget->setCurrentCell(currentIndex + 1, 0);
+	ui->tableWidget->setCurrentCell(currentIndex + 1, 1);
 
 }
 /**
@@ -73,27 +76,31 @@ void CommandWindow::deleteCommandClicked() {
  * @brief populate list with commands.
  */
 void CommandWindow::populate(){
+	//reseting
 	ui->tableWidget->clear();
 	ui->tableWidget->setRowCount(0);
-	ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("command type"));
-	ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("command color"));
+	ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("rgb"));
+	ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("break"));
+	ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("command type"));
 
-	ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	//refilling the list with shape data
 	for (int i = 0; i < shapes->length(); i++){
 		QString name = QString::fromStdString(shapes->at(i)->type);
 
 		//cell creation
 		ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-		ui->tableWidget->setItem(i, 0, new QTableWidgetItem(name));
-		ui->tableWidget->setItem(i, 1, new QTableWidgetItem());
-		ui->tableWidget->item(i, 0)->setTextAlignment(Qt::AlignCenter);
+		ui->tableWidget->setItem(i, 0, new QTableWidgetItem()); //rgb
+		ui->tableWidget->setItem(i, 2, new QTableWidgetItem(name)); //command type
 
 		//color setting
 		cv::Scalar penCol = shapes->at(i)->getPenColor();
-		ui->tableWidget->item(i, 1)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
-		if (shapes->at(i)->isBreakPoint){
-			recieveRunColor(i, "red");
-		}
+		ui->tableWidget->item(i, 0)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
+		if (shapes->at(i)->isBreakPoint){ recieveRunColor(i, "red"); }
+		else { ui->tableWidget->setItem(i, 1, new QTableWidgetItem("no")); }
+
+		//centering
+		ui->tableWidget->item(i, 1)->setTextAlignment(Qt::AlignCenter); // breakpoint
+		ui->tableWidget->item(i, 2)->setTextAlignment(Qt::AlignCenter); // command type
 	}
 }
 /**
@@ -130,16 +137,17 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 		index = ui->tableWidget->rowCount() - 1;
 	}
 	if (runToggle == "green"){
-		ui->tableWidget->item(index, 0)->setBackgroundColor("green");
+		ui->tableWidget->item(index, 2)->setBackgroundColor("green");
 	}
 	else if (runToggle == "yellow") {
-		ui->tableWidget->item(index, 0)->setBackgroundColor("yellow");
+		ui->tableWidget->item(index, 2)->setBackgroundColor("yellow");
 	}
 	else if (runToggle == "white") {
-		ui->tableWidget->item(index, 0)->setBackgroundColor("white");
+		ui->tableWidget->item(index, 2)->setBackgroundColor("white");
 	}
 	else if (runToggle == "red") {
-		ui->tableWidget->item(index, 0)->setBackgroundColor("red");
+		ui->tableWidget->setItem(index, 1, new QTableWidgetItem("yes"));
+		ui->tableWidget->item(index, 1)->setTextAlignment(Qt::AlignCenter);
 	}
 }
 
