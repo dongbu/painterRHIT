@@ -140,7 +140,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 	while (running && currentShapeIndex < stopIndex) {
 		//Updating index
 		Shape *s = this->shapes->at(currentShapeIndex);
-
 		//handling breakpoint
 		if (s->isBreakPoint) {
 			toggleBreakPoint(currentShapeIndex);
@@ -153,15 +152,15 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
-			std::vector<cv::Point> pts = p->getPoints();
+			std::vector<cv::Point> pts = p->getPoints();			
+
+			//no
 			for (int j = 0; j < simWin->grid.size().height; j++) {
 				for (int k = 0; k < simWin->grid.size().width; k++) {
-					RTP.addOverpaintablePixel(j, k);
+					RTP.addOverpaintablePixel(k, j);
 				}
 			}
-
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y);	}
-
 			if (Ava->connected) { //connected, fill
 				curBrush = this->Ava->curBrush;
 				RTP.defineBrush(this->Ava->curBrush);
@@ -172,7 +171,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			}
 			RTP.definePaths();
 			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
-
 			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
 				int prevX = pathVec.at(i).at(0).x;
 				int prevY = pathVec.at(i).at(0).y;
@@ -217,7 +215,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 		emit setRunColor(currentShapeIndex, "green");
 		currentShapeIndex++;
 	}
-
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 	running = false;
 

@@ -152,6 +152,35 @@ void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int min
 	sketch->prodOtherWindows();
 }
 
+void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
+	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+	ImageParserContours IPC;
+	IPC.setMinContourLength(min_line_length);
+	IPC.setCannyThreshold(threshold);
+	IPC.parseImage(sketch->cvWindow->grid);
+	IPC.defineShapes(shapes);
+
+	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(sketch->cvWindow); //redraw window
+	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->prodOtherWindows();
+}
+
+void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize){
+	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+	ImageParserKmeans IPK;
+	IPK.setNumColors(colorCount);
+	IPK.setMinPixelsInRegion(minRegionSize);
+	IPK.parseImage(sketch->cvWindow->grid);
+	IPK.defineShapes(shapes);
+
+	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(sketch->cvWindow); //redraw window
+	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->prodOtherWindows();
+}
+
+
 //Functions pertaining to GUI are below//
 /**
  * @brief display the GUI

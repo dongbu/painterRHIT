@@ -15,6 +15,7 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
+
 	//settting class variables
 	this->width = width;
 	this->height = height;
@@ -342,11 +343,23 @@ void Sketchpad::getColor() {
 //allows you to load a file into the sketchpad window.
 //these pictures are converted automatically to strokes.
 
-void Sketchpad::loadPhotoCannyClicked(std::string loc){
-	int threshold = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", 50, 1, 100);
-	if (!threshold) { return; }
-	int min_line_length = QInputDialog::getInt(this, "Load Canny", "Minimum Line Length (pixels)", 5, 1, 100);
-	if (!min_line_length) { return; }
+void Sketchpad::loadPhotoCannyClicked(std::string loc, int t, int mll){
+	int threshold;
+	int min_line_length;
+	if (t == 0){
+		int threshold = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", 50, 1, 100);
+		if (!threshold) { return; }
+	}
+	else{
+		threshold = t;
+	}
+	if (mll = 0){
+		int min_line_length = QInputDialog::getInt(this, "Load Canny", "Minimum Line Length (pixels)", 5, 1, 100);
+		if (!min_line_length) { return; }
+	}
+	else{
+		min_line_length = mll;
+	}
 
 	if (loc == ""){
 		QFileDialog directory;
@@ -360,12 +373,26 @@ void Sketchpad::loadPhotoCannyClicked(std::string loc){
 	}
 }
 
-void Sketchpad::loadPhotoKmeansClicked(std::string loc){
-	int colorCount = QInputDialog::getInt(this, "Load kMeans", "Color Count", 2, 2, 64);
-	if (!colorCount) { return; }
-	int minRegionSize = QInputDialog::getInt(this, "Load kMeans", "Minimum regions size (pixels)", 5, 1, 500);
-	if (!minRegionSize) { return; }
+void Sketchpad::loadPhotoKmeansClicked(std::string loc, int cc, int mrs){
+	int colorCount;
+	int minRegionSize;
+	if (cc == 0){
+		colorCount = QInputDialog::getInt(this, "Load kMeans", "Color Count", 2, 2, 64);
+		if (!colorCount) { return; }
+	}
+	else{
+		colorCount = cc;
+	}
+	if (mrs == 0){
+		minRegionSize = QInputDialog::getInt(this, "Load kMeans", "Minimum regions size (pixels)", 5, 1, 500);
+		if (!minRegionSize) { return; }
+	}
+	else{
+		minRegionSize = mrs;
+	}
 
+	printf("photo kmeans cc: %i, mrs: %i\n", cc, mrs);
+	printf("photo kmeans colorCount: %i, minRegionSize: %i\n", colorCount, minRegionSize);
 	if (loc == ""){
 		QFileDialog directory;
 		QStringList filters;
