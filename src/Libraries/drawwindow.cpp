@@ -7,7 +7,6 @@
 // Packages simple drawing commands for the simulator display window
 class DrawWindow {
 protected:
-  int width, height;
   cv::Scalar canvas_color;
   cv::Scalar pen_color;
   cv::Vec3b pen_color_vec;
@@ -21,6 +20,9 @@ protected:
 
 public:
   cv::Mat grid; 
+  int width, height;
+
+  // ABC: hmmm... why have this in DrawWindow?
   std::vector<cv::Point> poly_points; // will automatically allocate member if needed
 
   void setCanvasColor(int r, int g, int b) {
@@ -28,6 +30,45 @@ public:
   }
 
   void clearWindow() { grid.setTo(canvas_color); }
+
+  void copy(DrawWindow *W) { grid=W->grid.clone(); }
+
+  // copies pixels of W that are NOT r,g,b
+  void overlay(DrawWindow *W, int outline=0, int r=0, int g=0, int b=0) {
+    int min_width=std::min(W->width,width);
+    int min_height=std::min(W->height,height);
+    cv::Vec3b color;
+    cv::Vec3b neighbor_color;
+    for (int i=0; i<min_width; i++) {
+      for (int j=0; j<min_height; j++) {
+	color=W->getColor(i,j);
+	if (color[0]!=r || color[1]!=g || color[2]!=b) { // ABC: need to check color order
+	  if (outline) {
+	    // check for neighbors to see if it has 1+ pixels that are r,g,b
+	    int is_boundary=0;
+	    int left=std::max(i-1 , 0);
+	    int right=std::min(i+1 , width-1);
+	    int top=std::max(j-1 , 0);
+	    int bottom=std::min(j+1 ,height-1);
+	    for (int n=left; n<=right; n++) {
+	      for (int m=top; m<=bottom; m++) {
+		neighbor_color=W->getColor(n,m);
+		if (neighbor_color[0]==r && neighbor_color[1]==g && neighbor_color[2]==b) {
+		  is_boundary=1;
+		}
+	      }
+	    }
+	    if (is_boundary) {
+	      grid.at<cv::Vec3b>(cv::Point(i,j)) = color;
+	    }
+
+	  } else {
+	    grid.at<cv::Vec3b>(cv::Point(i,j)) = color;
+	  }
+	}
+      }
+    }
+  }
 
   // clears window and set pixels to r g b
   void clearWindow(int r, int g, int b) {

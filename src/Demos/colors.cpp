@@ -52,8 +52,8 @@ double *g_gradients;
 RNG rng(12345);
 
 // helper functions to move windows in a grid
-int win_w (int n,int offset=0) { return 20+n*520+offset; }
-int win_h (int n,int offset=0) { return 20+n*550+offset; }
+int win_w (int n,int offset=0) { return 20+n*g_photo_width+offset; }
+int win_h (int n,int offset=0) { return 20+n*g_photo_height+offset; }
 
 // simple stroke
 class LineStroke {
@@ -113,7 +113,7 @@ double calcDiffBetweenImages(Mat* mat1, Mat* mat2, Mat* canvas_mat=NULL) {
 }
 
 // creates an array of gradients for every pixel of an image.  grid_size=1,3,5,7 (for sobel operator)
-void defineGradients(Mat* original, double gradArray[], int grid_size=3, int num_blurs=0) {
+void defineGradients(Mat* original, double *gradArray, double *magnitudes, int grid_size=3, int num_blurs=0) {
   Mat original_Mat = original->clone();
   
   // Convert it to gray
@@ -122,27 +122,58 @@ void defineGradients(Mat* original, double gradArray[], int grid_size=3, int num
   
   /// Generate grad_x and grad_y
   Size s = original_Mat.size();
-  Mat grad_x = Mat::zeros(s.height, s.width, CV_16S); 
-  Mat grad_y = Mat::zeros(s.height, s.width, CV_16S);
+  Mat grad_x = Mat::zeros(s.height, s.width, CV_16SC1); 
+  Mat grad_y = Mat::zeros(s.height, s.width, CV_16SC1);
   
   /// Gradient X
-  Sobel(original_Mat, grad_x, CV_16S, 1, 0, grid_size);
+  Sobel(original_Mat, grad_x, CV_16S, 1, 0, grid_size); //, 1, 0, BORDER_DEFAULT);
   
   /// Gradient Y
   Sobel(original_Mat, grad_y, CV_16S, 0, 1, grid_size);
   
   short* pixelX = grad_x.ptr<short>(0);
   short* pixelY = grad_y.ptr<short>(0);
+
+  if (0) {
+    for (int i=0; i<src.cols; i++) {
+      for (int j=0; j<src.rows; j++) {
+	int dx = grad_x.at<short>(Point(i,j));
+	int dy = grad_x.at<short>(Point(i,j));
+	double directionRAD = atan2(dy,dx);
+	if (directionRAD<0) { directionRAD=2.0 * M_PI + directionRAD; }
+	double directionDEG = (180. * directionRAD / M_PI);
+	double mag = sqrt(dx*dx + dy*dy);
+	gradArray[i]=directionRAD;
+	magnitudes[i]=mag;
+	if (i==20) { 
+	  printf("[%i,%i] (%i,%i) Rad:%5.3f, Deg:%5.1f, Mag:%.2f\n",
+		 i,j,dx,dy,pixelX[i],directionRAD,directionDEG,mag); 
+	}
+      }
+    }
+  }
   
-  for(int i = 0; i < grad_x.rows * grad_x.cols; i++)  {
-    double directionRAD = atan2((double)pixelY[i], (double)pixelX[i]);
-    //int directionDEG = (int)(180 + directionRAD / M_PI * 180);
-    gradArray[i]=directionRAD;
-    // if (i%1000==0) { printf("%5i: (%f,%f) => Rad: %5.3f, Deg: %5.1d\n",i, (double)pixelY[i], (double)pixelX[i],directionRAD,directionDEG); }
+  if (1) {
+    //for(int i = 0; i < grad_x.rows * grad_x.cols; i++)  {
+    for (int i=0; i<src.rows; i++) {
+      for (int j=0; j<src.cols; j++) {
+	int index=src.cols*i + j;
+
+	int dx = pixelX[index];
+	int dy = pixelY[index];
+	double directionRAD = atan2((double)dy, (double)dx);
+	if (directionRAD<0) { directionRAD=2.0 * M_PI + directionRAD; }
+	double directionDEG = (180. * directionRAD / M_PI);
+	double mag = sqrt(dx*dx + dy*dy);
+	gradArray[index]=directionRAD;
+	magnitudes[index]=mag;
+	if (i%1000==0) { printf("%5i: [%i,%i] Rad:%5.3f, Deg:%5.1f, Mag:%.2f\n",i,dx,dy,directionRAD,directionDEG,mag); }
+      }
+    }
   }
 
   //  num_blurs = 1;
-  if (num_blurs>0) {  // "tame" gradients
+  if (0 && num_blurs>0) {  // "tame" gradients
     // post process gradient to make each average
     double *new_gradients; // new blurred gradient
     new_gradients = new double[s.height * s.width];   
@@ -198,26 +229,29 @@ void showGradients() {
   Mat gradients_image = src.clone();
 
   Size s = gradients_image.size();
-  double *gradients;
-
-  gradients = new double[s.height * s.width];   
-  defineGradients(&gradients_image,gradients,3,g_gradient_blur_loops);
+  double *gradients = new double[s.height * s.width];   
+  double *magnitudes = new double[s.height * s.width];   
+  defineGradients(&gradients_image,gradients,magnitudes,3,g_gradient_blur_loops);
   g_gradients = gradients;
   
   // show the gradients on the image (debug)
   if (1) {
-    for (int i=0; i<src.cols; i++) {
-      for (int j=0; j<src.rows; j++) {
-	Vec3b color = gradients_image.at<Vec3b>(Point(i,j));
-	double rad = gradients[src.rows*j + i];
-	color[0]=255*(rad+M_PI)/(2*M_PI);
-	color[1]=255*(rad+M_PI)/(2*M_PI);
-	color[2]=255*(rad+M_PI)/(2*M_PI);    
-	gradients_image.at<Vec3b>(Point(i,j)) = color; // set pixel      
+    for (int i=0; i<src.rows; i++) {
+      for (int j=0; j<src.cols; j++) {
+	int index=src.cols*i + j;
+	index=src.rows*j + i;
+	if (magnitudes[index]>0) {
+	  Vec3b color = gradients_image.at<Vec3b>(Point(i,j));
+	  double rad = gradients[index];
+	  color[0]=255*(rad)/(2*M_PI);
+	  color[1]=255*(rad)/(2*M_PI);
+	  color[2]=255*(rad)/(2*M_PI);    
+	  gradients_image.at<Vec3b>(Point(i,j)) = color; // set pixel      
+	}
       }
     }
   
-    int num_lines=src.rows*src.cols/100;
+    int num_lines=src.rows*src.cols/10000;
     for (int i=0; i<num_lines; i++) {
       int x = rng.uniform(0,src.cols);
       int y = rng.uniform(0,src.rows);  
@@ -232,8 +266,8 @@ void showGradients() {
     }
 
     namedWindow( "gradient_window", CV_WINDOW_AUTOSIZE );
-    imshow( "graident_window", gradients_image );
-    moveWindow("graident_window",win_w(3),win_h(0)); 
+    imshow( "gradient_window", gradients_image );
+    moveWindow("gradient_window",win_w(3),win_h(0)); 
   }
 
   // try to "paint" by lots of lines in the right direction
@@ -1257,6 +1291,12 @@ int main( int argc, char** argv )
     std::cout << "!!! Failed imread()\n ./colors <image filename>" << std::endl;
     return -1;
   }  
+
+  // resize so max dim is 800
+  int max_dim=300;
+  double scale = (double) max_dim / (double) fmax(src.cols,src.rows);
+  cv::resize(src, src, cv::Size(), scale, scale);
+
   if (make_bw==1) { 
     Mat gray_image;
     cvtColor( src, gray_image, CV_BGR2GRAY );
@@ -1264,8 +1304,8 @@ int main( int argc, char** argv )
     src = imread("./Gray_Image.jpg", 1 );
   }
 
-  //g_photo_width = src.cols;
-  //g_photo_height = src.rows;
+  g_photo_width = src.cols;
+  g_photo_height = src.rows;
   //if (argv[2]) { g_photo_width = atoi(argv[2]); }
   //  if (argv[3]) { g_photo_height = atoi(argv[3]); }
   printf("Photo width = %i\n", g_photo_width); 
