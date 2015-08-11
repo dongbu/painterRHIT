@@ -63,7 +63,8 @@ public:
 	static void zoomMouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
 		Webcam *self = static_cast<Webcam*>(userdata);
 		if (event == cv::EVENT_LBUTTONDOWN) {
-			printf("Setting zoom corner %d to %i,%i\n", self->webcam_corner, x, y);
+			printf("Setting zoom corner %d to %i,%i\n", self->webcam_corner + 1, x, y);
+			printf("Type %i, then click the calibration window.\n", self->webcam_corner + 1);
 			self->zoomQuad[self->webcam_corner].x = x * 2;
 			self->zoomQuad[self->webcam_corner].y = y * 2;
 		}
@@ -71,11 +72,12 @@ public:
 
 	// sets the desired region of the webcam 
 	void calibrateWebcam(int skip_reset = 0) {
+		printf("Type %i, then click the calibration window.\n",this->webcam_corner + 1);
 		cv::Mat webcam;
 		cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
 		//    cv::Mat canvas; // this is the "canvas"
 		char mapped_name[] = "Mapped Webcam";
-		char webcam_name[] = "Webcam";
+		char webcam_name[] = "Calibration Window";
 		int debug = 1;
 
 		cv::namedWindow(webcam_name, 1);
@@ -90,7 +92,7 @@ public:
 		webcam_corner = 0;
 		int done = 0;
 		HWND hwnd1 = (HWND)cvGetWindowHandle("Mapped Webcam");
-		HWND hwnd2 = (HWND)cvGetWindowHandle("Webcam");
+		HWND hwnd2 = (HWND)cvGetWindowHandle("Calibration Window");
 		while (!done && IsWindowVisible(hwnd1) && IsWindowVisible(hwnd2)) {
 			getFrame(&webcam, 3); // get a new frame from camera (blend 3 frames for better clarity)
 
