@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 
 	StartWindow w;
 	w.show();
+	
 
 	//console window//
     AllocConsole();
@@ -25,6 +26,6 @@ int main(int argc, char *argv[])
     //painter->showGUI(true);
 	//painter->loadPhoto("../../images/lena.jpg");
 	//console window//
-
+	w.raise();
     return a.exec();
 }

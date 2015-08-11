@@ -44,7 +44,12 @@ void StartWindow::updateExample(){
 	ui->example->setFixedWidth(w);
 }
 void StartWindow::loadClicked(){
-
+	Painter *painter = new Painter();
+	painter->showGUI(false);
+	if (painter->sketch->openClicked()){
+		painter->showGUI(true);
+		this->close();
+	}
 }
 void StartWindow::newClicked(){
 	if (ui->cameraRadio->isChecked()){

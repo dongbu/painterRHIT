@@ -420,7 +420,7 @@ void Sketchpad::saveClicked() {
 /**
  * @brief open functionality.
  */
-void Sketchpad::openClicked() {
+bool Sketchpad::openClicked() {
 
 	QFileDialog directory;
 	QStringList filters;
@@ -434,9 +434,14 @@ void Sketchpad::openClicked() {
 			emit load(directory.selectedFiles().at(0).toStdString());
 			emit prodOtherWindows();
 			this->paintingNamePath = directory.selectedFiles().at(0).toStdString();
+			return true;
 		}
-		else printf("the robot is empty.\n");
+		else {
+			printf("the robot is empty.\n");
+			return false;
+		}
 	}
+	return false;
 }
 /**
  * @brief New project functionality.

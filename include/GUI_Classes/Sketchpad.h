@@ -57,7 +57,6 @@ private slots:
 
     void saveAsClicked();
     void saveClicked();
-    void openClicked();
 
 	void loadPhotoCannyClicked();
 	void loadPhotoKmeansClicked();
@@ -76,6 +75,7 @@ private slots:
 public slots:
     void redraw();
 	void newClicked();
+	bool openClicked();
 
 signals:
     void prodOtherWindows();

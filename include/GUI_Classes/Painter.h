@@ -16,6 +16,8 @@ public:
     Painter();
     Painter(Shapes *shapes);
 
+	Sketchpad *sketch;
+
     void addShape(Shape *inboundShape);
     void addShapes(Shapes *inboundShapes);
     void setDimensions(int width, int height);
@@ -28,7 +30,6 @@ private:
 	bool stuffshowing;
 
     CommandWindow *commandWin;
-    Sketchpad *sketch;
     RunLogic *logic;
 	Webcam *Web;
 	CytonRunner *Ava;
