@@ -198,7 +198,8 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(loadPhotoKmeans(std::string, int, int)), this, SLOT(loadPhotoKmeans(std::string, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
-	connect(sketch->ui->actionNew, SIGNAL(triggered()), logic, SLOT(reset()));
+	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));
+	//connect(sketch->ui->actionNew, SIGNAL(triggered()), logic, SLOT(reset()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 
 	if (toggle){
@@ -269,4 +270,14 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 	this->setDimensions(w, h);
 
 	this->Web->setWebcamZoom(x0, y0, x1, y1, x2, y2, x3, y3);
+}
+
+void Painter::destroyAll(){
+	sketch->close();
+	delete Web;
+	shapes->clear();
+	commandWin->close();
+	delete logic;
+	Ava->close();
+	delete this;
 }

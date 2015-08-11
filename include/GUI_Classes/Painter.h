@@ -48,6 +48,7 @@ public slots:
 	void loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize);
 	void loadPhotoCanny(cv::Mat img, int threshold, int min_line_length);
 	void loadPhotoKmeans(cv::Mat img, int colorCount, int minRegionSize);
+	void destroyAll();
 
 };
 
