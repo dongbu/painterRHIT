@@ -369,7 +369,7 @@ void Sketchpad::loadPhotoKmeansClicked(){
 }
 
 //clicking yields resizing.
-void Sketchpad::calibrateWebcam() { Web->calibrateWebcam(); }
+void Sketchpad::calibrateWebcam() { printf("switch focus to the \"calibrate webcam\" window.\n"); Web->calibrateWebcam(); }
 
 void Sketchpad::viewWebcam() { Web->showWebcam(); }
 
@@ -392,8 +392,6 @@ void Sketchpad::loadWebcamPicture() {
 	translator->showImage(cvWindow->grid); //actually redraw the window
 	prodOtherWindows();
 }
-
-////Functions primarily relating to other classes are below here////
 
 /**
  * @brief saveAs functionality.
