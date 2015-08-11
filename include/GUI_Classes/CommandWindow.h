@@ -19,12 +19,24 @@ public:
     Shapes *shapes;
     Ui::CommandWindow *ui;
 
+private:
+	int commandsFinished;
+	QTimer *timer;
+	QTime startTime;
+	int secondCount, minuteCount;
+	bool minPrep;
+
 private slots:
     void moveUpClicked();
     void moveDownClicked();
     void deleteCommandClicked();
     void launchRightClick(QPoint p);
     void menuSort(QAction *a);
+
+	void drawingStarted();
+	void drawingPaused();
+	void drawingStopped();
+	void showTime();
 
 public slots:
     void populate();
@@ -36,7 +48,6 @@ signals:
     void runFrom(int index);
     void runOnly(int index);
     void setBreakPoint(int index);
-
 };
 
 #endif // COMMANDWINDOW_H

@@ -15,6 +15,12 @@ ui(new Ui::CommandWindow)
 
 	shapes = ss;
 
+	timer = new QTimer(this);
+	commandsFinished = 0;
+	secondCount = 0;
+	minuteCount = 0;
+	minPrep = false;
+
 	ui->tableWidget->setColumnCount(3);
 	ui->tableWidget->setColumnWidth(0, 35);  //color collumn
 	ui->tableWidget->setColumnWidth(1, 50);  //breakpoint collumn
@@ -24,6 +30,13 @@ ui(new Ui::CommandWindow)
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
 	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
+
+	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(drawingStarted()));
+	connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(drawingPaused()));
+	connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(drawingStopped()));
+	connect(ui->actionForward, SIGNAL(triggered()), this, SLOT(drawingPaused()));
+	connect(ui->actionBackward, SIGNAL(triggered()), this, SLOT(drawingPaused()));
+	connect(this->timer, SIGNAL(timeout()), this, SLOT(showTime()));
 
 	populate();
 }
@@ -102,6 +115,10 @@ void CommandWindow::populate(){
 		ui->tableWidget->item(i, 1)->setTextAlignment(Qt::AlignCenter); // breakpoint
 		ui->tableWidget->item(i, 2)->setTextAlignment(Qt::AlignCenter); // command type
 	}
+
+	//reseting
+	ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
+	ui->CommandsRun->setAlignment(Qt::AlignCenter);
 }
 /**
  * @brief recieve right click
@@ -138,12 +155,20 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 	}
 	if (runToggle == "green"){
 		ui->tableWidget->item(index, 2)->setBackgroundColor("green");
+		if (index == shapes->length() - 1) { this->timer->stop(); }
+		if (this->commandsFinished >= shapes->length()) { return; }
+		this->commandsFinished++;
+		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
+		ui->CommandsRun->setAlignment(Qt::AlignCenter);
 	}
 	else if (runToggle == "yellow") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("yellow");
 	}
 	else if (runToggle == "white") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("white");
+		this->commandsFinished = 0;
+		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
+		ui->CommandsRun->setAlignment(Qt::AlignCenter);
 	}
 	else if (runToggle == "red") {
 		ui->tableWidget->setItem(index, 1, new QTableWidgetItem("yes"));
@@ -156,6 +181,47 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
  */
 void CommandWindow::recieveClearRunColors(){
 	for (int i = 0; i < ui->tableWidget->rowCount(); i++){
-		recieveRunColor(i, false);
+		recieveRunColor(i, "white");
 	}
+}
+
+void CommandWindow::drawingStarted() {
+	if (shapes->length() == 0) { return; }
+	timer->start();
+	startTime = QTime::currentTime();
+}
+
+void CommandWindow::drawingPaused() {
+	if (!this->timer->isActive()) {
+		printf("returning\n");
+		return;
+	}
+
+	this->timer->stop();
+	secondCount = QTime::currentTime().second() - startTime.second() + secondCount;
+	if (secondCount < 0) { secondCount = 60 + secondCount; }
+}
+
+void CommandWindow::drawingStopped() {
+	this->timer->stop();
+	ui->TimeEllapsed->setText(QString::number(0) + QString(":") + QString::number(0) + QString(" ellapsed"));
+	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
+	secondCount = 0;
+	minuteCount = 0;
+	minPrep = false;
+}
+
+void CommandWindow::showTime() {
+	int sec = QTime::currentTime().second() - startTime.second() + secondCount;
+	if (sec < 0) { sec = 60 + sec; }
+
+	//updating minute logic
+	if (sec == 1) { minPrep = true; }
+	if (sec == 0 && minPrep) {
+		minPrep = false;
+		minuteCount++;
+	}
+
+	ui->TimeEllapsed->setText(QString::number(minuteCount) + QString(":") + QString::number(sec) + QString(" ellapsed"));
+	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }

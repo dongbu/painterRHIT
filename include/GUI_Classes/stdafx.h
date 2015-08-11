@@ -25,6 +25,8 @@
 #include <qlineedit.h>
 #include <QInputDialog>
 #include <qstring.h>
+#include <qtimer.h>
+#include <QTime>
 
 //auto-generated methods to include
 #include "ui_Sketchpad.h"
