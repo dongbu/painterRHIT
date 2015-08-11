@@ -74,17 +74,17 @@ void StartWindow::loadClicked(){
 	painter->showGUI(false);
 	if (painter->sketch->openClicked()){
 		painter->showGUI(true);
-		this->close();
+		this->hide();
 	}
 }
 void StartWindow::newClicked(){
+	Painter *painter = new Painter();
 	if (ui->cameraRadio->isChecked()){
 		bool kmeans = ui->kMeanCheck->isChecked();
 		bool canny = ui->cannyCheck->isChecked();
 		if (!kmeans && !canny){
 			return;
 		}
-		Painter *painter = new Painter();
 		int w = 10;
 		int h = 10;
 		if (ui->width->text() != ""){
@@ -127,10 +127,9 @@ void StartWindow::newClicked(){
 			painter->loadPhotoKmeans(img, cc, mrs);
 		}
 		painter->showGUI(true);
-		this->close();
+		this->hide();
 	}
 	else if (ui->sketchRadio->isChecked()){
-		Painter *painter = new Painter();
 		int w = 10;
 		int h = 10;
 		if (ui->width->text() != ""){
@@ -147,7 +146,7 @@ void StartWindow::newClicked(){
 		}
 		painter->setDimensions(w, h);
 		painter->showGUI(true);
-		this->close();
+		this->hide();
 	}
 	else if (ui->imageRadio->isChecked()){
 		bool kmeans = ui->kMeanCheck->isChecked();
@@ -155,7 +154,6 @@ void StartWindow::newClicked(){
 		if (!kmeans && !canny){
 			return;
 		}
-		Painter *painter = new Painter();
 
 		QFileDialog directory;
 		QStringList filters;
@@ -202,9 +200,11 @@ void StartWindow::newClicked(){
 				painter->sketch->loadPhotoCannyClicked(directory.selectedFiles().at(0).toStdString(), t, mll);
 			}
 			painter->showGUI(true);
-			this->close();
+			this->hide();
 		}
 	}
+	connect(painter->sketch, SIGNAL(newPressed()), this, SLOT(showSelf()));
+
 }
 void StartWindow::radioChanged(){
 	if (ui->cameraRadio->isChecked()){
@@ -299,4 +299,9 @@ void StartWindow::checkboxChanged(){
 		ui->MLLEdit->hide();
 		ui->MLLLabel->hide();
 	}
+}
+
+void StartWindow::showSelf(){
+	this->show();
+	this->raise();
 }

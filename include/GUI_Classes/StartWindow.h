@@ -25,6 +25,7 @@ private slots:
 	void newClicked();
 	void radioChanged();
 	void checkboxChanged();
+	void showSelf();
 
 
 };

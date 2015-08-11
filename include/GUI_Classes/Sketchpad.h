@@ -79,6 +79,7 @@ public slots:
 	void loadPhotoKmeansClicked(std::string loc = "", int cc = 0, int mrs = 0);
 
 signals:
+	void newPressed();
 	void prodOtherWindows();
 	void save(std::string);
 	void load(std::string);

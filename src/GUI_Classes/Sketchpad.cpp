@@ -1,5 +1,6 @@
 #pragma once
 #include "Sketchpad.h"
+#include "StartWindow.h"
 
 using namespace cv;
 
@@ -481,12 +482,17 @@ bool Sketchpad::openClicked() {
 /**
  * @brief New project functionality.
  */
-void Sketchpad::newClicked() {
-	this->shapes->clear();
-	this->paintingNamePath = "unpathed";
-	this->redraw();
-	emit prodOtherWindows();
+void Sketchpad::newClicked(){
+	emit newPressed();
 }
+
+//turn into clear button
+//void Sketchpad::newClicked() {
+//	this->shapes->clear();
+//	this->paintingNamePath = "unpathed";
+//	this->redraw();
+//	emit prodOtherWindows();
+//}
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
