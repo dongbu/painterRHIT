@@ -16,12 +16,12 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -41,7 +41,7 @@ public:
     QVBoxLayout *CommandListLayout;
     QLabel *Command_List_Label;
     QHBoxLayout *horizontalLayout_2;
-    QListWidget *listWidget;
+    QTableWidget *tableWidget;
     QVBoxLayout *verticalLayout;
     QPushButton *DeleteCommand;
     QPushButton *MoveUp;
@@ -56,7 +56,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(593, 368);
+        CommandWindow->resize(593, 362);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -102,10 +102,10 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        listWidget = new QListWidget(layoutWidget);
-        listWidget->setObjectName(QStringLiteral("listWidget"));
+        tableWidget = new QTableWidget(layoutWidget);
+        tableWidget->setObjectName(QStringLiteral("tableWidget"));
 
-        horizontalLayout_2->addWidget(listWidget);
+        horizontalLayout_2->addWidget(tableWidget);
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
@@ -138,7 +138,7 @@ public:
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 593, 21));
+        menubar->setGeometry(QRect(0, 0, 593, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);

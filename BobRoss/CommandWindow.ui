@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>593</width>
-    <height>368</height>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QListWidget" name="listWidget"/>
+        <widget class="QTableWidget" name="tableWidget"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>593</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSimulator">

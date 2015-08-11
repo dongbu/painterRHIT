@@ -15,8 +15,9 @@ ui(new Ui::CommandWindow)
 
 	shapes = ss;
 
-	ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(ui->listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
+	ui->tableWidget->setColumnCount(2);
+	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
 	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
@@ -35,31 +36,34 @@ CommandWindow::~CommandWindow()
  * @brief move command up in window (and vec)
  */
 void CommandWindow::moveUpClicked() {
-	int currentIndex = ui->listWidget->currentIndex().row();
+	int currentIndex = ui->tableWidget->currentRow();
+	if (currentIndex < 0 || (currentIndex == 0 && ui->tableWidget->rowCount() == 1)) return;
 	if (currentIndex > 0){
 		shapes->swap(currentIndex, currentIndex - 1);
 		populate();
 	}
+	ui->tableWidget->setCurrentCell(currentIndex - 1, 0);
 }
 /**
  * @brief move command down in window (and vec)
  */
 void CommandWindow::moveDownClicked() {
-	if (ui->listWidget->count() <= 0 || ui->listWidget->currentIndex().row() == ui->listWidget->count() - 1) return;
+	if (ui->tableWidget->rowCount() <= 0 || ui->tableWidget->currentRow() == ui->tableWidget->rowCount() - 1) return;
 
-	int currentIndex = ui->listWidget->currentIndex().row();
-	if (currentIndex < ui->listWidget->count()){
-		shapes->swap(currentIndex, currentIndex + 1);
+	int currentIndex = ui->tableWidget->currentRow();
+	if (currentIndex < ui->tableWidget->rowCount()){
+		shapes->swap(ui->tableWidget->currentRow(), ui->tableWidget->currentRow() + 1);
 		populate();
 	}
+	ui->tableWidget->setCurrentCell(currentIndex + 1, 0);
 
 }
 /**
  * @brief remove command from window (and vec)
  */
 void CommandWindow::deleteCommandClicked() {
-	if (ui->listWidget->count() <= 0) return;
-	int currentIndex = ui->listWidget->currentIndex().row();
+	if (ui->tableWidget->rowCount() <= 0) return;
+	int currentIndex = ui->tableWidget->currentRow();
 	shapes->removeShapeAt(currentIndex);
 	populate();
 	emit modifiedCommand();
@@ -69,10 +73,24 @@ void CommandWindow::deleteCommandClicked() {
  * @brief populate list with commands.
  */
 void CommandWindow::populate(){
-	ui->listWidget->clear();
+	ui->tableWidget->clear();
+	ui->tableWidget->setRowCount(0);
+	ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("command type"));
+	ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("command color"));
+
+	ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	for (int i = 0; i < shapes->length(); i++){
-		QString name = QString::fromStdString(shapes->at(i)->type) + QString::number(shapes->at(i)->getID());
-		ui->listWidget->addItem(new QListWidgetItem(name));
+		QString name = QString::fromStdString(shapes->at(i)->type);
+
+		//cell creation
+		ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+		ui->tableWidget->setItem(i, 0, new QTableWidgetItem(name));
+		ui->tableWidget->setItem(i, 1, new QTableWidgetItem());
+		ui->tableWidget->item(i, 0)->setTextAlignment(Qt::AlignCenter);
+
+		//color setting
+		cv::Scalar penCol = shapes->at(i)->getPenColor();
+		ui->tableWidget->item(i, 1)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
 		if (shapes->at(i)->isBreakPoint){
 			recieveRunColor(i, "red");
 		}
@@ -83,12 +101,12 @@ void CommandWindow::populate(){
  * @param pos
  */
 void CommandWindow::launchRightClick(QPoint pos) {
-	QMenu *menu = new QMenu(ui->listWidget);
+	QMenu *menu = new QMenu(ui->tableWidget);
 
-	menu->addAction(new QAction("Run from here", ui->listWidget));
-	menu->addAction(new QAction("Run this command", ui->listWidget));
-	menu->addAction(new QAction("Set Breakpoint", ui->listWidget));
-	menu->popup(ui->listWidget->viewport()->mapToGlobal(pos));
+	menu->addAction(new QAction("Run from here", ui->tableWidget));
+	menu->addAction(new QAction("Run this command", ui->tableWidget));
+	menu->addAction(new QAction("Set Breakpoint", ui->tableWidget));
+	menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
 
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(menuSort(QAction*)));
 }
@@ -97,9 +115,9 @@ void CommandWindow::launchRightClick(QPoint pos) {
  * @param a
  */
 void CommandWindow::menuSort(QAction *a) {
-	if (a->text() == "Run from here") emit runFrom(ui->listWidget->currentRow());
-	else if (a->text() == "Run this command") emit runOnly(ui->listWidget->currentRow());
-	else emit setBreakPoint(ui->listWidget->currentRow());
+	if (a->text() == "Run from here") emit runFrom(ui->tableWidget->currentRow());
+	else if (a->text() == "Run this command") emit runOnly(ui->tableWidget->currentRow());
+	else emit setBreakPoint(ui->tableWidget->currentRow());
 }
 
 /**
@@ -108,20 +126,20 @@ void CommandWindow::menuSort(QAction *a) {
  * @param runToggle
  */
 void CommandWindow::recieveRunColor(int index, QString runToggle){
-	if (index >= ui->listWidget->count()){
-		index = ui->listWidget->count() - 1;
+	if (index >= ui->tableWidget->rowCount()){
+		index = ui->tableWidget->rowCount() - 1;
 	}
 	if (runToggle == "green"){
-		ui->listWidget->item(index)->setBackgroundColor("green");
+		ui->tableWidget->item(index, 0)->setBackgroundColor("green");
 	}
 	else if (runToggle == "yellow") {
-		ui->listWidget->item(index)->setBackgroundColor("yellow");
+		ui->tableWidget->item(index, 0)->setBackgroundColor("yellow");
 	}
 	else if (runToggle == "white") {
-		ui->listWidget->item(index)->setBackgroundColor("white");
+		ui->tableWidget->item(index, 0)->setBackgroundColor("white");
 	}
 	else if (runToggle == "red") {
-		ui->listWidget->item(index)->setBackgroundColor("red");
+		ui->tableWidget->item(index, 0)->setBackgroundColor("red");
 	}
 }
 
@@ -129,7 +147,7 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
  * @brief clear all "already run" commands.
  */
 void CommandWindow::recieveClearRunColors(){
-	for (int i = 0; i < ui->listWidget->count(); i++){
+	for (int i = 0; i < ui->tableWidget->rowCount(); i++){
 		recieveRunColor(i, false);
 	}
 }
