@@ -113,6 +113,8 @@
    <addaction name="actionDraw_Circle"/>
    <addaction name="actionDraw_Square"/>
    <addaction name="actionDraw_Filled_Polygon"/>
+   <addaction name="separator"/>
+   <addaction name="actionClear"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -326,6 +328,18 @@
   <action name="actionChange_Add_Canny">
    <property name="text">
     <string>Change/Add Canny</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset>
+     <normaloff>Icon Storage/clear.png</normaloff>Icon Storage/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>clear</string>
+   </property>
+   <property name="toolTip">
+    <string>clear all</string>
    </property>
   </action>
  </widget>

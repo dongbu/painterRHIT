@@ -335,6 +335,9 @@
     <CustomBuild Include="GeneratedFiles\ui_StartWindow.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Icon Storage\clear.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">

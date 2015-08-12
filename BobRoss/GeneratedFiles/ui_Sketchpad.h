@@ -49,6 +49,7 @@ public:
     QAction *actionSnap_Webcam_Picture;
     QAction *actionChange_Add_Kmean;
     QAction *actionChange_Add_Canny;
+    QAction *actionClear;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -169,6 +170,11 @@ public:
         actionChange_Add_Kmean->setObjectName(QStringLiteral("actionChange_Add_Kmean"));
         actionChange_Add_Canny = new QAction(Sketchpad);
         actionChange_Add_Canny->setObjectName(QStringLiteral("actionChange_Add_Canny"));
+        actionClear = new QAction(Sketchpad);
+        actionClear->setObjectName(QStringLiteral("actionClear"));
+        QIcon icon18;
+        icon18.addFile(QStringLiteral("Icon Storage/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionClear->setIcon(icon18);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -231,6 +237,8 @@ public:
         toolBar_2->addAction(actionDraw_Circle);
         toolBar_2->addAction(actionDraw_Square);
         toolBar_2->addAction(actionDraw_Filled_Polygon);
+        toolBar_2->addSeparator();
+        toolBar_2->addAction(actionClear);
 
         retranslateUi(Sketchpad);
 
@@ -272,6 +280,10 @@ public:
         actionSnap_Webcam_Picture->setText(QApplication::translate("Sketchpad", "Snap Webcam Picture", 0));
         actionChange_Add_Kmean->setText(QApplication::translate("Sketchpad", "Change/Add Kmean", 0));
         actionChange_Add_Canny->setText(QApplication::translate("Sketchpad", "Change/Add Canny", 0));
+        actionClear->setText(QApplication::translate("Sketchpad", "clear", 0));
+#ifndef QT_NO_TOOLTIP
+        actionClear->setToolTip(QApplication::translate("Sketchpad", "clear all", 0));
+#endif // QT_NO_TOOLTIP
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));

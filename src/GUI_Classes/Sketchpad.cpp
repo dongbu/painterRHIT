@@ -119,6 +119,9 @@ void Sketchpad::setupQt() {
 	//image options connections
 	connect(ui->actionChange_Add_Canny, SIGNAL(triggered()), this, SLOT(changeCannyClicked()));
 	connect(ui->actionChange_Add_Kmean, SIGNAL(triggered()), this, SLOT(changeKmeansClicked()));
+
+	//misc
+	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(reset()));
 }
 
 /**
