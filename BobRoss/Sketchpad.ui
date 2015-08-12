@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -63,14 +63,6 @@
     <addaction name="menuWorkspace"/>
     <addaction name="actionShutdown"/>
    </widget>
-   <widget class="QMenu" name="menuImage">
-    <property name="title">
-     <string>Image</string>
-    </property>
-    <addaction name="actionLoad_Photo_Canny"/>
-    <addaction name="actionLoad_Photo_Kmeans"/>
-    <addaction name="actionSnap_Webcam_Picture"/>
-   </widget>
    <widget class="QMenu" name="menuWebcam">
     <property name="title">
      <string>Webcam</string>
@@ -89,7 +81,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
-   <addaction name="menuImage"/>
    <addaction name="menuWebcam"/>
    <addaction name="menuImage_Options"/>
   </widget>

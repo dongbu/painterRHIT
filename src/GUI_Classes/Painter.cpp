@@ -205,6 +205,7 @@ void Painter::showGUI(bool toggle, bool resetSketch){
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));
 	//connect(sketch->ui->actionNew, SIGNAL(triggered()), logic, SLOT(reset()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
+	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
 	if (toggle){
 		sketch->show();

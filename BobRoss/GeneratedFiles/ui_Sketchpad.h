@@ -56,7 +56,6 @@ public:
     QMenu *menuFile;
     QMenu *menuRobot;
     QMenu *menuWorkspace;
-    QMenu *menuImage;
     QMenu *menuWebcam;
     QMenu *menuImage_Options;
     QStatusBar *statusbar;
@@ -185,15 +184,13 @@ public:
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 924, 21));
+        menubar->setGeometry(QRect(0, 0, 924, 26));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuRobot = new QMenu(menubar);
         menuRobot->setObjectName(QStringLiteral("menuRobot"));
         menuWorkspace = new QMenu(menuRobot);
         menuWorkspace->setObjectName(QStringLiteral("menuWorkspace"));
-        menuImage = new QMenu(menubar);
-        menuImage->setObjectName(QStringLiteral("menuImage"));
         menuWebcam = new QMenu(menubar);
         menuWebcam->setObjectName(QStringLiteral("menuWebcam"));
         menuImage_Options = new QMenu(menubar);
@@ -208,7 +205,6 @@ public:
 
         menubar->addAction(menuFile->menuAction());
         menubar->addAction(menuRobot->menuAction());
-        menubar->addAction(menuImage->menuAction());
         menubar->addAction(menuWebcam->menuAction());
         menubar->addAction(menuImage_Options->menuAction());
         menuFile->addAction(actionNew);
@@ -219,9 +215,6 @@ public:
         menuRobot->addAction(actionShutdown);
         menuWorkspace->addAction(actionCreate);
         menuWorkspace->addAction(actionLoad);
-        menuImage->addAction(actionLoad_Photo_Canny);
-        menuImage->addAction(actionLoad_Photo_Kmeans);
-        menuImage->addAction(actionSnap_Webcam_Picture);
         menuWebcam->addAction(actionCalibrate);
         menuWebcam->addAction(actionView);
         menuWebcam->addAction(actionSwitch);
@@ -287,7 +280,6 @@ public:
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
-        menuImage->setTitle(QApplication::translate("Sketchpad", "Image", 0));
         menuWebcam->setTitle(QApplication::translate("Sketchpad", "Webcam", 0));
         menuImage_Options->setTitle(QApplication::translate("Sketchpad", "Image Options", 0));
         toolBar_2->setWindowTitle(QApplication::translate("Sketchpad", "toolBar_2", 0));
