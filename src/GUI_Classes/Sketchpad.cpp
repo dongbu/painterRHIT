@@ -507,9 +507,6 @@ void Sketchpad::reset() {
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
-	//QProcess *p = new QProcess();
-	//p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
-
 	QMessageBox *m = new QMessageBox();
 	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
 	m->setStandardButtons(QMessageBox::Ok);
@@ -551,9 +548,6 @@ void Sketchpad::shutDownClicked(){
 }
 
 void Sketchpad::changeCannyClicked(){
-	if (originalImage.size().width <= 0){
-		printf("awwww man...\n");
-	}
 	if (t0 == 0){
 		t0 = 50;
 	}
@@ -574,17 +568,13 @@ void Sketchpad::changeCannyClicked(){
 
 }
 void Sketchpad::changeKmeansClicked(){
-	
-	if (originalImage.size().width <= 0){
-		printf("awwww man...\n");
-	}
 	if (cc0 == 0){
 		cc0 = 2;
 	}
 	if (mrs0 == 0){
 		mrs0 = 1;
 	}
-	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 100);
+	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 64);
 	mrs0 = QInputDialog::getInt(this, "Load kmeans", "Min Region Size (Pixels)", mrs0, 1, 100);
 	this->shapes->clear();
 	this->redraw();
