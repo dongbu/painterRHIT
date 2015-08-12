@@ -136,6 +136,7 @@ void RunLogic::toggleBreakPoint(int index) {
 	}
 }
 
+//thread to handle actual drawing.
 void RunLogic::DrawingThread(DrawWindow *W){
 	while (running && currentShapeIndex < stopIndex) {
 		//Updating index
@@ -226,6 +227,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 
 }
 
+//clear away everything and reset variables.
 void RunLogic::reset(){
 	stepTaken = 2;
 	shapes->clear();
