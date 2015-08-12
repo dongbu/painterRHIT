@@ -45,12 +45,13 @@ ui(new Ui::StartWindow)
 	ui->MRSEdit->setValidator(new QIntValidator(1, 100, this));
 }
 
+//deconstructor
 StartWindow::~StartWindow()
 {
 	delete ui;
 }
 
-
+//updates the sizing example shown on the side.
 void StartWindow::updateExample(){
 	int w = 10;
 	int h = 10;
@@ -69,6 +70,8 @@ void StartWindow::updateExample(){
 	ui->example->setFixedHeight(h);
 	ui->example->setFixedWidth(w);
 }
+
+//used to load an xml file.
 void StartWindow::loadClicked(){
 	Painter *painter = new Painter();
 	painter->showGUI(false);
@@ -78,6 +81,11 @@ void StartWindow::loadClicked(){
 		this->hide();
 	}
 }
+
+//"new" was replaced with "start".  
+//Nevertheless, this function takes the information present, 
+//and creates the corresponding painting environment.
+
 void StartWindow::newClicked(){
 	Painter *painter = new Painter();
 
@@ -237,6 +245,8 @@ void StartWindow::newClicked(){
 	connect(painter->sketch, SIGNAL(newPressed()), this, SLOT(showSelf()));
 
 }
+
+//hides and shows things as appropriate when a new radio button is pressed.
 void StartWindow::radioChanged(){
 	if (ui->cameraRadio->isChecked()){
 		if (ui->kMeanCheck->isChecked()){
@@ -304,6 +314,7 @@ void StartWindow::radioChanged(){
 
 }
 
+//hides and shows things as appropriate when a checkbox is pressed.
 void StartWindow::checkboxChanged(){
 	if (ui->kMeanCheck->isChecked()){
 		ui->CCEdit->show();
@@ -332,6 +343,7 @@ void StartWindow::checkboxChanged(){
 	}
 }
 
+//tells the window to come back.
 void StartWindow::showSelf(){
 	this->show();
 	this->raise();

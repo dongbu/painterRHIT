@@ -88,6 +88,7 @@ void Painter::load(std::string projectLocation) {
 	this->sketch->redraw();
 }
 
+//connect to a robot
 void Painter::loadRobot(std::string robotLocation) {
 	if (!Ava->loadWorkspace(robotLocation)) return;
 
@@ -99,6 +100,7 @@ void Painter::loadRobot(std::string robotLocation) {
 	}
 }
 
+//load a photo from location.
 void Painter::loadPhoto(std::string photoLocation) {
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
@@ -120,6 +122,7 @@ void Painter::loadPhoto(std::string photoLocation) {
 	sketch->prodOtherWindows();
 }
 
+//load photo canny from location.
 void Painter::loadPhotoCanny(std::string photoLocation, int threshold, int min_line_length){
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
@@ -136,6 +139,8 @@ void Painter::loadPhotoCanny(std::string photoLocation, int threshold, int min_l
 	sketch->prodOtherWindows();
 
 }
+
+//load photo kmeans from location.
 void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize) {
 	cv::Mat image = cv::imread(photoLocation);
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
@@ -152,6 +157,7 @@ void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int min
 	sketch->prodOtherWindows();
 }
 
+//load photo canny from matrix.
 void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 	ImageParserContours IPC;
@@ -166,6 +172,7 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	sketch->prodOtherWindows();
 }
 
+//load photo kmeans from matrix.
 void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize){
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 	ImageParserKmeans IPK;
@@ -277,6 +284,7 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 	this->Web->setWebcamZoom(x0, y0, x1, y1, x2, y2, x3, y3);
 }
 
+//remove all windows.
 void Painter::destroyAll(){
 	sketch->close();
 	delete Web;

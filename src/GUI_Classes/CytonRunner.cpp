@@ -328,11 +328,13 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 
 }
 
+//set size of simulation.
 void CytonRunner::setSimulationSize(int width, int height){
 	this->width = width;
 	this->height = height;
 }
 
+//set size of actual canvas.
 void CytonRunner::setCanvasSize(double width, double height){
 	this->cWidth = width;
 	this->cHeight = height;
@@ -358,8 +360,10 @@ void CytonRunner::regulateWorkspaceData() {
 	this->setCanvasSize(maxX - minX, maxY - minY);
 }
 
+//let things know it is finished with a line/drawing/etc.
 void CytonRunner::tellFinished() { emit finishedSettingWorkspace(); }
 
+//change to a new paint color.
 void CytonRunner::changePaint(int new_paint_can_id){
 	if (paint.size() > 0){
 		getPaint(paint.at(0).first); //paint at 0 is water

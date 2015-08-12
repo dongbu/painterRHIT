@@ -354,7 +354,6 @@ void Sketchpad::getColor() {
 
 //allows you to load a file into the sketchpad window.
 //these pictures are converted automatically to strokes.
-
 void Sketchpad::loadPhotoCannyClicked(std::string loc, int t, int mll){
 	int threshold;
 	int min_line_length;
@@ -385,6 +384,7 @@ void Sketchpad::loadPhotoCannyClicked(std::string loc, int t, int mll){
 	}
 }
 
+//load a kmeans from a location.
 void Sketchpad::loadPhotoKmeansClicked(std::string loc, int cc, int mrs){
 	int colorCount;
 	int minRegionSize;
@@ -420,12 +420,16 @@ void Sketchpad::loadPhotoKmeansClicked(std::string loc, int cc, int mrs){
 //clicking yields resizing.
 void Sketchpad::calibrateWebcam() { printf("switch focus to the \"calibrate webcam\" window.\n"); Web->calibrateWebcam(); }
 
+//show webcam.
 void Sketchpad::viewWebcam() { Web->showWebcam(); }
 
+//change webcam.
 void Sketchpad::switchWebcam() { Web->switchWebcam(); }
 
+//judge via webcam.
 void Sketchpad::judgeWebcam() { Web->judge(this->cvWindow->grid); }
 
+//load picture from webcam.
 void Sketchpad::loadWebcamPicture() {
 	cv::Mat tempMat = Web->getWebcamSnap(cvWindow->grid);
 	if (tempMat.size().height == 1 && tempMat.size().width == 1) { return; }
@@ -507,9 +511,6 @@ void Sketchpad::reset() {
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
-	//QProcess *p = new QProcess();
-	//p->start("C:/\"Program Files (x86)\"/Robai/\"Cyton Gamma 1500 Viewer_4.X\"/bin/cytonViewer.exe");
-
 	QMessageBox *m = new QMessageBox();
 	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
 	m->setStandardButtons(QMessageBox::Ok);
@@ -550,10 +551,8 @@ void Sketchpad::shutDownClicked(){
 	}
 }
 
+//deal with user attempting to update canny.
 void Sketchpad::changeCannyClicked(){
-	if (originalImage.size().width <= 0){
-		printf("awwww man...\n");
-	}
 	if (t0 == 0){
 		t0 = 50;
 	}
@@ -573,18 +572,16 @@ void Sketchpad::changeCannyClicked(){
 	emit loadPhotoCanny(this->originalImage, t0, mll0);
 
 }
+
+//deal with user attempting to update kmeans.
 void Sketchpad::changeKmeansClicked(){
-	
-	if (originalImage.size().width <= 0){
-		printf("awwww man...\n");
-	}
 	if (cc0 == 0){
 		cc0 = 2;
 	}
 	if (mrs0 == 0){
 		mrs0 = 1;
 	}
-	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 100);
+	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 64);
 	mrs0 = QInputDialog::getInt(this, "Load kmeans", "Min Region Size (Pixels)", mrs0, 1, 100);
 	this->shapes->clear();
 	this->redraw();
@@ -597,6 +594,7 @@ void Sketchpad::changeKmeansClicked(){
 	emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
 }
 
+//used to highlight a selected shape.
 void Sketchpad::highlightShape(int index) {
 	if (index == -1) { return; }
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid

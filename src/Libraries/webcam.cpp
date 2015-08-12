@@ -38,14 +38,14 @@ public:
 		zoomQuad[2] = cv::Point2f(frame.cols - 0, frame.rows - 0);
 		zoomQuad[3] = cv::Point2f(0, frame.rows - 0);
 	}
-
+	//sets up zoom on webcam.
 	void setWebcamZoom(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
 		zoomQuad[0] = cv::Point2f(x1, y1);
 		zoomQuad[1] = cv::Point2f(x2, y2);
 		zoomQuad[2] = cv::Point2f(x3, y3);
 		zoomQuad[3] = cv::Point2f(x4, y4);
 	}
-
+	//recieves current zoom on webcam.
 	double * getWebcamZoom() {
 		static double map[8];
 		map[0] = zoomQuad[0].x;
@@ -168,22 +168,26 @@ public:
 		cv::warpPerspective(webcam, *mapped_frame, webcam_lambda, mapped_frame->size());
 	}
 
+	//returns the frame (already mapped).
 	cv::Mat getMappedFrame() {
 		cv::Mat mappedFrame;
 		getMappedFrame(&mappedFrame);
 		return mappedFrame;
 	}
 
+	//set the size of the webcam (in pixels)
 	void setMapSize(int w, int h) { // this is the projection of the webcam to an arbitrary size
 		map_height = h;
 		map_width = w;
 		resetMapping();
 	}
 
+	//set whether the webcam looks like a camera pointed at you, or a mirror.
 	void setFlip(int flip) { // set 1 to flip over the webcam
 		flip_webcam = flip;
 	}
 
+	//returns an integer to do with the frame.
 	int getFrame(cv::Mat *frame, int loops = 0, int blackwhite = 0) {
 		if (cam_id == 0) {
 			if (cam0->isOpened()) {  // check if we succeeded
@@ -219,6 +223,7 @@ public:
 		}
 	}
 
+	//shows the webcam
 	void showWebcam() {
 		cv::Mat mapped_webcam;
 
@@ -237,6 +242,7 @@ public:
 		cv::destroyWindow(mapped_name);
 	}
 
+	//takes a picture via webcam.
 	cv::Mat getWebcamSnap(cv::Mat grid) {
 		printf("Press any key to take a picture \n");
 		cv::Mat mapped_webcam;
@@ -276,6 +282,7 @@ public:
 
 	}
 
+	//changes the current webcam.
 	void switchWebcam() {
 		currentCamera++;
 		cam1 = new cv::VideoCapture(currentCamera);
@@ -286,10 +293,12 @@ public:
 		}
 	}
 
+	//determines how similar two colors are.
 	int colorCloseness(cv::Vec3b c1, cv::Vec3b c2) {
 		return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1]) + abs(c1[2] - c2[2]);
 	}
 
+	//used to determine if the painting looks correct.
 	void judge(cv::Mat ideal) {
 		int width, height, done;
 		int r, b;
