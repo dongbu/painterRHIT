@@ -85,6 +85,7 @@ public slots:
 	void changeCannyClicked();
 	void changeKmeansClicked();
 	void reset();
+	void highlightShape(int index);
 
 signals:
 	void newPressed();

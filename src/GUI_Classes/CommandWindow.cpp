@@ -25,8 +25,12 @@ ui(new Ui::CommandWindow)
 	ui->tableWidget->setColumnWidth(0, 35);  //color collumn
 	ui->tableWidget->setColumnWidth(1, 50);  //breakpoint collumn
 	ui->tableWidget->setColumnWidth(2, 130); //command type collumn
+
 	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
+	
+	connect(ui->tableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(cellChange(int, int, int, int)));
+
 	connect(ui->MoveUp, SIGNAL(clicked()), this, SLOT(moveUpClicked()));
 	connect(ui->MoveDown, SIGNAL(clicked()), this, SLOT(moveDownClicked()));
 	connect(ui->DeleteCommand, SIGNAL(clicked()), this, SLOT(deleteCommandClicked()));
@@ -160,9 +164,11 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 		this->commandsFinished++;
 		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 		ui->CommandsRun->setAlignment(Qt::AlignCenter);
+		ui->tableWidget->scrollToItem(ui->tableWidget->itemAt(index, 1));
 	}
 	else if (runToggle == "yellow") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("yellow");
+		highlightShape(index);
 	}
 	else if (runToggle == "white") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("white");
@@ -193,7 +199,6 @@ void CommandWindow::drawingStarted() {
 
 void CommandWindow::drawingPaused() {
 	if (!this->timer->isActive()) {
-		printf("returning\n");
 		return;
 	}
 
@@ -225,3 +230,5 @@ void CommandWindow::showTime() {
 	ui->TimeEllapsed->setText(QString::number(minuteCount) + QString(":") + QString::number(sec) + QString(" ellapsed"));
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
+
+void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }

@@ -586,3 +586,21 @@ void Sketchpad::changeKmeansClicked(){
 	kmeans = true;
 	emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
 }
+
+void Sketchpad::highlightShape(int index) {
+	if (index == -1) { return; }
+	printf("I was sent %i\n",index);
+	printf("\n\n");
+
+	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	shapes->drawAll(cvWindow); //redraw window
+
+	DrawWindow Woverlay = DrawWindow(width, height, "overlay", 1);
+	Woverlay.clearWindow(0, 0, 0);
+	shapes->drawOne(&Woverlay, index + 1, 250, 0, 200); // r,g,b should not be 0,0,0
+	cvWindow->overlay(&Woverlay, 1);
+
+	translator->showImage(cvWindow->grid); //actually redraw the window
+	emit prodOtherWindows();
+
+}

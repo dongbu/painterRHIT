@@ -79,7 +79,6 @@ void RunLogic::backwardClicked() {
 		simWin->show();
 		return;
 	}
-	printf("going backward.  ShapeIndex is: %i  shapes->length() is: %i\n", currentShapeIndex, shapes->length());
 	int temp = currentShapeIndex;
 	for (int i = 0; i < temp; i++) {
 		runOnly(i);

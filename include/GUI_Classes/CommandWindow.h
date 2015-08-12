@@ -32,6 +32,7 @@ private slots:
     void deleteCommandClicked();
     void launchRightClick(QPoint p);
     void menuSort(QAction *a);
+	void cellChange(int curRow, int curCol, int prevRow, int prevCol);
 
 	void drawingStarted();
 	void drawingPaused();
@@ -45,10 +46,10 @@ public slots:
 
 signals:
     void modifiedCommand();
+	void highlightShape(int index);
     void runFrom(int index);
     void runOnly(int index);
     void setBreakPoint(int index);
 };
 
 #endif // COMMANDWINDOW_H
-
