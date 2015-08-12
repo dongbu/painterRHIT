@@ -22,6 +22,10 @@ public:
 	explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
 	~Sketchpad();
 
+	cv::Mat originalImage;
+	int cc0, mrs0, t0, mll0;
+	bool canny, kmeans;
+
 	CytonRunner *Ava;
 	bool connected;
 	Ui::Sketchpad *ui;
@@ -78,6 +82,10 @@ public slots:
 	void loadPhotoCannyClicked(std::string loc = "", int t = 0, int mll = 0);
 	void loadPhotoKmeansClicked(std::string loc = "", int cc = 0, int mrs = 0);
 
+	void changeCannyClicked();
+	void changeKmeansClicked();
+	void reset();
+
 signals:
 	void newPressed();
 	void prodOtherWindows();
@@ -86,6 +94,8 @@ signals:
 	void loadRobot(std::string);
 	void loadPhotoCanny(std::string, int, int);
 	void loadPhotoKmeans(std::string, int, int);
+	void loadPhotoCanny(cv::Mat, int, int);
+	void loadPhotoKmeans(cv::Mat, int, int);
 };
 
 #endif // SKETCHPAD_H

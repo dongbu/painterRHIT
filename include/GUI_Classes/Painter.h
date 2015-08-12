@@ -22,7 +22,7 @@ public:
     void addShape(Shape *inboundShape);
     void addShapes(Shapes *inboundShapes);
     void setDimensions(int width, int height);
-    void showGUI(bool toggle);
+    void showGUI(bool toggle, bool resetSketch = true);
     void launchSimulation();
 
 private:

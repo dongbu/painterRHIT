@@ -26,6 +26,9 @@
     <property name="cursor">
      <cursorShape>CrossCursor</cursorShape>
     </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid black;</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -34,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -77,10 +80,18 @@
     <addaction name="actionSwitch"/>
     <addaction name="actionJudge"/>
    </widget>
+   <widget class="QMenu" name="menuImage_Options">
+    <property name="title">
+     <string>Image Options</string>
+    </property>
+    <addaction name="actionChange_Add_Kmean"/>
+    <addaction name="actionChange_Add_Canny"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
    <addaction name="menuImage"/>
    <addaction name="menuWebcam"/>
+   <addaction name="menuImage_Options"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar_2">
@@ -305,6 +316,16 @@
    </property>
    <property name="text">
     <string>Snap Webcam Picture</string>
+   </property>
+  </action>
+  <action name="actionChange_Add_Kmean">
+   <property name="text">
+    <string>Change/Add Kmean</string>
+   </property>
+  </action>
+  <action name="actionChange_Add_Canny">
+   <property name="text">
+    <string>Change/Add Canny</string>
    </property>
   </action>
  </widget>

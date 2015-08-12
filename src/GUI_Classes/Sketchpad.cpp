@@ -16,6 +16,10 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
+	//setting variables to be stored later.
+	originalImage = cv::Mat(0, 0, 0);
+	cc0 = mrs0 = t0 = mll0 = 0;
+	canny = kmeans = false;
 
 	//settting class variables
 	this->width = width;
@@ -32,7 +36,7 @@ ui(new Ui::Sketchpad)
 	//Linking opencv to Qt.
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-	this->cvWindow = new DrawWindow(width, height, "garbabe_name", 1);
+	this->cvWindow = new DrawWindow(width, height, "garbage_name", 1);
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -111,6 +115,10 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
 	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
 	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
+
+	//image options connections
+	connect(ui->actionChange_Add_Canny, SIGNAL(triggered()), this, SLOT(changeCannyClicked()));
+	connect(ui->actionChange_Add_Kmean, SIGNAL(triggered()), this, SLOT(changeKmeansClicked()));
 }
 
 /**
@@ -487,12 +495,12 @@ void Sketchpad::newClicked(){
 }
 
 //turn into clear button
-//void Sketchpad::newClicked() {
-//	this->shapes->clear();
-//	this->paintingNamePath = "unpathed";
-//	this->redraw();
-//	emit prodOtherWindows();
-//}
+void Sketchpad::reset() {
+	this->shapes->clear();
+	this->paintingNamePath = "unpathed";
+	this->redraw();
+	emit prodOtherWindows();
+}
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
@@ -537,4 +545,51 @@ void Sketchpad::shutDownClicked(){
 		ui->actionShutdown->setDisabled(true);
 		connected = false;
 	}
+}
+
+void Sketchpad::changeCannyClicked(){
+	if (originalImage.size().width <= 0){
+		printf("awwww man...\n");
+	}
+	if (t0 == 0){
+		t0 = 50;
+	}
+	if (mll0 == 0){
+		mll0 = 5;
+	}
+	t0 = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", t0, 1, 100);
+	mll0 = QInputDialog::getInt(this, "Load Canny", "Min Line Length (Pixels)", mll0, 1, 100);
+	this->shapes->clear();
+	this->redraw();
+	emit prodOtherWindows();
+
+	if (kmeans){
+		emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
+	}
+	canny = true;
+	emit loadPhotoCanny(this->originalImage, t0, mll0);
+
+}
+void Sketchpad::changeKmeansClicked(){
+	
+	if (originalImage.size().width <= 0){
+		printf("awwww man...\n");
+	}
+	if (cc0 == 0){
+		cc0 = 2;
+	}
+	if (mrs0 == 0){
+		mrs0 = 1;
+	}
+	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 100);
+	mrs0 = QInputDialog::getInt(this, "Load kmeans", "Min Region Size (Pixels)", mrs0, 1, 100);
+	this->shapes->clear();
+	this->redraw();
+	emit prodOtherWindows();
+	
+	if (canny){
+		emit loadPhotoCanny(this->originalImage, t0, mll0);
+	}
+	kmeans = true;
+	emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
 }

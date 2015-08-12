@@ -186,9 +186,11 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize){
  * @brief display the GUI
  * @param toggle
  */
-void Painter::showGUI(bool toggle){
+void Painter::showGUI(bool toggle, bool resetSketch){
 	stuffshowing = toggle;
-	sketch = new Sketchpad(width, height, shapes, Ava, Web);
+	if (resetSketch){
+		sketch = new Sketchpad(width, height, shapes, Ava, Web);
+	}
 	launchSimulation();
 
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
@@ -196,6 +198,8 @@ void Painter::showGUI(bool toggle){
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
 	connect(sketch, SIGNAL(loadPhotoCanny(std::string, int, int)), this, SLOT(loadPhotoCanny(std::string, int, int)));
 	connect(sketch, SIGNAL(loadPhotoKmeans(std::string, int, int)), this, SLOT(loadPhotoKmeans(std::string, int, int)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
+	connect(sketch, SIGNAL(loadPhotoCanny(cv::Mat, int, int)), this, SLOT(loadPhotoCanny(cv::Mat, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));

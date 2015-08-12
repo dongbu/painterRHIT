@@ -74,11 +74,14 @@ void StartWindow::loadClicked(){
 	painter->showGUI(false);
 	if (painter->sketch->openClicked()){
 		painter->showGUI(true);
+		painter->sketch->ui->menuImage_Options->setDisabled(true);
 		this->hide();
 	}
 }
 void StartWindow::newClicked(){
 	Painter *painter = new Painter();
+
+	//camera work
 	if (ui->cameraRadio->isChecked()){
 		bool kmeans = ui->kMeanCheck->isChecked();
 		bool canny = ui->cannyCheck->isChecked();
@@ -104,9 +107,11 @@ void StartWindow::newClicked(){
 		painter->setDimensions(w, h);
 		painter->showGUI(false);
 		img = painter->Web->getWebcamSnap(temp);
+
 		if (img.size().height <= 1 || img.size().width <= 1){
 			return;
 		}
+		painter->sketch->originalImage = img; //set original image.
 		if (canny){
 			int t = 0;
 			int mll = 0;
@@ -117,6 +122,9 @@ void StartWindow::newClicked(){
 				mll = ui->MLLEdit->text().toInt();
 			}
 			painter->loadPhotoCanny(img, t, mll);
+			painter->sketch->canny = true;
+			painter->sketch->t0 = t;
+			painter->sketch->mll0 = mll;
 		}
 		if (kmeans){
 			int cc = 0;
@@ -128,11 +136,16 @@ void StartWindow::newClicked(){
 				mrs = ui->MRSEdit->text().toInt();
 			}
 			painter->loadPhotoKmeans(img, cc, mrs);
+			painter->sketch->kmeans = true;
+			painter->sketch->cc0 = cc;
+			painter->sketch->mrs0 = mrs;
 		}
-		painter->showGUI(true);
+
+		painter->showGUI(true, false);
 		this->hide();
 	}
-	else if (ui->sketchRadio->isChecked()){
+	// sketch work
+	else if(ui->sketchRadio->isChecked()){
 		int w = 10;
 		int h = 10;
 		if (ui->width->text() != ""){
@@ -149,8 +162,10 @@ void StartWindow::newClicked(){
 		}
 		painter->setDimensions(w, h);
 		painter->showGUI(true);
+		painter->sketch->ui->menuImage_Options->setDisabled(true);
 		this->hide();
 	}
+	//image work
 	else if (ui->imageRadio->isChecked()){
 		bool kmeans = ui->kMeanCheck->isChecked();
 		bool canny = ui->cannyCheck->isChecked();
@@ -180,17 +195,13 @@ void StartWindow::newClicked(){
 			}
 			painter->setDimensions(w, h);
 			painter->showGUI(false);
-			if (kmeans){
-				int cc = 0;
-				int mrs = 0;
-				if (ui->CCEdit->text() != ""){
-					cc = ui->CCEdit->text().toInt();
-				}
-				if (ui->MRSEdit->text() != ""){
-					mrs = ui->MRSEdit->text().toInt();
-				}
-				painter->sketch->loadPhotoKmeansClicked(directory.selectedFiles().at(0).toStdString(), cc, mrs);
-			}
+
+			 cv::Mat temp = cv::imread(directory.selectedFiles().at(0).toStdString());
+			 painter->sketch->originalImage = temp;
+
+			 printf("temp: w: %i\n", temp.size().width);
+			 printf("painter: w: %i\n", painter->sketch->originalImage.size().width);
+
 			if (canny){
 				int t = 0;
 				int mll = 0;
@@ -201,8 +212,25 @@ void StartWindow::newClicked(){
 					mll = ui->MLLEdit->text().toInt();
 				}
 				painter->sketch->loadPhotoCannyClicked(directory.selectedFiles().at(0).toStdString(), t, mll);
+				painter->sketch->canny = true;
+				painter->sketch->t0 = t;
+				painter->sketch->mll0 = mll;
 			}
-			painter->showGUI(true);
+			if (kmeans){
+				int cc = 0;
+				int mrs = 0;
+				if (ui->CCEdit->text() != ""){
+					cc = ui->CCEdit->text().toInt();
+				}
+				if (ui->MRSEdit->text() != ""){
+					mrs = ui->MRSEdit->text().toInt();
+				}
+				painter->sketch->loadPhotoKmeansClicked(directory.selectedFiles().at(0).toStdString(), cc, mrs);
+				painter->sketch->kmeans = true;
+				painter->sketch->cc0 = cc;
+				painter->sketch->mrs0 = mrs;
+			}
+			painter->showGUI(true, false);
 			this->hide();
 		}
 	}
