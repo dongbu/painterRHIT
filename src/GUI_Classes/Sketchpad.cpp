@@ -599,9 +599,6 @@ void Sketchpad::changeKmeansClicked(){
 
 void Sketchpad::highlightShape(int index) {
 	if (index == -1) { return; }
-	printf("I was sent %i\n",index);
-	printf("\n\n");
-
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(cvWindow); //redraw window
 
@@ -611,6 +608,4 @@ void Sketchpad::highlightShape(int index) {
 	cvWindow->overlay(&Woverlay, 1);
 
 	translator->showImage(cvWindow->grid); //actually redraw the window
-	emit prodOtherWindows();
-
 }

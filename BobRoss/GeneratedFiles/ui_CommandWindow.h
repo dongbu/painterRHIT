@@ -38,7 +38,6 @@ public:
     QAction *actionBackward;
     QAction *actionPause;
     QWidget *centralwidget;
-    QLabel *Command_List_Label;
     QWidget *horizontalLayoutWidget;
     QHBoxLayout *horizontalLayout;
     QTableWidget *tableWidget;
@@ -46,8 +45,10 @@ public:
     QPushButton *MoveUp;
     QPushButton *MoveDown;
     QPushButton *DeleteCommand;
-    QSpacerItem *verticalSpacer;
+    QWidget *horizontalLayoutWidget_2;
+    QHBoxLayout *horizontalLayout_2;
     QLabel *CommandsRun;
+    QSpacerItem *horizontalSpacer;
     QLabel *TimeEllapsed;
     QMenuBar *menubar;
     QMenu *menuSimulator;
@@ -58,7 +59,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(392, 339);
+        CommandWindow->resize(392, 398);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -86,17 +87,9 @@ public:
         actionPause->setIcon(icon4);
         centralwidget = new QWidget(CommandWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
-        Command_List_Label = new QLabel(centralwidget);
-        Command_List_Label->setObjectName(QStringLiteral("Command_List_Label"));
-        Command_List_Label->setGeometry(QRect(10, 10, 371, 31));
-        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(Command_List_Label->sizePolicy().hasHeightForWidth());
-        Command_List_Label->setSizePolicy(sizePolicy);
         horizontalLayoutWidget = new QWidget(centralwidget);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 50, 371, 191));
+        horizontalLayoutWidget->setGeometry(QRect(10, 10, 371, 261));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -122,22 +115,28 @@ public:
 
         verticalLayout->addWidget(DeleteCommand);
 
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayout->addItem(verticalSpacer);
-
-        CommandsRun = new QLabel(horizontalLayoutWidget);
-        CommandsRun->setObjectName(QStringLiteral("CommandsRun"));
-
-        verticalLayout->addWidget(CommandsRun);
-
-        TimeEllapsed = new QLabel(horizontalLayoutWidget);
-        TimeEllapsed->setObjectName(QStringLiteral("TimeEllapsed"));
-
-        verticalLayout->addWidget(TimeEllapsed);
-
 
         horizontalLayout->addLayout(verticalLayout);
+
+        horizontalLayoutWidget_2 = new QWidget(centralwidget);
+        horizontalLayoutWidget_2->setObjectName(QStringLiteral("horizontalLayoutWidget_2"));
+        horizontalLayoutWidget_2->setGeometry(QRect(19, 270, 241, 31));
+        horizontalLayout_2 = new QHBoxLayout(horizontalLayoutWidget_2);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        CommandsRun = new QLabel(horizontalLayoutWidget_2);
+        CommandsRun->setObjectName(QStringLiteral("CommandsRun"));
+
+        horizontalLayout_2->addWidget(CommandsRun);
+
+        horizontalSpacer = new QSpacerItem(118, 26, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer);
+
+        TimeEllapsed = new QLabel(horizontalLayoutWidget_2);
+        TimeEllapsed->setObjectName(QStringLiteral("TimeEllapsed"));
+
+        horizontalLayout_2->addWidget(TimeEllapsed);
 
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
@@ -193,7 +192,6 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPause->setToolTip(QApplication::translate("CommandWindow", "pause simulation", 0));
 #endif // QT_NO_TOOLTIP
-        Command_List_Label->setText(QApplication::translate("CommandWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Command List</span></p><p align=\"center\"><br/></p></body></html>", 0));
         MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
         MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));
         DeleteCommand->setText(QApplication::translate("CommandWindow", "Delete", 0));

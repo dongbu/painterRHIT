@@ -164,11 +164,11 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 		this->commandsFinished++;
 		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 		ui->CommandsRun->setAlignment(Qt::AlignCenter);
-		ui->tableWidget->scrollToItem(ui->tableWidget->itemAt(index, 1));
 	}
 	else if (runToggle == "yellow") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("yellow");
-		highlightShape(index);
+		ui->tableWidget->scrollToItem(ui->tableWidget->item(index, 0), QAbstractItemView::PositionAtCenter);
+		emit highlightShape(index);
 	}
 	else if (runToggle == "white") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("white");
@@ -231,4 +231,4 @@ void CommandWindow::showTime() {
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
 
-void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
+void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow);}
