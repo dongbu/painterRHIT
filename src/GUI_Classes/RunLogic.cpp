@@ -155,14 +155,14 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
 
-			//temporary solution
 			if (Ava->connected && Ava->paint.size() >= 2){
-				printf("please type in the paint can id (1-%i)\n", Ava->paint.size() - 1);
-				int temp;
-				std::cin >> temp;
-				Ava->changePaint(temp);
+				cv::Scalar temp = s->getPenColor();
+				int r = temp[0];
+				int g = temp[1];
+				int b = temp[2];
+
+				Ava->decidePaint(r, g, b);
 			}
-			//temporary solution
 
 			for (int j = 0; j < simWin->grid.size().height; j++) {
 				for (int k = 0; k < simWin->grid.size().width; k++) {
@@ -204,14 +204,13 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			emit setRunColor(currentShapeIndex, "yellow");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
-			//temporary solution//
 			if (Ava->connected && Ava->paint.size() >= 2){
-				printf("please type in the paint can id (1-%i)\n", Ava->paint.size() - 1);
-				int temp;
-				std::cin >> temp;
-				Ava->changePaint(temp);
+				cv::Scalar temp = s->getPenColor();
+				int r = temp[0];
+				int g = temp[1];
+				int b = temp[2];
+				Ava->decidePaint(r, g, b);
 			}
-			//temporary solution//
 
 			int prevX = pts.at(0).x;
 			int prevY = pts.at(0).y;
@@ -241,6 +240,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 	}
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 	running = false;
+	Ava->raiseBrush();
 
 
 }

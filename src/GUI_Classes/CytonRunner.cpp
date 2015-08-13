@@ -83,10 +83,16 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 	for (pugi::xml_node temp = paintPickup.first_child(); temp; temp = temp.next_sibling()){
 		double x = temp.attribute("x").as_double();
 		double y = temp.attribute("y").as_double();
-		double id = temp.attribute("id").as_int();
+		int id = temp.attribute("id").as_int();
+		int r = temp.attribute("r").as_int();
+		int g = temp.attribute("g").as_int();
+		int b = temp.attribute("b").as_int();
 
 		cv::Point2d pos(x,y);
-		std::pair<int, cv::Point2d> paintPickup(id, pos);
+		std::vector<int> rgb;
+		rgb.push_back(r); rgb.push_back(g); rgb.push_back(b);
+		std::pair<cv::Point2d, std::vector<int>> pointAndRGB(pos, rgb);
+		std::pair<int, std::pair<cv::Point2d, std::vector<int>>> paintPickup(id, pointAndRGB);
 		paint.push_back(paintPickup);
 	}
 
@@ -204,8 +210,8 @@ void CytonRunner::getPaint(int paint_can_id){
 	double x, y;
 	for (size_t i = 0; i < this->paint.size(); i++){
 		if (this->paint.at(i).first == paint_can_id){
-			x = this->paint.at(i).second.x;
-			y = this->paint.at(i).second.y;
+			x = this->paint.at(i).second.first.x;
+			y = this->paint.at(i).second.first.y;
 			break;
 		}
 	}
@@ -382,12 +388,11 @@ void CytonRunner::changePaint(int new_paint_can_id){
 		getPaint(paint.at(0).first); //paint at 0 is water
 	}
 	lowerBrush();
-	double x = paint.at(0).second.x;
-	double y = paint.at(0).second.y;
+	double x = paint.at(0).second.first.x;
+	double y = paint.at(0).second.first.y;
 	double z = 0.0095;
 
 	for (int i = -1; i < 2; i++){
-		printf("%i",i);
 		for (double k = 0.0; k <= 2.0 * M_PI; k += 0.2){
 			goToPos(x + 0.01*i*sin(k), y + 0.01*i*cos(k), z, true);
 			if (i == 0 && k <= 0.8){
@@ -400,5 +405,19 @@ void CytonRunner::changePaint(int new_paint_can_id){
 }
 
 void CytonRunner::decidePaint(int r, int g, int b){
-
+	int closestId = 0;
+	int closestNum = -1;
+	for (int i = 1; i < paint.size(); i++){
+		int r1, g1, b1;
+		r1 = paint.at(i).second.second.at(0);
+		g1 = paint.at(i).second.second.at(1);
+		b1 = paint.at(i).second.second.at(2);
+		int distance = sqrt(pow(r - r1, 2) + pow(g - g1, 2) + pow(b - b1, 2));
+		if (distance < closestNum || closestNum == -1){
+			closestId = i;
+			closestNum = distance;
+		}
+	}
+	changePaint(closestId);
+	
 }

@@ -35,7 +35,7 @@ public:
 	void changePaint(int new_paint_can_id);
 	volatile bool connected;
 	Brush *curBrush;
-	std::vector<std::pair<int, cv::Point2d>> paint;
+	std::vector<std::pair<int, std::pair<cv::Point2d, std::vector<int>>>> paint;
 	void decidePaint(int r, int g, int b);
 
 private:

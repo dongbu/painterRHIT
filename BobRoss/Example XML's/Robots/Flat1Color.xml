@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<workspace>
+	<starting>
+		<rotation s="1.580200"/>
+		<rotation s="0.379871"/>
+		<rotation s="0.571139"/>
+		<rotation s="1.162818"/>
+		<rotation s="1.231693"/>
+		<rotation s="0.545710"/>
+		<rotation s="0.076720"/>
+	</starting>
+	<canvas>
+		<corner x="0.186707" y="-0.295273" z="0.11"/>
+		<corner x="-0.131072" y="-0.339749" z="0.11"/>
+		<corner x="-0.131071" y="-0.187871" z="0.11"/>
+	</canvas>
+	<paintPickup>
+		<point x="-0.240223" y="-0.235279" id="0"/>
+		<point x="-0.207313" y="-0.319254" id="1"/>
+	</paintPickup>
+</workspace>
