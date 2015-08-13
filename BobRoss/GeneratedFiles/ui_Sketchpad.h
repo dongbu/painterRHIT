@@ -172,7 +172,7 @@ public:
         actionClear = new QAction(Sketchpad);
         actionClear->setObjectName(QStringLiteral("actionClear"));
         QIcon icon18;
-        icon18.addFile(QStringLiteral("Icon Storage/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon18.addFile(QStringLiteral(":/Icon Storage/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionClear->setIcon(icon18);
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
