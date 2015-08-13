@@ -72,17 +72,18 @@
     <addaction name="actionSwitch"/>
     <addaction name="actionJudge"/>
    </widget>
-   <widget class="QMenu" name="menuImage_Options">
+   <widget class="QMenu" name="menuImage">
     <property name="title">
-     <string>Image Options</string>
+     <string>Image</string>
     </property>
-    <addaction name="actionChange_Add_Kmean"/>
-    <addaction name="actionChange_Add_Canny"/>
+    <addaction name="actionLoad_Photo_Kmeans"/>
+    <addaction name="actionLoad_Photo_Canny"/>
+    <addaction name="actionSnap_Webcam_Picture"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
    <addaction name="menuWebcam"/>
-   <addaction name="menuImage_Options"/>
+   <addaction name="menuImage"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar_2">

@@ -22,10 +22,6 @@ public:
 	explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
 	~Sketchpad();
 
-	cv::Mat originalImage;
-	int cc0, mrs0, t0, mll0;
-	bool canny, kmeans;
-
 	CytonRunner *Ava;
 	bool connected;
 	Ui::Sketchpad *ui;
@@ -54,6 +50,13 @@ private:
 
 	Webcam *Web;
 
+	QDialog *kMeansForm, *cannyForm;
+	QSpinBox *colorCountBox, *minSizeBox, *lengthBox, *thresholdBox;
+	QToolBar *kMeansToolbar, *cannyToolbar;
+	bool kMeansFirstAccept, cannyFirstAccept, webcamSnapActive;
+	Ui::kMeans kMeansUi;
+	Ui::canny cannyUi;
+	cv::Mat savedPicture;
 
 private slots:
 	void refresh(int x, int y);
@@ -72,6 +75,12 @@ private slots:
 	void shutDownClicked();
 	void completeConnection();
 
+	void kMeansAccepted();
+	void cannyAccepted();
+	void browseClicked();
+	void kMeansAdjusted();
+	void cannyAdjusted();
+
 public slots:
 	void redraw();
 	void newClicked();
@@ -79,11 +88,9 @@ public slots:
 
 	void loadWebcamPicture();
 
-	void loadPhotoCannyClicked(std::string loc = "", int t = 0, int mll = 0);
-	void loadPhotoKmeansClicked(std::string loc = "", int cc = 0, int mrs = 0);
+	void loadPhotoCannyClicked();
+	void loadPhotoKmeansClicked();
 
-	void changeCannyClicked();
-	void changeKmeansClicked();
 	void reset();
 	void highlightShape(int index);
 
@@ -93,8 +100,6 @@ signals:
 	void save(std::string);
 	void load(std::string);
 	void loadRobot(std::string);
-	void loadPhotoCanny(std::string, int, int);
-	void loadPhotoKmeans(std::string, int, int);
 	void loadPhotoCanny(cv::Mat, int, int);
 	void loadPhotoKmeans(cv::Mat, int, int);
 };

@@ -1,6 +1,5 @@
 #pragma once
 #include "Sketchpad.h"
-#include "StartWindow.h"
 
 using namespace cv;
 
@@ -16,11 +15,6 @@ Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
-	//setting variables to be stored later.
-	originalImage = cv::Mat(0, 0, 0);
-	cc0 = mrs0 = t0 = mll0 = 0;
-	canny = kmeans = false;
-
 	//settting class variables
 	this->width = width;
 	this->height = height;
@@ -57,10 +51,84 @@ ui(new Ui::Sketchpad)
 * @brief sets up the Qt ui with all buttons, actions, etc.
 */
 void Sketchpad::setupQt() {
+	//Moving sketchpad to top right corner
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
 	QRect r = QApplication::desktop()->availableGeometry();
 	this->move(r.right() - (width + 35), r.top());
+
+	//building kMeans dialog
+	kMeansFirstAccept = true;
+	kMeansForm = new QDialog();
+	kMeansUi.setupUi(kMeansForm);
+	kMeansUi.ColorInput->setValidator(new QIntValidator(1, 64));
+	kMeansUi.SizeInput->setValidator(new QIntValidator(1, 500));
+	kMeansUi.ImageInput->setDisabled(true);
+	connect(kMeansUi.browse, SIGNAL(clicked()), this, SLOT(browseClicked()));
+	connect(kMeansUi.buttonBox, SIGNAL(accepted()), this, SLOT(kMeansAccepted()));
+
+	//building canny dialog
+	cannyFirstAccept = true;
+	cannyForm = new QDialog();
+	cannyUi.setupUi(cannyForm);
+	cannyUi.ThresholdInput->setValidator(new QIntValidator(1, 100));
+	cannyUi.LengthInput->setValidator(new QIntValidator(1, 100));
+	cannyUi.ImageInput->setDisabled(true);
+	connect(cannyUi.browse, SIGNAL(clicked()), this, SLOT(browseClicked()));
+	connect(cannyUi.buttonBox, SIGNAL(accepted()), this, SLOT(cannyAccepted()));
+
+	//building kMeans toolbar
+	this->addToolBarBreak();
+	kMeansToolbar = new QToolBar();
+	this->addToolBar(kMeansToolbar);
+	kMeansToolbar->hide();
+
+	colorCountBox = new QSpinBox();
+	colorCountBox->setKeyboardTracking(false);
+	colorCountBox->setFixedWidth(60);
+	colorCountBox->setMinimum(0);
+	colorCountBox->setMaximum(64);
+	colorCountBox->setSingleStep(1);
+	kMeansToolbar->addWidget(new QLabel("# colors: "));
+	kMeansToolbar->addWidget(colorCountBox);
+	kMeansToolbar->addSeparator();
+	connect(colorCountBox, SIGNAL(valueChanged(int)), this, SLOT(kMeansAdjusted()));
+
+	minSizeBox = new QSpinBox();
+	minSizeBox->setKeyboardTracking(false);
+	minSizeBox->setFixedWidth(60);
+	minSizeBox->setMinimum(0);
+	minSizeBox->setMaximum(500);
+	minSizeBox->setSingleStep(5);
+	kMeansToolbar->addWidget(new QLabel("minimum region size: "));
+	kMeansToolbar->addWidget(minSizeBox);
+	connect(minSizeBox, SIGNAL(valueChanged(int)), this, SLOT(kMeansAdjusted()));
+
+	//building canny toolbar
+	cannyToolbar = new QToolBar();
+	this->addToolBar(cannyToolbar);
+	cannyToolbar->hide();
+
+	lengthBox = new QSpinBox();
+	lengthBox->setKeyboardTracking(false);
+	lengthBox->setFixedWidth(60);
+	lengthBox->setMinimum(0);
+	lengthBox->setMaximum(100);
+	lengthBox->setSingleStep(1);
+	cannyToolbar->addWidget(new QLabel("Minimum line length: "));
+	cannyToolbar->addWidget(lengthBox);
+	cannyToolbar->addSeparator();
+	connect(lengthBox, SIGNAL(valueChanged(int)), this, SLOT(cannyAdjusted()));
+
+	thresholdBox = new QSpinBox();
+	thresholdBox->setKeyboardTracking(false);
+	thresholdBox->setFixedWidth(60);
+	thresholdBox->setMinimum(0);
+	thresholdBox->setMaximum(100);
+	thresholdBox->setSingleStep(1);
+	cannyToolbar->addWidget(new QLabel("Threshold (%): "));
+	cannyToolbar->addWidget(thresholdBox);
+	connect(thresholdBox, SIGNAL(valueChanged(int)), this, SLOT(cannyAdjusted()));
 
 	//shape connections
 	QActionGroup *actionGroup = new QActionGroup(this);
@@ -103,6 +171,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
 
 	//image connections
+	webcamSnapActive = false;
 	connect(ui->actionLoad_Photo_Canny, SIGNAL(triggered()), this, SLOT(loadPhotoCannyClicked()));
 	connect(ui->actionLoad_Photo_Kmeans, SIGNAL(triggered()), this, SLOT(loadPhotoKmeansClicked()));
 	connect(ui->actionCalibrate, SIGNAL(triggered()), this, SLOT(calibrateWebcam()));
@@ -115,10 +184,6 @@ void Sketchpad::setupQt() {
 	connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadWorkspaceClicked()));
 	connect(ui->actionCreate, SIGNAL(triggered()), this, SLOT(createWorkspaceClicked()));
 	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
-
-	//image options connections
-	connect(ui->actionChange_Add_Canny, SIGNAL(triggered()), this, SLOT(changeCannyClicked()));
-	connect(ui->actionChange_Add_Kmean, SIGNAL(triggered()), this, SLOT(changeKmeansClicked()));
 
 	//misc
 	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(reset()));
@@ -172,7 +237,6 @@ void Sketchpad::startNewCommand() {
 		curPixelRegion = new PixelRegion();
 		curPixelRegion->setPenColor(rgbColor.at(0), rgbColor.at(1), rgbColor.at(2));
 		this->currentShape = curPixelRegion;
-
 	}
 }
 
@@ -352,69 +416,75 @@ void Sketchpad::getColor() {
 	this->rgbColor = toReplace;
 }
 
-//allows you to load a file into the sketchpad window.
-//these pictures are converted automatically to strokes.
-void Sketchpad::loadPhotoCannyClicked(std::string loc, int t, int mll){
-	int threshold;
-	int min_line_length;
-	if (t == 0){
-		int threshold = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", 50, 1, 100);
-		if (!threshold) { return; }
-	}
-	else{
-		threshold = t;
-	}
-	if (mll = 0){
-		int min_line_length = QInputDialog::getInt(this, "Load Canny", "Minimum Line Length (pixels)", 5, 1, 100);
-		if (!min_line_length) { return; }
-	}
-	else{
-		min_line_length = mll;
-	}
+void Sketchpad::loadPhotoKmeansClicked(){ kMeansForm->show(); kMeansFirstAccept = true; }
 
-	if (loc == ""){
-		QFileDialog directory;
-		QStringList filters;
-		filters << "Images (*.png *.xpm *.jpg)";
-		directory.setNameFilters(filters);
-		if (directory.exec()) emit loadPhotoCanny(directory.selectedFiles().at(0).toStdString(), threshold, min_line_length);
-	}
-	else{
-		emit loadPhotoCanny(loc, threshold, min_line_length);
+void Sketchpad::loadPhotoCannyClicked(){ cannyForm->show(); cannyFirstAccept = true; }
+
+void Sketchpad::browseClicked() {
+	QFileDialog directory;
+	QStringList filters;
+	filters << "Images (*.png *.xpm *.jpg)";
+	directory.setNameFilters(filters);
+	if (directory.exec()) {
+		kMeansUi.ImageInput->setText(directory.selectedFiles().at(0));
+		cannyUi.ImageInput->setText(directory.selectedFiles().at(0));
 	}
 }
 
-//load a kmeans from a location.
-void Sketchpad::loadPhotoKmeansClicked(std::string loc, int cc, int mrs){
-	int colorCount;
-	int minRegionSize;
-	if (cc == 0){
-		colorCount = QInputDialog::getInt(this, "Load kMeans", "Color Count", 2, 2, 64);
-		if (!colorCount) { return; }
-	}
-	else{
-		colorCount = cc;
-	}
-	if (mrs == 0){
-		minRegionSize = QInputDialog::getInt(this, "Load kMeans", "Minimum regions size (pixels)", 5, 1, 500);
-		if (!minRegionSize) { return; }
-	}
-	else{
-		minRegionSize = mrs;
-	}
+void Sketchpad::kMeansAccepted() {
+	std::string location = kMeansUi.ImageInput->text().toStdString();
+	if (location == "" && !webcamSnapActive) return; //make sure they didn't click "ok" with no image.
+	int colorCount = kMeansUi.ColorInput->text().toInt();
+	if (colorCount == 0) colorCount = 1; //don't let them have 0 colors.
+	int minPixel = kMeansUi.SizeInput->text().toInt();
+	if (minPixel == 0) minPixel = 1; //don't let them have empty regions.
+	reset();
 
-	printf("photo kmeans cc: %i, mrs: %i\n", cc, mrs);
-	printf("photo kmeans colorCount: %i, minRegionSize: %i\n", colorCount, minRegionSize);
-	if (loc == ""){
-		QFileDialog directory;
-		QStringList filters;
-		filters << "Images (*.png *.xpm *.jpg)";
-		directory.setNameFilters(filters);
-		if (directory.exec()) emit loadPhotoKmeans(directory.selectedFiles().at(0).toStdString(), colorCount, minRegionSize);
+	if (!webcamSnapActive) { savedPicture = cv::imread(location); }
+	emit loadPhotoKmeans(savedPicture, colorCount, minPixel);
+
+	if (kMeansFirstAccept) {
+		colorCountBox->setValue(kMeansUi.ColorInput->text().toInt());
+		minSizeBox->setValue(kMeansUi.SizeInput->text().toInt());
+		cannyToolbar->hide();
+		kMeansToolbar->show();
+		kMeansFirstAccept = false;
 	}
-	else{
-		emit loadPhotoKmeans(loc, colorCount, minRegionSize);
+}
+
+void Sketchpad::cannyAccepted() {
+	std::string location = cannyUi.ImageInput->text().toStdString();
+	if (location == "") return; //make sure they didn't click "ok" with no image.
+	int minLength = cannyUi.LengthInput->text().toInt();
+	if (minLength == 0) minLength = 1; //don't let them have dimensionless lines.
+	int threshold = cannyUi.ThresholdInput->text().toInt();
+	if (threshold == 0) threshold = 1; //don't let them have 0% threshold.
+	reset();
+
+	savedPicture = cv::imread(location);
+	emit loadPhotoCanny(savedPicture, threshold, minLength);
+
+	if (cannyFirstAccept) {
+		lengthBox->setValue(cannyUi.LengthInput->text().toInt());
+		thresholdBox->setValue(cannyUi.ThresholdInput->text().toInt());
+		kMeansToolbar->hide();
+		cannyToolbar->show();
+		cannyFirstAccept = false;
 	}
+}
+
+void Sketchpad::kMeansAdjusted() {
+	if (kMeansFirstAccept) return; //don't start endless loop
+	kMeansUi.ColorInput->setText(colorCountBox->text());
+	kMeansUi.SizeInput->setText(minSizeBox->text());
+	kMeansAccepted();
+}
+
+void Sketchpad::cannyAdjusted() {
+	if (cannyFirstAccept) return; //don't start endless loop
+	cannyUi.LengthInput->setText(lengthBox->text());
+	cannyUi.ThresholdInput->setText(thresholdBox->text());
+	cannyAccepted();
 }
 
 //clicking yields resizing.
@@ -431,19 +501,10 @@ void Sketchpad::judgeWebcam() { Web->judge(this->cvWindow->grid); }
 
 //load picture from webcam.
 void Sketchpad::loadWebcamPicture() {
-	cv::Mat tempMat = Web->getWebcamSnap(cvWindow->grid);
-	if (tempMat.size().height == 1 && tempMat.size().width == 1) { return; }
-	cvWindow->grid = tempMat;
-
-	ImageParserKmeans IPK;
-	IPK.setMinPixelsInRegion(5);
-	IPK.parseImage(cvWindow->grid);
-	IPK.defineShapes(shapes);
-
-	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->drawAll(cvWindow); //redraw window
-	translator->showImage(cvWindow->grid); //actually redraw the window
-	prodOtherWindows();
+	savedPicture = Web->getWebcamSnap(cvWindow->grid);
+	if (savedPicture.size().height == 1 && savedPicture.size().width == 1) { return; }
+	webcamSnapActive = true;
+	kMeansAccepted();
 }
 
 /**
@@ -488,7 +549,6 @@ bool Sketchpad::openClicked() {
 			return true;
 		}
 		else {
-			printf("the robot is empty.\n");
 			return false;
 		}
 	}
@@ -497,9 +557,7 @@ bool Sketchpad::openClicked() {
 /**
  * @brief New project functionality.
  */
-void Sketchpad::newClicked(){
-	emit newPressed();
-}
+void Sketchpad::newClicked(){ emit newPressed(); }
 
 //turn into clear button
 void Sketchpad::reset() {
@@ -549,49 +607,6 @@ void Sketchpad::shutDownClicked(){
 		ui->actionShutdown->setDisabled(true);
 		connected = false;
 	}
-}
-
-//deal with user attempting to update canny.
-void Sketchpad::changeCannyClicked(){
-	if (t0 == 0){
-		t0 = 50;
-	}
-	if (mll0 == 0){
-		mll0 = 5;
-	}
-	t0 = QInputDialog::getInt(this, "Load Canny", "Threshold (%)", t0, 1, 100);
-	mll0 = QInputDialog::getInt(this, "Load Canny", "Min Line Length (Pixels)", mll0, 1, 100);
-	this->shapes->clear();
-	this->redraw();
-	emit prodOtherWindows();
-
-	if (kmeans){
-		emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
-	}
-	canny = true;
-	emit loadPhotoCanny(this->originalImage, t0, mll0);
-
-}
-
-//deal with user attempting to update kmeans.
-void Sketchpad::changeKmeansClicked(){
-	if (cc0 == 0){
-		cc0 = 2;
-	}
-	if (mrs0 == 0){
-		mrs0 = 1;
-	}
-	cc0 = QInputDialog::getInt(this, "Load Kmeans", "Color Count", cc0, 1, 64);
-	mrs0 = QInputDialog::getInt(this, "Load kmeans", "Min Region Size (Pixels)", mrs0, 1, 100);
-	this->shapes->clear();
-	this->redraw();
-	emit prodOtherWindows();
-	
-	if (canny){
-		emit loadPhotoCanny(this->originalImage, t0, mll0);
-	}
-	kmeans = true;
-	emit loadPhotoKmeans(this->originalImage, cc0, mrs0);
 }
 
 //used to highlight a selected shape.

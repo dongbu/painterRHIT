@@ -123,8 +123,7 @@ void Painter::loadPhoto(std::string photoLocation) {
 }
 
 //load photo canny from location.
-void Painter::loadPhotoCanny(std::string photoLocation, int threshold, int min_line_length){
-	cv::Mat image = cv::imread(photoLocation);
+void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserContours IPC;
@@ -141,8 +140,7 @@ void Painter::loadPhotoCanny(std::string photoLocation, int threshold, int min_l
 }
 
 //load photo kmeans from location.
-void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize) {
-	cv::Mat image = cv::imread(photoLocation);
+void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) {
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 
 	ImageParserKmeans IPK;
@@ -156,37 +154,6 @@ void Painter::loadPhotoKmeans(std::string photoLocation, int colorCount, int min
 	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();
 }
-
-//load photo canny from matrix.
-void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
-	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
-	ImageParserContours IPC;
-	IPC.setMinContourLength(min_line_length);
-	IPC.setCannyThreshold(threshold);
-	IPC.parseImage(sketch->cvWindow->grid);
-	IPC.defineShapes(shapes);
-
-	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->drawAll(sketch->cvWindow); //redraw window
-	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
-	sketch->prodOtherWindows();
-}
-
-//load photo kmeans from matrix.
-void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize){
-	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
-	ImageParserKmeans IPK;
-	IPK.setNumColors(colorCount);
-	IPK.setMinPixelsInRegion(minRegionSize);
-	IPK.parseImage(sketch->cvWindow->grid);
-	IPK.defineShapes(shapes);
-
-	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->drawAll(sketch->cvWindow); //redraw window
-	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
-	sketch->prodOtherWindows();
-}
-
 
 //Functions pertaining to GUI are below//
 /**
@@ -203,10 +170,8 @@ void Painter::showGUI(bool toggle, bool resetSketch){
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
 	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
-	connect(sketch, SIGNAL(loadPhotoCanny(std::string, int, int)), this, SLOT(loadPhotoCanny(std::string, int, int)));
-	connect(sketch, SIGNAL(loadPhotoKmeans(std::string, int, int)), this, SLOT(loadPhotoKmeans(std::string, int, int)));
-	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
 	connect(sketch, SIGNAL(loadPhotoCanny(cv::Mat, int, int)), this, SLOT(loadPhotoCanny(cv::Mat, int, int)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));

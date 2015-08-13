@@ -31,6 +31,8 @@
 //auto-generated methods to include
 #include "ui_Sketchpad.h"
 #include "ui_commandwindow.h"
+#include "ui_kMeansUI.h"
+#include "ui_cannyUI.h"
 
 //std methods to include
 #include <vector>

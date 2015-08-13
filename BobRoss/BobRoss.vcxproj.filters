@@ -153,12 +153,6 @@
     <ClCompile Include="..\src\Libraries\pixeltools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_StartWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_StartWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\GUI_Classes\StartWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -338,6 +332,12 @@
     <CustomBuild Include="Icon Storage\clear.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="kMeansUI.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cannyUI.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -354,5 +354,13 @@
     <CustomBuild Include="myres.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_kMeansUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cannyUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

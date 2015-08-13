@@ -20,9 +20,8 @@ int main(int argc, char *argv[])
 	//console window//
 
 	//actual program//
-	StartWindow w;
-	w.show();
-	w.raise();
+	Painter p;
+	p.showGUI(true);
 	//actual program//
 
 	return a.exec();

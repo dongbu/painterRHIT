@@ -44,10 +44,8 @@ public slots:
     void load(std::string projectLocation);
 	void loadRobot(std::string robotLocation);
 	void loadPhoto(std::string photoLocation);
-	void loadPhotoCanny(std::string photoLocation, int threshold, int min_line_length);
-	void loadPhotoKmeans(std::string photoLocation, int colorCount, int minRegionSize);
-	void loadPhotoCanny(cv::Mat img, int threshold, int min_line_length);
-	void loadPhotoKmeans(cv::Mat img, int colorCount, int minRegionSize);
+	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
+	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
 	void destroyAll();
 
 };

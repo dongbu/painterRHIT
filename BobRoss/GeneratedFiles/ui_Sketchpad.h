@@ -57,7 +57,7 @@ public:
     QMenu *menuRobot;
     QMenu *menuWorkspace;
     QMenu *menuWebcam;
-    QMenu *menuImage_Options;
+    QMenu *menuImage;
     QStatusBar *statusbar;
     QToolBar *toolBar_2;
 
@@ -193,8 +193,8 @@ public:
         menuWorkspace->setObjectName(QStringLiteral("menuWorkspace"));
         menuWebcam = new QMenu(menubar);
         menuWebcam->setObjectName(QStringLiteral("menuWebcam"));
-        menuImage_Options = new QMenu(menubar);
-        menuImage_Options->setObjectName(QStringLiteral("menuImage_Options"));
+        menuImage = new QMenu(menubar);
+        menuImage->setObjectName(QStringLiteral("menuImage"));
         Sketchpad->setMenuBar(menubar);
         statusbar = new QStatusBar(Sketchpad);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -206,7 +206,7 @@ public:
         menubar->addAction(menuFile->menuAction());
         menubar->addAction(menuRobot->menuAction());
         menubar->addAction(menuWebcam->menuAction());
-        menubar->addAction(menuImage_Options->menuAction());
+        menubar->addAction(menuImage->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionSave);
@@ -219,8 +219,9 @@ public:
         menuWebcam->addAction(actionView);
         menuWebcam->addAction(actionSwitch);
         menuWebcam->addAction(actionJudge);
-        menuImage_Options->addAction(actionChange_Add_Kmean);
-        menuImage_Options->addAction(actionChange_Add_Canny);
+        menuImage->addAction(actionLoad_Photo_Kmeans);
+        menuImage->addAction(actionLoad_Photo_Canny);
+        menuImage->addAction(actionSnap_Webcam_Picture);
         toolBar_2->addAction(actionActionFill);
         toolBar_2->addAction(actionDraw_Filled_Rectangle);
         toolBar_2->addAction(actionDraw_Filled_Circle);
@@ -281,7 +282,7 @@ public:
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
         menuWebcam->setTitle(QApplication::translate("Sketchpad", "Webcam", 0));
-        menuImage_Options->setTitle(QApplication::translate("Sketchpad", "Image Options", 0));
+        menuImage->setTitle(QApplication::translate("Sketchpad", "Image", 0));
         toolBar_2->setWindowTitle(QApplication::translate("Sketchpad", "toolBar_2", 0));
     } // retranslateUi
 

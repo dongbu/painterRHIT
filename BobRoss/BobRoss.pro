@@ -56,7 +56,8 @@ FORMS    += \
     CytonRunner.ui \
     Sketchpad.ui \
     workspacewizard.ui \
-    StartWindow.ui
+    StartWindow.ui \
+    kMeansUI.ui
 
 RESOURCES += \
     myres.qrc
