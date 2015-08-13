@@ -36,7 +36,7 @@ private slots:
 
 	void drawingStarted();
 	void drawingPaused();
-	void drawingStopped();
+	void drawingCleared();
 	void showTime();
 
 public slots:

@@ -15,7 +15,7 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	this->shapes = shapes;
 	this->Ava = Ava;
 	this->simWin = new DrawWindow(width, height, "Simulation Window");
-	stopClicked();
+	clearClicked();
 	simWin->hideWindow();
 }
 
@@ -27,7 +27,7 @@ void RunLogic::shapesChanged() { stopIndex = shapes->length(); }
 /**
  * @brief stops and clears simulation.
  */
-void RunLogic::stopClicked() {
+void RunLogic::clearClicked() {
 	stepTaken = 2;
 	running = false;
 	simWin->clearWindow(255, 255, 255); //white
@@ -231,7 +231,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 void RunLogic::reset(){
 	stepTaken = 2;
 	shapes->clear();
-	stopClicked();
+	clearClicked();
 	simWin = new DrawWindow(width, height, "Simulation Window");
 	//simWin->hideWindow();
 }

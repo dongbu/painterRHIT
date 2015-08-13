@@ -170,7 +170,7 @@ void Painter::showGUI(){
 	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
-	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));
+	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(hideAll()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
@@ -187,7 +187,7 @@ void Painter::launchSimulation(){
 	connect(commandWin->ui->actionForward, SIGNAL(triggered()), logic, SLOT(forwardClicked()));
 	connect(commandWin->ui->actionPause, SIGNAL(triggered()), logic, SLOT(pauseClicked()));
 	connect(commandWin->ui->actionPlay, SIGNAL(triggered()), logic, SLOT(runClicked()));
-	connect(commandWin->ui->actionStop, SIGNAL(triggered()), logic, SLOT(stopClicked()));
+	connect(commandWin->ui->actionClear, SIGNAL(triggered()), logic, SLOT(clearClicked()));
 	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
 	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(toggleBreakPoint(int)));
@@ -238,6 +238,8 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 }
 
 //remove all windows.
-void Painter::destroyAll(){
+void Painter::hideAll(){
 	commandWin->hide();
+	logic->simWin->hideWindow();
+	logic->clearClicked();
 }

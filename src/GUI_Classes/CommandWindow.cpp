@@ -37,7 +37,7 @@ ui(new Ui::CommandWindow)
 
 	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(drawingStarted()));
 	connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(drawingPaused()));
-	connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(drawingStopped()));
+	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(drawingCleared()));
 	connect(ui->actionForward, SIGNAL(triggered()), this, SLOT(drawingPaused()));
 	connect(ui->actionBackward, SIGNAL(triggered()), this, SLOT(drawingPaused()));
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(showTime()));
@@ -209,7 +209,7 @@ void CommandWindow::drawingPaused() {
 	if (secondCount < 0) { secondCount = 60 + secondCount; }
 }
 
-void CommandWindow::drawingStopped() {
+void CommandWindow::drawingCleared() {
 	this->timer->stop();
 	ui->TimeEllapsed->setText(QString::number(0) + QString(":") + QString::number(0) + QString(" ellapsed"));
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
