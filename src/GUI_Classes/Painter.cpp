@@ -47,13 +47,11 @@ void Painter::addShape(Shape *inboundShape) {
 void Painter::setDimensions(int width, int height) {
 	this->width = width;
 	this->height = height;
-	Ava = new CytonRunner(width, height);
-	Web = new Webcam(width, height);
 
 	if (stuffshowing){
 		this->sketch->close();
 		this->commandWin->close();
-		showGUI(true);
+		showGUI();
 	}
 }
 /**
@@ -91,9 +89,9 @@ void Painter::load(std::string projectLocation) {
 //connect to a robot
 void Painter::loadRobot(std::string robotLocation) {
 	if (!Ava->loadWorkspace(robotLocation)) return;
-
 	Ava->connect();
 	Ava->startup();
+
 	if (stuffshowing) {
 		this->sketch->connected = true;
 		this->sketch->ui->actionShutdown->setEnabled(true);
@@ -160,11 +158,9 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) 
  * @brief display the GUI
  * @param toggle
  */
-void Painter::showGUI(bool toggle, bool resetSketch){
-	stuffshowing = toggle;
-	if (resetSketch){
-		sketch = new Sketchpad(width, height, shapes, Ava, Web);
-	}
+void Painter::showGUI(){
+	stuffshowing = true;
+	sketch = new Sketchpad(width, height, shapes, Ava, Web);
 	launchSimulation();
 
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
@@ -178,14 +174,7 @@ void Painter::showGUI(bool toggle, bool resetSketch){
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
-	if (toggle){
-		sketch->show();
-		commandWin->show();
-	}
-	else{
-		sketch->hide();
-		commandWin->hide();
-	}
+	sketch->show();
 }
 /**
  * @brief launch the simulation window.

@@ -557,7 +557,11 @@ bool Sketchpad::openClicked() {
 /**
  * @brief New project functionality.
  */
-void Sketchpad::newClicked(){ reset(); }
+void Sketchpad::newClicked(){
+	this->shapes->clear();
+	this->paintingNamePath = "unpathed";
+	this->redraw();
+}
 
 //turn into clear button
 void Sketchpad::reset() {

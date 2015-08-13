@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 	//actual program//
 	Painter p;
-	p.showGUI(true);
+	p.showGUI();
 	//actual program//
 
 	return a.exec();

@@ -43,6 +43,7 @@ ui(new Ui::CommandWindow)
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(showTime()));
 
 	populate();
+	this->hide();
 }
 /**
  * @brief destructor
@@ -94,6 +95,7 @@ void CommandWindow::deleteCommandClicked() {
  */
 void CommandWindow::populate(){
 	//reseting
+	this->show();
 	ui->tableWidget->clear();
 	ui->tableWidget->setRowCount(0);
 	ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("rgb"));
