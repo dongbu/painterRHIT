@@ -155,6 +155,15 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
 
+			//temporary solution
+			if (Ava->connected && Ava->paint.size() >= 2){
+				printf("please type in the paint can id (1-%i)\n", Ava->paint.size() - 1);
+				int temp;
+				std::cin >> temp;
+				Ava->changePaint(temp);
+			}
+			//temporary solution
+
 			for (int j = 0; j < simWin->grid.size().height; j++) {
 				for (int k = 0; k < simWin->grid.size().width; k++) {
 					RTP.addOverpaintablePixel(k, j);
@@ -194,6 +203,15 @@ void RunLogic::DrawingThread(DrawWindow *W){
 		else { //painting polyline object
 			emit setRunColor(currentShapeIndex, "yellow");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
+
+			//temporary solution//
+			if (Ava->connected && Ava->paint.size() >= 2){
+				printf("please type in the paint can id (1-%i)\n", Ava->paint.size() - 1);
+				int temp;
+				std::cin >> temp;
+				Ava->changePaint(temp);
+			}
+			//temporary solution//
 
 			int prevX = pts.at(0).x;
 			int prevY = pts.at(0).y;

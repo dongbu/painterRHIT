@@ -13,7 +13,7 @@ using namespace cv;
 CytonRunner::CytonRunner(int width, int height){
 	currentX = 0;
 	currentY = 0;
-	raiseHeight = 0.1;
+	raiseHeight = 0.08;
 	connected = false;
 	strokeInProgress = false;
 
@@ -85,8 +85,8 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 		double y = temp.attribute("y").as_double();
 		double id = temp.attribute("id").as_int();
 
-		cv::Point pos(x, y);
-		std::pair<int, cv::Point> paintPickup(id, pos);
+		cv::Point2d pos(x,y);
+		std::pair<int, cv::Point2d> paintPickup(id, pos);
 		paint.push_back(paintPickup);
 	}
 
@@ -126,14 +126,20 @@ bool CytonRunner::shutdown(){
 	return false;
 }
 // sends the robot to the specified coordinates
-void CytonRunner::goToPos(double x, double y, double z){
+void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 	EcCoordinateSystemTransformation pose;
-
-	std::vector<double> vec = convert(x*xScale, y*yScale, z);
-
-	pose.setTranslationX(vec.at(0));
-	pose.setTranslationY(vec.at(1));
-	pose.setTranslationZ(vec.at(2));
+	if (!toggle){
+		std::vector<double> vec = convert(x*xScale, y*yScale, z);
+		pose.setTranslationX(vec.at(0));
+		pose.setTranslationY(vec.at(1));
+		pose.setTranslationZ(vec.at(2));
+	}else{
+		std::vector<double> vec = convert(x*xScale, y*yScale, z);
+		pose.setTranslationX(x);
+		pose.setTranslationY(y);
+		pose.setTranslationZ(vec.at(2));
+	}
+	
 	EcOrientation orientation;
 
 	//roll about x-axis, pitch about y-axis,Yaw about z-axis
@@ -170,25 +176,26 @@ void CytonRunner::goToPos(double x, double y, double z){
 
 		if (offset.approxEq(zero, .00001)) achieved = EcTrue;
 
-		currentX = x;
-		currentY = y;
+		currentX = pose.translation().x();
+		currentY = pose.translation().y();
+
 	}
 
 }
 //have the robot rise straight up.
 void CytonRunner::raiseBrush(){
 	if (!isUp){
-		goToPos(currentX, currentY, raiseHeight);
+		goToPos(currentX, currentY, raiseHeight, true);
 	}
 	isUp = true;
 }
 //have the robot lower itself to the canvas/paper/medium.
 void CytonRunner::lowerBrush(){
-	if (!isUp) return;
-
-	goToPos(currentX + 0.01, currentY + 0.01, 0.01);
-	//almost there, let's not push the tip straight down.
-	goToPos(currentX - 0.01, currentY - 0.01, 0);
+	if (isUp){
+		goToPos(currentX + 0.005, currentY + 0.005, 0.01, true);
+		//almost there, let's not push the tip straight down.
+		goToPos(currentX - 0.005, currentY - 0.005, 0, true);
+	}
 	isUp = false;
 }
 //have the robot retrieve paint from the paint locations.
@@ -202,7 +209,7 @@ void CytonRunner::getPaint(int paint_can_id){
 			break;
 		}
 	}
-	goToPos(x, y, raiseHeight);
+	goToPos(x, y, raiseHeight, true);
 	lowerBrush();
 	raiseBrush();
 
@@ -317,7 +324,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 
 	toReturn.push_back(minX + x);
 	toReturn.push_back(minY + y);
-	toReturn.push_back(minZ + z + 0.02);
+	toReturn.push_back(minZ + z);
 
 	return toReturn;
 
@@ -361,29 +368,37 @@ void CytonRunner::regulateWorkspaceData() {
 }
 
 //let things know it is finished with a line/drawing/etc.
-void CytonRunner::tellFinished() { emit finishedSettingWorkspace(); }
+void CytonRunner::tellFinished() { 
+	emit finishedSettingWorkspace(); 
+}
 
 //change to a new paint color.
 void CytonRunner::changePaint(int new_paint_can_id){
+	if (new_paint_can_id > this->paint.size()){
+		new_paint_can_id = this->paint.size();
+		printf("paint can ID out of bounds. Substituting color\n");
+	}
 	if (paint.size() > 0){
 		getPaint(paint.at(0).first); //paint at 0 is water
 	}
 	lowerBrush();
 	double x = paint.at(0).second.x;
 	double y = paint.at(0).second.y;
-	double z = 0.2;
+	double z = 0.0095;
 
 	for (int i = -1; i < 2; i++){
-		for (double k = 0; k <= 2 * M_PI; k += 0.1){
-			goToPos(x + 0.02*i*sin(k), y + 0.02*i*cos(k), z + 0.01*cos(i) + 0.01*sin(k));
+		printf("%i",i);
+		for (double k = 0.0; k <= 2.0 * M_PI; k += 0.2){
+			goToPos(x + 0.01*i*sin(k), y + 0.01*i*cos(k), z, true);
+			if (i == 0 && k <= 0.8){
+				goToPos(x + 0.01*cos(k), y + 0.01*sin(k), z, true);
+			}
 		}
 	}
-	goToPos(x, y, z);
 	raiseBrush();
-	if ((unsigned)new_paint_can_id > paint.size()){
-		getPaint(new_paint_can_id);
-	}
-	else{
-		printf("paint can id out of bounds\n");
-	}
+	getPaint(new_paint_can_id);
+}
+
+void CytonRunner::decidePaint(int r, int g, int b){
+
 }

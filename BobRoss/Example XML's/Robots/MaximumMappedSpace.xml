@@ -1,2 +1,22 @@
 <?xml version="1.0"?>
-<workspace><starting><rotation s="0.286227"/><rotation s="1.263381"/><rotation s="-0.032154"/><rotation s="0.824820"/><rotation s="0.239327"/><rotation s="0.599809"/><rotation s="-0.148804"/></starting><canvas><corner x="0.25" y="-0.30" z="0.03"/><corner x="-0.25" y="-0.30" z="0.03"/><corner x="0.25" y="-0.15" z="0.03"/></canvas><paintPickup><point x="-0.149669" y="-0.316452" id="1"/><point x="-0.092100" y="-0.316451" id="2"/><point x="-0.101099" y="-0.316451" id="3"/><point x="-0.092104" y="-0.316451" id="4"/><point x="-0.101099" y="-0.316451" id="5"/></paintPickup></workspace>
+<workspace>
+<starting>
+	<rotation s="0.286227"/>
+	<rotation s="1.263381"/>
+	<rotation s="-0.032154"/>
+	<rotation s="0.824820"/>
+	<rotation s="0.239327"/>
+	<rotation s="0.599809"/>
+	<rotation s="-0.148804"/>
+</starting>
+<canvas>
+	<corner x="0.25" y="-0.30" z="0.05"/>
+	<corner x="-0.25" y="-0.30" z="0.05"/>
+	<corner x="0.25" y="-0.15" z="0.05"/>
+</canvas>
+<paintPickup>
+<point x="-0.149669" y="-0.311111" id="0"/>
+<point x="-0.092100" y="-0.311111" id="1"/>
+<point x="-0.101099" y="-0.311111" id="2"/>
+</paintPickup>
+</workspace>

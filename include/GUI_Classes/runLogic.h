@@ -14,7 +14,7 @@ class RunLogic : public QObject
 public:
     RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
 	DrawWindow *simWin;
-
+	
 private:
 	void DrawingThread(DrawWindow *W);
     volatile bool running;

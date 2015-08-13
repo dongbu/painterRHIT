@@ -22,7 +22,7 @@ public:
 	void startup();
 	bool shutdown();
 	void setSimulationSize(int width, int height);
-	void goToPos(double x, double y, double z);
+	void goToPos(double x, double y, double z, bool toggle = false);
 	void raiseBrush();
 	void lowerBrush();
 	void getPaint(int paint_can_id);
@@ -35,6 +35,8 @@ public:
 	void changePaint(int new_paint_can_id);
 	volatile bool connected;
 	Brush *curBrush;
+	std::vector<std::pair<int, cv::Point2d>> paint;
+	void decidePaint(int r, int g, int b);
 
 private:
 	Ui::CytonRunner *ui;
@@ -45,7 +47,6 @@ private:
 
 	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;
-	std::vector<std::pair<int, cv::Point>> paint;
 	std::string brushType;
 	double theta, phi, psi;
 	double currentX, currentY;
