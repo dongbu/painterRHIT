@@ -175,7 +175,6 @@ void Painter::showGUI(bool toggle, bool resetSketch){
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));
-	//connect(sketch->ui->actionNew, SIGNAL(triggered()), logic, SLOT(reset()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
@@ -251,11 +250,5 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 
 //remove all windows.
 void Painter::destroyAll(){
-	sketch->close();
-	delete Web;
-	shapes->clear();
-	commandWin->close();
-	delete logic;
-	Ava->close();
-	delete this;
+	commandWin->hide();
 }

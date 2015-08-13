@@ -557,7 +557,7 @@ bool Sketchpad::openClicked() {
 /**
  * @brief New project functionality.
  */
-void Sketchpad::newClicked(){ emit newPressed(); }
+void Sketchpad::newClicked(){ reset(); }
 
 //turn into clear button
 void Sketchpad::reset() {
