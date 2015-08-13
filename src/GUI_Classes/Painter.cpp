@@ -123,6 +123,8 @@ void Painter::loadPhoto(std::string photoLocation) {
 //load photo canny from location.
 void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+	logic->simWin->clearWindow(255, 255, 255); //white
+	logic->simWin->hideWindow();
 
 	ImageParserContours IPC;
 	IPC.setMinContourLength(min_line_length);
@@ -140,6 +142,8 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 //load photo kmeans from location.
 void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) {
 	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
+	logic->simWin->clearWindow(255, 255, 255); //white
+	logic->simWin->hideWindow();
 
 	ImageParserKmeans IPK;
 	IPK.setNumColors(colorCount);
