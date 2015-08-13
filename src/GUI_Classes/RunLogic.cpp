@@ -233,5 +233,4 @@ void RunLogic::reset(){
 	shapes->clear();
 	clearClicked();
 	simWin = new DrawWindow(width, height, "Simulation Window");
-	//simWin->hideWindow();
 }
