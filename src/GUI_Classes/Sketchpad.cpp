@@ -200,14 +200,17 @@ Sketchpad::~Sketchpad()
 }
 
 void Sketchpad::closeEvent(QCloseEvent *event) {
-	if (&title.at(title.size() - 1) == "*") { this->close(); }
-	QMessageBox::StandardButton dialog;
-	dialog = QMessageBox::warning(this, "close warning","You have unsaved work.  Do you still want to close?",
-		QMessageBox::Yes | QMessageBox::No);
-	if (dialog == QMessageBox::Yes) { this->close(); }
-	else { event->ignore(); }
+	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
+	if (!unsaved) {
+		this->close();
+	} else {
+		QMessageBox::StandardButton dialog;
+		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
+			QMessageBox::Yes | QMessageBox::No);
+		if (dialog == QMessageBox::Yes) { this->close(); }
+		else { event->ignore(); }
+	}
 }
-
 
 //redraws everything on the grid.
 void Sketchpad::redraw() {
