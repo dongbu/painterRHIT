@@ -47,13 +47,11 @@ void Painter::addShape(Shape *inboundShape) {
 void Painter::setDimensions(int width, int height) {
 	this->width = width;
 	this->height = height;
-	Ava = new CytonRunner(width, height);
-	Web = new Webcam(width, height);
 
 	if (stuffshowing){
 		this->sketch->close();
 		this->commandWin->close();
-		showGUI(true);
+		showGUI();
 	}
 }
 /**
@@ -91,9 +89,9 @@ void Painter::load(std::string projectLocation) {
 //connect to a robot
 void Painter::loadRobot(std::string robotLocation) {
 	if (!Ava->loadWorkspace(robotLocation)) return;
-
 	Ava->connect();
 	Ava->startup();
+
 	if (stuffshowing) {
 		this->sketch->connected = true;
 		this->sketch->ui->actionShutdown->setEnabled(true);
@@ -160,11 +158,9 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) 
  * @brief display the GUI
  * @param toggle
  */
-void Painter::showGUI(bool toggle, bool resetSketch){
-	stuffshowing = toggle;
-	if (resetSketch){
-		sketch = new Sketchpad(width, height, shapes, Ava, Web);
-	}
+void Painter::showGUI(){
+	stuffshowing = true;
+	sketch = new Sketchpad(width, height, shapes, Ava, Web);
 	launchSimulation();
 
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
@@ -174,18 +170,11 @@ void Painter::showGUI(bool toggle, bool resetSketch){
 	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
-	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(destroyAll()));
+	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(hideAll()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
-	if (toggle){
-		sketch->show();
-		commandWin->show();
-	}
-	else{
-		sketch->hide();
-		commandWin->hide();
-	}
+	sketch->show();
 }
 /**
  * @brief launch the simulation window.
@@ -198,7 +187,7 @@ void Painter::launchSimulation(){
 	connect(commandWin->ui->actionForward, SIGNAL(triggered()), logic, SLOT(forwardClicked()));
 	connect(commandWin->ui->actionPause, SIGNAL(triggered()), logic, SLOT(pauseClicked()));
 	connect(commandWin->ui->actionPlay, SIGNAL(triggered()), logic, SLOT(runClicked()));
-	connect(commandWin->ui->actionStop, SIGNAL(triggered()), logic, SLOT(stopClicked()));
+	connect(commandWin->ui->actionClear, SIGNAL(triggered()), logic, SLOT(clearClicked()));
 	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
 	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(toggleBreakPoint(int)));
@@ -249,6 +238,8 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 }
 
 //remove all windows.
-void Painter::destroyAll(){
+void Painter::hideAll(){
 	commandWin->hide();
+	logic->simWin->hideWindow();
+	logic->clearClicked();
 }

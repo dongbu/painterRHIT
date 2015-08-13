@@ -324,8 +324,8 @@
   </action>
   <action name="actionClear">
    <property name="icon">
-    <iconset>
-     <normaloff>Icon Storage/clear.png</normaloff>Icon Storage/clear.png</iconset>
+    <iconset resource="myres.qrc">
+     <normaloff>:/Icon Storage/clear.png</normaloff>:/Icon Storage/clear.png</iconset>
    </property>
    <property name="text">
     <string>clear</string>

@@ -29,11 +29,13 @@ public:
 	CVImageWidget *translator;
 
 private:
+	void closeEvent(QCloseEvent *event);
+
 	void getColor();
 	void setupQt();
 	void flood(cv::Point p);
 
-	std::string paintingNamePath;
+	std::string paintingNamePath, title;
 	int width, height;
 
 	Shapes *shapes;

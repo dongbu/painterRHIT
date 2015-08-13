@@ -108,7 +108,7 @@
      <string>Simulator</string>
     </property>
     <addaction name="actionPlay"/>
-    <addaction name="actionStop"/>
+    <addaction name="actionClear"/>
     <addaction name="actionPause"/>
     <addaction name="actionForward"/>
     <addaction name="actionBackward"/>
@@ -127,7 +127,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionPlay"/>
-   <addaction name="actionStop"/>
+   <addaction name="actionClear"/>
    <addaction name="actionBackward"/>
    <addaction name="actionPause"/>
    <addaction name="actionForward"/>
@@ -144,16 +144,16 @@
     <string>Runs the simulation</string>
    </property>
   </action>
-  <action name="actionStop">
+  <action name="actionClear">
    <property name="icon">
     <iconset resource="myres.qrc">
-     <normaloff>:/Icon Storage/stop.png</normaloff>:/Icon Storage/stop.png</iconset>
+     <normaloff>:/Icon Storage/reset.png</normaloff>:/Icon Storage/reset.png</iconset>
    </property>
    <property name="text">
-    <string>Stop</string>
+    <string>Clear</string>
    </property>
    <property name="toolTip">
-    <string>stops the simulation</string>
+    <string>clear simulation</string>
    </property>
   </action>
   <action name="actionForward">

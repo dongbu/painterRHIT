@@ -22,7 +22,7 @@ public:
     void addShape(Shape *inboundShape);
     void addShapes(Shapes *inboundShapes);
     void setDimensions(int width, int height);
-    void showGUI(bool toggle, bool resetSketch = true);
+    void showGUI();
     void launchSimulation();
 
 private:
@@ -46,7 +46,7 @@ public slots:
 	void loadPhoto(std::string photoLocation);
 	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
 	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
-	void destroyAll();
+	void hideAll();
 
 };
 

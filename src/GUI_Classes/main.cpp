@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	//console window//
 	AllocConsole();
 
-	SetConsoleTitleA("Robot Artist v3 (8/11/15)");
+	SetConsoleTitleA("Robot Artist v3 (8/13/15)");
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 	//actual program//
 	Painter p;
-	p.showGUI(true);
+	p.showGUI();
 	//actual program//
 
 	return a.exec();

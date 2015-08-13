@@ -33,7 +33,7 @@ class Ui_CommandWindow
 {
 public:
     QAction *actionPlay;
-    QAction *actionStop;
+    QAction *actionClear;
     QAction *actionForward;
     QAction *actionBackward;
     QAction *actionPause;
@@ -65,11 +65,11 @@ public:
         QIcon icon;
         icon.addFile(QStringLiteral(":/Icon Storage/play.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPlay->setIcon(icon);
-        actionStop = new QAction(CommandWindow);
-        actionStop->setObjectName(QStringLiteral("actionStop"));
+        actionClear = new QAction(CommandWindow);
+        actionClear->setObjectName(QStringLiteral("actionClear"));
         QIcon icon1;
-        icon1.addFile(QStringLiteral(":/Icon Storage/stop.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionStop->setIcon(icon1);
+        icon1.addFile(QStringLiteral(":/Icon Storage/reset.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionClear->setIcon(icon1);
         actionForward = new QAction(CommandWindow);
         actionForward->setObjectName(QStringLiteral("actionForward"));
         QIcon icon2;
@@ -154,12 +154,12 @@ public:
 
         menubar->addAction(menuSimulator->menuAction());
         menuSimulator->addAction(actionPlay);
-        menuSimulator->addAction(actionStop);
+        menuSimulator->addAction(actionClear);
         menuSimulator->addAction(actionPause);
         menuSimulator->addAction(actionForward);
         menuSimulator->addAction(actionBackward);
         toolBar->addAction(actionPlay);
-        toolBar->addAction(actionStop);
+        toolBar->addAction(actionClear);
         toolBar->addAction(actionBackward);
         toolBar->addAction(actionPause);
         toolBar->addAction(actionForward);
@@ -176,9 +176,9 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPlay->setToolTip(QApplication::translate("CommandWindow", "Runs the simulation", 0));
 #endif // QT_NO_TOOLTIP
-        actionStop->setText(QApplication::translate("CommandWindow", "Stop", 0));
+        actionClear->setText(QApplication::translate("CommandWindow", "Clear", 0));
 #ifndef QT_NO_TOOLTIP
-        actionStop->setToolTip(QApplication::translate("CommandWindow", "stops the simulation", 0));
+        actionClear->setToolTip(QApplication::translate("CommandWindow", "clear simulation", 0));
 #endif // QT_NO_TOOLTIP
         actionForward->setText(QApplication::translate("CommandWindow", "Forward", 0));
 #ifndef QT_NO_TOOLTIP
