@@ -338,6 +338,9 @@
     <CustomBuild Include="cannyUI.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="colorChangeUI.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -360,6 +363,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_cannyUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_colorChangeUI.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

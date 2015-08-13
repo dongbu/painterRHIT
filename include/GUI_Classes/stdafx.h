@@ -33,6 +33,7 @@
 #include "ui_commandwindow.h"
 #include "ui_kMeansUI.h"
 #include "ui_cannyUI.h"
+#include "ui_colorChangeUI.h"
 
 //std methods to include
 #include <vector>

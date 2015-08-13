@@ -42,6 +42,18 @@ ui(new Ui::CommandWindow)
 	connect(ui->actionBackward, SIGNAL(triggered()), this, SLOT(drawingPaused()));
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(showTime()));
 
+	//building color changing dialog
+	colorForm = new QDialog();
+	colorUi.setupUi(colorForm);
+	colorUi.tableWidget->setRowCount(0);
+	colorUi.tableWidget->setColumnCount(3);
+	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
+	colorUi.tableWidget->setColumnWidth(0, 35); //color collumn
+	colorUi.tableWidget->setColumnWidth(1, 50); //breakpoint collumn
+	colorUi.tableWidget->setColumnWidth(2, 130); //command type collumn
+	colorUi.ChangeAll->setChecked(true);
+	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
+
 	populate();
 	this->hide();
 }
@@ -132,10 +144,17 @@ void CommandWindow::populate(){
  */
 void CommandWindow::launchRightClick(QPoint pos) {
 	QMenu *menu = new QMenu(ui->tableWidget);
+	int col = ui->tableWidget->currentColumn();
 
-	menu->addAction(new QAction("Run from here", ui->tableWidget));
-	menu->addAction(new QAction("Run this command", ui->tableWidget));
-	menu->addAction(new QAction("Set Breakpoint", ui->tableWidget));
+	if (col == 0) { //color menu
+		menu->addAction(new QAction("Change Color", ui->tableWidget));
+	} else if (col == 1) { //breakpoint menu
+		menu->addAction(new QAction("Set Breakpoint", ui->tableWidget));
+	} else if (col == 2) { //run menu
+		menu->addAction(new QAction("Run from here", ui->tableWidget));
+		menu->addAction(new QAction("Run this command", ui->tableWidget));
+	}
+
 	menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
 
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(menuSort(QAction*)));
@@ -147,7 +166,24 @@ void CommandWindow::launchRightClick(QPoint pos) {
 void CommandWindow::menuSort(QAction *a) {
 	if (a->text() == "Run from here") emit runFrom(ui->tableWidget->currentRow());
 	else if (a->text() == "Run this command") emit runOnly(ui->tableWidget->currentRow());
-	else emit setBreakPoint(ui->tableWidget->currentRow());
+	else if (a->text() == "Set Breakpoint") emit setBreakPoint(ui->tableWidget->currentRow());
+	else if (a->text() == "Change Color") {
+		int curRow = ui->tableWidget->currentRow();
+		cv::Scalar penCol = shapes->at(curRow)->getPenColor();
+		QTableWidgetItem *rgb = new QTableWidgetItem();
+		rgb->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
+		colorUi.tableWidget->setItem(0, 0, rgb); //rgb
+		colorUi.comboBox->setCurrentText("current color");
+		if (shapes->at(curRow)->isBreakPoint) {
+		colorUi.tableWidget->setItem(0, 1, new QTableWidgetItem("yes"));
+		} else {
+			colorUi.tableWidget->setItem(0, 1, new QTableWidgetItem("no"));
+		}
+		colorUi.tableWidget->item(0, 1)->setTextAlignment(Qt::AlignCenter);
+		colorUi.tableWidget->setItem(0, 2, new QTableWidgetItem(*ui->tableWidget->item(curRow, 2)));
+
+		colorForm->show();
+	}
 }
 
 /**
@@ -234,3 +270,72 @@ void CommandWindow::showTime() {
 }
 
 void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow);}
+
+void CommandWindow::colorChangeConfirmed() {
+	colorForm->hide();
+	std::vector<int> NewRGB = getColor(colorUi.comboBox->currentText());
+	cv::Scalar OldRGB = shapes->at(ui->tableWidget->currentRow())->getPenColor();
+	if (NewRGB[0] == -1) return; //no change detected.
+
+	if (colorUi.ChangeAll->isChecked()) {
+		for (int i = 0; i < shapes->length(); i++) {
+			cv::Scalar checkRGB = shapes->at(i)->getPenColor();
+			if (checkRGB[0] == OldRGB[0] && checkRGB[1] == OldRGB[1] && checkRGB[2] == OldRGB[2]) {
+				shapes->at(i)->setPenColor(NewRGB[0], NewRGB[1], NewRGB[2]);
+			}
+		}
+	} else {
+		shapes->at(ui->tableWidget->currentRow())->setPenColor(NewRGB[0], NewRGB[1], NewRGB[2]);
+	}
+
+	populate();
+}
+
+/**
+* @brief transforms a text color into useable rgb code.
+*/
+std::vector<int> CommandWindow::getColor(QString col) {
+	std::vector<int> toReturn;
+	if (col == "black") {
+		toReturn.push_back(0);
+		toReturn.push_back(0);
+		toReturn.push_back(0);
+	}
+	else if (col == "orange") {
+		toReturn.push_back(30);
+		toReturn.push_back(144);
+		toReturn.push_back(255);
+	}
+	else if (col == "yellow") {
+		toReturn.push_back(0);
+		toReturn.push_back(255);
+		toReturn.push_back(255);
+	}
+	else if (col == "green") {
+		toReturn.push_back(34);
+		toReturn.push_back(139);
+		toReturn.push_back(34);
+	}
+	else if (col == "red") {
+		toReturn.push_back(34);
+		toReturn.push_back(34);
+		toReturn.push_back(178);
+	}
+	else if (col == "blue") {
+		toReturn.push_back(255);
+		toReturn.push_back(144);
+		toReturn.push_back(30);
+	}
+	else if (col == "purple") {
+		toReturn.push_back(240);
+		toReturn.push_back(32);
+		toReturn.push_back(160);
+	}
+	else {
+		toReturn.push_back(-1);
+		toReturn.push_back(-1);
+		toReturn.push_back(-1);
+	}
+
+	return toReturn;
+}
