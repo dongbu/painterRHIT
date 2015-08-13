@@ -240,7 +240,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 	}
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 	running = false;
-	Ava->raiseBrush();
+	Ava->goToJointHome(1);
 
 
 }

@@ -37,10 +37,10 @@ public:
 	Brush *curBrush;
 	std::vector<std::pair<int, std::pair<cv::Point2d, std::vector<int>>>> paint;
 	void decidePaint(int r, int g, int b);
+	bool goToJointHome(int type);
 
 private:
 	Ui::CytonRunner *ui;
-	bool goToJointHome(int type);
 	EcRealVector startJointPosition;
 	std::vector<double> convert(double x, double y, double z);
 	void regulateWorkspaceData();
