@@ -32,7 +32,6 @@ public slots:
     void runClicked();
     void runFrom(int index);
     void runOnly(int index);
-    void toggleBreakPoint(int index);
     void shapesChanged();
 	void reset();
 
