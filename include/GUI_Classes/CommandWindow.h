@@ -21,15 +21,14 @@ public:
 
 private:
 	std::vector<int> getColor(QString col);
-	int commandsFinished;
+
 	QTimer *timer;
 	QTime startTime;
-	int secondCount, minuteCount;
-	bool minPrep;
-
 	QDialog *colorForm;
 	Ui::colorChange colorUi;
 
+	int secondCount, minuteCount, commandsFinished;
+	bool minPrep;
 
 private slots:
     void moveUpClicked();
@@ -43,7 +42,6 @@ private slots:
 	void drawingPaused();
 	void drawingCleared();
 	void showTime();
-
 	void colorChangeConfirmed();
 
 public slots:
@@ -56,7 +54,6 @@ signals:
 	void highlightShape(int index);
     void runFrom(int index);
     void runOnly(int index);
-    void setBreakPoint(int index);
 };
 
 #endif // COMMANDWINDOW_H

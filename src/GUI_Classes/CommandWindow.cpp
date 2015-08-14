@@ -1,5 +1,9 @@
 #include "CommandWindow.h"
 
+int RGB_COL = 2;
+int BREAK_COL = 1;
+int NAME_COL = 0;
+
 /**
  * @brief constructor
  * @param ss
@@ -22,9 +26,9 @@ ui(new Ui::CommandWindow)
 	minPrep = false;
 
 	ui->tableWidget->setColumnCount(3);
-	ui->tableWidget->setColumnWidth(0, 35);  //color collumn
-	ui->tableWidget->setColumnWidth(1, 50);  //breakpoint collumn
-	ui->tableWidget->setColumnWidth(2, 130); //command type collumn
+	ui->tableWidget->setColumnWidth(RGB_COL, 35);  //color collumn
+	ui->tableWidget->setColumnWidth(BREAK_COL, 50);  //breakpoint collumn
+	ui->tableWidget->setColumnWidth(NAME_COL, 130); //command type collumn
 
 	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
@@ -48,9 +52,12 @@ ui(new Ui::CommandWindow)
 	colorUi.tableWidget->setRowCount(0);
 	colorUi.tableWidget->setColumnCount(3);
 	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
-	colorUi.tableWidget->setColumnWidth(0, 35); //color collumn
-	colorUi.tableWidget->setColumnWidth(1, 50); //breakpoint collumn
-	colorUi.tableWidget->setColumnWidth(2, 130); //command type collumn
+	colorUi.tableWidget->setColumnWidth(RGB_COL, 35);
+	colorUi.tableWidget->setColumnWidth(BREAK_COL, 50);
+	colorUi.tableWidget->setColumnWidth(NAME_COL, 130);
+	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("rgb"));
+	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("break"));
+	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("command type"));
 	colorUi.ChangeAll->setChecked(true);
 	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
 
@@ -75,7 +82,7 @@ void CommandWindow::moveUpClicked() {
 		shapes->swap(currentIndex, currentIndex - 1);
 		populate();
 	}
-	ui->tableWidget->setCurrentCell(currentIndex - 1, 2);
+	ui->tableWidget->setCurrentCell(currentIndex - 1, NAME_COL);
 }
 /**
  * @brief move command down in window (and vec)
@@ -88,7 +95,7 @@ void CommandWindow::moveDownClicked() {
 		shapes->swap(ui->tableWidget->currentRow(), ui->tableWidget->currentRow() + 1);
 		populate();
 	}
-	ui->tableWidget->setCurrentCell(currentIndex + 1, 1);
+	ui->tableWidget->setCurrentCell(currentIndex + 1, NAME_COL);
 
 }
 /**
@@ -110,9 +117,9 @@ void CommandWindow::populate(){
 	this->show();
 	ui->tableWidget->clear();
 	ui->tableWidget->setRowCount(0);
-	ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("rgb"));
-	ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("break"));
-	ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("command type"));
+	ui->tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("rgb"));
+	ui->tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("break"));
+	ui->tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("command type"));
 
 	//refilling the list with shape data
 	for (int i = 0; i < shapes->length(); i++){
@@ -120,21 +127,22 @@ void CommandWindow::populate(){
 
 		//cell creation
 		ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-		ui->tableWidget->setItem(i, 0, new QTableWidgetItem()); //rgb
-		ui->tableWidget->setItem(i, 2, new QTableWidgetItem(name)); //command type
+		ui->tableWidget->setItem(i, RGB_COL, new QTableWidgetItem()); //rgb
+		ui->tableWidget->setItem(i, NAME_COL, new QTableWidgetItem(name)); //command type
 
 		//color setting
 		cv::Scalar penCol = shapes->at(i)->getPenColor();
-		ui->tableWidget->item(i, 0)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
-		if (shapes->at(i)->isBreakPoint){ recieveRunColor(i, "red"); }
-		else { ui->tableWidget->setItem(i, 1, new QTableWidgetItem("no")); }
+		ui->tableWidget->item(i, RGB_COL)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
+		if (shapes->at(i)->isBreakPoint){
+			ui->tableWidget->setItem(i, BREAK_COL, new QTableWidgetItem("yes"));
+		} else { ui->tableWidget->setItem(i, BREAK_COL, new QTableWidgetItem("no")); }
 
 		//centering
-		ui->tableWidget->item(i, 1)->setTextAlignment(Qt::AlignCenter); // breakpoint
-		ui->tableWidget->item(i, 2)->setTextAlignment(Qt::AlignCenter); // command type
+		ui->tableWidget->item(i, BREAK_COL)->setTextAlignment(Qt::AlignCenter); // breakpoint
+		ui->tableWidget->item(i, NAME_COL)->setTextAlignment(Qt::AlignCenter); // command type
 	}
 
-	//reseting
+	//reseting run stats
 	ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 	ui->CommandsRun->setAlignment(Qt::AlignCenter);
 }
@@ -146,17 +154,15 @@ void CommandWindow::launchRightClick(QPoint pos) {
 	QMenu *menu = new QMenu(ui->tableWidget);
 	int col = ui->tableWidget->currentColumn();
 
-	if (col == 0) { //color menu
+	if (col == RGB_COL) { //color menu
 		menu->addAction(new QAction("Change Color", ui->tableWidget));
-	} else if (col == 1) { //breakpoint menu
+	} else if (col == BREAK_COL) { //breakpoint menu
 		menu->addAction(new QAction("Set Breakpoint", ui->tableWidget));
-	} else if (col == 2) { //run menu
+	} else if (col == NAME_COL) { //run menu
 		menu->addAction(new QAction("Run from here", ui->tableWidget));
 		menu->addAction(new QAction("Run this command", ui->tableWidget));
 	}
-
 	menu->popup(ui->tableWidget->viewport()->mapToGlobal(pos));
-
 	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(menuSort(QAction*)));
 }
 /**
@@ -166,22 +172,29 @@ void CommandWindow::launchRightClick(QPoint pos) {
 void CommandWindow::menuSort(QAction *a) {
 	if (a->text() == "Run from here") emit runFrom(ui->tableWidget->currentRow());
 	else if (a->text() == "Run this command") emit runOnly(ui->tableWidget->currentRow());
-	else if (a->text() == "Set Breakpoint") emit setBreakPoint(ui->tableWidget->currentRow());
-	else if (a->text() == "Change Color") {
+	else if (a->text() == "Set Breakpoint") {
+		int index = ui->tableWidget->currentRow();
+		if (shapes->at(index)->isBreakPoint) {
+			ui->tableWidget->setItem(index, BREAK_COL, new QTableWidgetItem("no")); //turn off
+			shapes->at(index)->toggleBreakPoint(false);
+		} else {
+			ui->tableWidget->setItem(index, BREAK_COL, new QTableWidgetItem("yes")); //turn on
+			shapes->at(index)->toggleBreakPoint(true);
+		}
+	} else if (a->text() == "Change Color") {
 		int curRow = ui->tableWidget->currentRow();
 		cv::Scalar penCol = shapes->at(curRow)->getPenColor();
 		QTableWidgetItem *rgb = new QTableWidgetItem();
 		rgb->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
-		colorUi.tableWidget->setItem(0, 0, rgb); //rgb
+		colorUi.tableWidget->setItem(0, RGB_COL, rgb); //rgb
 		colorUi.comboBox->setCurrentText("current color");
 		if (shapes->at(curRow)->isBreakPoint) {
-		colorUi.tableWidget->setItem(0, 1, new QTableWidgetItem("yes"));
+		colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("yes"));
 		} else {
-			colorUi.tableWidget->setItem(0, 1, new QTableWidgetItem("no"));
+			colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("no"));
 		}
-		colorUi.tableWidget->item(0, 1)->setTextAlignment(Qt::AlignCenter);
-		colorUi.tableWidget->setItem(0, 2, new QTableWidgetItem(*ui->tableWidget->item(curRow, 2)));
-
+		colorUi.tableWidget->item(0, BREAK_COL)->setTextAlignment(Qt::AlignCenter);
+		colorUi.tableWidget->setItem(0, NAME_COL, new QTableWidgetItem(*ui->tableWidget->item(curRow, NAME_COL)));
 		colorForm->show();
 	}
 }
@@ -196,7 +209,7 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 		index = ui->tableWidget->rowCount() - 1;
 	}
 	if (runToggle == "green"){
-		ui->tableWidget->item(index, 2)->setBackgroundColor("green");
+		ui->tableWidget->item(index, NAME_COL)->setBackgroundColor("green");
 		if (index == shapes->length() - 1) { this->timer->stop(); }
 		if (this->commandsFinished >= shapes->length()) { return; }
 		this->commandsFinished++;
@@ -205,18 +218,17 @@ void CommandWindow::recieveRunColor(int index, QString runToggle){
 	}
 	else if (runToggle == "yellow") {
 		ui->tableWidget->item(index, 2)->setBackgroundColor("yellow");
-		ui->tableWidget->scrollToItem(ui->tableWidget->item(index, 0), QAbstractItemView::PositionAtCenter);
+		ui->tableWidget->scrollToItem(ui->tableWidget->item(index, RGB_COL), QAbstractItemView::PositionAtCenter);
 		emit highlightShape(index);
 	}
 	else if (runToggle == "white") {
-		ui->tableWidget->item(index, 2)->setBackgroundColor("white");
+		ui->tableWidget->item(index, NAME_COL)->setBackgroundColor("white");
 		this->commandsFinished = 0;
 		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 		ui->CommandsRun->setAlignment(Qt::AlignCenter);
 	}
 	else if (runToggle == "red") {
-		ui->tableWidget->setItem(index, 1, new QTableWidgetItem("yes"));
-		ui->tableWidget->item(index, 1)->setTextAlignment(Qt::AlignCenter);
+
 	}
 }
 

@@ -194,7 +194,6 @@ void Painter::launchSimulation(){
 	connect(commandWin->ui->actionClear, SIGNAL(triggered()), logic, SLOT(clearClicked()));
 	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
-	connect(commandWin, SIGNAL(setBreakPoint(int)), logic, SLOT(toggleBreakPoint(int)));
 	connect(commandWin, SIGNAL(modifiedCommand()), logic, SLOT(shapesChanged()));
 	connect(logic, SIGNAL(setRunColor(int, QString)), commandWin, SLOT(recieveRunColor(int, QString)));
 	connect(logic, SIGNAL(clearRunColors()), commandWin, SLOT(recieveClearRunColors()));

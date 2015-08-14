@@ -121,20 +121,6 @@ void RunLogic::runOnly(int index) {
 	emit(setRunColor(index, "green"));
 	simWin->show();
 }
-/**
- * @brief toggles breakpoint on specified index.
- * @param index
- */
-void RunLogic::toggleBreakPoint(int index) {
-	if (!shapes->at(index)->isBreakPoint) {
-		shapes->at(index)->toggleBreakPoint(true);
-		emit setRunColor(index, "red");
-	}
-	else {
-		shapes->at(index)->toggleBreakPoint(false);
-		emit setRunColor(index, "white");
-	}
-}
 
 //thread to handle actual drawing.
 void RunLogic::DrawingThread(DrawWindow *W){
@@ -143,7 +129,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 		Shape *s = this->shapes->at(currentShapeIndex);
 		//handling breakpoint
 		if (s->isBreakPoint) {
-			toggleBreakPoint(currentShapeIndex);
 			running = false;
 			return;
 		}
