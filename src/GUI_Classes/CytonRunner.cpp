@@ -411,7 +411,7 @@ void CytonRunner::changePaint(int new_paint_can_id){
 		}
 	}
 	raiseBrush();
-	Sleep(20000); //pause for 20 seconds to give a chance for water to drip down. (and for me to dry it of if I want).
+	Sleep(10000); //pause for 10 seconds to give a chance for water to drip down. (and for me to dry it of if I want).
 	getPaint(new_paint_can_id);
 }
 
@@ -427,8 +427,12 @@ void CytonRunner::decidePaint(int r, int g, int b){
 		if (distance < closestNum || closestNum == -1){
 			closestId = i;
 			closestNum = distance;
+			
 		}
 	}
+	int r1 = paint.at(closestId).second.second.at(0);
+	int g1 = paint.at(closestId).second.second.at(1);
+	int b1 = paint.at(closestId).second.second.at(2);
+	this->curBrush->setColor(b1,g1,r1);
 	changePaint(closestId);
-	
 }

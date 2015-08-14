@@ -160,7 +160,6 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				int r = temp[0];
 				int g = temp[1];
 				int b = temp[2];
-
 				Ava->decidePaint(r, g, b);
 			}
 
