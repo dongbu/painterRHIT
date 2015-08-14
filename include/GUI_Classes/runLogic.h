@@ -16,7 +16,7 @@ public:
 	DrawWindow *simWin;
 	
 private:
-	void DrawingThread(DrawWindow *W);
+	void DrawingThread(DrawWindow *W, CytonRunner *Ava);
     volatile bool running;
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;

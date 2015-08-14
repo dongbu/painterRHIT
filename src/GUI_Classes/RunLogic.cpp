@@ -93,7 +93,7 @@ void RunLogic::runClicked() {
 	this->simWin->showWindow();
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
-	auto d1 = std::async(&RunLogic::DrawingThread, this, simWin);
+	auto d1 = std::async(&RunLogic::DrawingThread, this, simWin, Ava);
 	stepTaken = 2;
 }
 
@@ -123,7 +123,7 @@ void RunLogic::runOnly(int index) {
 }
 
 //thread to handle actual drawing.
-void RunLogic::DrawingThread(DrawWindow *W){
+void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 	while (running && currentShapeIndex < stopIndex) {
 		//Updating index
 		Shape *s = this->shapes->at(currentShapeIndex);
@@ -148,8 +148,8 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				Ava->decidePaint(r, g, b);
 			}
 
-			for (int j = 0; j < simWin->grid.size().height; j++) {
-				for (int k = 0; k < simWin->grid.size().width; k++) {
+			for (int j = 0; j < W->grid.size().height; j++) {
+				for (int k = 0; k < W->grid.size().width; k++) {
 					RTP.addOverpaintablePixel(k, j);
 				}
 			}
@@ -157,8 +157,8 @@ void RunLogic::DrawingThread(DrawWindow *W){
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
 			if (Ava->connected) { //connected, fill
-				curBrush = this->Ava->curBrush;
-				RTP.defineBrush(this->Ava->curBrush);
+				curBrush = Ava->curBrush;
+				RTP.defineBrush(Ava->curBrush);
 			}
 			else { //not connected, fill
 				curBrush = new Brush(15, 10, "ellipse");
@@ -174,7 +174,7 @@ void RunLogic::DrawingThread(DrawWindow *W){
 				for (size_t j = 1; j < pathVec.at(i).size(); j++) { //running through points in one stroke
 					if (!running) { return; }
 					if (Ava->connected) { Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j)); }
-					curBrush->drawLine(this->simWin, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
+					curBrush->drawLine(W, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
 					prevX = pathVec.at(i).at(j).x;
 					prevY = pathVec.at(i).at(j).y;
 
@@ -203,13 +203,13 @@ void RunLogic::DrawingThread(DrawWindow *W){
 
 				if (Ava->connected) { //connected, polyline
 					Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
-					Ava->curBrush->drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+					Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y);
 
 				}
 				else { //not connected, polyline
 					Brush curBrush = Brush(15, 10, "ellipse");
 					curBrush.setColor(s->getPenColor());
-					curBrush.drawLine(this->simWin, prevX, prevY, pts.at(i).x, pts.at(i).y);
+					curBrush.drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y);
 				}
 				prevX = pts.at(i).x;
 				prevY = pts.at(i).y;
