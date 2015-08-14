@@ -44,6 +44,10 @@ ui(new Ui::WorkspaceWizard)
 	scaleSlide->setVisible(false);
 	ui->ItemLayout->addWidget(scaleSlide);
 
+	//canvas corner selection
+	
+
+
 	//instance of the robot that is involved with this.
 	this->Ava = Ava;
 
@@ -146,18 +150,19 @@ void WorkspaceWizard::updateText(){
 	case 1: //setup home position
 		ui->BackButton->setText("Cancel");
 		ui->Title->setText("Setup Start Position");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u','j', 'm', and 'n' to put the robot into a stable home position \npress 'e' when finished");
+		ui->Directions->setText("Use keys to face the robot towards the canvas\nX: a/d, Y: w/s, z: u/j, z-rot: m,n\npress 'e' when finished");
 		ui->QuestionButton->show();
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		break;
 	case 2: //setup canvas corner one
-		ui->Title->setText("Setup Top Left Canvas Corner");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the top left corner of the canvas \norientation does not matter\npress 'e' when finished");
+		ui->Title->setText("Setup Canvas Corners");
+		ui->Directions->setText("Use keys to to touch the robot gripper to the selected corner of the canvas\nX: a/d, Y: w/s, z: u/j, z-rot: m,n \norientation does not matter\npress 'e' when finished");
 		ui->ForwardButton->setDisabled(true);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
+		ui->BackButton->setText("Back");
 		break;
 	case 3: //setup canvas corner two
 		ui->Title->setText("Setup Top Right Canvas Corner");
@@ -292,7 +297,7 @@ void WorkspaceWizard::saveInfo(){
 		s1 = currentJoints[0]; s2 = currentJoints[1]; s3 = currentJoints[2]; s4 = currentJoints[3];
 		s5 = currentJoints[4]; s6 = currentJoints[5]; s7 = currentJoints[6];
 	}
-	else if (stage >= 2 && stage <= 4){
+	else if (stage == 2){
 		getActualPlacement(actualEEPlacement);
 		actualCoord = actualEEPlacement.offsetTransformations()[0].coordSysXForm();
 		EcVector trans = actualCoord.translation();

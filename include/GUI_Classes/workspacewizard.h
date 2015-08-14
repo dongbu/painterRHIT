@@ -31,6 +31,8 @@ private:
 	QSlider* scaleSlide;
 	CytonRunner* Ava;
 	bool moving;
+
+	QRadioButton corner1, corner2, corner3;
 	
 	void updateText();
 	void rotateBase(int direction);

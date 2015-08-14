@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include <qtimer.h>
 #include <QTime>
+#include <qradiobutton.h>
 
 //auto-generated methods to include
 #include "ui_Sketchpad.h"
