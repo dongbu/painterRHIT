@@ -16,6 +16,7 @@ CytonRunner::CytonRunner(int width, int height){
 	raiseHeight = 0.08;
 	connected = false;
 	strokeInProgress = false;
+	lastPaintColor = 0;
 
 	//simulation size
 	this->width = width;
@@ -123,6 +124,7 @@ bool CytonRunner::shutdown(){
 			canvasCorners.clear();
 			paint.clear();
 			currentX = currentY = 0;
+			lastPaintColor = 0;
 			brushType = "";
 			Ec::shutdown();
 			printf("shut down\n");
@@ -380,6 +382,14 @@ void CytonRunner::tellFinished() {
 
 //change to a new paint color.
 void CytonRunner::changePaint(int new_paint_can_id){
+	if (new_paint_can_id == lastPaintColor || lastPaintColor == 0){ 
+		//just used this color, don't need to wash.
+		Sleep(100);//pause 1/10th of a second to let things settle
+		getPaint(new_paint_can_id);
+		lastPaintColor = new_paint_can_id;
+		return;
+	}
+	lastPaintColor = new_paint_can_id;
 	if (new_paint_can_id > this->paint.size()){
 		new_paint_can_id = this->paint.size();
 		printf("paint can ID out of bounds. Substituting color\n");
@@ -401,6 +411,7 @@ void CytonRunner::changePaint(int new_paint_can_id){
 		}
 	}
 	raiseBrush();
+	Sleep(20000); //pause for 20 seconds to give a chance for water to drip down. (and for me to dry it of if I want).
 	getPaint(new_paint_can_id);
 }
 

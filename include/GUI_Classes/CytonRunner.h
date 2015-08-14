@@ -40,6 +40,7 @@ public:
 	bool goToJointHome(int type);
 
 private:
+	int lastPaintColor;
 	Ui::CytonRunner *ui;
 	EcRealVector startJointPosition;
 	std::vector<double> convert(double x, double y, double z);
