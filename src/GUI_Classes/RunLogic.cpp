@@ -34,7 +34,9 @@ void RunLogic::clearClicked() {
 	simWin->show();
 	currentShapeIndex = 0;
 	stopIndex = shapes->length();
-	emit clearRunColors();
+	for (int i = 0; i < shapes->length(); i++) {
+		emit updateCommandList(i, "clear");
+	}
 }
 /**
  * @brief pauses simulation.
@@ -72,7 +74,7 @@ void RunLogic::backwardClicked() {
 
 	this->simWin->showWindow();
 	running = false;
-	emit setRunColor(currentShapeIndex, "white");
+	emit updateCommandList(currentShapeIndex, "clear");
 	simWin->clearWindow(255, 255, 255); //white
 	if (currentShapeIndex <= 0) {
 		stepTaken = 2;
@@ -118,7 +120,7 @@ void RunLogic::runOnly(int index) {
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 
-	emit(setRunColor(index, "green"));
+	emit(updateCommandList(index, "finished"));
 	simWin->show();
 }
 
@@ -134,7 +136,7 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 		}
 
 		if (s->fill) { //painting filled region
-			emit setRunColor(currentShapeIndex, "yellow");
+			emit updateCommandList(currentShapeIndex, "running");
 			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
@@ -185,7 +187,7 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 			}
 		}
 		else { //painting polyline object
-			emit setRunColor(currentShapeIndex, "yellow");
+			emit updateCommandList(currentShapeIndex, "running");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
 			if (Ava->connected && Ava->paint.size() >= 2){
@@ -219,7 +221,8 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 			}
 			if (Ava->connected) { Ava->strokeInProgress = false; }
 		}
-		emit setRunColor(currentShapeIndex, "green");
+		emit updateCommandList(currentShapeIndex, "finished");
+
 		currentShapeIndex++;
 	}
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;

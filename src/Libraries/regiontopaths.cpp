@@ -453,7 +453,7 @@ public:
 
 	// define one path inside the border of pixels for a region
 	void definePath(DrawWindow *W = NULL) {
-		int debug = 1;
+		int debug = 0;
 		// reset the lists
 		while (!one_border_candidate_pixels.empty()) { one_border_candidate_pixels.pop_back(); }
 		while (!boundary.empty()) { boundary.pop_back(); }
@@ -548,7 +548,7 @@ public:
 
 		int num_loops = 1;
 		while (1 && num_loops < 20 && one_border_candidate_pixels.size()>0) {
-			printf("IMA6.5 %i %i\n", num_loops, (int)one_border_candidate_pixels.size());
+			//printf("IMA6.5 %i %i\n", num_loops, (int)one_border_candidate_pixels.size());
 			num_loops++;
 			// update the grid and consider everything painted to be ok to paint over again
 			for (int i = 0; i < (int)candidate_pixels.size(); i++) {
@@ -567,7 +567,7 @@ public:
 		}
 
 		uint64 end = GetTimeMs64();
-		printf("PATHS TIME %llu ms\n", end - start);
+		//printf("PATHS TIME %llu ms\n", end - start);
 
 	}
 

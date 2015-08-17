@@ -26,6 +26,8 @@ public:
 	int id;
 	bool isBreakPoint;
 	bool fill;
+	bool hasPainted;
+	bool hasSimulated;
 
 	void setID(int i) { id = i; }
 	int getID(int i = -1) {
@@ -89,7 +91,7 @@ public:
 		return NULL;
 	}
 
-	Shape() { id = -1; type = "shape"; isBreakPoint = false; fill = false; }
+	Shape() { id = -1; type = "shape"; isBreakPoint = false; fill = false; hasPainted = false; hasSimulated = false; }
 	~Shape() { }
 };
 

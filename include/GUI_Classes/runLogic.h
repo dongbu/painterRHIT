@@ -36,8 +36,7 @@ public slots:
 	void reset();
 
 signals:
-    void setRunColor(int index, QString runToggle);
-    void clearRunColors();
+	void updateCommandList(int index, QString runToggle);
 };
 
 #endif // RUNLOGIC_H

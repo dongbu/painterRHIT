@@ -46,8 +46,7 @@ private slots:
 
 public slots:
     void populate();
-	void recieveRunColor(int index, QString toggle);
-    void recieveClearRunColors();
+	void updateCommandList(int index, QString toggle);
 
 signals:
     void modifiedCommand();

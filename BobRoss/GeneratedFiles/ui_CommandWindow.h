@@ -38,18 +38,19 @@ public:
     QAction *actionBackward;
     QAction *actionPause;
     QWidget *centralwidget;
-    QWidget *horizontalLayoutWidget;
-    QHBoxLayout *horizontalLayout;
-    QTableWidget *tableWidget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
-    QPushButton *MoveUp;
-    QPushButton *MoveDown;
+    QHBoxLayout *horizontalLayout_3;
     QPushButton *DeleteCommand;
-    QWidget *horizontalLayoutWidget_2;
+    QPushButton *MoveDown;
+    QPushButton *MoveUp;
+    QSpacerItem *horizontalSpacer_2;
     QHBoxLayout *horizontalLayout_2;
     QLabel *CommandsRun;
     QSpacerItem *horizontalSpacer;
     QLabel *TimeEllapsed;
+    QSpacerItem *horizontalSpacer_3;
+    QTableWidget *tableWidget;
     QMenuBar *menubar;
     QMenu *menuSimulator;
     QStatusBar *statusbar;
@@ -59,7 +60,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(392, 398);
+        CommandWindow->resize(442, 471);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -87,44 +88,39 @@ public:
         actionPause->setIcon(icon4);
         centralwidget = new QWidget(CommandWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
-        horizontalLayoutWidget = new QWidget(centralwidget);
-        horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 10, 371, 261));
-        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        tableWidget = new QTableWidget(horizontalLayoutWidget);
-        tableWidget->setObjectName(QStringLiteral("tableWidget"));
-
-        horizontalLayout->addWidget(tableWidget);
-
-        verticalLayout = new QVBoxLayout();
+        layoutWidget = new QWidget(centralwidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 320, 421, 67));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        MoveUp = new QPushButton(horizontalLayoutWidget);
-        MoveUp->setObjectName(QStringLiteral("MoveUp"));
-
-        verticalLayout->addWidget(MoveUp);
-
-        MoveDown = new QPushButton(horizontalLayoutWidget);
-        MoveDown->setObjectName(QStringLiteral("MoveDown"));
-
-        verticalLayout->addWidget(MoveDown);
-
-        DeleteCommand = new QPushButton(horizontalLayoutWidget);
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        DeleteCommand = new QPushButton(layoutWidget);
         DeleteCommand->setObjectName(QStringLiteral("DeleteCommand"));
 
-        verticalLayout->addWidget(DeleteCommand);
+        horizontalLayout_3->addWidget(DeleteCommand);
+
+        MoveDown = new QPushButton(layoutWidget);
+        MoveDown->setObjectName(QStringLiteral("MoveDown"));
+
+        horizontalLayout_3->addWidget(MoveDown);
+
+        MoveUp = new QPushButton(layoutWidget);
+        MoveUp->setObjectName(QStringLiteral("MoveUp"));
+
+        horizontalLayout_3->addWidget(MoveUp);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_3->addItem(horizontalSpacer_2);
 
 
-        horizontalLayout->addLayout(verticalLayout);
+        verticalLayout->addLayout(horizontalLayout_3);
 
-        horizontalLayoutWidget_2 = new QWidget(centralwidget);
-        horizontalLayoutWidget_2->setObjectName(QStringLiteral("horizontalLayoutWidget_2"));
-        horizontalLayoutWidget_2->setGeometry(QRect(19, 270, 241, 31));
-        horizontalLayout_2 = new QHBoxLayout(horizontalLayoutWidget_2);
+        horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        CommandsRun = new QLabel(horizontalLayoutWidget_2);
+        CommandsRun = new QLabel(layoutWidget);
         CommandsRun->setObjectName(QStringLiteral("CommandsRun"));
 
         horizontalLayout_2->addWidget(CommandsRun);
@@ -133,15 +129,28 @@ public:
 
         horizontalLayout_2->addItem(horizontalSpacer);
 
-        TimeEllapsed = new QLabel(horizontalLayoutWidget_2);
+        TimeEllapsed = new QLabel(layoutWidget);
         TimeEllapsed->setObjectName(QStringLiteral("TimeEllapsed"));
 
         horizontalLayout_2->addWidget(TimeEllapsed);
 
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_3);
+
+
+        verticalLayout->addLayout(horizontalLayout_2);
+
+        tableWidget = new QTableWidget(centralwidget);
+        tableWidget->setObjectName(QStringLiteral("tableWidget"));
+        tableWidget->setGeometry(QRect(10, 10, 417, 305));
         CommandWindow->setCentralWidget(centralwidget);
+        layoutWidget->raise();
+        tableWidget->raise();
+        tableWidget->raise();
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 392, 26));
+        menubar->setGeometry(QRect(0, 0, 442, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);
@@ -192,9 +201,9 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPause->setToolTip(QApplication::translate("CommandWindow", "pause simulation", 0));
 #endif // QT_NO_TOOLTIP
-        MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
-        MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));
         DeleteCommand->setText(QApplication::translate("CommandWindow", "Delete", 0));
+        MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));
+        MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
         CommandsRun->setText(QApplication::translate("CommandWindow", "x/x", 0));
         TimeEllapsed->setText(QApplication::translate("CommandWindow", "0:00 ellapsed", 0));
         menuSimulator->setTitle(QApplication::translate("CommandWindow", "Simulator", 0));
