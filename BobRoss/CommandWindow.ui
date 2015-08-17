@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
-    <height>471</height>
+    <width>510</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>320</y>
-      <width>421</width>
+      <width>491</width>
       <height>67</height>
      </rect>
     </property>
@@ -87,7 +87,7 @@
        <item>
         <widget class="QLabel" name="TimeEllapsed">
          <property name="text">
-          <string>0:00 ellapsed</string>
+          <string>0:00 elapsed</string>
          </property>
         </widget>
        </item>
@@ -113,21 +113,18 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>417</width>
+      <width>491</width>
       <height>305</height>
      </rect>
     </property>
    </widget>
-   <zorder>layoutWidget</zorder>
-   <zorder>tableWidget</zorder>
-   <zorder>tableWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>442</width>
+     <width>510</width>
      <height>26</height>
     </rect>
    </property>

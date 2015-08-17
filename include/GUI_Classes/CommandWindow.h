@@ -25,8 +25,11 @@ private:
 	QTimer *timer;
 	QTime startTime;
 	QDialog *colorForm;
+	QComboBox *modeBox;
+	QSpinBox *delayTime;
+	QLabel *delayTimeLabel;
+	QAction *delayTimeLabel_action, *delayTime_action;
 	Ui::colorChange colorUi;
-
 	int secondCount, minuteCount, commandsFinished;
 	bool minPrep;
 
@@ -37,6 +40,9 @@ private slots:
     void launchRightClick(QPoint p);
     void menuSort(QAction *a);
 	void cellChange(int curRow, int curCol, int prevRow, int prevCol);
+	void updateMode();
+	void disableModeSetting();
+	void enableModeSetting();
 
 	void drawingStarted();
 	void drawingPaused();
@@ -53,6 +59,7 @@ signals:
 	void highlightShape(int index);
     void runFrom(int index);
     void runOnly(int index);
+	void modeUpdated(QString mode, int delay);
 };
 
 #endif // COMMANDWINDOW_H

@@ -60,7 +60,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(442, 471);
+        CommandWindow->resize(510, 523);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -90,7 +90,7 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 320, 421, 67));
+        layoutWidget->setGeometry(QRect(10, 320, 491, 67));
         verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
@@ -143,14 +143,11 @@ public:
 
         tableWidget = new QTableWidget(centralwidget);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(10, 10, 417, 305));
+        tableWidget->setGeometry(QRect(10, 10, 491, 305));
         CommandWindow->setCentralWidget(centralwidget);
-        layoutWidget->raise();
-        tableWidget->raise();
-        tableWidget->raise();
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 442, 26));
+        menubar->setGeometry(QRect(0, 0, 510, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);
@@ -205,7 +202,7 @@ public:
         MoveDown->setText(QApplication::translate("CommandWindow", "Move Down", 0));
         MoveUp->setText(QApplication::translate("CommandWindow", "Move Up", 0));
         CommandsRun->setText(QApplication::translate("CommandWindow", "x/x", 0));
-        TimeEllapsed->setText(QApplication::translate("CommandWindow", "0:00 ellapsed", 0));
+        TimeEllapsed->setText(QApplication::translate("CommandWindow", "0:00 elapsed", 0));
         menuSimulator->setTitle(QApplication::translate("CommandWindow", "Simulator", 0));
         toolBar->setWindowTitle(QApplication::translate("CommandWindow", "toolBar", 0));
     } // retranslateUi

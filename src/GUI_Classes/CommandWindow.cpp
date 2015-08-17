@@ -28,7 +28,7 @@ ui(new Ui::CommandWindow)
 	minPrep = false;
 
 	ui->tableWidget->setColumnCount(5);
-        ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 	connect(ui->tableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(cellChange(int, int, int, int)));
 
@@ -57,6 +57,31 @@ ui(new Ui::CommandWindow)
 	colorUi.tableWidget->resizeColumnsToContents();
 	colorUi.ChangeAll->setChecked(true);
 	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
+
+	// setting up misc. modes
+	modeBox = new QComboBox();
+	delayTimeLabel = new QLabel("delay (ms): ");
+	QStringList modes;
+	modes << "Simulate Delayed Brush" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
+	modeBox->addItems(modes);
+	ui->toolBar->insertWidget(ui->actionPlay, modeBox);
+	connect(modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMode()));
+
+	delayTime = new QSpinBox();
+	delayTime->setFixedWidth(40);
+	delayTime->setMinimum(0);
+	delayTime->setMaximum(30);
+	delayTime->setSingleStep(1);
+	delayTime->setValue(10);
+	ui->toolBar->insertSeparator(ui->actionPlay);
+	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
+	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
+	ui->toolBar->insertSeparator(ui->actionPlay);
+	connect(delayTime, SIGNAL(valueChanged(int)), this, SLOT(updateMode()));
+
+	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(disableModeSetting()));
+	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(enableModeSetting()));
+
 
 	populate();
 	this->hide();
@@ -197,34 +222,38 @@ void CommandWindow::menuSort(QAction *a) {
 		}
 	} else if (a->text() == "Change Color") {
 		int curRow = ui->tableWidget->currentRow();
+		QString name = QString::fromStdString(shapes->at(curRow)->type);
+		colorUi.tableWidget->setItem(0, NAME_COL, new QTableWidgetItem(name));
+
 		cv::Scalar penCol = shapes->at(curRow)->getPenColor();
 		QTableWidgetItem *rgb = new QTableWidgetItem();
 		rgb->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
-		colorUi.tableWidget->setItem(0, RGB_COL, rgb); //rgb
+		colorUi.tableWidget->setItem(0, RGB_COL, rgb);
 
-		colorUi.comboBox->setCurrentText("current color");
 		if (shapes->at(curRow)->isBreakPoint) {
 		colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("yes"));
 		} else {
 			colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("no"));
 		}
+
 		if (shapes->at(curRow)->hasPainted) { //paint col
-			ui->tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("yes"));
+			colorUi.tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("yes"));
 		} else {
-			ui->tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("no"));
+			colorUi.tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("no"));
 		}
+
 		if (shapes->at(curRow)->hasSimulated) { //sim col
-			ui->tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("yes"));
+			colorUi.tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("yes"));
 		} else {
-			ui->tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("no"));
+			colorUi.tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("no"));
 		}
-		
+
 		colorUi.tableWidget->item(0, BREAK_COL)->setTextAlignment(Qt::AlignCenter);
 		colorUi.tableWidget->item(0, SIM_COL)->setTextAlignment(Qt::AlignCenter);
-		colorUi.tableWidget->item(0, NAME_COL)->setTextAlignment(Qt::AlignCenter);
 		colorUi.tableWidget->item(0, PAINT_COL)->setTextAlignment(Qt::AlignCenter);
-
-		colorUi.tableWidget->setItem(0, NAME_COL, new QTableWidgetItem(*ui->tableWidget->item(curRow, NAME_COL)));
+		colorUi.tableWidget->item(0, NAME_COL)->setTextAlignment(Qt::AlignCenter);
+		
+		colorUi.comboBox->setCurrentText("current color");
 		colorForm->show();
 	}
 }
@@ -289,7 +318,7 @@ void CommandWindow::drawingPaused() {
 
 void CommandWindow::drawingCleared() {
 	this->timer->stop();
-	ui->TimeEllapsed->setText(QString::number(0) + QString(":") + QString::number(0) + QString(" ellapsed"));
+	ui->TimeEllapsed->setText(QString::number(0) + QString(":") + QString::number(0) + QString(" elapsed"));
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 	secondCount = 0;
 	minuteCount = 0;
@@ -307,7 +336,7 @@ void CommandWindow::showTime() {
 		minuteCount++;
 	}
 
-	ui->TimeEllapsed->setText(QString::number(minuteCount) + QString(":") + QString::number(sec) + QString(" ellapsed"));
+	ui->TimeEllapsed->setText(QString::number(minuteCount) + QString(":") + QString::number(sec) + QString(" elapsed"));
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
 
@@ -380,4 +409,51 @@ std::vector<int> CommandWindow::getColor(QString col) {
 	}
 
 	return toReturn;
+}
+
+void CommandWindow::updateMode() {
+	if (modeBox->currentText() == "Simulate Delayed Brush") {
+		ui->actionBackward->setDisabled(false);
+		ui->actionForward->setDisabled(false);
+		delayTimeLabel_action->setVisible(true);
+		delayTime_action->setVisible(true);
+	} 
+	else if (modeBox->currentText() == "Simulate Real Brush") {
+		ui->actionBackward->setDisabled(false);
+		ui->actionForward->setDisabled(false);
+		delayTimeLabel_action->setVisible(true);
+		delayTime_action->setVisible(true);
+	}
+	else if (modeBox->currentText() == "Non-touch robot motion") {
+		ui->actionBackward->setDisabled(true);
+		ui->actionForward->setDisabled(true);
+		delayTimeLabel_action->setVisible(false);
+		delayTime_action->setVisible(false);
+	}
+	else if (modeBox->currentText() == "Paint w/o feedback") {
+		ui->actionBackward->setDisabled(true);
+		ui->actionForward->setDisabled(true);
+		delayTimeLabel_action->setVisible(false);
+		delayTime_action->setVisible(false);
+	}
+	else if (modeBox->currentText() == "Paint w/ feedback") {
+		ui->actionBackward->setDisabled(true);
+		ui->actionForward->setDisabled(true);
+		delayTimeLabel_action->setVisible(false);
+		delayTime_action->setVisible(false);
+	}
+
+	emit modeUpdated(modeBox->currentText(), delayTime->text().toInt());
+}
+
+void CommandWindow::enableModeSetting() {
+	this->modeBox->setDisabled(false);
+	this->delayTime->setDisabled(false);
+	this->delayTimeLabel->setDisabled(false);
+}
+
+void CommandWindow::disableModeSetting() {
+	this->modeBox->setDisabled(true);
+	this->delayTime->setDisabled(true);
+	this->delayTimeLabel->setDisabled(true);
 }

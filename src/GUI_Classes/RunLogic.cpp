@@ -1,8 +1,6 @@
 #include "RunLogic.h"
 #include <windows.h>
 
-int COMMAND_DELAY = 10; //(ms)
-
 /**
  * @brief constructor
  * @param width
@@ -10,6 +8,7 @@ int COMMAND_DELAY = 10; //(ms)
  * @param shapes
  */
 RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
+	COMMAND_DELAY = 10; //ms
 	this->width = width;
 	this->height = height;
 	this->shapes = shapes;
@@ -97,6 +96,16 @@ void RunLogic::runClicked() {
 	running = true;
 	auto d1 = std::async(&RunLogic::DrawingThread, this, simWin, Ava);
 	stepTaken = 2;
+	//if (mode == "Simulate Delayed Brush") {
+	//}
+	//else if (mode == "Simulate Real Brush") {
+	//}
+	//else if (mode == "Non-touch robot motion") {
+	//}
+	//else if (mode == "Paint w/o feedback") {
+	//}
+	//else if (mode == "Paint w/ feedback") {
+	//}
 }
 
 /**
@@ -240,4 +249,10 @@ void RunLogic::reset(){
 	clearClicked();
 	simWin = new DrawWindow(width, height, "Simulation Window");
 	//simWin->hideWindow();
+}
+
+void RunLogic::updateMode(QString mode, int delay) {
+	printf("run logic hit update mode\n");
+	this->mode = mode;
+	this->COMMAND_DELAY = delay;
 }
