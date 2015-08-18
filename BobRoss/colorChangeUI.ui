@@ -120,17 +120,32 @@
       </item>
       <item>
        <property name="text">
+        <string>dark grey</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>medium grey</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>light grey</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>white</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>yelow</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>orange</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>yellow</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>green</string>
        </property>
       </item>
       <item>
@@ -140,12 +155,17 @@
       </item>
       <item>
        <property name="text">
+        <string>purple</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>blue</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>purple</string>
+        <string>green</string>
        </property>
       </item>
      </widget>

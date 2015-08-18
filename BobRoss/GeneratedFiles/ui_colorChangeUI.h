@@ -132,12 +132,16 @@ public:
         comboBox->insertItems(0, QStringList()
          << QApplication::translate("colorChange", "current color", 0)
          << QApplication::translate("colorChange", "black", 0)
+         << QApplication::translate("colorChange", "dark grey", 0)
+         << QApplication::translate("colorChange", "medium grey", 0)
+         << QApplication::translate("colorChange", "light grey", 0)
+         << QApplication::translate("colorChange", "white", 0)
+         << QApplication::translate("colorChange", "yelow", 0)
          << QApplication::translate("colorChange", "orange", 0)
-         << QApplication::translate("colorChange", "yellow", 0)
-         << QApplication::translate("colorChange", "green", 0)
          << QApplication::translate("colorChange", "red", 0)
-         << QApplication::translate("colorChange", "blue", 0)
          << QApplication::translate("colorChange", "purple", 0)
+         << QApplication::translate("colorChange", "blue", 0)
+         << QApplication::translate("colorChange", "green", 0)
         );
     } // retranslateUi
 

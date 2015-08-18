@@ -366,49 +366,69 @@ void CommandWindow::colorChangeConfirmed() {
 * @brief transforms a text color into useable rgb code.
 */
 std::vector<int> CommandWindow::getColor(QString col) {
-	std::vector<int> toReturn;
+	std::vector<int> toReplace;
 	if (col == "black") {
-		toReturn.push_back(0);
-		toReturn.push_back(0);
-		toReturn.push_back(0);
+		toReplace.push_back(0);
+		toReplace.push_back(0);
+		toReplace.push_back(0);
 	}
 	else if (col == "orange") {
-		toReturn.push_back(30);
-		toReturn.push_back(144);
-		toReturn.push_back(255);
+		toReplace.push_back(30);
+		toReplace.push_back(144);
+		toReplace.push_back(255);
 	}
 	else if (col == "yellow") {
-		toReturn.push_back(0);
-		toReturn.push_back(255);
-		toReturn.push_back(255);
+		toReplace.push_back(0);
+		toReplace.push_back(255);
+		toReplace.push_back(255);
 	}
 	else if (col == "green") {
-		toReturn.push_back(34);
-		toReturn.push_back(139);
-		toReturn.push_back(34);
+		toReplace.push_back(34);
+		toReplace.push_back(139);
+		toReplace.push_back(34);
 	}
 	else if (col == "red") {
-		toReturn.push_back(34);
-		toReturn.push_back(34);
-		toReturn.push_back(178);
+		toReplace.push_back(34);
+		toReplace.push_back(34);
+		toReplace.push_back(178);
 	}
 	else if (col == "blue") {
-		toReturn.push_back(255);
-		toReturn.push_back(144);
-		toReturn.push_back(30);
+		toReplace.push_back(255);
+		toReplace.push_back(144);
+		toReplace.push_back(30);
 	}
 	else if (col == "purple") {
-		toReturn.push_back(240);
-		toReturn.push_back(32);
-		toReturn.push_back(160);
+		toReplace.push_back(240);
+		toReplace.push_back(32);
+		toReplace.push_back(160);
+	}
+	else if (col == "dark grey"){
+		toReplace.push_back(75);
+		toReplace.push_back(75);
+		toReplace.push_back(75);
+	}
+	else if (col == "medium grey"){
+		toReplace.push_back(150);
+		toReplace.push_back(150);
+		toReplace.push_back(150);
+	}
+	else if (col == "light grey"){
+		toReplace.push_back(225);
+		toReplace.push_back(225);
+		toReplace.push_back(225);
+	}
+	else if (col == "white"){
+		toReplace.push_back(255);
+		toReplace.push_back(255);
+		toReplace.push_back(255);
 	}
 	else {
-		toReturn.push_back(-1);
-		toReturn.push_back(-1);
-		toReturn.push_back(-1);
+		toReplace.push_back(-1);
+		toReplace.push_back(-1);
+		toReplace.push_back(-1);
 	}
 
-	return toReturn;
+	return toReplace;
 }
 
 void CommandWindow::updateMode() {

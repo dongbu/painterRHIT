@@ -26,7 +26,7 @@ ui(new Ui::Sketchpad)
 
 	//setting up Qt's misc. toolbars & windows.
 	ui->setupUi(this);
-	this->setWindowTitle(title.c_str());
+	this->setWindowTitle(("RHobart - " + title).c_str());
 	setupQt();
 
 	//Linking opencv to Qt.
@@ -161,7 +161,7 @@ void Sketchpad::setupQt() {
 	color = new QComboBox();
 	thickness = new QSpinBox();
 	QStringList colors;
-	colors << "black" << "orange" << "yellow" << "green" << "red" << "blue" << "purple";
+	colors << "black" << "dark grey" << "medium grey" << "light grey" << "white" << "yellow" << "orange" << "red" << "purple" << "blue" << "green";
 	color->addItems(colors);
 	thickness->setFixedWidth(60);
 	thickness->setMinimum(1);
@@ -339,7 +339,7 @@ void Sketchpad::refresh(int x, int y) {
 		startNewCommand();
 		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 		shapes->drawAll(cvWindow); //redraw window
-		this->setWindowTitle((title + "*").c_str());
+		this->setWindowTitle(("RHobart - " + title + "*").c_str());
 		emit prodOtherWindows();
 	}
 	else {
@@ -436,6 +436,26 @@ void Sketchpad::getColor() {
 		toReplace.push_back(32);
 		toReplace.push_back(160);
 	}
+	else if (col == "dark grey"){
+		toReplace.push_back(75);
+		toReplace.push_back(75);
+		toReplace.push_back(75);
+	}
+	else if (col == "medium grey"){
+		toReplace.push_back(150);
+		toReplace.push_back(150);
+		toReplace.push_back(150);
+	}
+	else if (col == "light grey"){
+		toReplace.push_back(225);
+		toReplace.push_back(225);
+		toReplace.push_back(225);
+	}
+	else if (col == "white"){
+		toReplace.push_back(255);
+		toReplace.push_back(255);
+		toReplace.push_back(255);
+	}
 	this->rgbColor = toReplace;
 }
 
@@ -455,7 +475,7 @@ void Sketchpad::browseClicked() {
 }
 
 void Sketchpad::kMeansAccepted() {
-	this->setWindowTitle((title + "*").c_str());
+	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
 	std::string location = kMeansUi.ImageInput->text().toStdString();
 	if (location == "" && !webcamSnapActive) return; //make sure they didn't click "ok" with no image.
@@ -478,7 +498,7 @@ void Sketchpad::kMeansAccepted() {
 }
 
 void Sketchpad::cannyAccepted() {
-	this->setWindowTitle((title + "*").c_str());
+	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
 	std::string location = cannyUi.ImageInput->text().toStdString();
 	if (location == "") return; //make sure they didn't click "ok" with no image.
@@ -549,7 +569,7 @@ void Sketchpad::saveAsClicked() {
 		QString temp = saveDirectory.selectedFiles().at(0);
 		temp.chop(4);
 		title = temp.split("/").back().toStdString();
-		this->setWindowTitle(temp.split("/").back());
+		this->setWindowTitle(("RHobart - " + title).c_str());
 	}
 }
 /**
@@ -559,7 +579,7 @@ void Sketchpad::saveClicked() {
 	if (paintingNamePath == "unpathed") saveAsClicked();
 	else {
 		emit save(paintingNamePath);
-		this->setWindowTitle(title.c_str());
+		this->setWindowTitle(("RHobart - " + title).c_str());
 	}
 }
 
@@ -594,7 +614,7 @@ bool Sketchpad::openClicked() {
 void Sketchpad::newClicked(){
 	this->shapes->clear();
 	this->paintingNamePath = "unpathed";
-	this->setWindowTitle("untitled");
+	this->setWindowTitle("RHobart - untitled");
 	this->redraw();
 }
 
