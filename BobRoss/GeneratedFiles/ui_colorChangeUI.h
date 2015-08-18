@@ -39,14 +39,14 @@ public:
     QWidget *layoutWidget1;
     QHBoxLayout *horizontalLayout_2;
     QLabel *ChangeAllLabel_2;
-    QSpacerItem *horizontalSpacer_2;
     QComboBox *comboBox;
+    QSpacerItem *horizontalSpacer_2;
 
     void setupUi(QDialog *colorChange)
     {
         if (colorChange->objectName().isEmpty())
             colorChange->setObjectName(QStringLiteral("colorChange"));
-        colorChange->resize(356, 163);
+        colorChange->resize(460, 163);
         tableWidget = new QTableWidget(colorChange);
         if (tableWidget->columnCount() < 3)
             tableWidget->setColumnCount(3);
@@ -61,10 +61,10 @@ public:
         QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
         tableWidget->setVerticalHeaderItem(0, __qtablewidgetitem3);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(10, 40, 331, 61));
+        tableWidget->setGeometry(QRect(10, 40, 441, 61));
         layoutWidget = new QWidget(colorChange);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 120, 337, 30));
+        layoutWidget->setGeometry(QRect(10, 120, 441, 30));
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -89,7 +89,7 @@ public:
 
         layoutWidget1 = new QWidget(colorChange);
         layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
-        layoutWidget1->setGeometry(QRect(10, 10, 331, 24));
+        layoutWidget1->setGeometry(QRect(10, 10, 441, 24));
         horizontalLayout_2 = new QHBoxLayout(layoutWidget1);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -98,14 +98,14 @@ public:
 
         horizontalLayout_2->addWidget(ChangeAllLabel_2);
 
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_2->addItem(horizontalSpacer_2);
-
         comboBox = new QComboBox(layoutWidget1);
         comboBox->setObjectName(QStringLiteral("comboBox"));
 
         horizontalLayout_2->addWidget(comboBox);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_2);
 
 
         retranslateUi(colorChange);
@@ -127,7 +127,7 @@ public:
         ChangeAllLabel->setText(QApplication::translate("colorChange", "Change all instances of this color", 0));
         ChangeAll->setText(QString());
         ConfirmButton->setText(QApplication::translate("colorChange", "Confirm", 0));
-        ChangeAllLabel_2->setText(QApplication::translate("colorChange", "Pick a new color:", 0));
+        ChangeAllLabel_2->setText(QApplication::translate("colorChange", "Pick a new color:  ", 0));
         comboBox->clear();
         comboBox->insertItems(0, QStringList()
          << QApplication::translate("colorChange", "current color", 0)

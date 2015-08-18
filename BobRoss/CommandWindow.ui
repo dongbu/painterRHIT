@@ -6,33 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>398</height>
+    <width>510</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Command List</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="horizontalLayoutWidget">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>371</width>
-      <height>261</height>
+      <y>320</y>
+      <width>491</width>
+      <height>67</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QTableWidget" name="tableWidget"/>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QPushButton" name="MoveUp">
+        <widget class="QPushButton" name="DeleteCommand">
          <property name="text">
-          <string>Move Up</string>
+          <string>Delete</string>
          </property>
         </widget>
        </item>
@@ -44,54 +41,82 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="DeleteCommand">
+        <widget class="QPushButton" name="MoveUp">
          <property name="text">
-          <string>Delete</string>
+          <string>Move Up</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="CommandsRun">
+         <property name="text">
+          <string>x/x</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>118</width>
+           <height>26</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="TimeEllapsed">
+         <property name="text">
+          <string>0:00 elapsed</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget_2">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>19</x>
-      <y>270</y>
-      <width>241</width>
-      <height>31</height>
+      <x>10</x>
+      <y>10</y>
+      <width>491</width>
+      <height>305</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="CommandsRun">
-       <property name="text">
-        <string>x/x</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>118</width>
-         <height>26</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="TimeEllapsed">
-       <property name="text">
-        <string>0:00 ellapsed</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -99,7 +124,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>392</width>
+     <width>510</width>
      <height>26</height>
     </rect>
    </property>

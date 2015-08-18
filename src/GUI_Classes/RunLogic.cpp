@@ -1,8 +1,6 @@
 #include "RunLogic.h"
 #include <windows.h>
 
-int COMMAND_DELAY = 10; //(ms)
-
 /**
  * @brief constructor
  * @param width
@@ -10,6 +8,7 @@ int COMMAND_DELAY = 10; //(ms)
  * @param shapes
  */
 RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
+	COMMAND_DELAY = 10; //ms
 	this->width = width;
 	this->height = height;
 	this->shapes = shapes;
@@ -34,7 +33,9 @@ void RunLogic::clearClicked() {
 	simWin->show();
 	currentShapeIndex = 0;
 	stopIndex = shapes->length();
-	emit clearRunColors();
+	for (int i = 0; i < shapes->length(); i++) {
+		emit updateCommandList(i, "clear");
+	}
 }
 /**
  * @brief pauses simulation.
@@ -72,7 +73,7 @@ void RunLogic::backwardClicked() {
 
 	this->simWin->showWindow();
 	running = false;
-	emit setRunColor(currentShapeIndex, "white");
+	emit updateCommandList(currentShapeIndex, "clear");
 	simWin->clearWindow(255, 255, 255); //white
 	if (currentShapeIndex <= 0) {
 		stepTaken = 2;
@@ -95,6 +96,16 @@ void RunLogic::runClicked() {
 	running = true;
 	auto d1 = std::async(&RunLogic::DrawingThread, this, simWin, Ava);
 	stepTaken = 2;
+	//if (mode == "Simulate Delayed Brush") {
+	//}
+	//else if (mode == "Simulate Real Brush") {
+	//}
+	//else if (mode == "Non-touch robot motion") {
+	//}
+	//else if (mode == "Paint w/o feedback") {
+	//}
+	//else if (mode == "Paint w/ feedback") {
+	//}
 }
 
 /**
@@ -118,7 +129,7 @@ void RunLogic::runOnly(int index) {
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 
-	emit(setRunColor(index, "green"));
+	emit(updateCommandList(index, "finished"));
 	simWin->show();
 }
 
@@ -134,7 +145,7 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 		}
 
 		if (s->fill) { //painting filled region
-			emit setRunColor(currentShapeIndex, "yellow");
+			emit updateCommandList(currentShapeIndex, "running");
 			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
@@ -185,7 +196,7 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 			}
 		}
 		else { //painting polyline object
-			emit setRunColor(currentShapeIndex, "yellow");
+			emit updateCommandList(currentShapeIndex, "running");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
 			if (Ava->connected && Ava->paint.size() >= 2){
@@ -219,7 +230,8 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 			}
 			if (Ava->connected) { Ava->strokeInProgress = false; }
 		}
-		emit setRunColor(currentShapeIndex, "green");
+		emit updateCommandList(currentShapeIndex, "finished");
+
 		currentShapeIndex++;
 	}
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
@@ -237,4 +249,10 @@ void RunLogic::reset(){
 	clearClicked();
 	simWin = new DrawWindow(width, height, "Simulation Window");
 	//simWin->hideWindow();
+}
+
+void RunLogic::updateMode(QString mode, int delay) {
+	printf("run logic hit update mode\n");
+	this->mode = mode;
+	this->COMMAND_DELAY = delay;
 }

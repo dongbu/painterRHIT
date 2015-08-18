@@ -17,14 +17,16 @@ public:
 	
 private:
 	void DrawingThread(DrawWindow *W, CytonRunner *Ava);
+
+	QString mode;
     volatile bool running;
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;
-    int width, height;
+	int width, height, COMMAND_DELAY, stepTaken;
 	CytonRunner *Ava;
-	int stepTaken; //0 for back, 1 for forward, 2 for neither.
 
 public slots:
+	void updateMode(QString mode, int delay);
     void clearClicked();
     void pauseClicked();
     void forwardClicked();
@@ -36,8 +38,7 @@ public slots:
 	void reset();
 
 signals:
-    void setRunColor(int index, QString runToggle);
-    void clearRunColors();
+	void updateCommandList(int index, QString runToggle);
 };
 
 #endif // RUNLOGIC_H

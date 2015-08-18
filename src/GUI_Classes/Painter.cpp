@@ -195,8 +195,9 @@ void Painter::launchSimulation(){
 	connect(commandWin, SIGNAL(runFrom(int)), logic, SLOT(runFrom(int)));
 	connect(commandWin, SIGNAL(runOnly(int)), logic, SLOT(runOnly(int)));
 	connect(commandWin, SIGNAL(modifiedCommand()), logic, SLOT(shapesChanged()));
-	connect(logic, SIGNAL(setRunColor(int, QString)), commandWin, SLOT(recieveRunColor(int, QString)));
-	connect(logic, SIGNAL(clearRunColors()), commandWin, SLOT(recieveClearRunColors()));
+	connect(commandWin, SIGNAL(modeUpdated(QString, int)), logic, SLOT(updateMode(QString, int)));
+	connect(logic, SIGNAL(updateCommandList(int, QString)), commandWin, SLOT(updateCommandList(int, QString)));
+
 }
 
 /*

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
+    <width>460</width>
     <height>163</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>331</width>
+     <width>441</width>
      <height>61</height>
     </rect>
    </property>
@@ -48,7 +48,7 @@
     <rect>
      <x>10</x>
      <y>120</y>
-     <width>337</width>
+     <width>441</width>
      <height>30</height>
     </rect>
    </property>
@@ -94,7 +94,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>331</width>
+     <width>441</width>
      <height>24</height>
     </rect>
    </property>
@@ -102,22 +102,9 @@
     <item>
      <widget class="QLabel" name="ChangeAllLabel_2">
       <property name="text">
-       <string>Pick a new color:</string>
+       <string>Pick a new color:  </string>
       </property>
      </widget>
-    </item>
-    <item>
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <widget class="QComboBox" name="comboBox">
@@ -162,6 +149,19 @@
        </property>
       </item>
      </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
