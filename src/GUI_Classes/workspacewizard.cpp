@@ -186,7 +186,7 @@ void WorkspaceWizard::updateText(){
 		break;
 	case 3: //setup as many paint locations as necessary.
 		ui->Title->setText("Setup Paint Locations");
-		ui->Directions->setText("use keys to move the robot gripper tip above the paint location\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\nheight and orientation do not matter\npress 'e' to add a color\n The first location must be water");
+		ui->Directions->setText("use keys to move the robot gripper tip above the paint location\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\nheight and orientation do not matter\npress 'e' to add a color\n The first location must be water\n");
 		ui->ForwardButton->setText("Next");
 		nameEdit->setVisible(false);
 		browse->setVisible(false);

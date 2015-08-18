@@ -127,6 +127,7 @@ bool CytonRunner::shutdown(){
 			lastPaintColor = 0;
 			brushType = "";
 			Ec::shutdown();
+			this->connected = false;
 			printf("shut down\n");
 			return true;
 		}

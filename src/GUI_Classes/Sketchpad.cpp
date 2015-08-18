@@ -46,6 +46,13 @@ ui(new Ui::Sketchpad)
 	//ui->menuRobot->setDisabled(true);
 	connected = false;
 	ui->actionShutdown->setDisabled(true);
+	ui->actionABB->setCheckable(true);
+	ui->actionCyton->setCheckable(true);
+	ui->actionConnect->setDisabled(true);
+	ui->menuWorkspace->setDisabled(true);
+	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(setABB()));
+	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(setCyton()));
+	connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectRobot()));
 	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(completeConnection()));
 }
 
@@ -601,10 +608,10 @@ void Sketchpad::reset() {
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
-	QMessageBox *m = new QMessageBox();
-	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
-	m->setStandardButtons(QMessageBox::Ok);
-	if (m->exec() != QMessageBox::Ok) return;
+	//QMessageBox *m = new QMessageBox();
+	//m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
+	//m->setStandardButtons(QMessageBox::Ok);
+	//if (m->exec() != QMessageBox::Ok) return;
 
 	QFileDialog directory;
 	QStringList filters;
@@ -617,12 +624,6 @@ void Sketchpad::loadWorkspaceClicked(){
 
 //connects to the cyton and tells it to create a workspace.
 void Sketchpad::createWorkspaceClicked(){
-	QMessageBox *m = new QMessageBox();
-	m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
-	m->setStandardButtons(QMessageBox::Ok);
-	if (m->exec() != QMessageBox::Ok) return;
-
-	Ava->connect();
 	Ava->createWorkspace();
 }
 
@@ -630,7 +631,6 @@ void Sketchpad::createWorkspaceClicked(){
 void Sketchpad::completeConnection() {
 	Ava->startup();
 	connected = true;
-	ui->actionShutdown->setEnabled(true);
 }
 
 //tells the cyton to shut down.
@@ -653,4 +653,56 @@ void Sketchpad::highlightShape(int index) {
 	cvWindow->overlay(&Woverlay, 1);
 
 	translator->showImage(cvWindow->grid); //actually redraw the window
+}
+
+void Sketchpad::setABB(){
+	ui->actionCyton->setChecked(false);
+	if (ui->actionABB->isChecked()){
+		ui->actionConnect->setEnabled(true);
+		robotSelected = 1;
+	}
+	else{
+		ui->actionConnect->setDisabled(true);
+		robotSelected = -1;
+	}
+
+}
+
+void Sketchpad::setCyton(){
+	ui->actionABB->setChecked(false);
+	if (ui->actionCyton->isChecked()){
+		ui->actionConnect->setEnabled(true);
+		robotSelected = 0;
+	}
+	else{
+		ui->actionConnect->setDisabled(true);
+		robotSelected = -1;
+	}
+}
+
+void Sketchpad::connectRobot(){
+	if (robotSelected == 1){
+		printf("connect to ABB\n");
+	}
+	else if (robotSelected == 0){
+		if (!Ava->connected){
+			QMessageBox *m = new QMessageBox();
+			m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
+			m->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+			if (m->exec() != QMessageBox::Ok) return;
+
+			if (Ava->connect()){
+				ui->menuWorkspace->setEnabled(true);
+				ui->actionConnect->setText("Disconnect");
+				ui->menuSelect_Robot->setDisabled(true);
+			}
+		}
+		else{
+			if (Ava->shutdown()){
+				ui->menuWorkspace->setDisabled(true);
+				ui->actionConnect->setText("Connect");
+				ui->menuSelect_Robot->setEnabled(true);
+			}
+		}
+	}
 }

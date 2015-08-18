@@ -38,6 +38,8 @@ private:
 	std::string paintingNamePath, title;
 	int width, height;
 
+	int robotSelected; //0: cyton, 1: ABB
+
 	Shapes *shapes;
 	Shape *currentShape;
 	PolyLine *curPolyLine;
@@ -95,6 +97,11 @@ public slots:
 
 	void reset();
 	void highlightShape(int index);
+
+	void setABB();
+	void setCyton();
+
+	void connectRobot();
 
 signals:
 	void newPressed();

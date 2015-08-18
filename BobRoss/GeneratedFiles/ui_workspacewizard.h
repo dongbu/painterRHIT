@@ -51,7 +51,7 @@ public:
         WorkspaceWizard->resize(496, 467);
         Title = new QLabel(WorkspaceWizard);
         Title->setObjectName(QStringLiteral("Title"));
-        Title->setGeometry(QRect(10, 10, 381, 21));
+        Title->setGeometry(QRect(10, 10, 441, 21));
         ForwardButton = new QPushButton(WorkspaceWizard);
         ForwardButton->setObjectName(QStringLiteral("ForwardButton"));
         ForwardButton->setGeometry(QRect(410, 430, 75, 23));
@@ -60,13 +60,13 @@ public:
         BackButton->setGeometry(QRect(320, 430, 75, 23));
         Directions = new QLabel(WorkspaceWizard);
         Directions->setObjectName(QStringLiteral("Directions"));
-        Directions->setGeometry(QRect(10, 50, 361, 91));
+        Directions->setGeometry(QRect(10, 50, 471, 111));
         QuestionButton = new QPushButton(WorkspaceWizard);
         QuestionButton->setObjectName(QStringLiteral("QuestionButton"));
         QuestionButton->setGeometry(QRect(460, 10, 21, 21));
         verticalLayoutWidget = new QWidget(WorkspaceWizard);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(10, 150, 471, 261));
+        verticalLayoutWidget->setGeometry(QRect(10, 170, 471, 241));
         ItemLayout = new QVBoxLayout(verticalLayoutWidget);
         ItemLayout->setObjectName(QStringLiteral("ItemLayout"));
         ItemLayout->setContentsMargins(0, 0, 0, 0);

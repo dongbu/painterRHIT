@@ -50,12 +50,16 @@ public:
     QAction *actionChange_Add_Kmean;
     QAction *actionChange_Add_Canny;
     QAction *actionClear;
+    QAction *actionCyton;
+    QAction *actionABB;
+    QAction *actionConnect;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuRobot;
     QMenu *menuWorkspace;
+    QMenu *menuSelect_Robot;
     QMenu *menuWebcam;
     QMenu *menuImage;
     QStatusBar *statusbar;
@@ -174,6 +178,12 @@ public:
         QIcon icon18;
         icon18.addFile(QStringLiteral(":/Icon Storage/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionClear->setIcon(icon18);
+        actionCyton = new QAction(Sketchpad);
+        actionCyton->setObjectName(QStringLiteral("actionCyton"));
+        actionABB = new QAction(Sketchpad);
+        actionABB->setObjectName(QStringLiteral("actionABB"));
+        actionConnect = new QAction(Sketchpad);
+        actionConnect->setObjectName(QStringLiteral("actionConnect"));
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -184,13 +194,15 @@ public:
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 924, 26));
+        menubar->setGeometry(QRect(0, 0, 924, 21));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuRobot = new QMenu(menubar);
         menuRobot->setObjectName(QStringLiteral("menuRobot"));
         menuWorkspace = new QMenu(menuRobot);
         menuWorkspace->setObjectName(QStringLiteral("menuWorkspace"));
+        menuSelect_Robot = new QMenu(menuRobot);
+        menuSelect_Robot->setObjectName(QStringLiteral("menuSelect_Robot"));
         menuWebcam = new QMenu(menubar);
         menuWebcam->setObjectName(QStringLiteral("menuWebcam"));
         menuImage = new QMenu(menubar);
@@ -211,10 +223,13 @@ public:
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionSave);
         menuFile->addAction(actionSave_As);
+        menuRobot->addAction(menuSelect_Robot->menuAction());
+        menuRobot->addAction(actionConnect);
         menuRobot->addAction(menuWorkspace->menuAction());
-        menuRobot->addAction(actionShutdown);
         menuWorkspace->addAction(actionCreate);
         menuWorkspace->addAction(actionLoad);
+        menuSelect_Robot->addAction(actionCyton);
+        menuSelect_Robot->addAction(actionABB);
         menuWebcam->addAction(actionCalibrate);
         menuWebcam->addAction(actionView);
         menuWebcam->addAction(actionSwitch);
@@ -278,9 +293,13 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionClear->setToolTip(QApplication::translate("Sketchpad", "clear all", 0));
 #endif // QT_NO_TOOLTIP
+        actionCyton->setText(QApplication::translate("Sketchpad", "Cyton", 0));
+        actionABB->setText(QApplication::translate("Sketchpad", "ABB", 0));
+        actionConnect->setText(QApplication::translate("Sketchpad", "Connect", 0));
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
+        menuSelect_Robot->setTitle(QApplication::translate("Sketchpad", "Select Robot", 0));
         menuWebcam->setTitle(QApplication::translate("Sketchpad", "Webcam", 0));
         menuImage->setTitle(QApplication::translate("Sketchpad", "Image", 0));
         toolBar_2->setWindowTitle(QApplication::translate("Sketchpad", "toolBar_2", 0));

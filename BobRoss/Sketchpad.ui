@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -60,8 +60,16 @@
      <addaction name="actionCreate"/>
      <addaction name="actionLoad"/>
     </widget>
+    <widget class="QMenu" name="menuSelect_Robot">
+     <property name="title">
+      <string>Select Robot</string>
+     </property>
+     <addaction name="actionCyton"/>
+     <addaction name="actionABB"/>
+    </widget>
+    <addaction name="menuSelect_Robot"/>
+    <addaction name="actionConnect"/>
     <addaction name="menuWorkspace"/>
-    <addaction name="actionShutdown"/>
    </widget>
    <widget class="QMenu" name="menuWebcam">
     <property name="title">
@@ -332,6 +340,21 @@
    </property>
    <property name="toolTip">
     <string>clear all</string>
+   </property>
+  </action>
+  <action name="actionCyton">
+   <property name="text">
+    <string>Cyton</string>
+   </property>
+  </action>
+  <action name="actionABB">
+   <property name="text">
+    <string>ABB</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect</string>
    </property>
   </action>
  </widget>
