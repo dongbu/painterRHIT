@@ -13,9 +13,11 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -31,33 +33,87 @@ public:
     QPushButton *QuestionButton;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *ItemLayout;
+    QWidget *FormWidget;
+    QWidget *layoutWidget;
+    QFormLayout *formLayout;
+    QRadioButton *radioButton;
+    QLabel *label;
+    QRadioButton *radioButton_2;
+    QRadioButton *radioButton_3;
+    QLabel *label_3;
+    QLabel *label_2;
+    QPushButton *RFButton;
 
     void setupUi(QWidget *WorkspaceWizard)
     {
         if (WorkspaceWizard->objectName().isEmpty())
             WorkspaceWizard->setObjectName(QStringLiteral("WorkspaceWizard"));
-        WorkspaceWizard->resize(400, 300);
+        WorkspaceWizard->resize(496, 467);
         Title = new QLabel(WorkspaceWizard);
         Title->setObjectName(QStringLiteral("Title"));
         Title->setGeometry(QRect(10, 10, 381, 21));
         ForwardButton = new QPushButton(WorkspaceWizard);
         ForwardButton->setObjectName(QStringLiteral("ForwardButton"));
-        ForwardButton->setGeometry(QRect(310, 260, 75, 23));
+        ForwardButton->setGeometry(QRect(410, 430, 75, 23));
         BackButton = new QPushButton(WorkspaceWizard);
         BackButton->setObjectName(QStringLiteral("BackButton"));
-        BackButton->setGeometry(QRect(220, 260, 75, 23));
+        BackButton->setGeometry(QRect(320, 430, 75, 23));
         Directions = new QLabel(WorkspaceWizard);
         Directions->setObjectName(QStringLiteral("Directions"));
         Directions->setGeometry(QRect(10, 50, 361, 91));
         QuestionButton = new QPushButton(WorkspaceWizard);
         QuestionButton->setObjectName(QStringLiteral("QuestionButton"));
-        QuestionButton->setGeometry(QRect(370, 10, 21, 21));
+        QuestionButton->setGeometry(QRect(460, 10, 21, 21));
         verticalLayoutWidget = new QWidget(WorkspaceWizard);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(10, 150, 371, 80));
+        verticalLayoutWidget->setGeometry(QRect(10, 150, 471, 261));
         ItemLayout = new QVBoxLayout(verticalLayoutWidget);
         ItemLayout->setObjectName(QStringLiteral("ItemLayout"));
         ItemLayout->setContentsMargins(0, 0, 0, 0);
+        FormWidget = new QWidget(verticalLayoutWidget);
+        FormWidget->setObjectName(QStringLiteral("FormWidget"));
+        layoutWidget = new QWidget(FormWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(0, 0, 551, 91));
+        formLayout = new QFormLayout(layoutWidget);
+        formLayout->setObjectName(QStringLiteral("formLayout"));
+        formLayout->setContentsMargins(0, 0, 0, 0);
+        radioButton = new QRadioButton(layoutWidget);
+        radioButton->setObjectName(QStringLiteral("radioButton"));
+
+        formLayout->setWidget(0, QFormLayout::LabelRole, radioButton);
+
+        label = new QLabel(layoutWidget);
+        label->setObjectName(QStringLiteral("label"));
+
+        formLayout->setWidget(0, QFormLayout::FieldRole, label);
+
+        radioButton_2 = new QRadioButton(layoutWidget);
+        radioButton_2->setObjectName(QStringLiteral("radioButton_2"));
+
+        formLayout->setWidget(1, QFormLayout::LabelRole, radioButton_2);
+
+        radioButton_3 = new QRadioButton(layoutWidget);
+        radioButton_3->setObjectName(QStringLiteral("radioButton_3"));
+
+        formLayout->setWidget(2, QFormLayout::LabelRole, radioButton_3);
+
+        label_3 = new QLabel(layoutWidget);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        formLayout->setWidget(2, QFormLayout::FieldRole, label_3);
+
+        label_2 = new QLabel(layoutWidget);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        formLayout->setWidget(1, QFormLayout::FieldRole, label_2);
+
+
+        ItemLayout->addWidget(FormWidget);
+
+        RFButton = new QPushButton(WorkspaceWizard);
+        RFButton->setObjectName(QStringLiteral("RFButton"));
+        RFButton->setGeometry(QRect(10, 420, 131, 23));
 
         retranslateUi(WorkspaceWizard);
 
@@ -72,6 +128,13 @@ public:
         BackButton->setText(QApplication::translate("WorkspaceWizard", "Cancel", 0));
         Directions->setText(QApplication::translate("WorkspaceWizard", "Press \"Next\"' to continue", 0));
         QuestionButton->setText(QApplication::translate("WorkspaceWizard", "?", 0));
+        radioButton->setText(QApplication::translate("WorkspaceWizard", "Top-Left", 0));
+        label->setText(QApplication::translate("WorkspaceWizard", "undefined", 0));
+        radioButton_2->setText(QApplication::translate("WorkspaceWizard", "Top-Right", 0));
+        radioButton_3->setText(QApplication::translate("WorkspaceWizard", "Bottom-Left", 0));
+        label_3->setText(QApplication::translate("WorkspaceWizard", "undefined", 0));
+        label_2->setText(QApplication::translate("WorkspaceWizard", "undefined", 0));
+        RFButton->setText(QApplication::translate("WorkspaceWizard", "Regain Robot Focus", 0));
     } // retranslateUi
 
 };

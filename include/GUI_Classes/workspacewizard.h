@@ -20,10 +20,9 @@ public:
 private:
     Ui::WorkspaceWizard *ui;
 	int stage;
-	size_t numOfColors;
 	double s1, s2, s3, s4, s5, s6, s7;
+	QTableWidget *tab;
 	std::vector<cv::Point3d> canvasCorners;
-	std::vector<std::pair<int, cv::Point2d>> paint;
 	QLabel *paintCountLabel;
 	QLineEdit* nameEdit;
 	std::string workspaceName;
@@ -40,6 +39,7 @@ private:
 	void saveInfo();
 	void finishWizard();
 	std::string string_format(const std::string fmt, ...);
+	bool checkTable();
 
 
 protected:
@@ -50,6 +50,7 @@ private slots:
   void backPressed();
   void browsePressed();
   void helpPressed();
+  void resetSamples();
 
 };
 

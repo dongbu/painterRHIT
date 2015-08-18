@@ -18,7 +18,6 @@ ui(new Ui::WorkspaceWizard)
 	s1 = s2 = s3 = s4 = s5 = s6 = s7 = 0;
 
 	stage = 0;
-	numOfColors = 0;
 	workspaceName = "Desktop/Workspace";
 	moving = false;
 
@@ -44,6 +43,17 @@ ui(new Ui::WorkspaceWizard)
 	scaleSlide->setVisible(false);
 	ui->ItemLayout->addWidget(scaleSlide);
 
+
+	tab = new QTableWidget();
+	tab->setColumnCount(6);
+	tab->setRowCount(0);
+	QStringList temp;
+	tab->setColumnWidth(2, 40);
+	tab->setColumnWidth(3, 40);
+	tab->setColumnWidth(4, 40);
+	temp << "x" << "y"<< "r"<< "g"<< "b" << "sample";
+	tab->setHorizontalHeaderLabels(temp);
+	ui->ItemLayout->addWidget(tab);
 	//canvas corner selection
 	
 
@@ -61,8 +71,7 @@ ui(new Ui::WorkspaceWizard)
 	connect(ui->ForwardButton, SIGNAL(clicked()), this, SLOT(forwardPressed()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(browsePressed()));
 	connect(ui->QuestionButton, SIGNAL(clicked()), this, SLOT(helpPressed()));
-
-
+	connect(ui->RFButton, SIGNAL(clicked()), this, SLOT(resetSamples()));
 	forwardPressed(); //prevent "welcome" page from showing.
 
 }
@@ -81,7 +90,7 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 	if (moving) return;
 	Sleep(27);
 
-	if (stage == 1 || stage == 2 || stage == 3 || stage == 4 || stage == 5){
+	if (stage == 1 || stage == 2 || stage == 3){
 		QString pressedKey = event->text();
 		if (pressedKey == "w"){
 			moveDirection(0);
@@ -109,13 +118,6 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 		}
 		else if (pressedKey == "e"){
 			ui->ForwardButton->setEnabled(true);
-			if (stage == 5){
-				numOfColors++;
-				paintCountLabel->setText(QString("Number of Color Locations: " + QString::number(numOfColors)));
-			}
-			else{
-				paintCountLabel->setText("position saved!");
-			}
 			saveInfo();
 		}
 	}
@@ -136,8 +138,20 @@ void WorkspaceWizard::backPressed(){
 slot for the "Next" button.  closes and saves if on the last window (stage 6)
 */
 void WorkspaceWizard::forwardPressed(){
-	stage++;
-	updateText();
+	if (stage == 3){
+		if (checkTable()){
+			stage++;
+			updateText();
+		}
+		else{
+			this->paintCountLabel->setText("Please Fix The Cells In Red");
+			this->paintCountLabel->show();
+		}
+	}
+	else{
+		stage++;
+		updateText();
+	}
 }
 
 /*
@@ -150,56 +164,52 @@ void WorkspaceWizard::updateText(){
 	case 1: //setup home position
 		ui->BackButton->setText("Cancel");
 		ui->Title->setText("Setup Start Position");
-		ui->Directions->setText("Use keys to face the robot towards the canvas\nX: a/d, Y: w/s, z: u/j, z-rot: m,n\npress 'e' when finished");
+		ui->Directions->setText("Use keys to face the robot towards the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\npress 'e' when finished");
 		ui->QuestionButton->show();
 		ui->ForwardButton->setDisabled(true);
+		ui->verticalLayoutWidget->setVisible(false);
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
+		ui->RFButton->hide();
 		break;
-	case 2: //setup canvas corner one
+	case 2: //setup canvas corners
 		ui->Title->setText("Setup Canvas Corners");
-		ui->Directions->setText("Use keys to to touch the robot gripper to the selected corner of the canvas\nX: a/d, Y: w/s, z: u/j, z-rot: m,n \norientation does not matter\npress 'e' when finished");
-		ui->ForwardButton->setDisabled(true);
+		ui->Directions->setText("Use keys to touch the robot gripper to the selected corner of the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n \n\norientation does not matter\npress 'e' when finished");
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
+		tab->setVisible(false);
+		ui->verticalLayoutWidget->setVisible(true);
+		ui->FormWidget->setVisible(true);
+		ui->radioButton->setChecked(true);
 		ui->BackButton->setText("Back");
+		ui->RFButton->hide();
 		break;
-	case 3: //setup canvas corner two
-		ui->Title->setText("Setup Top Right Canvas Corner");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the top right corner of the canvas\norientation does not matter\npress 'e' when finished");
-		ui->ForwardButton->setDisabled(true);
-		paintCountLabel->setText("");
-		scaleSlide->setVisible(true);
-		break;
-	case 4: //setup canvas corner 3
-		ui->Title->setText("Setup Bottom Right Canvas Corner");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to touch the robot gripper to the bottom right corner of the canvas\norientation does not matter\npress 'e' when finished");
-		ui->ForwardButton->setDisabled(true);
-		paintCountLabel->setText("");
-		scaleSlide->setVisible(true);
-		break;
-	case 5: //setup as many paint locations as necessary.
-		numOfColors = 0;
+	case 3: //setup as many paint locations as necessary.
 		ui->Title->setText("Setup Paint Locations");
-		ui->Directions->setText("use keys 'w', 'a', 's', 'd', 'u', 'j', 'm', and 'n' to put the robot gripper tip above the paint location\nheight and orientation do not matter\npress 'e' to continue to next color");
-		paintCountLabel->setText("Number of Color Locations: 0");
+		ui->Directions->setText("use keys to move the robot gripper tip above the paint location\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\nheight and orientation do not matter\npress 'e' to add a color\n The first location must be water");
 		ui->ForwardButton->setText("Next");
 		nameEdit->setVisible(false);
 		browse->setVisible(false);
+		paintCountLabel->setVisible(false);
+		ui->FormWidget->setVisible(false);
+		tab->setVisible(true);
 		ui->QuestionButton->show();
 		scaleSlide->setVisible(true);
+		ui->RFButton->show();
 		break;
-	case 6: //finish it all off.
+	case 4: //finish it all off.
 		ui->Title->setText("Finish");
 		ui->Directions->setText("All Done!\nPut in a file name/location and press finish to load your brand new workspace!");
 		ui->ForwardButton->setText("Finish");
 		nameEdit->setVisible(true);
 		browse->setVisible(true);
+		tab->setVisible(false);
 		ui->QuestionButton->hide();
 		paintCountLabel->setText("Please fill out file path below");
 		scaleSlide->setVisible(false);
+		ui->RFButton->hide();
 		break;
-	case 7: //things are finished, we need to save now.
+	case 5: //things are finished, we need to save now.
 		finishWizard();
 		break;
 	default: //should never hit default.
@@ -305,19 +315,52 @@ void WorkspaceWizard::saveInfo(){
 		double y = trans.y();
 		double z = trans.z();
 
-		canvasCorners.at(stage - 2) = cv::Point3d(x, y, z);
-	}
-	else if (stage == 5){
-		if (numOfColors <= paint.size()){
-			paint.clear();
+		int cornerNum;
+		if (ui->radioButton->isChecked()){
+			cornerNum = 0;
+			ui->label->setText("x: " + QString::number(x).left(4) + " y: " + QString::number(y).left(4) + " z: " + QString::number(z).left(4));
 		}
+		else if (ui->radioButton_2->isChecked()){
+			cornerNum = 1;
+			ui->label_2->setText("x: " + QString::number(x).left(4) + " y: " + QString::number(y).left(4) + " z: " + QString::number(z).left(4));
+		}
+		else{
+			cornerNum = 2;
+			ui->label_3->setText("x: " + QString::number(x).left(4) + " y: " + QString::number(y).left(4) + " z: " + QString::number(z).left(4));
+		}
+
+		canvasCorners.at(cornerNum) = cv::Point3d(x, y, z);
+
+	}
+	else if (stage == 3){
 		getActualPlacement(actualEEPlacement);
 		actualCoord = actualEEPlacement.offsetTransformations()[0].coordSysXForm();
 		EcVector trans = actualCoord.translation();
 		double x = trans.x();
 		double y = trans.y();
 
-		paint.push_back(std::pair<int, cv::Point2d>(numOfColors, cv::Point2d(x, y)));
+		tab->insertRow(tab->rowCount());
+
+		QTableWidgetItem *iX, *iY, *iR, *iG, *iB, *iS;
+		iX = new QTableWidgetItem(QString::number(x));
+		iY = new QTableWidgetItem(QString::number(y));
+		iR = new QTableWidgetItem("0");
+		iG = new QTableWidgetItem("0");
+		iB = new QTableWidgetItem("0");
+		iS = new QTableWidgetItem("");
+
+		tab->setItem(tab->rowCount() - 1, 0, iX);
+		tab->setItem(tab->rowCount() - 1, 1, iY);
+		//paint.push_back(std::pair<int, cv::Point2d>(numOfColors, cv::Point2d(x, y)));
+		tab->setItem(tab->rowCount() - 1, 2,iR);
+		tab->setItem(tab->rowCount() - 1, 3, iG);
+		tab->setItem(tab->rowCount() - 1, 4, iB);
+		tab->setItem(tab->rowCount() - 1, 5, iS);
+
+		iS->setBackgroundColor(QColor(iR->text().toInt(), iG->text().toInt(), iB->text().toInt()));
+
+		this->resetSamples();
+
 	}
 }
 
@@ -346,14 +389,35 @@ void WorkspaceWizard::finishWizard(){
 	}
 	line.append("</canvas>");
 	line.append("<paintPickup>");
-	for (size_t i = 0; i < paint.size(); i++){
-		std::pair<int, cv::Point2d> p = paint.at(i);
-		line.append(string_format("<point x=\"%f\" y=\"%f\" id=\"%d\"/>", p.second.x, p.second.y, p.first));
+	//for (size_t i = 0; i < paint.size(); i++){
+	//	std::pair<int, cv::Point2d> p = paint.at(i);
+	//	line.append(string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", p.second.x, p.second.y, p.first, r.at(i), g.at(i), b.at(i)));
+	//}
+	for (int i = 0; i < tab->rowCount(); i++){
+		double x = tab->item(i, 0)->text().toDouble();
+		double y = tab->item(i, 1)->text().toDouble();
+		int r = tab->item(i, 2)->text().toInt();
+		int g = tab->item(i, 3)->text().toInt();
+		int b = tab->item(i, 4)->text().toInt();
+		if (i == 0){
+			r = g = b = -1;
+		}
+		line.append(string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", x, y, i, r, g, b));
 	}
 	line.append("</paintPickup>");
 	line.append("</workspace>");
 
 	std::string saveName = nameEdit->text().toStdString();
+	if (saveName.size() == 0){
+		saveName = "untitled.xml";
+	}
+	else if (saveName.size() <= 4){
+		saveName.append(".xml");
+	}
+	else if (saveName.substr(saveName.size() - 5, saveName.size() - 1) != ".xml"){
+		printf(saveName.c_str());
+		saveName.append(".xml");
+	}
 
 	std::ofstream myfile;
 	myfile.open(saveName);
@@ -427,6 +491,73 @@ void WorkspaceWizard::helpPressed(){
 	d.setLayout(l);
 
 	if (d.exec()){
-		printf("goodbye again\n");
+		printf("goodbye\n");
 	}
+}
+
+void WorkspaceWizard::resetSamples(){
+	for (int i = 0; i < tab->rowCount(); i++){
+		bool rOk, gOk, bOk;
+		int r = tab->item(i, 2)->text().toInt(&rOk);
+		int g = tab->item(i, 3)->text().toInt(&gOk);
+		int b = tab->item(i, 4)->text().toInt(&bOk);
+		if (rOk && gOk && bOk && r <= 255 && r >= 0 && g <= 255 && g >= 0 && b <= 255 && b >= 0){
+			QTableWidgetItem *iS = new QTableWidgetItem("");
+			tab->setItem(i, 5, iS);
+			iS->setBackgroundColor(QColor(r, g, b));
+		}
+	}
+}
+
+bool WorkspaceWizard::checkTable(){
+	bool allGood = true;
+	for (int i = 0; i < tab->rowCount(); i++){
+		bool xOk, yOk, rOk, gOk, bOk;
+		tab->item(i, 0)->text().toDouble(&xOk);
+		tab->item(i, 1)->text().toDouble(&yOk);
+		int r = tab->item(i, 2)->text().toInt(&rOk);
+		int g = tab->item(i, 3)->text().toInt(&gOk);
+		int b = tab->item(i, 4)->text().toInt(&bOk);
+
+		if (!xOk){
+			tab->item(i, 0)->setBackgroundColor(QColor(240, 10, 10,100));
+			allGood = false;
+		}
+		else{
+			tab->item(i, 0)->setBackgroundColor(QColor("white"));
+		}
+
+		if (!yOk){
+			tab->item(i, 1)->setBackgroundColor(QColor(240, 10, 10, 100));
+			allGood = false;
+		}
+		else{
+			tab->item(i, 1)->setBackgroundColor(QColor("white"));
+		}
+
+		if (!rOk || r < 0 || r > 255){
+			tab->item(i, 2)->setBackgroundColor(QColor(240, 10, 10, 100));
+			allGood = false;
+		}
+		else{
+			tab->item(i, 2)->setBackgroundColor(QColor("white"));
+		}
+
+		if (!gOk || g < 0 || g > 255){
+			tab->item(i, 3)->setBackgroundColor(QColor(240, 10, 10, 100));
+			allGood = false;
+		}
+		else{
+			tab->item(i, 3)->setBackgroundColor(QColor("white"));
+		}
+
+		if (!bOk || b < 0 || b > 255){
+			tab->item(i, 4)->setBackgroundColor(QColor(240, 10, 10, 100));
+			allGood = false;
+		}
+		else{
+			tab->item(i, 4)->setBackgroundColor(QColor("white"));
+		}
+	}
+	return allGood;
 }
