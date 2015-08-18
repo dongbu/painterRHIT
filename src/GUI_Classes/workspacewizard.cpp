@@ -51,11 +51,11 @@ ui(new Ui::WorkspaceWizard)
 	tab->setColumnWidth(2, 40);
 	tab->setColumnWidth(3, 40);
 	tab->setColumnWidth(4, 40);
-	temp << "x" << "y"<< "r"<< "g"<< "b" << "sample";
+	temp << "x" << "y" << "r" << "g" << "b" << "sample";
 	tab->setHorizontalHeaderLabels(temp);
 	ui->ItemLayout->addWidget(tab);
 	//canvas corner selection
-	
+
 
 
 	//instance of the robot that is involved with this.
@@ -124,7 +124,7 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 					ui->ForwardButton->setDisabled(true);
 				}
 			}
-				
+
 		}
 	}
 }
@@ -361,7 +361,7 @@ void WorkspaceWizard::saveInfo(){
 		tab->setItem(tab->rowCount() - 1, 0, iX);
 		tab->setItem(tab->rowCount() - 1, 1, iY);
 		//paint.push_back(std::pair<int, cv::Point2d>(numOfColors, cv::Point2d(x, y)));
-		tab->setItem(tab->rowCount() - 1, 2,iR);
+		tab->setItem(tab->rowCount() - 1, 2, iR);
 		tab->setItem(tab->rowCount() - 1, 3, iG);
 		tab->setItem(tab->rowCount() - 1, 4, iB);
 		tab->setItem(tab->rowCount() - 1, 5, iS);
@@ -529,7 +529,7 @@ bool WorkspaceWizard::checkTable(){
 		int b = tab->item(i, 4)->text().toInt(&bOk);
 
 		if (!xOk){
-			tab->item(i, 0)->setBackgroundColor(QColor(240, 10, 10,100));
+			tab->item(i, 0)->setBackgroundColor(QColor(240, 10, 10, 100));
 			allGood = false;
 		}
 		else{

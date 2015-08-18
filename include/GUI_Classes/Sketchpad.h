@@ -85,6 +85,8 @@ private slots:
 	void kMeansAdjusted();
 	void cannyAdjusted();
 
+	void changeSize();
+
 public slots:
 	void redraw();
 	void newClicked();

@@ -196,6 +196,7 @@ void Sketchpad::setupQt() {
 
 	//misc
 	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(reset()));
+	connect(ui->actionSet_sketch_window_size, SIGNAL(triggered()), this, SLOT(changeSize()));
 }
 
 /**
@@ -210,7 +211,8 @@ void Sketchpad::closeEvent(QCloseEvent *event) {
 	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
 	if (!unsaved) {
 		this->close();
-	} else {
+	}
+	else {
 		QMessageBox::StandardButton dialog;
 		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
 			QMessageBox::Yes | QMessageBox::No);
@@ -587,7 +589,12 @@ void Sketchpad::saveClicked() {
  * @brief open functionality.
  */
 bool Sketchpad::openClicked() {
-
+	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
+	QMessageBox *m = new QMessageBox();
+	m->setText("Are you sure?");
+	m->setInformativeText("All unsaved changes will be lost");
+	m->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+	if (m->exec() != QMessageBox::Yes){ return false; }
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Text files (*.xml)";
@@ -612,6 +619,13 @@ bool Sketchpad::openClicked() {
  * @brief New project functionality.
  */
 void Sketchpad::newClicked(){
+	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
+	QMessageBox *m = new QMessageBox();
+	m->setText("Are you sure?");
+	m->setInformativeText("All unsaved changes will be lost");
+	m->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+	if (m->exec() != QMessageBox::Yes){ return; }
+
 	this->shapes->clear();
 	this->paintingNamePath = "unpathed";
 	this->setWindowTitle("RHobart - untitled");
@@ -620,18 +634,19 @@ void Sketchpad::newClicked(){
 
 //turn into clear button
 void Sketchpad::reset() {
-	this->shapes->clear();
-	this->paintingNamePath = "unpathed";
-	this->redraw();
-	emit prodOtherWindows();
+	QMessageBox *m = new QMessageBox();
+	m->setText("Are you sure?");
+	m->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+	if (m->exec() == QMessageBox::Yes){
+		this->shapes->clear();
+		this->paintingNamePath = "unpathed";
+		this->redraw();
+		emit prodOtherWindows();
+	}
 }
 
 //connects to the cyton and brings up a dialog to load a workspace.
 void Sketchpad::loadWorkspaceClicked(){
-	//QMessageBox *m = new QMessageBox();
-	//m->setInformativeText("Please ensure that CytonViewer.exe is running before continuing.");
-	//m->setStandardButtons(QMessageBox::Ok);
-	//if (m->exec() != QMessageBox::Ok) return;
 
 	QFileDialog directory;
 	QStringList filters;
@@ -725,4 +740,21 @@ void Sketchpad::connectRobot(){
 			}
 		}
 	}
+}
+
+void Sketchpad::changeSize(){
+	bool xOk, yOk;
+	int x = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"), tr("Width (pixels):"), 600, 10, 800, 10, &xOk);
+	int y = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"), tr("Height (pixels):"), 600, 10, 800, 10, &yOk);
+	if (!xOk || !yOk){return;}
+	this->width = x;
+	this->height = y;
+
+	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(width + 20);
+
+	this->cvWindow = new DrawWindow(width, height, title, 1);
+
+
+	
 }

@@ -87,6 +87,7 @@
     <addaction name="actionLoad_Photo_Kmeans"/>
     <addaction name="actionLoad_Photo_Canny"/>
     <addaction name="actionSnap_Webcam_Picture"/>
+    <addaction name="actionSet_sketch_window_size"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRobot"/>
@@ -355,6 +356,11 @@
   <action name="actionConnect">
    <property name="text">
     <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionSet_sketch_window_size">
+   <property name="text">
+    <string>Set sketch window size</string>
    </property>
   </action>
  </widget>

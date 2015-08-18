@@ -53,6 +53,7 @@ public:
     QAction *actionCyton;
     QAction *actionABB;
     QAction *actionConnect;
+    QAction *actionSet_sketch_window_size;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -184,6 +185,8 @@ public:
         actionABB->setObjectName(QStringLiteral("actionABB"));
         actionConnect = new QAction(Sketchpad);
         actionConnect->setObjectName(QStringLiteral("actionConnect"));
+        actionSet_sketch_window_size = new QAction(Sketchpad);
+        actionSet_sketch_window_size->setObjectName(QStringLiteral("actionSet_sketch_window_size"));
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -237,6 +240,7 @@ public:
         menuImage->addAction(actionLoad_Photo_Kmeans);
         menuImage->addAction(actionLoad_Photo_Canny);
         menuImage->addAction(actionSnap_Webcam_Picture);
+        menuImage->addAction(actionSet_sketch_window_size);
         toolBar_2->addAction(actionActionFill);
         toolBar_2->addAction(actionDraw_Filled_Rectangle);
         toolBar_2->addAction(actionDraw_Filled_Circle);
@@ -296,6 +300,7 @@ public:
         actionCyton->setText(QApplication::translate("Sketchpad", "Cyton", 0));
         actionABB->setText(QApplication::translate("Sketchpad", "ABB", 0));
         actionConnect->setText(QApplication::translate("Sketchpad", "Connect", 0));
+        actionSet_sketch_window_size->setText(QApplication::translate("Sketchpad", "Set sketch window size", 0));
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));

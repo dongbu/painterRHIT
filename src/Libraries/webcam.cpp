@@ -267,11 +267,16 @@ public:
 				getMappedFrame(&mapped_webcam);
 				grid = mapped_webcam;
 				cv::imshow(mapped_name, mapped_webcam);
+				done = 1;
 			}
-			if (k == 27 || k == int('x')) done = 1; //escape position	  
+			if (k == 27){
+				frozen = 0;
+				done = 1;
+			}
 		}
 		if (frozen == 0) {
 			printf("No picture saved\n");
+			cv::destroyWindow(mapped_name);
 			return cv::Mat(1, 1, 1);
 		}
 		else {

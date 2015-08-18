@@ -89,7 +89,7 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 		int g = temp.attribute("g").as_int();
 		int b = temp.attribute("b").as_int();
 
-		cv::Point2d pos(x,y);
+		cv::Point2d pos(x, y);
 		std::vector<int> rgb;
 		rgb.push_back(r); rgb.push_back(g); rgb.push_back(b);
 		std::pair<cv::Point2d, std::vector<int>> pointAndRGB(pos, rgb);
@@ -142,13 +142,14 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 		pose.setTranslationX(vec.at(0));
 		pose.setTranslationY(vec.at(1));
 		pose.setTranslationZ(vec.at(2));
-	}else{
+	}
+	else{
 		std::vector<double> vec = convert(x*xScale, y*yScale, z);
 		pose.setTranslationX(x);
 		pose.setTranslationY(y);
 		pose.setTranslationZ(vec.at(2));
 	}
-	
+
 	EcOrientation orientation;
 
 	//roll about x-axis, pitch about y-axis,Yaw about z-axis
@@ -377,13 +378,13 @@ void CytonRunner::regulateWorkspaceData() {
 }
 
 //let things know it is finished with a line/drawing/etc.
-void CytonRunner::tellFinished() { 
-	emit finishedSettingWorkspace(); 
+void CytonRunner::tellFinished() {
+	emit finishedSettingWorkspace();
 }
 
 //change to a new paint color.
 void CytonRunner::changePaint(int new_paint_can_id){
-	if (new_paint_can_id == lastPaintColor || lastPaintColor == 0){ 
+	if (new_paint_can_id == lastPaintColor || lastPaintColor == 0){
 		//just used this color, don't need to wash.
 		Sleep(100);//pause 1/10th of a second to let things settle
 		getPaint(new_paint_can_id);
@@ -428,12 +429,12 @@ void CytonRunner::decidePaint(int r, int g, int b){
 		if (distance < closestNum || closestNum == -1){
 			closestId = i;
 			closestNum = distance;
-			
+
 		}
 	}
 	int r1 = paint.at(closestId).second.second.at(0);
 	int g1 = paint.at(closestId).second.second.at(1);
 	int b1 = paint.at(closestId).second.second.at(2);
-	this->curBrush->setColor(b1,g1,r1);
+	this->curBrush->setColor(b1, g1, r1);
 	changePaint(closestId);
 }

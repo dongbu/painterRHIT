@@ -28,7 +28,7 @@ ui(new Ui::CommandWindow)
 	minPrep = false;
 
 	ui->tableWidget->setColumnCount(5);
-    ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 	connect(ui->tableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(cellChange(int, int, int, int)));
 
@@ -81,7 +81,6 @@ ui(new Ui::CommandWindow)
 
 	connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(disableModeSetting()));
 	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(enableModeSetting()));
-
 
 	populate();
 	this->hide();
@@ -159,12 +158,14 @@ void CommandWindow::populate(){
 		else { ui->tableWidget->setItem(i, BREAK_COL, new QTableWidgetItem("no")); }
 		if (shapes->at(i)->hasPainted) { //paint col
 			ui->tableWidget->setItem(i, PAINT_COL, new QTableWidgetItem("yes"));
-		} else {
+		}
+		else {
 			ui->tableWidget->setItem(i, PAINT_COL, new QTableWidgetItem("no"));
 		}
 		if (shapes->at(i)->hasSimulated) { //sim col
 			ui->tableWidget->setItem(i, SIM_COL, new QTableWidgetItem("yes"));
-		} else {
+		}
+		else {
 			ui->tableWidget->setItem(i, SIM_COL, new QTableWidgetItem("no"));
 		}
 		cv::Scalar penCol = shapes->at(i)->getPenColor(); //color col
@@ -174,7 +175,7 @@ void CommandWindow::populate(){
 		//centering
 		ui->tableWidget->item(i, BREAK_COL)->setTextAlignment(Qt::AlignCenter);
 		ui->tableWidget->item(i, NAME_COL)->setTextAlignment(Qt::AlignCenter);
-		ui->tableWidget->item(i, SIM_COL)->setTextAlignment(Qt::AlignCenter); 
+		ui->tableWidget->item(i, SIM_COL)->setTextAlignment(Qt::AlignCenter);
 		ui->tableWidget->item(i, PAINT_COL)->setTextAlignment(Qt::AlignCenter);
 
 		//resizing
@@ -190,14 +191,17 @@ void CommandWindow::populate(){
  * @param pos
  */
 void CommandWindow::launchRightClick(QPoint pos) {
+	ui->actionPause->trigger();
 	QMenu *menu = new QMenu(ui->tableWidget);
 	int col = ui->tableWidget->currentColumn();
 
 	if (col == RGB_COL) { //color menu
 		menu->addAction(new QAction("Change Color", ui->tableWidget));
-	} else if (col == BREAK_COL) { //breakpoint menu
+	}
+	else if (col == BREAK_COL) { //breakpoint menu
 		menu->addAction(new QAction("Set Breakpoint", ui->tableWidget));
-	} else if (col == NAME_COL) { //run menu
+	}
+	else if (col == NAME_COL) { //run menu
 		menu->addAction(new QAction("Run from here", ui->tableWidget));
 		menu->addAction(new QAction("Run this command", ui->tableWidget));
 	}
@@ -216,11 +220,13 @@ void CommandWindow::menuSort(QAction *a) {
 		if (shapes->at(index)->isBreakPoint) {
 			ui->tableWidget->setItem(index, BREAK_COL, new QTableWidgetItem("no")); //turn off
 			shapes->at(index)->toggleBreakPoint(false);
-		} else {
+		}
+		else {
 			ui->tableWidget->setItem(index, BREAK_COL, new QTableWidgetItem("yes")); //turn on
 			shapes->at(index)->toggleBreakPoint(true);
 		}
-	} else if (a->text() == "Change Color") {
+	}
+	else if (a->text() == "Change Color") {
 		int curRow = ui->tableWidget->currentRow();
 		QString name = QString::fromStdString(shapes->at(curRow)->type);
 		colorUi.tableWidget->setItem(0, NAME_COL, new QTableWidgetItem(name));
@@ -231,20 +237,23 @@ void CommandWindow::menuSort(QAction *a) {
 		colorUi.tableWidget->setItem(0, RGB_COL, rgb);
 
 		if (shapes->at(curRow)->isBreakPoint) {
-		colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("yes"));
-		} else {
+			colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("yes"));
+		}
+		else {
 			colorUi.tableWidget->setItem(0, BREAK_COL, new QTableWidgetItem("no"));
 		}
 
 		if (shapes->at(curRow)->hasPainted) { //paint col
 			colorUi.tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("yes"));
-		} else {
+		}
+		else {
 			colorUi.tableWidget->setItem(0, PAINT_COL, new QTableWidgetItem("no"));
 		}
 
 		if (shapes->at(curRow)->hasSimulated) { //sim col
 			colorUi.tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("yes"));
-		} else {
+		}
+		else {
 			colorUi.tableWidget->setItem(0, SIM_COL, new QTableWidgetItem("no"));
 		}
 
@@ -252,7 +261,7 @@ void CommandWindow::menuSort(QAction *a) {
 		colorUi.tableWidget->item(0, SIM_COL)->setTextAlignment(Qt::AlignCenter);
 		colorUi.tableWidget->item(0, PAINT_COL)->setTextAlignment(Qt::AlignCenter);
 		colorUi.tableWidget->item(0, NAME_COL)->setTextAlignment(Qt::AlignCenter);
-		
+
 		colorUi.comboBox->setCurrentText("current color");
 		colorForm->show();
 	}
@@ -281,7 +290,7 @@ void CommandWindow::updateCommandList(int index, QString runToggle){
 		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 		ui->CommandsRun->setAlignment(Qt::AlignCenter);
 	}
-	else if (runToggle == "running") {		
+	else if (runToggle == "running") {
 		ui->tableWidget->setItem(index, SIM_COL, new QTableWidgetItem("running"));
 		ui->tableWidget->setItem(index, PAINT_COL, new QTableWidgetItem("running"));
 
@@ -340,7 +349,7 @@ void CommandWindow::showTime() {
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
 
-void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow);}
+void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
 
 void CommandWindow::colorChangeConfirmed() {
 	colorForm->hide();
@@ -355,7 +364,8 @@ void CommandWindow::colorChangeConfirmed() {
 				shapes->at(i)->setPenColor(NewRGB[0], NewRGB[1], NewRGB[2]);
 			}
 		}
-	} else {
+	}
+	else {
 		shapes->at(ui->tableWidget->currentRow())->setPenColor(NewRGB[0], NewRGB[1], NewRGB[2]);
 	}
 
@@ -437,7 +447,7 @@ void CommandWindow::updateMode() {
 		ui->actionForward->setDisabled(false);
 		delayTimeLabel_action->setVisible(true);
 		delayTime_action->setVisible(true);
-	} 
+	}
 	else if (modeBox->currentText() == "Simulate Real Brush") {
 		ui->actionBackward->setDisabled(false);
 		ui->actionForward->setDisabled(false);
