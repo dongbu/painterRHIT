@@ -119,6 +119,12 @@ void WorkspaceWizard::keyPressEvent(QKeyEvent *event){
 		else if (pressedKey == "e"){
 			ui->ForwardButton->setEnabled(true);
 			saveInfo();
+			if (stage == 2){
+				if (ui->label->text() == "undefined" || ui->label_2->text() == "undefined" || ui->label_3->text() == "undefined"){
+					ui->ForwardButton->setDisabled(true);
+				}
+			}
+				
 		}
 	}
 }
@@ -164,7 +170,7 @@ void WorkspaceWizard::updateText(){
 	case 1: //setup home position
 		ui->BackButton->setText("Cancel");
 		ui->Title->setText("Setup Start Position");
-		ui->Directions->setText("Use keys to face the robot towards the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\npress 'e' when finished");
+		ui->Directions->setText("Use keys to face the robot towards the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m/n\n\npress 'e' when finished");
 		ui->QuestionButton->show();
 		ui->ForwardButton->setDisabled(true);
 		ui->verticalLayoutWidget->setVisible(false);
@@ -174,7 +180,7 @@ void WorkspaceWizard::updateText(){
 		break;
 	case 2: //setup canvas corners
 		ui->Title->setText("Setup Canvas Corners");
-		ui->Directions->setText("Use keys to touch the robot gripper to the selected corner of the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n \n\norientation does not matter\npress 'e' when finished");
+		ui->Directions->setText("Use keys to touch the robot gripper to the selected corner of the canvas\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m/n \n\norientation does not matter\npress 'e' when finished");
 		paintCountLabel->setText("");
 		scaleSlide->setVisible(true);
 		tab->setVisible(false);
@@ -182,11 +188,14 @@ void WorkspaceWizard::updateText(){
 		ui->FormWidget->setVisible(true);
 		ui->radioButton->setChecked(true);
 		ui->BackButton->setText("Back");
+		if (ui->label->text() == "undefined" || ui->label_2->text() == "undefined" || ui->label_3->text() == "undefined"){
+			ui->ForwardButton->setDisabled(true);
+		}
 		ui->RFButton->hide();
 		break;
 	case 3: //setup as many paint locations as necessary.
 		ui->Title->setText("Setup Paint Locations");
-		ui->Directions->setText("use keys to move the robot gripper tip above the paint location\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m,n\n\nheight and orientation do not matter\npress 'e' to add a color\n The first location must be water\n");
+		ui->Directions->setText("use keys to move the robot gripper tip above the paint location\n\nX: a/d, Y: w/s, Z: u/j, Z-Rot: m/n\n\nheight and orientation do not matter\npress 'e' to add a color\n The first location must be water\n");
 		ui->ForwardButton->setText("Next");
 		nameEdit->setVisible(false);
 		browse->setVisible(false);
