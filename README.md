@@ -1,0 +1,4 @@
+Robot Artist
+================
+
+The goal of this project is to make something unexpected beautiful with robots. :)  The goal of this project is to build a painting program that allows users to create artwork in the virtual world, then control a connect robot arm to bring that artwork into the physical world.  Users can add simple shapes such as lines, rectangles, and fill regions or import images, via file or webcam, to bring content into the program.  A user can then individually select commands to have a robot arm paint each component.  Additionally a webcam is used to monitor the robot arm's progress and make adjustments to make the physical world painting as needed.  This project is ongoing.
