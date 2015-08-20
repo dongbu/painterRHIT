@@ -67,77 +67,28 @@ void Sketchpad::setupQt() {
 	this->move(r.right() - (width + 35), r.top());
 
 	//building kMeans dialog
-	kMeansFirstAccept = true;
 	kMeansForm = new QDialog();
 	kMeansUi.setupUi(kMeansForm);
 	kMeansUi.ColorInput->setValidator(new QIntValidator(1, 64));
 	kMeansUi.SizeInput->setValidator(new QIntValidator(1, 500));
-	kMeansUi.ImageInput->setDisabled(true);
-	connect(kMeansUi.browse, SIGNAL(clicked()), this, SLOT(browseClicked()));
-	connect(kMeansUi.buttonBox, SIGNAL(accepted()), this, SLOT(kMeansAccepted()));
+	connect(kMeansUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
+	connect(kMeansUi.accept, SIGNAL(clicked()), this, SLOT(kMeansAdjusted()));
 
 	//building canny dialog
-	cannyFirstAccept = true;
 	cannyForm = new QDialog();
 	cannyUi.setupUi(cannyForm);
 	cannyUi.ThresholdInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.LengthInput->setValidator(new QIntValidator(1, 100));
-	cannyUi.ImageInput->setDisabled(true);
-	connect(cannyUi.browse, SIGNAL(clicked()), this, SLOT(browseClicked()));
-	connect(cannyUi.buttonBox, SIGNAL(accepted()), this, SLOT(cannyAccepted()));
+	connect(cannyUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
+	connect(cannyUi.accept, SIGNAL(clicked()), this, SLOT(cannyAdjusted()));
 
-	//building kMeans toolbar
-	this->addToolBarBreak();
-	kMeansToolbar = new QToolBar();
-	this->addToolBar(kMeansToolbar);
-	kMeansToolbar->hide();
-
-	colorCountBox = new QSpinBox();
-	colorCountBox->setKeyboardTracking(false);
-	colorCountBox->setFixedWidth(60);
-	colorCountBox->setMinimum(0);
-	colorCountBox->setMaximum(64);
-	colorCountBox->setSingleStep(1);
-	kMeansToolbar->addWidget(new QLabel("# colors: "));
-	kMeansToolbar->addWidget(colorCountBox);
-	kMeansToolbar->addSeparator();
-	connect(colorCountBox, SIGNAL(valueChanged(int)), this, SLOT(kMeansAdjusted()));
-
-	minSizeBox = new QSpinBox();
-	minSizeBox->setKeyboardTracking(false);
-	minSizeBox->setFixedWidth(60);
-	minSizeBox->setMinimum(0);
-	minSizeBox->setMaximum(500);
-	minSizeBox->setSingleStep(5);
-	kMeansToolbar->addWidget(new QLabel("minimum region size: "));
-	kMeansToolbar->addWidget(minSizeBox);
-	connect(minSizeBox, SIGNAL(valueChanged(int)), this, SLOT(kMeansAdjusted()));
-
-	//building canny toolbar
-	cannyToolbar = new QToolBar();
-	this->addToolBar(cannyToolbar);
-	cannyToolbar->hide();
-
-	lengthBox = new QSpinBox();
-	lengthBox->setKeyboardTracking(false);
-	lengthBox->setFixedWidth(60);
-	lengthBox->setMinimum(0);
-	lengthBox->setMaximum(100);
-	lengthBox->setSingleStep(1);
-	cannyToolbar->addWidget(new QLabel("Minimum line length: "));
-	cannyToolbar->addWidget(lengthBox);
-	cannyToolbar->addSeparator();
-	connect(lengthBox, SIGNAL(valueChanged(int)), this, SLOT(cannyAdjusted()));
-
-	thresholdBox = new QSpinBox();
-	thresholdBox->setKeyboardTracking(false);
-	thresholdBox->setFixedWidth(60);
-	thresholdBox->setMinimum(0);
-	thresholdBox->setMaximum(100);
-	thresholdBox->setSingleStep(1);
-	cannyToolbar->addWidget(new QLabel("Threshold (%): "));
-	cannyToolbar->addWidget(thresholdBox);
-	connect(thresholdBox, SIGNAL(valueChanged(int)), this, SLOT(cannyAdjusted()));
+	//building brush dialog
+	brushForm = new QDialog();
+	brushUi.setupUi(brushForm);
+	brushUi.widthInput->setValidator(new QIntValidator(1, 30));
+	brushUi.heightInput->setValidator(new QIntValidator(1, 30));
+	connect(brushUi.accept, SIGNAL(clicked()), this, SLOT(brushChanged()));
+	connect(brushUi.cancel, SIGNAL(clicked()), this, SLOT(hideBrushUi()));
 
 	//shape connections
 	QActionGroup *actionGroup = new QActionGroup(this);
@@ -168,8 +119,8 @@ void Sketchpad::setupQt() {
 	thickness->setMaximum(25);
 	thickness->setSingleStep(1);
 	thickness->setValue(4);
-	ui->toolBar_2->addWidget(color);
-	ui->toolBar_2->addWidget(thickness);
+	ui->toolBar_2->insertWidget(ui->actionDraw_Line, color);
+	ui->toolBar_2->insertWidget(ui->actionDraw_Line, thickness);
 	connect(color, SIGNAL(currentIndexChanged(int)), this, SLOT(redraw()));
 	connect(thickness, SIGNAL(valueChanged(int)), this, SLOT(redraw()));
 
@@ -180,7 +131,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(saveAsClicked()));
 
 	//image connections
-	webcamSnapActive = false;
+	connect(ui->actionLoadPhoto, SIGNAL(triggered()), this, SLOT(loadPhotoClicked()));
 	connect(ui->actionLoad_Photo_Canny, SIGNAL(triggered()), this, SLOT(loadPhotoCannyClicked()));
 	connect(ui->actionLoad_Photo_Kmeans, SIGNAL(triggered()), this, SLOT(loadPhotoKmeansClicked()));
 	connect(ui->actionCalibrate, SIGNAL(triggered()), this, SLOT(calibrateWebcam()));
@@ -197,6 +148,7 @@ void Sketchpad::setupQt() {
 	//misc
 	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(reset()));
 	connect(ui->actionSet_sketch_window_size, SIGNAL(triggered()), this, SLOT(changeSize()));
+	connect(ui->actionDefine_Shape, SIGNAL(triggered()), this, SLOT(showBrushUi()));
 }
 
 /**
@@ -461,83 +413,81 @@ void Sketchpad::getColor() {
 	this->rgbColor = toReplace;
 }
 
-void Sketchpad::loadPhotoKmeansClicked(){ kMeansForm->show(); kMeansFirstAccept = true; }
+void Sketchpad::loadPhotoKmeansClicked(){ kMeansForm->show();}
 
-void Sketchpad::loadPhotoCannyClicked(){ cannyForm->show(); cannyFirstAccept = true; }
+void Sketchpad::loadPhotoCannyClicked(){ cannyForm->show();}
 
-void Sketchpad::browseClicked() {
+void Sketchpad::loadPhotoClicked() {
 	QFileDialog directory;
 	QStringList filters;
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
-		kMeansUi.ImageInput->setText(directory.selectedFiles().at(0));
-		cannyUi.ImageInput->setText(directory.selectedFiles().at(0));
+		location = directory.selectedFiles().at(0).toStdString();
+		cv::Mat temp = cv::imread(location);
+		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
+		savedPicture = temp;
+		this->cvWindow->grid = savedPicture;
+		this->setWindowTitle(("RHobart - " + title + "*").c_str());
+		translator->showImage(cvWindow->grid);
 	}
 }
 
-void Sketchpad::kMeansAccepted() {
-	this->setWindowTitle(("RHobart - " + title + "*").c_str());
+void Sketchpad::editingCanceled() {
+	kMeansForm->hide();
+	cannyForm->hide();
+}
 
-	std::string location = kMeansUi.ImageInput->text().toStdString();
-	if (location == "" && !webcamSnapActive) return; //make sure they didn't click "ok" with no image.
+void Sketchpad::kMeansAdjusted() {
+	kMeansUi.accept->setDisabled(true);
+	this->setWindowTitle(("RHobart - " + title + "*").c_str());
+	savedPicture = cv::imread(location);
+
+	if (location == "") return; //make sure they didn't click "ok" with no image.
 	int colorCount = kMeansUi.ColorInput->text().toInt();
 	if (colorCount == 0) colorCount = 1; //don't let them have 0 colors.
 	int minPixel = kMeansUi.SizeInput->text().toInt();
 	if (minPixel == 0) minPixel = 1; //don't let them have empty regions.
-	reset();
 
-	if (!webcamSnapActive) { savedPicture = cv::imread(location); }
+	this->shapes->clear();
+	this->paintingNamePath = "unpathed";
+	this->redraw();
+	emit prodOtherWindows();
+
+	printf("loading photo kMeans\n");
 	emit loadPhotoKmeans(savedPicture, colorCount, minPixel);
-
-	if (kMeansFirstAccept) {
-		colorCountBox->setValue(kMeansUi.ColorInput->text().toInt());
-		minSizeBox->setValue(kMeansUi.SizeInput->text().toInt());
-		cannyToolbar->hide();
-		kMeansToolbar->show();
-		kMeansFirstAccept = false;
-	}
+	printf("finished loading photo kMeans\n");
+	kMeansUi.accept->setDisabled(false);
 }
 
-void Sketchpad::cannyAccepted() {
+void Sketchpad::cannyAdjusted() {
+	cannyUi.accept->setDisabled(true);
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
+	savedPicture = cv::imread(location);
 
-	std::string location = cannyUi.ImageInput->text().toStdString();
 	if (location == "") return; //make sure they didn't click "ok" with no image.
 	int minLength = cannyUi.LengthInput->text().toInt();
 	if (minLength == 0) minLength = 1; //don't let them have dimensionless lines.
 	int threshold = cannyUi.ThresholdInput->text().toInt();
 	if (threshold == 0) threshold = 1; //don't let them have 0% threshold.
-	reset();
 
-	savedPicture = cv::imread(location);
+	this->shapes->clear();
+	this->paintingNamePath = "unpathed";
+	this->redraw();
+	emit prodOtherWindows();
+
+	printf("loading photo canny\n");
 	emit loadPhotoCanny(savedPicture, threshold, minLength);
-
-	if (cannyFirstAccept) {
-		lengthBox->setValue(cannyUi.LengthInput->text().toInt());
-		thresholdBox->setValue(cannyUi.ThresholdInput->text().toInt());
-		kMeansToolbar->hide();
-		cannyToolbar->show();
-		cannyFirstAccept = false;
-	}
-}
-
-void Sketchpad::kMeansAdjusted() {
-	if (kMeansFirstAccept) return; //don't start endless loop
-	kMeansUi.ColorInput->setText(colorCountBox->text());
-	kMeansUi.SizeInput->setText(minSizeBox->text());
-	kMeansAccepted();
-}
-
-void Sketchpad::cannyAdjusted() {
-	if (cannyFirstAccept) return; //don't start endless loop
-	cannyUi.LengthInput->setText(lengthBox->text());
-	cannyUi.ThresholdInput->setText(thresholdBox->text());
-	cannyAccepted();
+	printf("finished loading photo canny\n");
+	cannyUi.accept->setDisabled(false);
 }
 
 //clicking yields resizing.
-void Sketchpad::calibrateWebcam() { printf("switch focus to the \"calibrate webcam\" window.\n"); Web->calibrateWebcam(); }
+void Sketchpad::calibrateWebcam() {
+	printf("switch focus to the \"calibrate webcam\" window.\n");
+	printf("Click the calibration window, then press 1 - 4 to set the four corners.");
+	Web->calibrateWebcam();
+}
 
 //show webcam.
 void Sketchpad::viewWebcam() { Web->showWebcam(); }
@@ -550,10 +500,12 @@ void Sketchpad::judgeWebcam() { Web->judge(this->cvWindow->grid); }
 
 //load picture from webcam.
 void Sketchpad::loadWebcamPicture() {
-	savedPicture = Web->getWebcamSnap(cvWindow->grid);
+	cv::Mat temp = Web->getWebcamSnap(cvWindow->grid);
 	if (savedPicture.size().height == 1 && savedPicture.size().width == 1) { return; }
-	webcamSnapActive = true;
-	kMeansAccepted();
+	savedPicture = temp;
+	this->cvWindow->grid = savedPicture;
+	this->setWindowTitle(("RHobart - " + title + "*").c_str());
+	translator->showImage(cvWindow->grid);
 }
 
 /**
@@ -642,6 +594,7 @@ void Sketchpad::reset() {
 		this->paintingNamePath = "unpathed";
 		this->redraw();
 		emit prodOtherWindows();
+		emit hideAll();
 	}
 }
 
@@ -753,8 +706,15 @@ void Sketchpad::changeSize(){
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
 
-	this->cvWindow = new DrawWindow(width, height, title, 1);
-
-
-	
+	this->cvWindow = new DrawWindow(width, height, title, 1);	
 }
+
+void Sketchpad::brushChanged() {
+	int w = brushUi.heightInput->text().toInt();
+	int h = brushUi.widthInput->text().toInt();
+	std::string brushType = brushUi.shapeInput->currentText().toStdString();
+	Ava->curBrush = new Brush(w, h, brushType);
+}
+
+void Sketchpad::hideBrushUi() { brushForm->hide(); }
+void Sketchpad::showBrushUi() { brushForm->show();  }

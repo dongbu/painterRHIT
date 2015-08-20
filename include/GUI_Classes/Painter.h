@@ -43,11 +43,9 @@ public slots:
     void save(std::string projectLocation);
     void load(std::string projectLocation);
 	void loadRobot(std::string robotLocation);
-	void loadPhoto(std::string photoLocation);
 	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
 	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
 	void hideAll();
-
 };
 
 #endif // PAINTER_H

@@ -64,7 +64,6 @@ public:
 		Webcam *self = static_cast<Webcam*>(userdata);
 		if (event == cv::EVENT_LBUTTONDOWN) {
 			printf("Setting zoom corner %d to %i,%i\n", self->webcam_corner + 1, x, y);
-			printf("Type %i, then click the calibration window.\n", self->webcam_corner + 1);
 			self->zoomQuad[self->webcam_corner].x = x * 2;
 			self->zoomQuad[self->webcam_corner].y = y * 2;
 		}
@@ -72,7 +71,6 @@ public:
 
 	// sets the desired region of the webcam 
 	void calibrateWebcam(int skip_reset = 0) {
-		printf("Type %i, then click the calibration window.\n", this->webcam_corner + 1);
 		cv::Mat webcam;
 		cv::Mat mapped_webcam; // this is the webcam mapped to the same dimensions as the final canvas pixels
 		//    cv::Mat canvas; // this is the "canvas"

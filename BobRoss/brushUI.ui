@@ -1,59 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>kMeans</class>
- <widget class="QDialog" name="kMeans">
+ <class>brush</class>
+ <widget class="QDialog" name="brush">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
-    <height>138</height>
+    <width>219</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>0</x>
      <y>10</y>
-     <width>251</width>
-     <height>80</height>
+     <width>111</width>
+     <height>113</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="ColorLabel">
+       <widget class="QComboBox" name="shapeInput">
+        <item>
+         <property name="text">
+          <string>Rectangle</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ellipse</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="widthLabel">
         <property name="text">
-         <string>Color Count</string>
+         <string>width:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="MinSizeLabel">
+       <widget class="QLineEdit" name="widthInput">
         <property name="text">
-         <string>Minimum Region Size (pixels)</string>
+         <string>30</string>
         </property>
        </widget>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLineEdit" name="ColorInput">
+       <widget class="QLabel" name="heightLabel">
         <property name="text">
-         <string>2</string>
+         <string>height:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="SizeInput">
+       <widget class="QLineEdit" name="heightInput">
         <property name="text">
-         <string>5</string>
+         <string>15</string>
         </property>
        </widget>
       </item>
@@ -64,13 +82,13 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>251</width>
-     <height>30</height>
+     <x>120</x>
+     <y>10</y>
+     <width>95</width>
+     <height>81</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QPushButton" name="cancel">
       <property name="text">

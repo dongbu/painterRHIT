@@ -35,6 +35,7 @@
 #include "ui_kMeansUI.h"
 #include "ui_cannyUI.h"
 #include "ui_colorChangeUI.h"
+#include "ui_brushUI.h"
 
 //std methods to include
 #include <vector>

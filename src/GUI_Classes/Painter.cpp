@@ -98,57 +98,32 @@ void Painter::loadRobot(std::string robotLocation) {
 	}
 }
 
-//load a photo from location.
-void Painter::loadPhoto(std::string photoLocation) {
-	cv::Mat image = cv::imread(photoLocation);
-	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
-
-	ImageParserContours IPC;
-	IPC.setMinContourLength(5);
-	IPC.setCannyThreshold(50);
-	IPC.parseImage(sketch->cvWindow->grid);
-	IPC.defineShapes(shapes);
-
-	ImageParserKmeans IPK;
-	IPK.setMinPixelsInRegion(5);
-	IPK.parseImage(sketch->cvWindow->grid);
-	IPK.defineShapes(shapes);
-
-	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
-	shapes->drawAll(sketch->cvWindow); //redraw window
-	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
-	sketch->prodOtherWindows();
-}
-
 //load photo canny from location.
 void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
-	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 	logic->simWin->clearWindow(255, 255, 255); //white
 	logic->simWin->hideWindow();
 
 	ImageParserContours IPC;
 	IPC.setMinContourLength(min_line_length);
 	IPC.setCannyThreshold(threshold);
-	IPC.parseImage(sketch->cvWindow->grid);
+	IPC.parseImage(image);
 	IPC.defineShapes(shapes);
 
 	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(sketch->cvWindow); //redraw window
 	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();
-
 }
 
 //load photo kmeans from location.
 void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) {
-	cv::resize(image, sketch->cvWindow->grid, sketch->cvWindow->grid.size(), 0, 0, 1);
 	logic->simWin->clearWindow(255, 255, 255); //white
 	logic->simWin->hideWindow();
 
 	ImageParserKmeans IPK;
 	IPK.setNumColors(colorCount);
 	IPK.setMinPixelsInRegion(minRegionSize);
-	IPK.parseImage(sketch->cvWindow->grid);
+	IPK.parseImage(image);
 	IPK.defineShapes(shapes);
 
 	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
@@ -175,6 +150,7 @@ void Painter::showGUI(){
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(hideAll()));
+	connect(sketch, SIGNAL(hideAll()), this, SLOT(hideAll()));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 

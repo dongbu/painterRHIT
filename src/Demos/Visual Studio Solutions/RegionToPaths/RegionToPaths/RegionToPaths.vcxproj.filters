@@ -15,10 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\regiontopaths_demo.cpp">
+    <ClCompile Include="..\regiontopaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\regiontopaths.cpp">
+    <ClCompile Include="..\regiontopaths_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\drawwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pixeltools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -54,13 +54,12 @@ private:
 
 	Webcam *Web;
 
-	QDialog *kMeansForm, *cannyForm;
-	QSpinBox *colorCountBox, *minSizeBox, *lengthBox, *thresholdBox;
-	QToolBar *kMeansToolbar, *cannyToolbar;
-	bool kMeansFirstAccept, cannyFirstAccept, webcamSnapActive;
+	QDialog *kMeansForm, *cannyForm, *brushForm;
 	Ui::kMeans kMeansUi;
 	Ui::canny cannyUi;
+	Ui::brush brushUi;
 	cv::Mat savedPicture;
+	std::string location;
 
 private slots:
 	void refresh(int x, int y);
@@ -79,13 +78,16 @@ private slots:
 	void shutDownClicked();
 	void completeConnection();
 
-	void kMeansAccepted();
-	void cannyAccepted();
-	void browseClicked();
+	void loadPhotoClicked();
 	void kMeansAdjusted();
 	void cannyAdjusted();
+	void editingCanceled();
 
 	void changeSize();
+
+	void brushChanged();
+	void hideBrushUi();
+	void showBrushUi();
 
 public slots:
 	void redraw();
@@ -108,6 +110,7 @@ public slots:
 signals:
 	void newPressed();
 	void prodOtherWindows();
+	void hideAll();
 	void save(std::string);
 	void load(std::string);
 	void loadRobot(std::string);

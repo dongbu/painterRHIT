@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>
-#include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -28,7 +27,6 @@ QT_BEGIN_NAMESPACE
 class Ui_kMeans
 {
 public:
-    QDialogButtonBox *buttonBox;
     QWidget *horizontalLayoutWidget;
     QHBoxLayout *horizontalLayout;
     QVBoxLayout *verticalLayout;
@@ -37,23 +35,19 @@ public:
     QVBoxLayout *verticalLayout_2;
     QLineEdit *ColorInput;
     QLineEdit *SizeInput;
-    QLabel *ImageLabel;
-    QLineEdit *ImageInput;
-    QPushButton *browse;
+    QWidget *layoutWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *cancel;
+    QPushButton *accept;
 
     void setupUi(QDialog *kMeans)
     {
         if (kMeans->objectName().isEmpty())
             kMeans->setObjectName(QStringLiteral("kMeans"));
-        kMeans->resize(279, 184);
-        buttonBox = new QDialogButtonBox(kMeans);
-        buttonBox->setObjectName(QStringLiteral("buttonBox"));
-        buttonBox->setGeometry(QRect(-100, 140, 341, 32));
-        buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+        kMeans->resize(267, 138);
         horizontalLayoutWidget = new QWidget(kMeans);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(20, 10, 251, 80));
+        horizontalLayoutWidget->setGeometry(QRect(10, 10, 251, 80));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -87,19 +81,24 @@ public:
 
         horizontalLayout->addLayout(verticalLayout_2);
 
-        ImageLabel = new QLabel(kMeans);
-        ImageLabel->setObjectName(QStringLiteral("ImageLabel"));
-        ImageLabel->setGeometry(QRect(20, 90, 51, 34));
-        ImageInput = new QLineEdit(kMeans);
-        ImageInput->setObjectName(QStringLiteral("ImageInput"));
-        ImageInput->setGeometry(QRect(70, 100, 161, 22));
-        browse = new QPushButton(kMeans);
-        browse->setObjectName(QStringLiteral("browse"));
-        browse->setGeometry(QRect(240, 100, 31, 21));
+        layoutWidget = new QWidget(kMeans);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 100, 251, 30));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        cancel = new QPushButton(layoutWidget);
+        cancel->setObjectName(QStringLiteral("cancel"));
+
+        horizontalLayout_2->addWidget(cancel);
+
+        accept = new QPushButton(layoutWidget);
+        accept->setObjectName(QStringLiteral("accept"));
+
+        horizontalLayout_2->addWidget(accept);
+
 
         retranslateUi(kMeans);
-        QObject::connect(buttonBox, SIGNAL(accepted()), kMeans, SLOT(accept()));
-        QObject::connect(buttonBox, SIGNAL(rejected()), kMeans, SLOT(reject()));
 
         QMetaObject::connectSlotsByName(kMeans);
     } // setupUi
@@ -111,9 +110,8 @@ public:
         MinSizeLabel->setText(QApplication::translate("kMeans", "Minimum Region Size (pixels)", 0));
         ColorInput->setText(QApplication::translate("kMeans", "2", 0));
         SizeInput->setText(QApplication::translate("kMeans", "5", 0));
-        ImageLabel->setText(QApplication::translate("kMeans", "Image:", 0));
-        ImageInput->setText(QString());
-        browse->setText(QApplication::translate("kMeans", "...", 0));
+        cancel->setText(QApplication::translate("kMeans", "Cancel", 0));
+        accept->setText(QApplication::translate("kMeans", "Accept", 0));
     } // retranslateUi
 
 };

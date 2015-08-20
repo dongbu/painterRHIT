@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>
-#include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -28,7 +27,6 @@ QT_BEGIN_NAMESPACE
 class Ui_canny
 {
 public:
-    QDialogButtonBox *buttonBox;
     QWidget *horizontalLayoutWidget;
     QHBoxLayout *horizontalLayout;
     QVBoxLayout *verticalLayout;
@@ -37,23 +35,19 @@ public:
     QVBoxLayout *verticalLayout_2;
     QLineEdit *ThresholdInput;
     QLineEdit *LengthInput;
-    QLabel *ImageLabel;
-    QLineEdit *ImageInput;
-    QPushButton *browse;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *cancel;
+    QPushButton *accept;
 
     void setupUi(QDialog *canny)
     {
         if (canny->objectName().isEmpty())
             canny->setObjectName(QStringLiteral("canny"));
-        canny->resize(279, 184);
-        buttonBox = new QDialogButtonBox(canny);
-        buttonBox->setObjectName(QStringLiteral("buttonBox"));
-        buttonBox->setGeometry(QRect(-100, 140, 341, 32));
-        buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+        canny->resize(271, 137);
         horizontalLayoutWidget = new QWidget(canny);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(20, 10, 266, 80));
+        horizontalLayoutWidget->setGeometry(QRect(0, 10, 266, 80));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -87,19 +81,24 @@ public:
 
         horizontalLayout->addLayout(verticalLayout_2);
 
-        ImageLabel = new QLabel(canny);
-        ImageLabel->setObjectName(QStringLiteral("ImageLabel"));
-        ImageLabel->setGeometry(QRect(20, 90, 51, 34));
-        ImageInput = new QLineEdit(canny);
-        ImageInput->setObjectName(QStringLiteral("ImageInput"));
-        ImageInput->setGeometry(QRect(70, 100, 161, 22));
-        browse = new QPushButton(canny);
-        browse->setObjectName(QStringLiteral("browse"));
-        browse->setGeometry(QRect(240, 100, 31, 21));
+        widget = new QWidget(canny);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(0, 100, 261, 30));
+        horizontalLayout_2 = new QHBoxLayout(widget);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        cancel = new QPushButton(widget);
+        cancel->setObjectName(QStringLiteral("cancel"));
+
+        horizontalLayout_2->addWidget(cancel);
+
+        accept = new QPushButton(widget);
+        accept->setObjectName(QStringLiteral("accept"));
+
+        horizontalLayout_2->addWidget(accept);
+
 
         retranslateUi(canny);
-        QObject::connect(buttonBox, SIGNAL(accepted()), canny, SLOT(accept()));
-        QObject::connect(buttonBox, SIGNAL(rejected()), canny, SLOT(reject()));
 
         QMetaObject::connectSlotsByName(canny);
     } // setupUi
@@ -111,9 +110,8 @@ public:
         MinLengthLabel->setText(QApplication::translate("canny", "Minimum Line Length (pixels)", 0));
         ThresholdInput->setText(QApplication::translate("canny", "50", 0));
         LengthInput->setText(QApplication::translate("canny", "5", 0));
-        ImageLabel->setText(QApplication::translate("canny", "Image:", 0));
-        ImageInput->setText(QString());
-        browse->setText(QApplication::translate("canny", "...", 0));
+        cancel->setText(QApplication::translate("canny", "Cancel", 0));
+        accept->setText(QApplication::translate("canny", "Accept", 0));
     } // retranslateUi
 
 };

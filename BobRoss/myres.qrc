@@ -29,5 +29,7 @@
         <file>Icon Storage/gavel.png</file>
         <file>Icon Storage/reset.png</file>
         <file>Icon Storage/clear.png</file>
+        <file>Icon Storage/resize.png</file>
+        <file>Icon Storage/sizeBrush.png</file>
     </qresource>
 </RCC>

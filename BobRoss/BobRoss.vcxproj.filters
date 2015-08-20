@@ -350,6 +350,9 @@
     <CustomBuild Include="GeneratedFiles\ui_kMeansUI.h">
       <Filter>Generated Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="brushUI.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -366,5 +369,10 @@
     <CustomBuild Include="myres.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_brushUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
