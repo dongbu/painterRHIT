@@ -109,7 +109,7 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	IPC.parseImage(image);
 	IPC.defineShapes(shapes);
 
-	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
 	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();
@@ -126,7 +126,7 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) 
 	IPK.parseImage(image);
 	IPK.defineShapes(shapes);
 
-	sketch->cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
 	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();

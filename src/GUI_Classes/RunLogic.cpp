@@ -158,13 +158,11 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 				int b = temp[2];
 				Ava->decidePaint(r, g, b);
 			}
-
 			for (int j = 0; j < W->grid.size().height; j++) {
 				for (int k = 0; k < W->grid.size().width; k++) {
 					RTP.addOverpaintablePixel(k, j);
 				}
 			}
-
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
 			if (Ava->connected) { //connected, fill
@@ -178,7 +176,6 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 			}
 			RTP.definePaths();
 			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
-
 			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
 				int prevX = pathVec.at(i).at(0).x;
 				int prevY = pathVec.at(i).at(0).y;
@@ -238,8 +235,6 @@ void RunLogic::DrawingThread(DrawWindow *W, CytonRunner *Ava){
 	running = false;
 	Ava->changePaint(0);
 	Ava->goToJointHome(1);
-
-
 }
 
 //clear away everything and reset variables.

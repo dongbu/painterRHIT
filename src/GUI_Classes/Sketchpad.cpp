@@ -71,6 +71,7 @@ void Sketchpad::setupQt() {
 	kMeansUi.setupUi(kMeansForm);
 	kMeansUi.ColorInput->setValidator(new QIntValidator(1, 64));
 	kMeansUi.SizeInput->setValidator(new QIntValidator(1, 500));
+	kMeansUi.accept->setDisabled(true);
 	connect(kMeansUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
 	connect(kMeansUi.accept, SIGNAL(clicked()), this, SLOT(kMeansAdjusted()));
 
@@ -79,6 +80,7 @@ void Sketchpad::setupQt() {
 	cannyUi.setupUi(cannyForm);
 	cannyUi.ThresholdInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.LengthInput->setValidator(new QIntValidator(1, 100));
+	cannyUi.accept->setDisabled(true);
 	connect(cannyUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
 	connect(cannyUi.accept, SIGNAL(clicked()), this, SLOT(cannyAdjusted()));
 
@@ -177,8 +179,7 @@ void Sketchpad::closeEvent(QCloseEvent *event) {
 void Sketchpad::redraw() {
 	getColor();
 	startNewCommand();
-
-	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw the window
 	translator->showImage(cvWindow->grid); //actually redraw the window
 }
@@ -281,7 +282,7 @@ void Sketchpad::refresh(int x, int y) {
 	//DRAW PIXELREGION (fill)
 	else if (ui->actionActionFill->isChecked()) {
 		reset = true;
-		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+		cvWindow->clearWindow(255, 255, 255);
 
 		shapes->drawAll(cvWindow);
 		flood(Point(x, y));
@@ -291,7 +292,7 @@ void Sketchpad::refresh(int x, int y) {
 	if (reset) {
 		shapes->addShape(currentShape);
 		startNewCommand();
-		cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+		cvWindow->clearWindow(255, 255, 255);
 		shapes->drawAll(cvWindow); //redraw window
 		this->setWindowTitle(("RHobart - " + title + "*").c_str());
 		emit prodOtherWindows();
@@ -423,11 +424,12 @@ void Sketchpad::loadPhotoClicked() {
 	filters << "Images (*.png *.xpm *.jpg)";
 	directory.setNameFilters(filters);
 	if (directory.exec()) {
+		cannyUi.accept->setDisabled(false);
+		kMeansUi.accept->setDisabled(false);
 		location = directory.selectedFiles().at(0).toStdString();
 		cv::Mat temp = cv::imread(location);
 		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
-		savedPicture = temp;
-		this->cvWindow->grid = savedPicture;
+		cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
 		this->setWindowTitle(("RHobart - " + title + "*").c_str());
 		translator->showImage(cvWindow->grid);
 	}
@@ -441,16 +443,12 @@ void Sketchpad::editingCanceled() {
 void Sketchpad::kMeansAdjusted() {
 	kMeansUi.accept->setDisabled(true);
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
-	savedPicture = cv::imread(location);
 
 	if (location == "") return; //make sure they didn't click "ok" with no image.
 	int colorCount = kMeansUi.ColorInput->text().toInt();
 	if (colorCount == 0) colorCount = 1; //don't let them have 0 colors.
 	int minPixel = kMeansUi.SizeInput->text().toInt();
 	if (minPixel == 0) minPixel = 1; //don't let them have empty regions.
-
-	this->shapes->clear();
-	this->paintingNamePath = "unpathed";
 	this->redraw();
 	emit prodOtherWindows();
 
@@ -463,7 +461,6 @@ void Sketchpad::kMeansAdjusted() {
 void Sketchpad::cannyAdjusted() {
 	cannyUi.accept->setDisabled(true);
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
-	savedPicture = cv::imread(location);
 
 	if (location == "") return; //make sure they didn't click "ok" with no image.
 	int minLength = cannyUi.LengthInput->text().toInt();
@@ -471,8 +468,6 @@ void Sketchpad::cannyAdjusted() {
 	int threshold = cannyUi.ThresholdInput->text().toInt();
 	if (threshold == 0) threshold = 1; //don't let them have 0% threshold.
 
-	this->shapes->clear();
-	this->paintingNamePath = "unpathed";
 	this->redraw();
 	emit prodOtherWindows();
 
@@ -501,11 +496,16 @@ void Sketchpad::judgeWebcam() { Web->judge(this->cvWindow->grid); }
 //load picture from webcam.
 void Sketchpad::loadWebcamPicture() {
 	cv::Mat temp = Web->getWebcamSnap(cvWindow->grid);
-	if (savedPicture.size().height == 1 && savedPicture.size().width == 1) { return; }
-	savedPicture = temp;
-	this->cvWindow->grid = savedPicture;
+	if (temp.size().height == 1 && temp.size().width == 1) { return; }
+	cannyUi.accept->setDisabled(false);
+	kMeansUi.accept->setDisabled(false);
+	cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
+	cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 	translator->showImage(cvWindow->grid);
+	cannyUi.accept->setDisabled(false);
+	kMeansUi.accept->setDisabled(false);
+	location = "not nothing";
 }
 
 /**
@@ -578,6 +578,8 @@ void Sketchpad::newClicked(){
 	m->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
 	if (m->exec() != QMessageBox::Yes){ return; }
 
+	cannyUi.accept->setDisabled(true);
+	kMeansUi.accept->setDisabled(true);
 	this->shapes->clear();
 	this->paintingNamePath = "unpathed";
 	this->setWindowTitle("RHobart - untitled");
@@ -631,14 +633,16 @@ void Sketchpad::shutDownClicked(){
 
 //used to highlight a selected shape.
 void Sketchpad::highlightShape(int index) {
+	//printf("highlight shape has been called at index %i\n", index);
 	if (index == -1) { return; }
-	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
+	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw window
 
 	DrawWindow Woverlay = DrawWindow(width, height, "overlay", 1);
 	Woverlay.clearWindow(0, 0, 0);
 	shapes->drawOne(&Woverlay, index + 1, 250, 0, 200); // r,g,b should not be 0,0,0
 	cvWindow->overlay(&Woverlay, 1);
+	Woverlay.showWindow();  Woverlay.show();
 
 	translator->showImage(cvWindow->grid); //actually redraw the window
 }
@@ -698,13 +702,16 @@ void Sketchpad::connectRobot(){
 void Sketchpad::changeSize(){
 	bool xOk, yOk;
 	int x = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"), tr("Width (pixels):"), 600, 10, 800, 10, &xOk);
+	if (!xOk) { return; }
 	int y = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"), tr("Height (pixels):"), 600, 10, 800, 10, &yOk);
-	if (!xOk || !yOk){return;}
+	if (!yOk){ return; }
 	this->width = x;
 	this->height = y;
 
 	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
 	this->setFixedWidth(width + 20);
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (width + 35), r.top());
 
 	this->cvWindow = new DrawWindow(width, height, title, 1);	
 }
