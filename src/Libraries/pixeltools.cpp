@@ -149,6 +149,9 @@ public:
       maxx = std::max(maxx, region[i].x);
       maxy = std::max(maxy, region[i].y);
     }
+	maxx++; //matrix sizes aren't 0-indexed
+	maxy++; //matrix sizes aren't 0-indexed
+
     cv::Mat image = cv::Mat::zeros(cv::Size(maxx - minx, maxy - miny), CV_8UC3);
     //cv::Mat image = cv::Mat( maxy-miny, maxx-minx, CV_8UC3 ); // 3 channel color
 

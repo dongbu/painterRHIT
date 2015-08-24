@@ -619,7 +619,10 @@ public:
 	// ABC: should be renamed to something like getNumShapes as length is ambiguous
 	int length() { return shapes.size(); }
 
-	void clear() { shapes.clear(); }
+	void clear() {
+		shapes.clear();
+		max_id = 0;
+	}
 
 	void swap(int pos1, int pos2) {
 		std::iter_swap(shapes.begin() + pos1, shapes.begin() + pos2);
