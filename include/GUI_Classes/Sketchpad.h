@@ -19,7 +19,7 @@ class Sketchpad : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
+	explicit Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
 	~Sketchpad();
 
 	CytonRunner *Ava;
@@ -36,7 +36,7 @@ private:
 	void flood(cv::Point p);
 
 	std::string paintingNamePath, title;
-	int width, height;
+	int *width, *height;
 
 	int robotSelected; //0: cyton, 1: ABB
 
@@ -84,6 +84,7 @@ private slots:
 	void editingCanceled();
 
 	void changeSize();
+	void changeSize(int *width, int *height);
 
 	void brushChanged();
 	void hideBrushUi();
@@ -111,6 +112,7 @@ signals:
 	void newPressed();
 	void prodOtherWindows();
 	void hideAll();
+	void resizeSimWin(int *width, int *height);
 	void save(std::string);
 	void load(std::string);
 	void loadRobot(std::string);

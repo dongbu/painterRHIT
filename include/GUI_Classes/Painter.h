@@ -21,13 +21,13 @@ public:
 
     void addShape(Shape *inboundShape);
     void addShapes(Shapes *inboundShapes);
-    void setDimensions(int width, int height);
+    void setDimensions(int *width, int *height);
     void showGUI();
     void launchSimulation();
 
 private:
     Shapes *shapes;
-    int width, height;
+    int *width, *height;
 	bool stuffshowing;
 
     CommandWindow *commandWin;
@@ -46,6 +46,7 @@ public slots:
 	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
 	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
 	void hideAll();
+	void resize(int *width, int *height);
 };
 
 #endif // PAINTER_H

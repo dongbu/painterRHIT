@@ -4,8 +4,8 @@
  * @brief default constructor
  */
 Painter::Painter() {
-	width = 600;
-	height = 600;
+	width = new int(600);
+	height = new int(600);
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
@@ -17,8 +17,8 @@ Painter::Painter() {
  */
 Painter::Painter(Shapes *shapes) {
 	this->shapes = shapes;
-	width = 600;
-	height = 600;
+	width = new int(600);
+	height = new int(600);
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
 	Web = new Webcam(width, height);
@@ -44,7 +44,7 @@ void Painter::addShape(Shape *inboundShape) {
  * @param width
  * @param height
  */
-void Painter::setDimensions(int width, int height) {
+void Painter::setDimensions(int *width, int *height) {
 	this->width = width;
 	this->height = height;
 
@@ -151,6 +151,7 @@ void Painter::showGUI(){
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(hideAll()));
 	connect(sketch, SIGNAL(hideAll()), this, SLOT(hideAll()));
+	connect(sketch, SIGNAL(resizeSimWin(int*, int*)), this, SLOT(resize(int*, int*)));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 
@@ -181,7 +182,7 @@ void Painter::launchSimulation(){
  */
 std::string Painter::getXMLDim() {
 	std::string line;
-	line = "<canvas width=\"" + std::to_string(this->width) + "\" height=\"" + std::to_string(this->height) + "\">\n";
+	line = "<canvas width=\"" + std::to_string(*this->width) + "\" height=\"" + std::to_string(*this->height) + "\">\n";
 	line.append("</canvas>\n");
 	return line;
 }
@@ -212,7 +213,7 @@ void Painter::parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo){
 	int x3 = webcamInfo->attribute("x3").as_int();
 	int y3 = webcamInfo->attribute("y3").as_int();
 
-	this->setDimensions(w, h);
+	this->setDimensions(new int(w), new int(h));
 
 	this->Web->setWebcamZoom(x0, y0, x1, y1, x2, y2, x3, y3);
 }
@@ -222,4 +223,19 @@ void Painter::hideAll(){
 	commandWin->hide();
 	logic->simWin->hideWindow();
 	logic->clearClicked();
+}
+
+void Painter::resize(int *width, int *height){
+	this->width = width;
+	this->height = height;
+	Web->map_width = width;
+	Web->map_height = height;
+	logic->width = width;
+	logic->height = height;
+	logic->stepTaken = 2;
+	logic->clearClicked();
+
+	logic->simWin = new DrawWindow(*width, *height, "Simulation Window");
+	logic->simWin->showWindow();
+	logic->simWin->show();
 }

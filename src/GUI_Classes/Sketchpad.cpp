@@ -11,7 +11,7 @@ using namespace cv;
  * @param W
  * @param parent
  */
-Sketchpad::Sketchpad(int width, int height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent) :
+Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
@@ -32,7 +32,7 @@ ui(new Ui::Sketchpad)
 	//Linking opencv to Qt.
 	this->translator = new CVImageWidget(ui->widget);
 	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
-	this->cvWindow = new DrawWindow(width, height, "garbage_name", 1);
+	this->cvWindow = new DrawWindow(*width, *height, "garbage_name", 1);
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
@@ -61,10 +61,10 @@ ui(new Ui::Sketchpad)
 */
 void Sketchpad::setupQt() {
 	//Moving sketchpad to top right corner
-	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	this->setFixedWidth(width + 20);
+	this->setFixedHeight(*height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(*width + 20);
 	QRect r = QApplication::desktop()->availableGeometry();
-	this->move(r.right() - (width + 35), r.top());
+	this->move(r.right() - (*width + 35), r.top());
 
 	//building kMeans dialog
 	kMeansForm = new QDialog();
@@ -428,6 +428,16 @@ void Sketchpad::loadPhotoClicked() {
 		kMeansUi.accept->setDisabled(false);
 		location = directory.selectedFiles().at(0).toStdString();
 		cv::Mat temp = cv::imread(location);
+
+		int widthDim = temp.size().width;
+		int heightDim = temp.size().height;
+		double scale = 1.0;
+		if (temp.size().width > temp.size().height && temp.size().width > 800) { scale = widthDim / 800.0; }
+		if (temp.size().height > temp.size().width && temp.size().height > 800) { scale = heightDim / 800.0; }
+		widthDim = widthDim / scale;
+		heightDim = heightDim / scale;
+		changeSize(&widthDim, &heightDim);
+
 		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 		cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
 		this->setWindowTitle(("RHobart - " + title + "*").c_str());
@@ -638,11 +648,10 @@ void Sketchpad::highlightShape(int index) {
 	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw window
 
-	DrawWindow Woverlay = DrawWindow(width, height, "overlay", 1);
+	DrawWindow Woverlay = DrawWindow(*width, *height, "overlay", 1);
 	Woverlay.clearWindow(0, 0, 0);
 	shapes->drawOne(&Woverlay, index + 1, 250, 0, 200); // r,g,b should not be 0,0,0
 	cvWindow->overlay(&Woverlay, 1);
-	Woverlay.showWindow();  Woverlay.show();
 
 	translator->showImage(cvWindow->grid); //actually redraw the window
 }
@@ -705,16 +714,22 @@ void Sketchpad::changeSize(){
 	if (!xOk) { return; }
 	int y = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"), tr("Height (pixels):"), 600, 10, 800, 10, &yOk);
 	if (!yOk){ return; }
-	this->width = x;
-	this->height = y;
-
-	this->setFixedHeight(height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	this->setFixedWidth(width + 20);
-	QRect r = QApplication::desktop()->availableGeometry();
-	this->move(r.right() - (width + 35), r.top());
-
-	this->cvWindow = new DrawWindow(width, height, title, 1);	
+	this->width = new int(x);
+	this->height = new int(y);
+	changeSize(this->width, this->height);
 }
+
+void Sketchpad::changeSize(int *width, int *height) {
+	this->setFixedHeight(*height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	this->setFixedWidth(*width + 20);
+	QRect r = QApplication::desktop()->availableGeometry();
+	this->move(r.right() - (*width + 35), r.top());
+
+	this->cvWindow = new DrawWindow(*width, *height, title, 1);
+	redraw();
+	emit resizeSimWin(width, height);
+}
+
 
 void Sketchpad::brushChanged() {
 	int w = brushUi.heightInput->text().toInt();

@@ -13,7 +13,7 @@ class CytonRunner: public QDialog
 	Q_OBJECT
 
 public:
-	explicit CytonRunner(int width, int height);
+	explicit CytonRunner(int *width, int *height);
 	~CytonRunner();
 	bool connect();
 	bool loadWorkspace(std::string fileLocation);
@@ -21,7 +21,7 @@ public:
 	void saveWorkspace();
 	void startup();
 	bool shutdown();
-	void setSimulationSize(int width, int height);
+	void setSimulationSize(int *width, int *height);
 	void goToPos(double x, double y, double z, bool toggle = false);
 	void raiseBrush();
 	void lowerBrush();
@@ -52,7 +52,7 @@ private:
 	double theta, phi, psi;
 	double currentX, currentY;
 	double raiseHeight;
-	int width, height;
+	int *width, *height;
 	double cWidth, cHeight;
 	double xScale, yScale;
 

@@ -12,17 +12,19 @@ class RunLogic : public QObject
     Q_OBJECT
 
 public:
-    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
+    RunLogic(int *width, int *height, Shapes *shapes, CytonRunner *Ava);
 	DrawWindow *simWin;
+	int *width, *height, stepTaken;
 	
 private:
-	void DrawingThread(DrawWindow *W, CytonRunner *Ava);
+	void paintWOFeedbackThread(DrawWindow *W);
+	void simulateDelayedBrushThread(DrawWindow *W);
 
 	QString mode;
     volatile bool running;
     volatile int currentShapeIndex, stopIndex;
     Shapes *shapes;
-	int width, height, COMMAND_DELAY, stepTaken;
+	int COMMAND_DELAY;
 	CytonRunner *Ava;
 
 public slots:

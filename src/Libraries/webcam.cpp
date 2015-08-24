@@ -12,8 +12,6 @@
 class Webcam {
 protected:
 	cv::VideoCapture *cam0, *cam1;
-	int map_width;
-	int map_height;
 	int cam_id, currentCamera;
 	int flip_webcam;
 	int webcam_corner;
@@ -22,14 +20,16 @@ protected:
 	cv::Point2f canvasQuad[4]; // four corners of desired mapped output
 
 public:
+	int *map_width;
+	int *map_height;
 
 	// reset the map used to map webcam to another matrix/frame
 	void resetMapping() {
 		// The 4 points where the mapping is to be done , from top-left in clockwise order
 		canvasQuad[0] = cv::Point2f(0, 0);
-		canvasQuad[1] = cv::Point2f(map_width, 0);
-		canvasQuad[2] = cv::Point2f(map_width, map_height);
-		canvasQuad[3] = cv::Point2f(0, map_height);
+		canvasQuad[1] = cv::Point2f(*map_width, 0);
+		canvasQuad[2] = cv::Point2f(*map_width, *map_height);
+		canvasQuad[3] = cv::Point2f(0, *map_height);
 
 		cv::Mat frame;
 		getFrame(&frame); // get a new frame from camera
@@ -158,7 +158,7 @@ public:
 		cv::warpPerspective(webcam, webcam, zoom_lambda, webcam.size());
 
 		// create the mapped_frame 
-		*mapped_frame = cv::Mat::zeros(map_height, map_width, webcam.type());
+		*mapped_frame = cv::Mat::zeros(*map_height, *map_width, webcam.type());
 
 		cv::Mat webcam_lambda = getMapLambda(&webcam);
 
@@ -175,8 +175,8 @@ public:
 
 	//set the size of the webcam (in pixels)
 	void setMapSize(int w, int h) { // this is the projection of the webcam to an arbitrary size
-		map_height = h;
-		map_width = w;
+		map_height = new int(h);
+		map_width = new int(w);
 		resetMapping();
 	}
 
@@ -373,7 +373,7 @@ public:
 		}
 	}
 
-	Webcam(int width = 600, int height = 600) { // constructor
+	Webcam(int *width = new int(600), int *height = new int(600)) { // constructor
 		cam_id = 0;
 		map_width = width;
 		map_height = height;
@@ -384,38 +384,6 @@ public:
 		if (!cam0->isOpened()) return;
 		resetMapping();
 	}
-
-	// Webcam() { // contested constructor
-	//   cam_id=0;
-	//   map_width=600;
-	//   map_height=400;
-	//   flip_webcam=0;
-	//   webcam_corner = 0;	
-
-	//   resetMapping();
-
-	//   if (0) { // was trying to open webcam only when create this object... but cam not persistent after constructor
-	//     cv::VideoCapture cam0(0); // open the default camera
-	//     cam0ptr = &cam0;
-	//     if(cam0.isOpened()) {  // check if we succeeded
-	//printf("Camera0 opened ok\n");
-	//camptr = cam0ptr;
-	//     } else {
-	//printf("Camera0 not open\n");
-	//     }
-	//     
-	//     int cam1_on=1;
-	//     cv::VideoCapture cam1(1); // open the default camera
-	//     cam1ptr = &cam1;
-	//     if(cam1.isOpened()) {  // check if we succeeded
-	//printf("Camera1 opened ok\n");
-	//camptr = cam1ptr;
-	//     } else {
-	//cam1_on=0;
-	//printf("Camera1 not open\n");
-	//     }
-	//   }
-	// }
 
 	~Webcam() {
 	}

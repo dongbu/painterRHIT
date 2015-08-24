@@ -10,7 +10,7 @@ using namespace Ec;
 using namespace cv;
 
 //constructor for cyton robot object
-CytonRunner::CytonRunner(int width, int height){
+CytonRunner::CytonRunner(int *width, int *height){
 	currentX = 0;
 	currentY = 0;
 	raiseHeight = 0.08;
@@ -25,8 +25,8 @@ CytonRunner::CytonRunner(int width, int height){
 	//canvas size
 	cWidth = 0.3; //meters
 	cHeight = 0.3; //meters
-	xScale = cWidth / width;
-	yScale = cHeight / height;
+	xScale = cWidth / *width;
+	yScale = cHeight / *height;
 
 	//current brush
 	curBrush = new Brush(30, 20, "ellipse");
@@ -137,6 +137,9 @@ bool CytonRunner::shutdown(){
 // sends the robot to the specified coordinates
 void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 	EcCoordinateSystemTransformation pose;
+	xScale = cWidth / *width;
+	yScale = cHeight / *height;
+
 	if (!toggle){
 		std::vector<double> vec = convert(x*xScale, y*yScale, z);
 		pose.setTranslationX(vec.at(0));
@@ -346,7 +349,7 @@ std::vector<double> CytonRunner::convert(double x, double y, double z){
 }
 
 //set size of simulation.
-void CytonRunner::setSimulationSize(int width, int height){
+void CytonRunner::setSimulationSize(int *width, int *height){
 	this->width = width;
 	this->height = height;
 }
@@ -355,8 +358,8 @@ void CytonRunner::setSimulationSize(int width, int height){
 void CytonRunner::setCanvasSize(double width, double height){
 	this->cWidth = width;
 	this->cHeight = height;
-	xScale = cWidth / this->width;
-	yScale = cHeight / this->height;
+	xScale = cWidth / *this->width;
+	yScale = cHeight / *this->height;
 }
 
 //used to startup the workspace wizard.
