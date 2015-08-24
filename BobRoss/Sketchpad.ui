@@ -282,7 +282,7 @@
      <normaloff>:/Icon Storage/trace.png</normaloff>:/Icon Storage/trace.png</iconset>
    </property>
    <property name="text">
-    <string>Load Photo Canny</string>
+    <string>Parse Photo Canny</string>
    </property>
   </action>
   <action name="actionLoad_Photo_Kmeans">
@@ -291,7 +291,7 @@
      <normaloff>:/Icon Storage/splatter.png</normaloff>:/Icon Storage/splatter.png</iconset>
    </property>
    <property name="text">
-    <string>Load Photo Kmeans</string>
+    <string>Parse Photo Kmeans</string>
    </property>
   </action>
   <action name="actionView">

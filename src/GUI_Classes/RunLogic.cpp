@@ -7,13 +7,13 @@
  * @param height
  * @param shapes
  */
-RunLogic::RunLogic(int *width, int *height, Shapes *shapes, CytonRunner *Ava) {
+RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	COMMAND_DELAY = 10; //ms
 	this->width = width;
 	this->height = height;
 	this->shapes = shapes;
 	this->Ava = Ava;
-	this->simWin = new DrawWindow(*width, *height, "Simulation Window");
+	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	clearClicked();
 	simWin->hideWindow();
 	mode = "Simulate Delayed Brush";
@@ -144,7 +144,7 @@ void RunLogic::reset(){
 	stepTaken = 2;
 	shapes->clear();
 	clearClicked();
-	simWin = new DrawWindow(*width, *height, "Simulation Window");
+	simWin = new DrawWindow(width, height, "Simulation Window");
 	//simWin->hideWindow();
 }
 
@@ -164,25 +164,23 @@ void RunLogic::simulateDelayedBrushThread(DrawWindow *W){
 			running = false;
 			return;
 		}
-
 		if (s->fill) { //painting filled region
 			emit updateCommandList(currentShapeIndex, "running");
-			RegionToPaths RTP = RegionToPaths(*width, *height, 30);
+			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
-
 			for (int j = 0; j < W->grid.size().height; j++) {
 				for (int k = 0; k < W->grid.size().width; k++) {
 					RTP.addOverpaintablePixel(k, j);
 				}
 			}
+
 			for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
 			Brush *curBrush = Ava->curBrush;
 			curBrush->setColor(s->getPenColor());
 			RTP.defineBrush(curBrush);
 			RTP.definePaths();
-
 			std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 			for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of strokes
 				int prevX = pathVec.at(i).at(0).x;
@@ -228,8 +226,7 @@ void RunLogic::simulateDelayedBrushThread(DrawWindow *W){
 
 //thread to handle actual drawing.
 void RunLogic::paintWOFeedbackThread(DrawWindow *W){
-	printf("starting painting w/o feedback thread\n");
-
+	printf("starting painting w/o feedback 'thread'\n");
 	while (running && currentShapeIndex < stopIndex) {
 		//Updating index
 		Shape *s = this->shapes->at(currentShapeIndex);
@@ -242,7 +239,7 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 		if (s->fill) { //painting filled region
 			emit updateCommandList(currentShapeIndex, "running");
 			Brush *curBrush;
-			RegionToPaths RTP = RegionToPaths(*width, *height, 30);
+			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
 
@@ -271,6 +268,7 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 				int prevY = pathVec.at(i).at(0).y;
 				for (size_t j = 1; j < pathVec.at(i).size(); j++) { //running through points in one stroke
 					if (!running) { return; }
+					printf("--------------------------------------------------------------------------------------------------------------------\n");
 					Ava->stroke(cv::Point(prevX, prevY), pathVec.at(i).at(j));
 					curBrush->drawLine(W, prevX, prevY, pathVec.at(i).at(j).x, pathVec.at(i).at(j).y);
 					prevX = pathVec.at(i).at(j).x;

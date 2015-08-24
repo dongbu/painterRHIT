@@ -12,9 +12,9 @@ class RunLogic : public QObject
     Q_OBJECT
 
 public:
-    RunLogic(int *width, int *height, Shapes *shapes, CytonRunner *Ava);
+    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
 	DrawWindow *simWin;
-	int *width, *height, stepTaken;
+	int width, height, stepTaken;
 	
 private:
 	void paintWOFeedbackThread(DrawWindow *W);

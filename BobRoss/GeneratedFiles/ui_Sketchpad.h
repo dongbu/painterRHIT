@@ -302,8 +302,8 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionCalibrate->setToolTip(QApplication::translate("Sketchpad", "launch webcam", 0));
 #endif // QT_NO_TOOLTIP
-        actionLoad_Photo_Canny->setText(QApplication::translate("Sketchpad", "Load Photo Canny", 0));
-        actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Load Photo Kmeans", 0));
+        actionLoad_Photo_Canny->setText(QApplication::translate("Sketchpad", "Parse Photo Canny", 0));
+        actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Parse Photo Kmeans", 0));
         actionView->setText(QApplication::translate("Sketchpad", "View", 0));
         actionSwitch->setText(QApplication::translate("Sketchpad", "Switch Webcam", 0));
         actionJudge->setText(QApplication::translate("Sketchpad", "Judge", 0));

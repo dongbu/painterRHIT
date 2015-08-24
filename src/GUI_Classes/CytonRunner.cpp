@@ -152,6 +152,7 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 		pose.setTranslationY(y);
 		pose.setTranslationZ(vec.at(2));
 	}
+	printf("...................................................................................................................\n");
 
 	EcOrientation orientation;
 

@@ -162,7 +162,7 @@ void Painter::showGUI(){
  */
 void Painter::launchSimulation(){
 	commandWin = new CommandWindow(shapes);
-	logic = new RunLogic(width, height, shapes, Ava);
+	logic = new RunLogic(*width, *height, shapes, Ava);
 
 	connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
 	connect(commandWin->ui->actionForward, SIGNAL(triggered()), logic, SLOT(forwardClicked()));
@@ -230,8 +230,8 @@ void Painter::resize(int *width, int *height){
 	this->height = height;
 	Web->map_width = width;
 	Web->map_height = height;
-	logic->width = width;
-	logic->height = height;
+	logic->width = *width;
+	logic->height = *height;
 	logic->stepTaken = 2;
 	logic->clearClicked();
 

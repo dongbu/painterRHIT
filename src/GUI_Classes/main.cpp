@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	//console window//
 	AllocConsole();
 
-	SetConsoleTitleA("Robot Artist v3 (8/18/15)");
+	SetConsoleTitleA("Robot Artist v3 (8/24/15)");
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
