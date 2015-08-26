@@ -1,10 +1,10 @@
 #include "CommandWindow.h"
 
 int RGB_COL = 0;
-int BREAK_COL = 1;
-int SIM_COL = 2;
-int PAINT_COL = 3;
-int NAME_COL = 4;
+int NAME_COL = 1;
+int BREAK_COL = 2;
+int SIM_COL = 3;
+int PAINT_COL = 4;
 
 /**
  * @brief constructor
@@ -46,12 +46,13 @@ ui(new Ui::CommandWindow)
 	//building color changing dialog
 	colorForm = new QDialog();
 	colorUi.setupUi(colorForm);
+	colorForm->setWindowTitle("Color Options");
 	colorUi.tableWidget->setRowCount(0);
 	colorUi.tableWidget->setColumnCount(5);
 	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
-	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("rgb"));
-	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("break"));
-	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("command type"));
+	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("RGB"));
+	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("Break"));
+	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
 	colorUi.tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
 	colorUi.tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
 	colorUi.tableWidget->resizeColumnsToContents();
@@ -62,7 +63,7 @@ ui(new Ui::CommandWindow)
 	modeBox = new QComboBox();
 	delayTimeLabel = new QLabel("delay (ms): ");
 	QStringList modes;
-	modes << "Simulate Delayed Brush" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
+	modes << "Simulate Idealized Brush" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
 	modeBox->addItems(modes);
 	ui->toolBar->insertWidget(ui->actionPlay, modeBox);
 	connect(modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMode()));
@@ -72,7 +73,7 @@ ui(new Ui::CommandWindow)
 	delayTime->setMinimum(0);
 	delayTime->setMaximum(30);
 	delayTime->setSingleStep(1);
-	delayTime->setValue(10);
+	delayTime->setValue(2);
 	ui->toolBar->insertSeparator(ui->actionPlay);
 	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
 	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
@@ -142,7 +143,7 @@ void CommandWindow::populate(){
 	ui->tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("Break"));
 	ui->tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
 	ui->tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
-	ui->tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Command Type"));
+	ui->tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
 
 	//refilling the list with shape data
 	for (int i = 0; i < shapes->length(); i++){
@@ -263,6 +264,7 @@ void CommandWindow::menuSort(QAction *a) {
 		colorUi.tableWidget->item(0, NAME_COL)->setTextAlignment(Qt::AlignCenter);
 
 		colorUi.comboBox->setCurrentText("current color");
+		colorUi.tableWidget->resizeColumnsToContents();
 		colorForm->show();
 	}
 }
@@ -276,7 +278,19 @@ void CommandWindow::updateCommandList(int index, QString runToggle){
 	if (index >= ui->tableWidget->rowCount()){
 		index = ui->tableWidget->rowCount() - 1;
 	}
-	if (runToggle == "finished"){
+	if (runToggle == "finishedSim"){
+		ui->tableWidget->setItem(index, SIM_COL, new QTableWidgetItem("yes"));
+		shapes->at(index)->hasSimulated = true;
+		ui->tableWidget->item(index, SIM_COL)->setTextAlignment(Qt::AlignCenter);
+		ui->tableWidget->item(index, PAINT_COL)->setTextAlignment(Qt::AlignCenter);
+
+		if (index == shapes->length() - 1) { this->timer->stop(); }
+		if (this->commandsFinished >= shapes->length()) { return; }
+		this->commandsFinished++;
+		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
+		ui->CommandsRun->setAlignment(Qt::AlignCenter);
+	}
+	else if (runToggle == "finishedBot"){
 		ui->tableWidget->setItem(index, SIM_COL, new QTableWidgetItem("yes"));
 		ui->tableWidget->setItem(index, PAINT_COL, new QTableWidgetItem("yes"));
 		shapes->at(index)->hasSimulated = true;
@@ -290,7 +304,13 @@ void CommandWindow::updateCommandList(int index, QString runToggle){
 		ui->CommandsRun->setText(QString::number(commandsFinished) + QString("/") + QString::number(shapes->length()) + QString(" run"));
 		ui->CommandsRun->setAlignment(Qt::AlignCenter);
 	}
-	else if (runToggle == "running") {
+	else if (runToggle == "runningSim") {
+		ui->tableWidget->setItem(index, SIM_COL, new QTableWidgetItem("running"));
+
+		ui->tableWidget->scrollToItem(ui->tableWidget->item(index, RGB_COL), QAbstractItemView::PositionAtCenter);
+		emit highlightShape(index);
+	}
+	else if (runToggle == "runningBot") {
 		ui->tableWidget->setItem(index, SIM_COL, new QTableWidgetItem("running"));
 		ui->tableWidget->setItem(index, PAINT_COL, new QTableWidgetItem("running"));
 
@@ -442,7 +462,7 @@ std::vector<int> CommandWindow::getColor(QString col) {
 }
 
 void CommandWindow::updateMode() {
-	if (modeBox->currentText() == "Simulate Delayed Brush") {
+	if (modeBox->currentText() == "Simulate Idealized Brush") {
 		ui->actionBackward->setDisabled(false);
 		ui->actionForward->setDisabled(false);
 		delayTimeLabel_action->setVisible(true);

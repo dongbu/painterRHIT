@@ -251,9 +251,9 @@ public:
         menuWebcam->addAction(actionView);
         menuWebcam->addAction(actionSwitch);
         menuWebcam->addAction(actionJudge);
+        menuWebcam->addAction(actionSnap_Webcam_Picture);
         menuImage->addAction(actionLoad_Photo_Kmeans);
         menuImage->addAction(actionLoad_Photo_Canny);
-        menuImage->addAction(actionSnap_Webcam_Picture);
         menuImage->addAction(actionSet_sketch_window_size);
         menuBrush->addAction(actionDefine_Shape);
         toolBar_2->addAction(actionClear);
@@ -268,6 +268,7 @@ public:
         toolBar_2->addAction(actionDraw_Filled_Polygon);
         toolBar_2->addSeparator();
         toolBar_2->addAction(actionLoadPhoto);
+        toolBar_2->addAction(actionSnap_Webcam_Picture);
         toolBar_2->addSeparator();
 
         retranslateUi(Sketchpad);
@@ -278,15 +279,15 @@ public:
     void retranslateUi(QMainWindow *Sketchpad)
     {
         Sketchpad->setWindowTitle(QApplication::translate("Sketchpad", "MainWindow", 0));
-        actionOpen->setText(QApplication::translate("Sketchpad", "Open", 0));
+        actionOpen->setText(QApplication::translate("Sketchpad", "Open Project", 0));
         actionOpen->setShortcut(QApplication::translate("Sketchpad", "Ctrl+O", 0));
-        actionNew->setText(QApplication::translate("Sketchpad", "New", 0));
+        actionNew->setText(QApplication::translate("Sketchpad", "New Project", 0));
         actionNew->setShortcut(QApplication::translate("Sketchpad", "Ctrl+N", 0));
         actionDraw_Square->setText(QApplication::translate("Sketchpad", "Draw Square", 0));
         actionDraw_Circle->setText(QApplication::translate("Sketchpad", "Draw Circle", 0));
         actionDraw_Line->setText(QApplication::translate("Sketchpad", "Draw Line", 0));
-        actionSave_As->setText(QApplication::translate("Sketchpad", "Save As", 0));
-        actionSave->setText(QApplication::translate("Sketchpad", "Save", 0));
+        actionSave_As->setText(QApplication::translate("Sketchpad", "Save As Project", 0));
+        actionSave->setText(QApplication::translate("Sketchpad", "Save Project", 0));
         actionSave->setShortcut(QApplication::translate("Sketchpad", "Ctrl+S", 0));
         actionDraw_Filled_Circle->setText(QApplication::translate("Sketchpad", "Draw Filled Circle", 0));
         actionDraw_Filled_Rectangle->setText(QApplication::translate("Sketchpad", "Draw Filled Rectangle", 0));
@@ -302,8 +303,8 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionCalibrate->setToolTip(QApplication::translate("Sketchpad", "launch webcam", 0));
 #endif // QT_NO_TOOLTIP
-        actionLoad_Photo_Canny->setText(QApplication::translate("Sketchpad", "Parse Photo Canny", 0));
-        actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Parse Photo Kmeans", 0));
+        actionLoad_Photo_Canny->setText(QApplication::translate("Sketchpad", "Define sketch outline (canny)", 0));
+        actionLoad_Photo_Kmeans->setText(QApplication::translate("Sketchpad", "Split sketch into color regions (kmeans)", 0));
         actionView->setText(QApplication::translate("Sketchpad", "View", 0));
         actionSwitch->setText(QApplication::translate("Sketchpad", "Switch Webcam", 0));
         actionJudge->setText(QApplication::translate("Sketchpad", "Judge", 0));
@@ -329,7 +330,7 @@ public:
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
         menuSelect_Robot->setTitle(QApplication::translate("Sketchpad", "Select Robot", 0));
         menuWebcam->setTitle(QApplication::translate("Sketchpad", "Webcam", 0));
-        menuImage->setTitle(QApplication::translate("Sketchpad", "Image", 0));
+        menuImage->setTitle(QApplication::translate("Sketchpad", "Sketch Tools", 0));
         menuBrush->setTitle(QApplication::translate("Sketchpad", "Brush", 0));
         toolBar_2->setWindowTitle(QApplication::translate("Sketchpad", "toolBar_2", 0));
     } // retranslateUi

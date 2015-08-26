@@ -46,7 +46,7 @@ public:
     {
         if (colorChange->objectName().isEmpty())
             colorChange->setObjectName(QStringLiteral("colorChange"));
-        colorChange->resize(460, 163);
+        colorChange->resize(363, 163);
         tableWidget = new QTableWidget(colorChange);
         if (tableWidget->columnCount() < 3)
             tableWidget->setColumnCount(3);
@@ -61,10 +61,10 @@ public:
         QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
         tableWidget->setVerticalHeaderItem(0, __qtablewidgetitem3);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(10, 40, 441, 61));
+        tableWidget->setGeometry(QRect(10, 40, 341, 61));
         layoutWidget = new QWidget(colorChange);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 120, 441, 30));
+        layoutWidget->setGeometry(QRect(10, 120, 341, 30));
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -89,7 +89,7 @@ public:
 
         layoutWidget1 = new QWidget(colorChange);
         layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
-        layoutWidget1->setGeometry(QRect(10, 10, 441, 24));
+        layoutWidget1->setGeometry(QRect(10, 10, 341, 24));
         horizontalLayout_2 = new QHBoxLayout(layoutWidget1);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);

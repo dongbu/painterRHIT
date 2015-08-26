@@ -124,9 +124,9 @@ public:
          << QApplication::translate("brush", "Rectangle", 0)
          << QApplication::translate("brush", "Ellipse", 0)
         );
-        widthLabel->setText(QApplication::translate("brush", "width:", 0));
+        widthLabel->setText(QApplication::translate("brush", "Width:", 0));
         widthInput->setText(QApplication::translate("brush", "30", 0));
-        heightLabel->setText(QApplication::translate("brush", "height:", 0));
+        heightLabel->setText(QApplication::translate("brush", "Height:", 0));
         heightInput->setText(QApplication::translate("brush", "15", 0));
         cancel->setText(QApplication::translate("brush", "Cancel", 0));
         accept->setText(QApplication::translate("brush", "Accept", 0));

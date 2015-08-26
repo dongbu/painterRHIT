@@ -69,6 +69,7 @@ void Sketchpad::setupQt() {
 	//building kMeans dialog
 	kMeansForm = new QDialog();
 	kMeansUi.setupUi(kMeansForm);
+	kMeansForm->setWindowTitle("kMeans Options");
 	kMeansUi.ColorInput->setValidator(new QIntValidator(1, 64));
 	kMeansUi.SizeInput->setValidator(new QIntValidator(1, 500));
 	kMeansUi.accept->setDisabled(true);
@@ -78,6 +79,7 @@ void Sketchpad::setupQt() {
 	//building canny dialog
 	cannyForm = new QDialog();
 	cannyUi.setupUi(cannyForm);
+	cannyForm->setWindowTitle("Canny Options");
 	cannyUi.ThresholdInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.LengthInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.accept->setDisabled(true);
@@ -87,6 +89,7 @@ void Sketchpad::setupQt() {
 	//building brush dialog
 	brushForm = new QDialog();
 	brushUi.setupUi(brushForm);
+	brushForm->setWindowTitle("Brush Options");
 	brushUi.widthInput->setValidator(new QIntValidator(1, 30));
 	brushUi.heightInput->setValidator(new QIntValidator(1, 30));
 	connect(brushUi.accept, SIGNAL(clicked()), this, SLOT(brushChanged()));
@@ -452,6 +455,7 @@ void Sketchpad::editingCanceled() {
 
 void Sketchpad::kMeansAdjusted() {
 	kMeansUi.accept->setDisabled(true);
+	editingCanceled();
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
 	if (location == "") return; //make sure they didn't click "ok" with no image.
@@ -470,6 +474,7 @@ void Sketchpad::kMeansAdjusted() {
 
 void Sketchpad::cannyAdjusted() {
 	cannyUi.accept->setDisabled(true);
+	editingCanceled();
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
 	if (location == "") return; //make sure they didn't click "ok" with no image.

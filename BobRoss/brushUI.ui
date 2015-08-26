@@ -46,7 +46,7 @@
       <item>
        <widget class="QLabel" name="widthLabel">
         <property name="text">
-         <string>width:</string>
+         <string>Width:</string>
         </property>
        </widget>
       </item>
@@ -64,7 +64,7 @@
       <item>
        <widget class="QLabel" name="heightLabel">
         <property name="text">
-         <string>height:</string>
+         <string>Height:</string>
         </property>
        </widget>
       </item>

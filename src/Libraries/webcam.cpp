@@ -223,6 +223,10 @@ public:
 
 	//shows the webcam
 	void showWebcam() {
+		if (!cam0->isOpened()) {
+			printf("your webcam is not attatched correctly.\n");
+			return;
+		}
 		cv::Mat mapped_webcam;
 
 		char mapped_name[] = "Mapped Webcam";
@@ -242,6 +246,10 @@ public:
 
 	//takes a picture via webcam.
 	cv::Mat getWebcamSnap(cv::Mat grid) {
+		if (!cam0->isOpened()) {
+			printf("your webcam is not attatched correctly.\n");
+			return cv::Mat(1, 1, 1);
+		}
 		printf("Press any key to take a picture \n");
 		cv::Mat mapped_webcam;
 

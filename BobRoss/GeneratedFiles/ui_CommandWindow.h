@@ -39,6 +39,8 @@ public:
     QAction *actionPause;
     QWidget *centralwidget;
     QWidget *layoutWidget;
+    QVBoxLayout *verticalLayout_2;
+    QTableWidget *tableWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *DeleteCommand;
@@ -50,17 +52,17 @@ public:
     QSpacerItem *horizontalSpacer;
     QLabel *TimeEllapsed;
     QSpacerItem *horizontalSpacer_3;
-    QTableWidget *tableWidget;
     QMenuBar *menubar;
     QMenu *menuSimulator;
     QStatusBar *statusbar;
     QToolBar *toolBar;
+    QToolBar *toolBar_2;
 
     void setupUi(QMainWindow *CommandWindow)
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(510, 523);
+        CommandWindow->resize(369, 538);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -90,10 +92,17 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 320, 491, 67));
-        verticalLayout = new QVBoxLayout(layoutWidget);
+        layoutWidget->setGeometry(QRect(10, 10, 351, 411));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+        tableWidget = new QTableWidget(layoutWidget);
+        tableWidget->setObjectName(QStringLiteral("tableWidget"));
+
+        verticalLayout_2->addWidget(tableWidget);
+
+        verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        verticalLayout->setContentsMargins(0, 0, 0, 0);
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         DeleteCommand = new QPushButton(layoutWidget);
@@ -141,13 +150,13 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_2);
 
-        tableWidget = new QTableWidget(centralwidget);
-        tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(10, 10, 491, 305));
+
+        verticalLayout_2->addLayout(verticalLayout);
+
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 510, 26));
+        menubar->setGeometry(QRect(0, 0, 369, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);
@@ -157,6 +166,10 @@ public:
         toolBar = new QToolBar(CommandWindow);
         toolBar->setObjectName(QStringLiteral("toolBar"));
         CommandWindow->addToolBar(Qt::TopToolBarArea, toolBar);
+        toolBar_2 = new QToolBar(CommandWindow);
+        toolBar_2->setObjectName(QStringLiteral("toolBar_2"));
+        CommandWindow->addToolBar(Qt::TopToolBarArea, toolBar_2);
+        CommandWindow->insertToolBarBreak(toolBar_2);
 
         menubar->addAction(menuSimulator->menuAction());
         menuSimulator->addAction(actionPlay);
@@ -164,11 +177,11 @@ public:
         menuSimulator->addAction(actionPause);
         menuSimulator->addAction(actionForward);
         menuSimulator->addAction(actionBackward);
-        toolBar->addAction(actionPlay);
-        toolBar->addAction(actionClear);
-        toolBar->addAction(actionBackward);
-        toolBar->addAction(actionPause);
-        toolBar->addAction(actionForward);
+        toolBar_2->addAction(actionPlay);
+        toolBar_2->addAction(actionClear);
+        toolBar_2->addAction(actionBackward);
+        toolBar_2->addAction(actionPause);
+        toolBar_2->addAction(actionForward);
 
         retranslateUi(CommandWindow);
 
@@ -205,6 +218,7 @@ public:
         TimeEllapsed->setText(QApplication::translate("CommandWindow", "0:00 elapsed", 0));
         menuSimulator->setTitle(QApplication::translate("CommandWindow", "Simulator", 0));
         toolBar->setWindowTitle(QApplication::translate("CommandWindow", "toolBar", 0));
+        toolBar_2->setWindowTitle(QApplication::translate("CommandWindow", "toolBar_2", 0));
     } // retranslateUi
 
 };

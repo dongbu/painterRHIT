@@ -16,7 +16,7 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	clearClicked();
 	simWin->hideWindow();
-	mode = "Simulate Delayed Brush";
+	mode = "Simulate Idealized Brush";
 }
 
 /**
@@ -96,7 +96,7 @@ void RunLogic::runClicked() {
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
 	stepTaken = 2;
-	if (mode == "Simulate Delayed Brush") {
+	if (mode == "Simulate Idealized Brush") {
 		auto d1 = std::async(&RunLogic::simulateDelayedBrushThread, this, simWin);
 	}
 	else if (mode == "Simulate Real Brush") {
@@ -135,7 +135,7 @@ void RunLogic::runOnly(int index) {
 	currentShapeIndex = index + 1;
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
 
-	emit(updateCommandList(index, "finished"));
+	emit(updateCommandList(index, "finishedSim"));
 	simWin->show();
 }
 
@@ -165,7 +165,7 @@ void RunLogic::simulateDelayedBrushThread(DrawWindow *W){
 			return;
 		}
 		if (s->fill) { //painting filled region
-			emit updateCommandList(currentShapeIndex, "running");
+			emit updateCommandList(currentShapeIndex, "runningSim");
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
 			std::vector<cv::Point> pts = p->getPoints();
@@ -197,7 +197,7 @@ void RunLogic::simulateDelayedBrushThread(DrawWindow *W){
 			}
 		}
 		else { //painting polyline object
-			emit updateCommandList(currentShapeIndex, "running");
+			emit updateCommandList(currentShapeIndex, "runningSim");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
 			int prevX = pts.at(0).x;
@@ -216,7 +216,7 @@ void RunLogic::simulateDelayedBrushThread(DrawWindow *W){
 				Sleep(COMMAND_DELAY);
 			}
 		}
-		emit updateCommandList(currentShapeIndex, "finished");
+		emit updateCommandList(currentShapeIndex, "finishedSim");
 
 		currentShapeIndex++;
 	}
@@ -237,7 +237,7 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 		}
 
 		if (s->fill) { //painting filled region
-			emit updateCommandList(currentShapeIndex, "running");
+			emit updateCommandList(currentShapeIndex, "runningBot");
 			Brush *curBrush;
 			RegionToPaths RTP = RegionToPaths(width, height, 30);
 			PixelRegion *p = s->toPixelRegion();
@@ -280,7 +280,7 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 			}
 		}
 		else { //painting polyline object
-			emit updateCommandList(currentShapeIndex, "running");
+			emit updateCommandList(currentShapeIndex, "runningBot");
 			std::vector<cv::Point> pts = s->toPolyline()->points;
 
 			if (Ava->connected && Ava->paint.size() >= 2){
@@ -313,7 +313,7 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 			}
 			Ava->strokeInProgress = false;
 		}
-		emit updateCommandList(currentShapeIndex, "finished");
+		emit updateCommandList(currentShapeIndex, "finishedBot");
 
 		currentShapeIndex++;
 	}

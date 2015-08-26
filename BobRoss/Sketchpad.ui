@@ -79,14 +79,14 @@
     <addaction name="actionView"/>
     <addaction name="actionSwitch"/>
     <addaction name="actionJudge"/>
+    <addaction name="actionSnap_Webcam_Picture"/>
    </widget>
    <widget class="QMenu" name="menuImage">
     <property name="title">
-     <string>Image</string>
+     <string>Sketch Tools</string>
     </property>
     <addaction name="actionLoad_Photo_Kmeans"/>
     <addaction name="actionLoad_Photo_Canny"/>
-    <addaction name="actionSnap_Webcam_Picture"/>
     <addaction name="actionSet_sketch_window_size"/>
    </widget>
    <widget class="QMenu" name="menuBrush">
@@ -124,6 +124,7 @@
    <addaction name="actionDraw_Filled_Polygon"/>
    <addaction name="separator"/>
    <addaction name="actionLoadPhoto"/>
+   <addaction name="actionSnap_Webcam_Picture"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionOpen">
@@ -132,7 +133,7 @@
      <normaloff>:/Icon Storage/open.png</normaloff>:/Icon Storage/open.png</iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string>Open Project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -144,7 +145,7 @@
      <normaloff>:/Icon Storage/new.png</normaloff>:/Icon Storage/new.png</iconset>
    </property>
    <property name="text">
-    <string>New</string>
+    <string>New Project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -183,7 +184,7 @@
      <normaloff>:/Icon Storage/save.png</normaloff>:/Icon Storage/save.png</iconset>
    </property>
    <property name="text">
-    <string>Save As</string>
+    <string>Save As Project</string>
    </property>
   </action>
   <action name="actionSave">
@@ -192,7 +193,7 @@
      <normaloff>:/Icon Storage/save.png</normaloff>:/Icon Storage/save.png</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save Project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -282,7 +283,7 @@
      <normaloff>:/Icon Storage/trace.png</normaloff>:/Icon Storage/trace.png</iconset>
    </property>
    <property name="text">
-    <string>Parse Photo Canny</string>
+    <string>Define sketch outline (canny)</string>
    </property>
   </action>
   <action name="actionLoad_Photo_Kmeans">
@@ -291,7 +292,7 @@
      <normaloff>:/Icon Storage/splatter.png</normaloff>:/Icon Storage/splatter.png</iconset>
    </property>
    <property name="text">
-    <string>Parse Photo Kmeans</string>
+    <string>Split sketch into color regions (kmeans)</string>
    </property>
   </action>
   <action name="actionView">
