@@ -5,30 +5,25 @@
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
 #define POINT_EE_SET 0
 #define M_PI 3.141592653
+#define TIMEOUT 5000  //5 seconds
 
 using namespace Ec;
 using namespace cv;
 
 //constructor for cyton robot object
 CytonRunner::CytonRunner(int *width, int *height){
-	currentX = 0;
-	currentY = 0;
-	raiseHeight = 0.08;
-	connected = false;
-	strokeInProgress = false;
-	lastPaintColor = 0;
+	currentX = 0;  //initialization
+	currentY = 0;  //initialization
+	raiseHeight = 0.08;  //roughly the length of a paintbrush?
+	connected = false;  //initialization
+	strokeInProgress = false; //initialization
+	lastPaintColor = 0; //initialization
 
 	//simulation size
-	this->width = width;
-	this->height = height;
+	this->width = width; //initialization
+	this->height = height; //initialization
 
-	//canvas size
-	cWidth = 0.3; //meters
-	cHeight = 0.3; //meters
-	xScale = cWidth / *width;
-	yScale = cHeight / *height;
-
-	//current brush
+	//current brush initialization
 	curBrush = new Brush(30, 20, "ellipse");
 	curBrush->setColor(200, 200, 200);
 }
@@ -96,11 +91,6 @@ bool CytonRunner::loadWorkspace(std::string fileLocation){
 		std::pair<int, std::pair<cv::Point2d, std::vector<int>>> paintPickup(id, pointAndRGB);
 		paint.push_back(paintPickup);
 	}
-
-	//figure out roll, pitch, and yaw.  Not used as of yet.
-	this->phi = 0;
-	this->theta = 0;
-	this->psi = 0;
 
 	regulateWorkspaceData();
 	return true;
@@ -173,11 +163,10 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 	setDesiredPlacement(desiredPlacement, 0, 0);
 
 	// if it hasnt been achieved after 5 sec, return false
-	EcU32 timeout = 5000;
 	EcU32 interval = 10;
 	EcU32 count = 0;
 	EcBoolean achieved = EcFalse;
-	while (!achieved && !(count >= timeout / interval))
+	while (!achieved && !(count >= TIMEOUT / interval))
 	{
 		EcSLEEPMS(interval);
 		count++;
@@ -300,11 +289,11 @@ bool CytonRunner::goToJointHome(int type){
 	EcBoolean positionAchieved = EcFalse;
 
 	// if it hasnt been achieved after 5 sec, return false
-	EcU32 timeout = 5000;
+
 	EcU32 interval = 10;
 	EcU32 count = 0;
 
-	while (!positionAchieved && !(count >= timeout / interval)) {
+	while (!positionAchieved && !(count >= TIMEOUT / interval)) {
 		EcSLEEPMS(interval);
 		count++;
 		getJointValues(currentJoints);
@@ -421,9 +410,11 @@ void CytonRunner::changePaint(int new_paint_can_id){
 	getPaint(new_paint_can_id);
 }
 
+//Takes target rgb values, and has the robot select the color with the closest rgb.
 void CytonRunner::decidePaint(int r, int g, int b){
 	int closestId = 0;
 	int closestNum = -1;
+	//loop to find smallest distance
 	for (int i = 1; i < paint.size(); i++){
 		int r1, g1, b1;
 		r1 = paint.at(i).second.second.at(0);
@@ -439,6 +430,7 @@ void CytonRunner::decidePaint(int r, int g, int b){
 	int r1 = paint.at(closestId).second.second.at(0);
 	int g1 = paint.at(closestId).second.second.at(1);
 	int b1 = paint.at(closestId).second.second.at(2);
+	//set color then physically get the color.
 	this->curBrush->setColor(b1, g1, r1);
 	changePaint(closestId);
 }

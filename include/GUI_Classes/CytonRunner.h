@@ -12,34 +12,43 @@ class CytonRunner: public QDialog
 {
 	Q_OBJECT
 
+
 public:
 	explicit CytonRunner(int *width, int *height);
 	~CytonRunner();
+
+	void changePaint(int new_paint_can_id);
 	bool connect();
-	bool loadWorkspace(std::string fileLocation);
+	volatile bool connected;
+	std::vector<std::pair<int, std::pair<cv::Point2d, std::vector<int>>>> paint;
 	void createWorkspace();
+
+	Brush *curBrush;
+	void decidePaint(int r, int g, int b);
+	bool goToJointHome(int type);
+
+	bool loadWorkspace(std::string fileLocation);
 	void saveWorkspace();
+
 	void startup();
 	bool shutdown();
+
+	void stroke(cv::Point pt1, cv::Point pt2);
+	void stroke(std::vector<cv::Point> pts);
+
+	bool strokeInProgress;
+	void tellFinished();
+
+private:
 	void setSimulationSize(int *width, int *height);
 	void goToPos(double x, double y, double z, bool toggle = false);
 	void raiseBrush();
 	void lowerBrush();
 	void getPaint(int paint_can_id);
 	void drawPoint(cv::Point pt);
-	void stroke(cv::Point pt1, cv::Point pt2);
-	void stroke(std::vector<cv::Point> pts);
-	void setCanvasSize(double width, double height);
-	void tellFinished();
-	bool strokeInProgress;
-	void changePaint(int new_paint_can_id);
-	volatile bool connected;
-	Brush *curBrush;
-	std::vector<std::pair<int, std::pair<cv::Point2d, std::vector<int>>>> paint;
-	void decidePaint(int r, int g, int b);
-	bool goToJointHome(int type);
 
-private:
+	void setCanvasSize(double width, double height);
+	
 	int lastPaintColor;
 	Ui::CytonRunner *ui;
 	EcRealVector startJointPosition;
@@ -49,7 +58,6 @@ private:
 	double dx, dy, dz;
 	std::vector<cv::Point3d> canvasCorners;
 	std::string brushType;
-	double theta, phi, psi;
 	double currentX, currentY;
 	double raiseHeight;
 	int *width, *height;
