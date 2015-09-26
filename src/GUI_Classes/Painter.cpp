@@ -211,7 +211,7 @@ void Painter::resize(int *width, int *height){
 	Web->map_height = height;
 	logic->width = *width;
 	logic->height = *height;
-	logic->stepTaken = 2;
+	logic->resetStepTaken();
 	logic->clearClicked();
 
 	logic->resetSimWin(*width, *height, "Simulation Window");

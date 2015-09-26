@@ -311,3 +311,8 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s, bool simulated){
 		Ava->strokeInProgress = false;
 	}
 }
+
+//resets stepTaken to NEITHER
+void RunLogic::resetStepTaken(){
+	stepTaken = NEITHER;
+}

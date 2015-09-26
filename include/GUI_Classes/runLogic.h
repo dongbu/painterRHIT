@@ -12,9 +12,9 @@ class RunLogic : public QObject
     Q_OBJECT
 
 	enum STEP{
-		NEITHER, //previously 2  For when neither back nor forward pressed || if back or forward hit their respective limits
-		FORWARD, //previously 1  For when forward was successfully pressed
-		BACKWARD, //previously 0 For when backward was successfully pressed
+		NEITHER, //For when neither back nor forward pressed || if back or forward hit their respective limits
+		FORWARD, //For when forward was successfully pressed
+		BACKWARD, //For when backward was successfully pressed
 	};
 
 public:
@@ -26,6 +26,8 @@ public:
 	void clearSimWin();
 	void resetSimWin(int width, int height, std::string string);
 	void showSimWin();
+
+	void resetStepTaken();
 	
 private:
 	void paintWOFeedbackThread(DrawWindow *W);
