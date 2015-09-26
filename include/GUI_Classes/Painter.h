@@ -14,16 +14,12 @@ class Painter : public QObject
 
 public:
     Painter();
-    Painter(Shapes *shapes);
 
 	Sketchpad *sketch;
 	Webcam *Web;
 
-    void addShape(Shape *inboundShape);
-    void addShapes(Shapes *inboundShapes);
     void setDimensions(int *width, int *height);
     void showGUI();
-    void launchSimulation();
 
 private:
     Shapes *shapes;
@@ -34,9 +30,7 @@ private:
     RunLogic *logic;
 	CytonRunner *Ava;
 
-	std::string Painter::getXMLDim();
-	std::string Painter::getXMLWeb();
-
+	std::string getXMLHelper(std::string xml);
 	void parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo);
 
 public slots:
@@ -45,7 +39,7 @@ public slots:
 	void loadRobot(std::string robotLocation);
 	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
 	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
-	void hideAll();
+	void newClicked();
 	void resize(int *width, int *height);
 };
 
