@@ -59,10 +59,10 @@ private:
 	Ui::canny cannyUi;
 	Ui::brush brushUi;
 	cv::Mat savedPicture;
-	std::string location;
+	std::string imageLocation;
 
 private slots:
-	void refresh(int x, int y);
+	void respondClick(int x, int y);
 	void startNewCommand();
 
 	void saveAsClicked();
@@ -100,7 +100,7 @@ public slots:
 	void loadPhotoCannyClicked();
 	void loadPhotoKmeansClicked();
 
-	void reset();
+	void clearWindow();
 	void highlightShape(int index);
 
 	void setABB();

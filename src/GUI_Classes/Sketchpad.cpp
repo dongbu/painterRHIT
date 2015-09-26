@@ -1,5 +1,6 @@
 #pragma once
 #include "Sketchpad.h"
+#include "helperMethods.h"
 
 using namespace cv;
 
@@ -15,7 +16,7 @@ Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webc
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
-	//settting class variables
+	//setting class variables
 	this->width = width;
 	this->height = height;
 	this->shapes = ss;
@@ -31,12 +32,13 @@ ui(new Ui::Sketchpad)
 
 	//Linking opencv to Qt.
 	this->translator = new CVImageWidget(ui->widget);
-	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(refresh(int, int)));
+	connect(translator, SIGNAL(emitRefresh(int, int)), this, SLOT(respondClick(int, int)));
 	this->cvWindow = new DrawWindow(*width, *height, "garbage_name", 1);
 
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
-	getColor(); //sets class's color
+
+	this->rgbColor = helperMethods().getColor(this->color->currentText().toStdString().c_str()); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(cvWindow); //redraw the window
 	translator->showImage(cvWindow->grid); //actually redraw the window
@@ -151,7 +153,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionShutdown, SIGNAL(triggered()), this, SLOT(shutDownClicked()));
 
 	//misc
-	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(reset()));
+	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(clearWindow()));
 	connect(ui->actionSet_sketch_window_size, SIGNAL(triggered()), this, SLOT(changeSize()));
 	connect(ui->actionDefine_Shape, SIGNAL(triggered()), this, SLOT(showBrushUi()));
 }
@@ -180,7 +182,7 @@ void Sketchpad::closeEvent(QCloseEvent *event) {
 
 //redraws everything on the grid.
 void Sketchpad::redraw() {
-	getColor();
+	this->rgbColor = helperMethods().getColor(this->color->currentText().toStdString().c_str()); //sets class's color
 	startNewCommand();
 	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw the window
@@ -225,7 +227,7 @@ void Sketchpad::startNewCommand() {
  * @param x
  * @param y
  */
-void Sketchpad::refresh(int x, int y) {
+void Sketchpad::respondClick(int x, int y) {
 	//DRAW CLICK CIRCLE//
 	cvWindow->setPenColor(200, 200, 200);
 	cvWindow->setLineThickness(2);
@@ -331,90 +333,25 @@ void Sketchpad::flood(Point p) {
 		}
 		else skip = true;
 
-		if (!skip && p.y - 1 >= 0 && processed.at<double>(p.x, p.y - 1) != 1) { //recurse down
+		if (!skip && p.y - 1 >= 0 && processed.at<double>(p.x, p.y - 1) != 1) { //down
 			pointVec.push_back(Point(p.x, p.y - 1));
 			processed.at<double>(p.x, p.y - 1) = 1;
 		}
-		if (!skip && p.x - 1 >= 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//recurse left
+		if (!skip && p.x - 1 >= 0 && processed.at<double>(p.x - 1, p.y) != 1) {	//left
 			pointVec.push_back(Point(p.x - 1, p.y));
 			processed.at<double>(p.x - 1, p.y) = 1;
 		}
-		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //recurse up
+		if (!skip && p.y + 1 < cvWindow->grid.size().height && processed.at<double>(p.x, p.y + 1) != 1) { //up
 			pointVec.push_back(Point(p.x, p.y + 1));
 			processed.at<double>(p.x, p.y + 1) = 1;
 
 		}
-		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //recurse right
+		if (!skip && p.x + 1 < cvWindow->grid.size().width && processed.at<double>(p.x + 1, p.y) != 1) { //right
 			pointVec.push_back(Point(p.x + 1, p.y));
 			processed.at<double>(p.x + 1, p.y) = 1;
 		}
 	}
 	curPixelRegion->addPoint(p2.x + 1, p2.y + 1);
-
-}
-
-/**
- * @brief transforms a text color into useable rgb code.
- */
-void Sketchpad::getColor() {
-	QString col = this->color->currentText();
-	std::vector<int> toReplace;
-	if (col == "black") {
-		toReplace.push_back(0);
-		toReplace.push_back(0);
-		toReplace.push_back(0);
-	}
-	else if (col == "orange") {
-		toReplace.push_back(30);
-		toReplace.push_back(144);
-		toReplace.push_back(255);
-	}
-	else if (col == "yellow") {
-		toReplace.push_back(0);
-		toReplace.push_back(255);
-		toReplace.push_back(255);
-	}
-	else if (col == "green") {
-		toReplace.push_back(34);
-		toReplace.push_back(139);
-		toReplace.push_back(34);
-	}
-	else if (col == "red") {
-		toReplace.push_back(34);
-		toReplace.push_back(34);
-		toReplace.push_back(178);
-	}
-	else if (col == "blue") {
-		toReplace.push_back(255);
-		toReplace.push_back(144);
-		toReplace.push_back(30);
-	}
-	else if (col == "purple") {
-		toReplace.push_back(240);
-		toReplace.push_back(32);
-		toReplace.push_back(160);
-	}
-	else if (col == "dark grey"){
-		toReplace.push_back(75);
-		toReplace.push_back(75);
-		toReplace.push_back(75);
-	}
-	else if (col == "medium grey"){
-		toReplace.push_back(150);
-		toReplace.push_back(150);
-		toReplace.push_back(150);
-	}
-	else if (col == "light grey"){
-		toReplace.push_back(225);
-		toReplace.push_back(225);
-		toReplace.push_back(225);
-	}
-	else if (col == "white"){
-		toReplace.push_back(255);
-		toReplace.push_back(255);
-		toReplace.push_back(255);
-	}
-	this->rgbColor = toReplace;
 }
 
 void Sketchpad::loadPhotoKmeansClicked(){ kMeansForm->show();}
@@ -429,8 +366,8 @@ void Sketchpad::loadPhotoClicked() {
 	if (directory.exec()) {
 		cannyUi.accept->setDisabled(false);
 		kMeansUi.accept->setDisabled(false);
-		location = directory.selectedFiles().at(0).toStdString();
-		cv::Mat temp = cv::imread(location);
+		imageLocation = directory.selectedFiles().at(0).toStdString();
+		cv::Mat temp = cv::imread(imageLocation);
 
 		int widthDim = temp.size().width;
 		int heightDim = temp.size().height;
@@ -458,7 +395,7 @@ void Sketchpad::kMeansAdjusted() {
 	editingCanceled();
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
-	if (location == "") return; //make sure they didn't click "ok" with no image.
+	if (imageLocation == "") return; //make sure they didn't click "ok" with no image.
 	int colorCount = kMeansUi.ColorInput->text().toInt();
 	if (colorCount == 0) colorCount = 1; //don't let them have 0 colors.
 	int minPixel = kMeansUi.SizeInput->text().toInt();
@@ -477,7 +414,7 @@ void Sketchpad::cannyAdjusted() {
 	editingCanceled();
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
 
-	if (location == "") return; //make sure they didn't click "ok" with no image.
+	if (imageLocation == "") return; //make sure they didn't click "ok" with no image.
 	int minLength = cannyUi.LengthInput->text().toInt();
 	if (minLength == 0) minLength = 1; //don't let them have dimensionless lines.
 	int threshold = cannyUi.ThresholdInput->text().toInt();
@@ -520,7 +457,7 @@ void Sketchpad::loadWebcamPicture() {
 	translator->showImage(cvWindow->grid);
 	cannyUi.accept->setDisabled(false);
 	kMeansUi.accept->setDisabled(false);
-	location = "not nothing";
+	imageLocation = "not nothing";
 }
 
 /**
@@ -602,7 +539,7 @@ void Sketchpad::newClicked(){
 }
 
 //turn into clear button
-void Sketchpad::reset() {
+void Sketchpad::clearWindow() {
 	QMessageBox *m = new QMessageBox();
 	m->setText("Are you sure?");
 	m->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);

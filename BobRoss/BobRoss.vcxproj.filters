@@ -156,6 +156,9 @@
     <ClCompile Include="..\src\GUI_Classes\StartWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="helperMethods.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
@@ -373,6 +376,9 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_brushUI.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helperMethods.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
