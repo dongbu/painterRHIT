@@ -125,8 +125,8 @@ void Painter::loadRobot(std::string robotLocation) {
 
 //load photo canny from location.
 void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
-	logic->simWin->clearWindow(255, 255, 255); //white
-	logic->simWin->hideWindow();
+	logic->clearSimWin(); //white
+	logic->hideSimWin();
 
 	ImageParserContours IPC;
 	IPC.setMinContourLength(min_line_length);
@@ -142,8 +142,8 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 
 //load photo kmeans from location.
 void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) {
-	logic->simWin->clearWindow(255, 255, 255); //white
-	logic->simWin->hideWindow();
+	logic->clearSimWin(); //white
+	logic->hideSimWin();
 
 	ImageParserKmeans IPK;
 	IPK.setNumColors(colorCount);
@@ -200,7 +200,7 @@ void Painter::showGUI(){
 //hide all windows but sketchpad (i.e., new clicked)
 void Painter::newClicked(){
 	commandWin->hide();
-	logic->simWin->hideWindow();
+	logic->hideSimWin();
 	logic->clearClicked();
 }
 
@@ -214,7 +214,6 @@ void Painter::resize(int *width, int *height){
 	logic->stepTaken = 2;
 	logic->clearClicked();
 
-	logic->simWin = new DrawWindow(*width, *height, "Simulation Window");
-	logic->simWin->showWindow();
-	logic->simWin->show();
+	logic->resetSimWin(*width, *height, "Simulation Window");
+	logic->showSimWin();
 }

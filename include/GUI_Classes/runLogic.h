@@ -15,6 +15,11 @@ public:
     RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
 	
 	int width, height, stepTaken;
+
+	void hideSimWin();
+	void clearSimWin();
+	void resetSimWin(int width, int height, std::string string);
+	void showSimWin();
 	
 private:
 	void paintWOFeedbackThread(DrawWindow *W);

@@ -322,3 +322,22 @@ void RunLogic::paintWOFeedbackThread(DrawWindow *W){
 	Ava->changePaint(0);
 	Ava->goToJointHome(1);
 }
+
+//hides the simwin
+void RunLogic::hideSimWin(){
+	this->simWin->hideWindow();
+}
+//clears the simwin to white
+void RunLogic::clearSimWin(){
+	this->simWin->clearWindow(255, 255, 255);
+}
+
+//makes an entirely new simwin
+void RunLogic::resetSimWin(int width, int height, std::string string){
+	this->simWin = new DrawWindow(width, height, string);
+}
+//shows the simwin
+void RunLogic::showSimWin(){
+	this->simWin->showWindow();
+	this->simWin->show();
+}
