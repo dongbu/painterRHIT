@@ -11,10 +11,16 @@ class RunLogic : public QObject
 {
     Q_OBJECT
 
+	enum STEP{
+		NEITHER, //previously 2  For when neither back nor forward pressed || if back or forward hit their respective limits
+		FORWARD, //previously 1  For when forward was successfully pressed
+		BACKWARD, //previously 0 For when backward was successfully pressed
+	};
+
 public:
     RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
 	
-	int width, height, stepTaken;
+	int width, height;
 
 	void hideSimWin();
 	void clearSimWin();
@@ -33,6 +39,11 @@ private:
 	CytonRunner *Ava;
 
 	DrawWindow *simWin;
+
+	void paintPolyline(DrawWindow *W, Shape *s, bool simulated);
+	void paintFill(DrawWindow *W, Shape *s, bool simulated);
+
+	STEP stepTaken;
 
 public slots:
 	void updateMode(QString mode, int delay);
