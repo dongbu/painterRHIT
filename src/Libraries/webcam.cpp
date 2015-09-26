@@ -78,6 +78,11 @@ public:
 		char webcam_name[] = "Calibration Window";
 		int debug = 1;
 
+		QMessageBox instruct;
+		instruct.show();
+		instruct.setText("Use Keys 1-4, 'x' or 'esc' to quit");
+		instruct.setInformativeText("");
+
 		cv::namedWindow(webcam_name, 1);
 		cv::moveWindow(webcam_name, 20, 20);
 		cv::setMouseCallback(webcam_name, zoomMouseCallBackFunc, this);
@@ -108,23 +113,28 @@ public:
 			else if (k == int('1')) {
 				webcam_corner = 0;
 				if (debug) printf("Click on the desired region's upper left corner\n");
+				instruct.setInformativeText("Click on the desired region's upper left corner\n");
 			}
 			else if (k == int('2')) {
 				webcam_corner = 1;
 				if (debug) printf("Click on the desired region's upper right corner\n");
+				instruct.setInformativeText("Click on the desired region's upper right corner\n");
 			}
 			else if (k == int('3')) {
 				webcam_corner = 2;
 				if (debug) printf("Click on the desired region's lower right corner\n");
+				instruct.setInformativeText("Click on the desired region's lower right corner\n");
 			}
 			else if (k == int('4')) {
 				webcam_corner = 3;
 				if (debug) printf("Click on the desired region's lower left corner\n");
+				instruct.setInformativeText("Click on the desired region's lower left corner\n");
 			}
 			else if (k == int('x')) {
 				done = 1;
 			}
 		}
+		instruct.close();
 		printf("Webcam calibration matrix defined.\n");
 		cv::destroyWindow(mapped_name);
 		cv::destroyWindow(webcam_name);

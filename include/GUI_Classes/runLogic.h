@@ -13,7 +13,7 @@ class RunLogic : public QObject
 
 public:
     RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
-	DrawWindow *simWin;
+	
 	int width, height, stepTaken;
 	
 private:
@@ -26,6 +26,8 @@ private:
     Shapes *shapes;
 	int COMMAND_DELAY;
 	CytonRunner *Ava;
+
+	DrawWindow *simWin;
 
 public slots:
 	void updateMode(QString mode, int delay);
