@@ -569,7 +569,7 @@ bool Sketchpad::openClicked() {
 	if (directory.exec()) {
 		pugi::xml_document doc;
 		pugi::xml_parse_result result = doc.load_file((directory.selectedFiles().at(0).toStdString()).c_str());
-		if (!doc.child("robot").empty()){
+		if (!doc.child("VirtualData").empty()){
 			newClicked();
 			emit load(directory.selectedFiles().at(0).toStdString());
 			emit prodOtherWindows();
