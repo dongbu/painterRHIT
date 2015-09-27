@@ -196,7 +196,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="helperMethods.cpp" />
     <ClCompile Include="Release\moc_CommandWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -1373,7 +1372,6 @@ endlocal
   <ItemGroup>
     <ClInclude Include="..\include\Libraries\paint_util.h" />
     <ClInclude Include="GeneratedFiles\ui_brushUI.h" />
-    <ClInclude Include="helperMethods.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

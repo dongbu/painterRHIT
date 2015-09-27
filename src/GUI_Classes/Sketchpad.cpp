@@ -1,6 +1,5 @@
 #pragma once
 #include "Sketchpad.h"
-#include "helperMethods.h"
 
 using namespace cv;
 
@@ -38,7 +37,7 @@ ui(new Ui::Sketchpad)
 	//Drawing set-up logic
 	ui->actionDraw_Line->setChecked(true); //defaults to PolyLine
 
-	this->rgbColor = helperMethods().getColor(this->color->currentText().toStdString().c_str()); //sets class's color
+	this->rgbColor = paint_util::getColor(this->color->currentText().toStdString().c_str()); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(cvWindow); //redraw the window
 	translator->convertToQImage(cvWindow->grid); //actually redraw the window
@@ -182,7 +181,7 @@ void Sketchpad::closeEvent(QCloseEvent *event) {
 
 //redraws everything on the grid.
 void Sketchpad::redraw() {
-	this->rgbColor = helperMethods().getColor(this->color->currentText().toStdString().c_str()); //sets class's color
+	this->rgbColor = paint_util::getColor(this->color->currentText().toStdString().c_str()); //sets class's color
 	startNewCommand();
 	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw the window
