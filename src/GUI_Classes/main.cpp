@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
+	//!!
 	//There is a memory leak. never, ever run this without debug parameters
 	if (cmdOptionExists(argv, argv + argc, "-debug")){
 
