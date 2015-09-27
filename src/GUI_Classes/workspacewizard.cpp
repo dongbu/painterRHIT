@@ -2,7 +2,6 @@
 #include "workspacewizard.h"
 #include "CytonRunner.h"
 #include "windows.h"
-
 using namespace Ec;
 
 /*
@@ -383,24 +382,24 @@ void WorkspaceWizard::finishWizard(){
 	std::string line = "<?xml version=\"1.0\"?>\n";;
 	line.append("<workspace>");
 	line.append("<starting>");
-	line.append(string_format("<rotation s=\"%f\"/>", s1));
-	line.append(string_format("<rotation s=\"%f\"/>", s2));
-	line.append(string_format("<rotation s=\"%f\"/>", s3));
-	line.append(string_format("<rotation s=\"%f\"/>", s4));
-	line.append(string_format("<rotation s=\"%f\"/>", s5));
-	line.append(string_format("<rotation s=\"%f\"/>", s6));
-	line.append(string_format("<rotation s=\"%f\"/>", s7));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s1));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s2));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s3));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s4));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s5));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s6));
+	line.append(paint_util::string_format("<rotation s=\"%f\"/>", s7));
 	line.append("</starting>");
 	line.append("<canvas>");
 	for (size_t i = 0; i < canvasCorners.size(); i++){
 		cv::Point3d p = canvasCorners.at(i);
-		line.append(string_format("<corner x=\"%f\" y=\"%f\" z=\"%f\"/>", p.x, p.y, p.z));
+		line.append(paint_util::string_format("<corner x=\"%f\" y=\"%f\" z=\"%f\"/>", p.x, p.y, p.z));
 	}
 	line.append("</canvas>");
 	line.append("<paintPickup>");
 	//for (size_t i = 0; i < paint.size(); i++){
 	//	std::pair<int, cv::Point2d> p = paint.at(i);
-	//	line.append(string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", p.second.x, p.second.y, p.first, r.at(i), g.at(i), b.at(i)));
+	//	line.append(paint_util::string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", p.second.x, p.second.y, p.first, r.at(i), g.at(i), b.at(i)));
 	//}
 	for (int i = 0; i < tab->rowCount(); i++){
 		double x = tab->item(i, 0)->text().toDouble();
@@ -411,7 +410,7 @@ void WorkspaceWizard::finishWizard(){
 		if (i == 0){
 			r = g = b = -1;
 		}
-		line.append(string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", x, y, i, r, g, b));
+		line.append(paint_util::string_format("<point x=\"%f\" y=\"%f\" id=\"%d\" r=\"%i\" g=\"%i\" b=\"%i\"/>", x, y, i, r, g, b));
 	}
 	line.append("</paintPickup>");
 	line.append("</workspace>");
@@ -443,24 +442,6 @@ void WorkspaceWizard::finishWizard(){
 	Ava->tellFinished();
 }
 
-/*
-does the same thing here as everywhere else.
-*/
-// not a beautiful place for this but c'est la vie
-std::string WorkspaceWizard::string_format(const std::string fmt, ...) {
-	int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
-	std::string str;
-	va_list ap;
-	while (1) {     // Maximum two passes on a POSIX system...
-		str.resize(size);
-		va_start(ap, fmt);
-		int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
-		va_end(ap);
-		if (n > -1 && n < size) { str.resize(n); return str; }
-		if (n > -1) size = n + 1; else size *= 2;
-	}
-	return str;
-}
 
 /*
 opens a file directory to select the name (and location) to save the new xml.

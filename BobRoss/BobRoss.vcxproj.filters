@@ -159,6 +159,9 @@
     <ClCompile Include="helperMethods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Libraries\paint_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
@@ -378,6 +381,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="helperMethods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Libraries\paint_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

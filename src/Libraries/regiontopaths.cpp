@@ -4,13 +4,13 @@
 #include "pixeltools.cpp"
 #include <cstdarg>
 
-
 #ifdef _WIN32
 #include <Windows.h>
 #else
 #include <sys/time.h>
 #include <ctime>
 #endif
+
 
 /* Remove if already defined */
 typedef long long int64; typedef unsigned long long uint64;
@@ -47,35 +47,21 @@ public:
 
   void setDrawOffset(int x = 0, int y = 0) { draw_offset = cv::Point(x, y); }
 
-  // not a beautiful place for this but c'est la vie
-  std::string string_format(const std::string fmt, ...) {
-    int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
-    std::string str;
-    va_list ap;
-    while (1) {     // Maximum two passes on a POSIX system...
-      str.resize(size);
-      va_start(ap, fmt);
-      int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
-      va_end(ap);
-      if (n > -1 && n < size) { str.resize(n); return str; }
-      if (n > -1) size = n + 1; else size *= 2;
-    }
-    return str;
-  }
+
 
   std::string getColorXML() {
     std::string line;
-    line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", color[2], color[1], color[0]));
+    line.append(paint_util::string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", color[2], color[1], color[0]));
     return line;
   }
 
   virtual std::string getXML() {
     std::string line;
-    line.append(string_format("<shape type=\"brush\" w=\"%i\" h=\"%i\" style=\"%i\"", width, height, style));
+    line.append(paint_util::string_format("<shape type=\"brush\" w=\"%i\" h=\"%i\" style=\"%i\"", width, height, style));
     line.append(getColorXML());
     line.append("<points>");
     for (int i = 0; i < (int)pixels.size(); i++) {
-      line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", pixels[i].x, pixels[i].y));
+      line.append(paint_util::string_format("<p x=\"%i\" y=\"%i\"></p>", pixels[i].x, pixels[i].y));
     }
     line.append("</points>");
     line.append("</shape>");

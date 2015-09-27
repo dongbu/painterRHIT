@@ -10,7 +10,7 @@ public:
 
 public slots :
 
-    void showImage(const cv::Mat& image);
+void convertToQImage(const cv::Mat& image);
 
 protected:
     void paintEvent(QPaintEvent* /*event*/);

@@ -14,6 +14,7 @@
 class PolyLine;
 class PixelRegion;
 
+
 class Shape {
 protected:
 	cv::Scalar pen_color;
@@ -50,7 +51,7 @@ public:
 
 	std::string getColorXML() {
 		std::string line;
-		line.append(string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", pen_color_vec[2], pen_color_vec[1], pen_color_vec[0]));
+		line.append(paint_util::string_format("<color r=\"%i\" g=\"%i\" b=\"%i\"></color>", pen_color_vec[2], pen_color_vec[1], pen_color_vec[0]));
 		return line;
 	}
 
@@ -59,21 +60,6 @@ public:
 		return line;
 	}
 
-	// not a beautiful place for this but c'est la vie
-	std::string string_format(const std::string fmt, ...) {
-		int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
-		std::string str;
-		va_list ap;
-		while (1) {     // Maximum two passes on a POSIX system...
-			str.resize(size);
-			va_start(ap, fmt);
-			int n = vsnprintf((char *)str.data(), size, fmt.c_str(), ap);
-			va_end(ap);
-			if (n > -1 && n < size) { str.resize(n); return str; }
-			if (n > -1) size = n + 1; else size *= 2;
-		}
-		return str;
-	}
 
 	void toggleBreakPoint(bool toggle) {
 		isBreakPoint = toggle;
@@ -105,11 +91,11 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"polyline\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+		line.append(paint_util::string_format("<shape type=\"polyline\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
 		line.append(Shape::getColorXML());
 		line.append("<points>");
 		for (int i = 0; i < (int)points.size(); i++) {
-			line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+			line.append(paint_util::string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
 		}
 		line.append("</points>");
 		line.append("</shape>");
@@ -160,11 +146,11 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"pixelregion\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\" style=\"%i\">", getID(), isBreakPoint, thickness, style));
+		line.append(paint_util::string_format("<shape type=\"pixelregion\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\" style=\"%i\">", getID(), isBreakPoint, thickness, style));
 		line.append(Shape::getColorXML());
 		line.append("<points>");
 		for (int i = 0; i < (int)points.size(); i++) {
-			line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+			line.append(paint_util::string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
 		}
 		line.append("</points>");
 		line.append("</shape>");
@@ -270,11 +256,11 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"polypoints\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
+		line.append(paint_util::string_format("<shape type=\"polypoints\" id=\"%i\" breakpoint=\"%i\" thickness=\"%i\">", getID(), isBreakPoint, thickness));
 		line.append(Shape::getColorXML());
 		line.append("<points>");
 		for (int i = 0; i < (int)points.size(); i++) {
-			line.append(string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
+			line.append(paint_util::string_format("<p x=\"%i\" y=\"%i\"></p>", points[i].x, points[i].y));
 		}
 		line.append("</points>");
 		line.append("</shape>");
@@ -335,9 +321,9 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakpoint=\"%i\">", getID(), fill, isBreakPoint));
+		line.append(paint_util::string_format("<shape type=\"rectangle\" id=\"%i\" fill=\"%i\" breakpoint=\"%i\">", getID(), fill, isBreakPoint));
 		line.append(getColorXML());
-		line.append(string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
+		line.append(paint_util::string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			pt1.x, pt1.y, pt2.x, pt2.y));
 		line.append("</shape>");
 		return line;
@@ -414,7 +400,7 @@ public:
 
 	virtual std::string getXML() {
 		std::string line;
-		line.append(string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
+		line.append(paint_util::string_format("<shape type=\"ellipse\" id=\"%i\" fill=\"%i\" x=\"%i\" y=\"%i\" w=\"%d\" h=\"%d\" breakPoint=\"%i\">",
 			getID(), fill, pt.x, pt.y, axes.width, axes.height, isBreakPoint));
 		line.append(getColorXML());
 		line.append("</shape>");

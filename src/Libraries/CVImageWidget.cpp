@@ -18,10 +18,11 @@ QSize CVImageWidget::minimumSizeHint() {
 }
 
 /**
- * @brief show image as QImage
+ * @brief convert and display image as QImage
  * @param image
+ * @formerly Formerly showImage
  */
-void CVImageWidget::showImage(const cv::Mat& image)   {
+void CVImageWidget::convertToQImage(const cv::Mat& image)   {
 	// Convert the image to the RGB888 format
 	switch (image.type()) {
 	case CV_8UC1:

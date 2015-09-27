@@ -22,7 +22,6 @@ public:
 	cv::Mat grid;
 	int width, height;
 
-	// ABC: hmmm... why have this in DrawWindow?
 	std::vector<cv::Point> poly_points; // will automatically allocate member if needed
 
 	void setCanvasColor(int r, int g, int b) {
@@ -30,7 +29,11 @@ public:
 	}
 
 	void clearWindow() { grid.setTo(canvas_color); }
+	void clearWindow(int r, int g, int b){ 
+		setCanvasColor(r, g, b);
+		clearWindow();
 
+	}
 	void copy(DrawWindow *W) { grid = W->grid.clone(); }
 
 	// copies pixels of W that are NOT r,g,b
@@ -72,10 +75,10 @@ public:
 	}
 
 	// clears window and set pixels to r g b
-	void clearWindow(int r, int g, int b) {
-		setCanvasColor(r, g, b);
-		clearWindow();
-	}
+	//void clearWindow(int r, int g, int b) {
+	//	setCanvasColor(r, g, b);
+	//	clearWindow();
+	//}
 
 	cv::Vec3b getColor(int i, int j) {
 		return grid.at<cv::Vec3b>(cv::Point(i, j));
@@ -241,9 +244,6 @@ public:
 		cv::moveWindow(window_name, winx, winy);
 	}
 
-	void topWindow() {
-		// BringWindowToTop(cv::getWindowHandle(window_name));
-	}
 
 	// creates the window
 	void popWindow() {
@@ -281,7 +281,9 @@ public:
 		setLineType("solid");
 		setLineThickness(2);
 		setPenColor(0, 0, 0);
-		clearWindow(255, 255, 255);
+		setCanvasColor(255, 255, 255);
+		clearWindow();
+
 	}
 
 	~DrawWindow() {

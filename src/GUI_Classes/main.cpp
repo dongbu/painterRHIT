@@ -3,21 +3,31 @@
 #include "Painter.h"
 #include "StartWindow.h"
 #include <windows.h>
+#include <algorithm>
 
 
+bool cmdOptionExists(char** begin, char** end, const std::string& option)
+{
+	return std::find(begin, end, option) != end;
+}
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
-	//console window//
-	AllocConsole();
+	//There is a memory leak. never, ever run this without debug parameters
+	if (cmdOptionExists(argv, argv + argc, "-debug")){
 
-	SetConsoleTitleA("Robot Artist v3 (8/26/15)");
-	freopen("conin$", "r", stdin);
-	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
-	//console window//
+		//console window//
+		AllocConsole();
+
+		SetConsoleTitleA("Robot Artist v3 (8/26/15)");
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		//console window//
+	}
+
 
 	//actual program//
 	Painter p;

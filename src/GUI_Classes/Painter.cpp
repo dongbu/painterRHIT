@@ -136,7 +136,7 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 
 	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
-	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->translator->convertToQImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();
 }
 
@@ -153,7 +153,7 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) 
 
 	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
-	sketch->translator->showImage(sketch->cvWindow->grid); //actually redraw the window
+	sketch->translator->convertToQImage(sketch->cvWindow->grid); //actually redraw the window
 	sketch->prodOtherWindows();
 }
 

@@ -69,6 +69,7 @@
 #include <opencv/cv.h>
 
 //self-written methods to include
+#include "paint_util.h"
 //#include "CVImageWidget.h"
 //#include "kmeansSegment.hpp"
 //#include "pugixml.hpp"

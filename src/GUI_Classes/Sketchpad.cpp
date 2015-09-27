@@ -41,7 +41,7 @@ ui(new Ui::Sketchpad)
 	this->rgbColor = helperMethods().getColor(this->color->currentText().toStdString().c_str()); //sets class's color
 	cvWindow->grid.setTo(cv::Scalar(255, 255, 255)); //clear the grid
 	shapes->drawAll(cvWindow); //redraw the window
-	translator->showImage(cvWindow->grid); //actually redraw the window
+	translator->convertToQImage(cvWindow->grid); //actually redraw the window
 	this->startNewCommand(); //prep for initial command
 
 	//robot logic
@@ -186,7 +186,7 @@ void Sketchpad::redraw() {
 	startNewCommand();
 	cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(cvWindow); //redraw the window
-	translator->showImage(cvWindow->grid); //actually redraw the window
+	translator->convertToQImage(cvWindow->grid); //actually redraw the window
 }
 
 //begin a new command on the sketchpad.
@@ -260,7 +260,7 @@ void Sketchpad::respondClick(int x, int y) {
 		if (prevX == -10) { //first point clicked
 			prevX = x;
 			prevY = y;
-			translator->showImage(cvWindow->grid);
+			translator->convertToQImage(cvWindow->grid);
 			return;
 		}
 		else { //second point clicked
@@ -275,7 +275,7 @@ void Sketchpad::respondClick(int x, int y) {
 		if (prevX == -10) { //first point clicked
 			prevX = x;
 			prevY = y;
-			translator->showImage(cvWindow->grid);
+			translator->convertToQImage(cvWindow->grid);
 			return;
 		}
 		else { //second point clicked
@@ -308,7 +308,7 @@ void Sketchpad::respondClick(int x, int y) {
 		prevY = y; //iterate
 	}
 
-	translator->showImage(cvWindow->grid); //actually redraw the window
+	translator->convertToQImage(cvWindow->grid); //actually redraw the window
 
 }
 
@@ -381,7 +381,7 @@ void Sketchpad::loadPhotoClicked() {
 		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 		cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
 		this->setWindowTitle(("RHobart - " + title + "*").c_str());
-		translator->showImage(cvWindow->grid);
+		translator->convertToQImage(cvWindow->grid);
 	}
 }
 
@@ -454,7 +454,7 @@ void Sketchpad::loadWebcamPicture() {
 	cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
 	cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 	this->setWindowTitle(("RHobart - " + title + "*").c_str());
-	translator->showImage(cvWindow->grid);
+	translator->convertToQImage(cvWindow->grid);
 	cannyUi.accept->setDisabled(false);
 	kMeansUi.accept->setDisabled(false);
 	imageLocation = "not nothing";
@@ -595,7 +595,7 @@ void Sketchpad::highlightShape(int index) {
 	shapes->drawOne(&Woverlay, index + 1, 250, 0, 200); // r,g,b should not be 0,0,0
 	cvWindow->overlay(&Woverlay, 1);
 
-	translator->showImage(cvWindow->grid); //actually redraw the window
+	translator->convertToQImage(cvWindow->grid); //actually redraw the window
 }
 
 void Sketchpad::setABB(){
