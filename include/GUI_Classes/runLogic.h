@@ -30,8 +30,7 @@ public:
 	void resetStepTaken();
 	
 private:
-	void paintWOFeedbackThread(DrawWindow *W);
-	void simulateDelayedBrushThread(DrawWindow *W);
+	void paintThread(DrawWindow *W, bool simulated);
 
 	QString mode;
     volatile bool running;
@@ -42,8 +41,9 @@ private:
 
 	DrawWindow *simWin;
 
-	void paintPolyline(DrawWindow *W, Shape *s, bool simulated);
 	void paintFill(DrawWindow *W, Shape *s, bool simulated);
+	void setAvaPenColor(bool simulated, Shape *s);
+	void drawPolyLine(std::vector<cv::Point> pts, bool simulated, DrawWindow *W);
 
 	STEP stepTaken;
 
