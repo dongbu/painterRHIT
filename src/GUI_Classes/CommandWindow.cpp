@@ -45,19 +45,7 @@ ui(new Ui::CommandWindow)
 
 	//building color changing dialog
 	colorForm = new QDialog();
-	colorUi.setupUi(colorForm);
-	colorForm->setWindowTitle("Color Options");
-	colorUi.tableWidget->setRowCount(0);
-	colorUi.tableWidget->setColumnCount(5);
-	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
-	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("RGB"));
-	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("Break"));
-	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
-	colorUi.tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
-	colorUi.tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
-	colorUi.tableWidget->resizeColumnsToContents();
-	colorUi.ChangeAll->setChecked(true);
-	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
+	buildColorChangeDialog(colorForm);
 
 	// setting up misc. modes
 	modeBox = new QComboBox();
@@ -69,14 +57,7 @@ ui(new Ui::CommandWindow)
 	connect(modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMode()));
 
 	delayTime = new QSpinBox();
-	delayTime->setFixedWidth(40);
-	delayTime->setMinimum(0);
-	delayTime->setMaximum(30);
-	delayTime->setSingleStep(1);
-	delayTime->setValue(2);
-	ui->toolBar->insertSeparator(ui->actionPlay);
-	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
-	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
+	setupDelayTime(delayTime);
 	ui->toolBar->insertSeparator(ui->actionPlay);
 	connect(delayTime, SIGNAL(valueChanged(int)), this, SLOT(updateMode()));
 
@@ -93,7 +74,41 @@ CommandWindow::~CommandWindow()
 {
 	delete ui;
 }
+/**
+/ @brief Sets up DelayTime
+*/
+void CommandWindow::setupDelayTime(QSpinBox *DelayTime)
+{
+	delayTime->setFixedWidth(40);
+	delayTime->setMinimum(0);
+	delayTime->setMaximum(30);
+	delayTime->setSingleStep(1);
+	delayTime->setValue(2);
+	ui->toolBar->insertSeparator(ui->actionPlay);
+	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
+	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
+}
 
+/**
+/ @ brief Sets up the color change dialog.
+
+*/
+void CommandWindow::buildColorChangeDialog(QDialog *colorForm)
+{
+	colorUi.setupUi(colorForm);
+	colorForm->setWindowTitle("Color Options");
+	colorUi.tableWidget->setRowCount(0);
+	colorUi.tableWidget->setColumnCount(5);
+	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
+	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("RGB"));
+	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("Break"));
+	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
+	colorUi.tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
+	colorUi.tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
+	colorUi.tableWidget->resizeColumnsToContents();
+	colorUi.ChangeAll->setChecked(true);
+	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
+}
 /**
  * @brief move command up in window (and vec)
  */
@@ -394,39 +409,31 @@ void CommandWindow::colorChangeConfirmed() {
 
 void CommandWindow::updateMode() {
 	if (modeBox->currentText() == "Simulate Idealized Brush") {
-		ui->actionBackward->setDisabled(false);
-		ui->actionForward->setDisabled(false);
-		delayTimeLabel_action->setVisible(true);
-		delayTime_action->setVisible(true);
+		updateModeHelper(false, false, true, true);
 	}
 	else if (modeBox->currentText() == "Simulate Real Brush") {
-		ui->actionBackward->setDisabled(false);
-		ui->actionForward->setDisabled(false);
-		delayTimeLabel_action->setVisible(true);
-		delayTime_action->setVisible(true);
+		updateModeHelper(false, false, true, true);
 	}
 	else if (modeBox->currentText() == "Non-touch robot motion") {
-		ui->actionBackward->setDisabled(true);
-		ui->actionForward->setDisabled(true);
-		delayTimeLabel_action->setVisible(false);
-		delayTime_action->setVisible(false);
+		updateModeHelper(true, true, false, false);
 	}
 	else if (modeBox->currentText() == "Paint w/o feedback") {
-		ui->actionBackward->setDisabled(true);
-		ui->actionForward->setDisabled(true);
-		delayTimeLabel_action->setVisible(false);
-		delayTime_action->setVisible(false);
+		updateModeHelper(true, true, false, false);
 	}
 	else if (modeBox->currentText() == "Paint w/ feedback") {
-		ui->actionBackward->setDisabled(true);
-		ui->actionForward->setDisabled(true);
-		delayTimeLabel_action->setVisible(false);
-		delayTime_action->setVisible(false);
+		updateModeHelper(true, true, false, false);
 	}
 
 	emit modeUpdated(modeBox->currentText(), delayTime->text().toInt());
 }
-
+void CommandWindow::updateModeHelper(bool setForward,
+	bool setBackward, bool timeLabelAction, bool timeAction)
+{
+	ui->actionBackward->setDisabled(setForward);
+	ui->actionForward->setDisabled(setBackward);
+	delayTimeLabel_action->setVisible(timeLabelAction);
+	delayTime_action->setVisible(timeAction);
+}
 void CommandWindow::enableModeSetting() {
 	this->modeBox->setDisabled(false);
 	this->delayTime->setDisabled(false);
