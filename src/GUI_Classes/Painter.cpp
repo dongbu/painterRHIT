@@ -193,7 +193,7 @@ void Painter::showGUI(){
 	connect(sketch, SIGNAL(resizeSimWin(int*, int*)), this, SLOT(resize(int*, int*)));
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
-
+	connect(sketch->ui->actionQuit, SIGNAL(triggered()), this, SLOT(murderousRampage()));
 	sketch->show();
 }
 
@@ -216,4 +216,8 @@ void Painter::resize(int *width, int *height){
 
 	logic->resetSimWin(*width, *height, "Simulation Window");
 	logic->showSimWin();
+}
+
+void Painter::murderousRampage(){
+	std::printf("We need to return to main somehow and call \"return 0\"");
 }

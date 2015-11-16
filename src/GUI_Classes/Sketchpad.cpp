@@ -155,6 +155,7 @@ void Sketchpad::setupQt() {
 	connect(ui->actionClear, SIGNAL(triggered()), this, SLOT(clearWindow()));
 	connect(ui->actionSet_sketch_window_size, SIGNAL(triggered()), this, SLOT(changeSize()));
 	connect(ui->actionDefine_Shape, SIGNAL(triggered()), this, SLOT(showBrushUi()));
+	
 }
 
 /**

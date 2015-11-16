@@ -152,6 +152,7 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 	pose.setOrientation(orientation);
 
 	setEndEffectorSet(FRAME_EE_SET); // point end effector set index
+	//setEndEffectorSet(0);
 	EcEndEffectorPlacement desiredPlacement(pose);
 	EcManipulatorEndEffectorPlacement actualEEPlacement;
 	EcCoordinateSystemTransformation offset, zero, actualCoord;
@@ -263,6 +264,7 @@ bool CytonRunner::goToJointHome(int type){
 
 	EcBoolean retVal = EcTrue;
 	setEndEffectorSet(JOINT_CONTROL_EE_SET);
+	//setEndEffectorSet(FRAME_EE_SET);
 	EcSLEEPMS(500);
 
 	//vector of EcReals that holds the set of joint angles
@@ -280,6 +282,7 @@ bool CytonRunner::goToJointHome(int type){
 	for (size_t ii = 0; ii < size; ++ii) {
 		currentJoints[ii] = jointPosition[ii];
 	}
+	//currentJoints[size - 1] = 0.003;
 
 	retVal &= setJointValues(currentJoints);
 

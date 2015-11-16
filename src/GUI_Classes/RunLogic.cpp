@@ -190,7 +190,7 @@ void RunLogic::paintThread(DrawWindow *W, bool simulated){
 			return;
 		}
 
-		this->setAvaPenColor(true, s);
+		this->setAvaPenColor(simulated, s);
 
 		emit updateCommandList(currentShapeIndex, "runningBot");
 		if (s->fill) { paintFill(W, s, simulated); } //paint fill

@@ -32,6 +32,7 @@ private:
 
 	std::string getXMLHelper(std::string xml);
 	void parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo);
+	
 
 public slots:
     void save(std::string projectLocation);
@@ -41,6 +42,7 @@ public slots:
 	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
 	void newClicked();
 	void resize(int *width, int *height);
+	void murderousRampage();
 };
 
 #endif // PAINTER_H

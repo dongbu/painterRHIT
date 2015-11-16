@@ -54,6 +54,7 @@ public:
     QAction *actionSet_sketch_window_size;
     QAction *actionLoadPhoto;
     QAction *actionDefine_Shape;
+    QAction *actionQuit;
     QWidget *centralwidget;
     QWidget *widget;
     QMenuBar *menubar;
@@ -198,6 +199,8 @@ public:
         QIcon icon21;
         icon21.addFile(QStringLiteral(":/Icon Storage/sizeBrush.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionDefine_Shape->setIcon(icon21);
+        actionQuit = new QAction(Sketchpad);
+        actionQuit->setObjectName(QStringLiteral("actionQuit"));
         centralwidget = new QWidget(Sketchpad);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         widget = new QWidget(centralwidget);
@@ -208,7 +211,7 @@ public:
         Sketchpad->setCentralWidget(centralwidget);
         menubar = new QMenuBar(Sketchpad);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 924, 26));
+        menubar->setGeometry(QRect(0, 0, 924, 21));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuRobot = new QMenu(menubar);
@@ -240,6 +243,7 @@ public:
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionSave);
         menuFile->addAction(actionSave_As);
+        menuFile->addAction(actionQuit);
         menuRobot->addAction(menuSelect_Robot->menuAction());
         menuRobot->addAction(actionConnect);
         menuRobot->addAction(menuWorkspace->menuAction());
@@ -325,6 +329,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionDefine_Shape->setToolTip(QApplication::translate("Sketchpad", "Define Brush Shape", 0));
 #endif // QT_NO_TOOLTIP
+        actionQuit->setText(QApplication::translate("Sketchpad", "Quit", 0));
         menuFile->setTitle(QApplication::translate("Sketchpad", "File", 0));
         menuRobot->setTitle(QApplication::translate("Sketchpad", "Robot", 0));
         menuWorkspace->setTitle(QApplication::translate("Sketchpad", "Canvas", 0));
