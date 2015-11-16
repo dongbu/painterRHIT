@@ -30,6 +30,10 @@ private:
 	QLabel *delayTimeLabel;
 	QAction *delayTimeLabel_action, *delayTime_action;
 	Ui::colorChange colorUi;
+	void setupDelayTime(QSpinBox *DelayTime);
+	void buildColorChangeDialog(QDialog *colorForm);
+	void updateModeHelper(bool setForward, 
+		bool setBackward, bool timeLabelAction, bool timeAction);
 	int secondCount, minuteCount, commandsFinished;
 	bool minPrep;
 
