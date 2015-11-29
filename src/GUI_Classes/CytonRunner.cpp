@@ -142,7 +142,7 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 		pose.setTranslationY(y);
 		pose.setTranslationZ(vec.at(2));
 	}
-	printf("...................................................................................................................\n");
+	//printf("...................................................................................................................\n");
 
 	EcOrientation orientation;
 
@@ -171,19 +171,23 @@ void CytonRunner::goToPos(double x, double y, double z, bool toggle){
 	{
 		EcSLEEPMS(interval);
 		count++;
+		EcBoolean successData = getActualPlacement(actualEEPlacement);
+		if (!successData) {
+		}
+		else {
+			actualCoord = actualEEPlacement.offsetTransformations()[0].coordSysXForm();
 
-		getActualPlacement(actualEEPlacement);
-		actualCoord = actualEEPlacement.offsetTransformations()[0].coordSysXForm();
+			//get the transformation between the actual and desired 
+			offset = (actualCoord.inverse()) * pose;
 
-		//get the transformation between the actual and desired 
-		offset = (actualCoord.inverse()) * pose;
-
-		if (offset.approxEq(zero, .00001)) achieved = EcTrue;
-
-		currentX = pose.translation().x();
-		currentY = pose.translation().y();
-
+			if (offset.approxEq(zero, .00001)) {
+				achieved = EcTrue;
+			}
+			currentX = pose.translation().x();
+			currentY = pose.translation().y();
+		}
 	}
+
 
 }
 //have the robot rise straight up.
