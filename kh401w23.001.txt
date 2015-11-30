@@ -1,0 +1,200 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   BobRoss/NeededBinaries/Qt5Core.dll
+#	modified:   BobRoss/NeededBinaries/Qt5Gui.dll
+#	modified:   BobRoss/NeededBinaries/Qt5Widgets.dll
+#	deleted:    BobRoss/NeededBinaries/boost_system-vc120-mt-1_57.dll
+#	modified:   BobRoss/NeededBinaries/cyton.ecz
+#	modified:   BobRoss/NeededBinaries/ecControl.dll
+#	modified:   BobRoss/NeededBinaries/ecControlCore.dll
+#	modified:   BobRoss/NeededBinaries/ecConvertSimulation.dll
+#	modified:   BobRoss/NeededBinaries/ecConvertSystem.dll
+#	modified:   BobRoss/NeededBinaries/ecForceControl.dll
+#	modified:   BobRoss/NeededBinaries/ecFoundCommon.dll
+#	modified:   BobRoss/NeededBinaries/ecFoundCore.dll
+#	modified:   BobRoss/NeededBinaries/ecFunction.dll
+#	modified:   BobRoss/NeededBinaries/ecGeometry.dll
+#	modified:   BobRoss/NeededBinaries/ecGrasping.dll
+#	modified:   BobRoss/NeededBinaries/ecInterface.dll
+#	modified:   BobRoss/NeededBinaries/ecManipulation.dll
+#	modified:   BobRoss/NeededBinaries/ecManipulationDirector.dll
+#	modified:   BobRoss/NeededBinaries/ecManipulator.dll
+#	modified:   BobRoss/NeededBinaries/ecMatrixUtilities.dll
+#	modified:   BobRoss/NeededBinaries/ecPathPlanning.dll
+#	modified:   BobRoss/NeededBinaries/ecPlanarGeometry.dll
+#	modified:   BobRoss/NeededBinaries/ecPluginCommon.dll
+#	modified:   BobRoss/NeededBinaries/ecPlugins.dll
+#	modified:   BobRoss/NeededBinaries/ecRemoteCommand.dll
+#	modified:   BobRoss/NeededBinaries/ecSensorInterface.dll
+#	modified:   BobRoss/NeededBinaries/ecShapeProximity.dll
+#	modified:   BobRoss/NeededBinaries/ecSimulation.dll
+#	modified:   BobRoss/NeededBinaries/ecSocket.dll
+#	deleted:    BobRoss/NeededBinaries/ecSoilMechanics.dll
+#	modified:   BobRoss/NeededBinaries/ecStream.dll
+#	modified:   BobRoss/NeededBinaries/ecTransport.dll
+#	modified:   BobRoss/NeededBinaries/ecVisualization.dll
+#	modified:   BobRoss/NeededBinaries/ecVrml97.dll
+#	modified:   BobRoss/NeededBinaries/ecXml.dll
+#	modified:   BobRoss/NeededBinaries/ecXmlReaderWriter.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_chrono-mt.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_date_time-mt.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_filesystem-mt.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_iostreams-mt.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_system-mt.dll
+#	modified:   BobRoss/NeededBinaries/ecboost_thread-mt.dll
+#	modified:   BobRoss/NeededBinaries/icudt49.dll
+#	modified:   BobRoss/NeededBinaries/icuin49.dll
+#	modified:   BobRoss/NeededBinaries/icuuc49.dll
+#	modified:   BobRoss/NeededBinaries/imageSensor.ecp
+#	modified:   BobRoss/NeededBinaries/opencv_world300.dll
+#	modified:   BobRoss/NeededBinaries/platforms/qwindows.dll
+#	modified:   BobRoss/NeededBinaries/remoteCommandClientPlugin.ecp
+#	deleted:    BobRoss/NeededBinaries/workspaceHelp.png
+#	modified:   BobRoss/NeededBinaries/zlib1.dll
+#	modified:   src/Libraries/shapes.cpp
+#
+# Untracked files:
+#	BobRoss/NeededBinaries/Example Cyton Direction.ecd
+#	BobRoss/NeededBinaries/Example Cyton DirectionPoses.ecz
+#	BobRoss/NeededBinaries/PropertyEditor.dll
+#	BobRoss/NeededBinaries/Qt5Concurrent.dll
+#	BobRoss/NeededBinaries/Qt5Multimedia.dll
+#	BobRoss/NeededBinaries/Qt5MultimediaWidgets.dll
+#	BobRoss/NeededBinaries/Qt5Network.dll
+#	BobRoss/NeededBinaries/Qt5OpenGL.dll
+#	BobRoss/NeededBinaries/Qt5Positioning.dll
+#	BobRoss/NeededBinaries/Qt5PrintSupport.dll
+#	BobRoss/NeededBinaries/Qt5Qml.dll
+#	BobRoss/NeededBinaries/Qt5Quick.dll
+#	BobRoss/NeededBinaries/Qt5Sensors.dll
+#	BobRoss/NeededBinaries/Qt5Sql.dll
+#	BobRoss/NeededBinaries/Qt5Svg.dll
+#	BobRoss/NeededBinaries/Qt5WebKitWidgets.dll
+#	BobRoss/NeededBinaries/UniControl.dll
+#	BobRoss/NeededBinaries/UniTransform.dll
+#	BobRoss/NeededBinaries/VidCapDll.dll
+#	BobRoss/NeededBinaries/actinRT.exe
+#	BobRoss/NeededBinaries/cameraPlugin.ecp
+#	BobRoss/NeededBinaries/collisionExclusionPlugin.ecp
+#	BobRoss/NeededBinaries/controlSystemPlugin.ecp
+#	BobRoss/NeededBinaries/cytonConfig.xml
+#	BobRoss/NeededBinaries/cytonConfigOriginal.xml
+#	BobRoss/NeededBinaries/cytonMultiturnStartupPlugin.ecp
+#	BobRoss/NeededBinaries/cytonPlugin.ecp
+#	BobRoss/NeededBinaries/cytonSensorBoard.ecp
+#	BobRoss/NeededBinaries/cytonSensorPlugin.ecp
+#	BobRoss/NeededBinaries/cytonSetup.exe
+#	BobRoss/NeededBinaries/cytonStartupConfigPlugin.ecp
+#	BobRoss/NeededBinaries/cytonViewer.exe
+#	BobRoss/NeededBinaries/cytonViewerPlugin.ecp
+#	BobRoss/NeededBinaries/dataPlotPlugin.ecp
+#	BobRoss/NeededBinaries/defaultContextMenuPlugin.ecp
+#	BobRoss/NeededBinaries/displayAttributesPlugin.ecp
+#	BobRoss/NeededBinaries/dynAccConfig.xml
+#	BobRoss/NeededBinaries/dynAccPlugin.ecp
+#	BobRoss/NeededBinaries/ecCommonControls.dll
+#	BobRoss/NeededBinaries/ecConfigurationValidator.dll
+#	BobRoss/NeededBinaries/ecConvert.dll
+#	BobRoss/NeededBinaries/ecCytonHardwareInterface.dll
+#	BobRoss/NeededBinaries/ecDragger.dll
+#	BobRoss/NeededBinaries/ecFilterStream.dll
+#	BobRoss/NeededBinaries/ecFoundWeb.dll
+#	BobRoss/NeededBinaries/ecHardwarePlugin.dll
+#	BobRoss/NeededBinaries/ecImage.dll
+#	BobRoss/NeededBinaries/ecImageCapture.dll
+#	BobRoss/NeededBinaries/ecImageFilter.dll
+#	BobRoss/NeededBinaries/ecImagePipeline.dll
+#	BobRoss/NeededBinaries/ecImageSegmentationUI.dll
+#	BobRoss/NeededBinaries/ecImageSensorDisplay.dll
+#	BobRoss/NeededBinaries/ecImageTransform.dll
+#	BobRoss/NeededBinaries/ecLabviewRemoteCommand.dll
+#	BobRoss/NeededBinaries/ecLoader.dll
+#	BobRoss/NeededBinaries/ecManipulationDirectorGui.dll
+#	BobRoss/NeededBinaries/ecPlotLib.dll
+#	BobRoss/NeededBinaries/ecRendCore.dll
+#	BobRoss/NeededBinaries/ecRender.dll
+#	BobRoss/NeededBinaries/ecSensCore.dll
+#	BobRoss/NeededBinaries/ecSensMeas.dll
+#	BobRoss/NeededBinaries/ecSerial.dll
+#	BobRoss/NeededBinaries/ecSlotManager.dll
+#	BobRoss/NeededBinaries/ecSystemSimulation.dll
+#	BobRoss/NeededBinaries/ecUserManagement.dll
+#	BobRoss/NeededBinaries/ecViewerCore.dll
+#	BobRoss/NeededBinaries/ecWidgetLib.dll
+#	BobRoss/NeededBinaries/ecboost_program_options-mt.dll
+#	BobRoss/NeededBinaries/ecboost_regex-mt.dll
+#	BobRoss/NeededBinaries/ecboost_timer-mt.dll
+#	BobRoss/NeededBinaries/endEffectorControlPlugin.ecp
+#	BobRoss/NeededBinaries/environmentInfoPlugin.ecp
+#	BobRoss/NeededBinaries/examplePlugin.ecp
+#	BobRoss/NeededBinaries/hardwarePluginGUI.ecp
+#	BobRoss/NeededBinaries/helpMenuPlugin.ecp
+#	BobRoss/NeededBinaries/icuio49.dll
+#	BobRoss/NeededBinaries/icule49.dll
+#	BobRoss/NeededBinaries/iculx49.dll
+#	BobRoss/NeededBinaries/icutu49.dll
+#	BobRoss/NeededBinaries/imageformats/
+#	BobRoss/NeededBinaries/imuCalibrationPlugin.ecp
+#	BobRoss/NeededBinaries/joystickPlugin.ecp
+#	BobRoss/NeededBinaries/labviewRemoteCommand.h
+#	BobRoss/NeededBinaries/libbz2.dll
+#	BobRoss/NeededBinaries/lightingPlugin.ecp
+#	BobRoss/NeededBinaries/manipAttachmentPlugin.ecp
+#	BobRoss/NeededBinaries/manipulationActionDirectionPlugin.ecp
+#	BobRoss/NeededBinaries/manipulationActionExample.exe
+#	BobRoss/NeededBinaries/manipulationActionExec.exe
+#	BobRoss/NeededBinaries/manipulationActionExecPlugin.ecp
+#	BobRoss/NeededBinaries/manipulationActionManagerPlugin.ecp
+#	BobRoss/NeededBinaries/manipulationDirectorExec.exe
+#	BobRoss/NeededBinaries/manipulationDirectorExecPlugin.ecp
+#	BobRoss/NeededBinaries/manipulationDirectorPlugin.ecp
+#	BobRoss/NeededBinaries/manipulatorConfigPlugin.ecp
+#	BobRoss/NeededBinaries/moc_CVImageWidget.cpp
+#	BobRoss/NeededBinaries/moc_CommandWindow.cpp
+#	BobRoss/NeededBinaries/moc_CytonRunner.cpp
+#	BobRoss/NeededBinaries/moc_Painter.cpp
+#	BobRoss/NeededBinaries/moc_Sketchpad.cpp
+#	BobRoss/NeededBinaries/moc_runLogic.cpp
+#	BobRoss/NeededBinaries/moc_workspacewizard.cpp
+#	BobRoss/NeededBinaries/multiPointCalibrationPlugin.ecp
+#	BobRoss/NeededBinaries/networkGUIPlugin.ecp
+#	BobRoss/NeededBinaries/networkPlugin.ecp
+#	BobRoss/NeededBinaries/osg100-osg.dll
+#	BobRoss/NeededBinaries/osg100-osgDB.dll
+#	BobRoss/NeededBinaries/osg100-osgFX.dll
+#	BobRoss/NeededBinaries/osg100-osgGA.dll
+#	BobRoss/NeededBinaries/osg100-osgManipulator.dll
+#	BobRoss/NeededBinaries/osg100-osgQt.dll
+#	BobRoss/NeededBinaries/osg100-osgShadow.dll
+#	BobRoss/NeededBinaries/osg100-osgSim.dll
+#	BobRoss/NeededBinaries/osg100-osgText.dll
+#	BobRoss/NeededBinaries/osg100-osgUtil.dll
+#	BobRoss/NeededBinaries/osg100-osgViewer.dll
+#	BobRoss/NeededBinaries/osg100-osgWidget.dll
+#	BobRoss/NeededBinaries/osgPlugins-3.2.1/
+#	BobRoss/NeededBinaries/ot20-OpenThreads.dll
+#	BobRoss/NeededBinaries/overlayPlugin.ecp
+#	BobRoss/NeededBinaries/platforms/qminimal.dll
+#	BobRoss/NeededBinaries/platforms/qminimald.dll
+#	BobRoss/NeededBinaries/platforms/qwindowsd.dll
+#	BobRoss/NeededBinaries/poseLibraryPlugin.ecp
+#	BobRoss/NeededBinaries/propertyEditor/
+#	BobRoss/NeededBinaries/qwt.dll
+#	BobRoss/NeededBinaries/remoteCommandServerPlugin.ecp
+#	BobRoss/NeededBinaries/shapePrimitivePlugin.ecp
+#	BobRoss/NeededBinaries/sound0.wav
+#	BobRoss/NeededBinaries/sound1.wav
+#	BobRoss/NeededBinaries/statusPlugin.ecp
+#	BobRoss/NeededBinaries/tempTorquePlugin.ecp
+#	BobRoss/NeededBinaries/testRemoteCommandActions.xml
+#	BobRoss/NeededBinaries/threeAxisViewPlugin.ecp
+#	BobRoss/NeededBinaries/unitManagerPlugin.ecp
+#	BobRoss/NeededBinaries/xmlTreePlugin.ecp
+#	BobRoss/property files/#OpenCV.props#
+#
+
