@@ -392,8 +392,8 @@ void CytonRunner::changePaint(int new_paint_can_id){
 		return;
 	}
 	lastPaintColor = new_paint_can_id;
-	if (new_paint_can_id > this->paint.size()){
-		new_paint_can_id = this->paint.size();
+	if (new_paint_can_id > (int)this->paint.size()){
+		new_paint_can_id = (int)this->paint.size();
 		printf("paint can ID out of bounds. Substituting color\n");
 	}
 	if (paint.size() > 0){

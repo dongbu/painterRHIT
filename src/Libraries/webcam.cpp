@@ -67,6 +67,7 @@ public:
 			self->zoomQuad[self->webcam_corner].x = x * 2;
 			self->zoomQuad[self->webcam_corner].y = y * 2;
 		}
+		x = flags; // ABC: yah silly... just didn't like the "unreferenced formal param" warning
 	}
 
 	// sets the desired region of the webcam 
@@ -229,6 +230,7 @@ public:
 				printf("Cam 0 didn't open\n");
 			}
 		}
+		return 0;
 	}
 
 	//shows the webcam
@@ -322,7 +324,7 @@ public:
 	//used to determine if the painting looks correct.
 	void judge(cv::Mat ideal) {
 		int width, height, done;
-		int r, b;
+		//int r, b;
 		cv::Vec3b pen_color_vec;
 
 		width = ideal.size().width;

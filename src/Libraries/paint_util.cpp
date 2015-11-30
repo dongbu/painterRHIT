@@ -1,5 +1,5 @@
 #include "paint_util.h"
-//#include <string>
+
 namespace paint_util{
 	std::string string_format(const std::string fmt, ...) {
 		int size = ((int)fmt.size()) * 2 + 50;   // Use a rubric appropriate for your code
@@ -16,10 +16,11 @@ namespace paint_util{
 		return str;
 	}
 
-	std::vector<int> getQColor(QString col) {
+	/* std::vector<int> getQColor(QString col) {
 		std::string col2 = col.toUtf8().constData();
 		return getColor(col2);
-	}
+	} */
+
 	std::vector<int> getColor(std::string col){
 		std::vector<int> toReplace;
 		if (col == "black") {

@@ -65,7 +65,9 @@ public:
 		isBreakPoint = toggle;
 	}
 
-	virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); }
+	virtual void draw(DrawWindow *W) { 
+		printf("hey, you should know how to draw yourself (%i x %i)\n",W->width,W->height); 
+	}
 
 	virtual PolyLine* toPolyline(){
 		printf("if you are seeing this message, this class cannot convert to polyline\n");
@@ -130,10 +132,10 @@ protected:
 
 public:
 	void addPoint(cv::Point pt) { points.push_back(pt); }
-	void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
+	//void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
 	void addPoint(int i, int j, int dup_check=1) { // add point if it doesn't exist yet
+		int found = 0;
 		if (dup_check) {
-			int found = 0;
 			for (int n = 0; n < (int)points.size(); n++) {
 				if (points[n].x == i && points[n].y == j) {
 					found = 1;

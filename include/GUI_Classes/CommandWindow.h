@@ -30,10 +30,10 @@ private:
 	QLabel *delayTimeLabel;
 	QAction *delayTimeLabel_action, *delayTime_action;
 	Ui::colorChange colorUi;
-	void setupDelayTime(QSpinBox *DelayTime);
+	//void setupDelayTime(QSpinBox *DelayTime);
+	void setupDelayTime();
 	void buildColorChangeDialog(QDialog *colorForm);
-	void updateModeHelper(bool setForward, 
-		bool setBackward, bool timeLabelAction, bool timeAction);
+	void updateModeHelper(bool setForward, bool setBackward, bool timeLabelAction, bool timeAction);
 	int secondCount, minuteCount, commandsFinished;
 	bool minPrep;
 
@@ -43,7 +43,8 @@ private slots:
     void deleteCommandClicked();
     void launchRightClick(QPoint p);
     void menuSort(QAction *a);
-	void cellChange(int curRow, int curCol, int prevRow, int prevCol);
+	//void cellChange(int curRow, int curCol, int prevRow, int prevCol);
+	void cellChange(int curRow);
 	void updateMode();
 	void disableModeSetting();
 	void enableModeSetting();
