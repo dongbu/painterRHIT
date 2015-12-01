@@ -10,10 +10,10 @@
 #include "pugixml.cpp"
 #endif
 #include "drawwindow.cpp"
+#include "paint_util.cpp"
 
 class PolyLine;
 class PixelRegion;
-
 
 class Shape {
 protected:
@@ -604,6 +604,7 @@ public:
 				return shapes.at(i);
 			}
 		}
+		return NULL;
 	}
 
 	// ABC: should be renamed to something like getNumShapes as length is ambiguous

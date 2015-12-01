@@ -255,12 +255,12 @@ public:
 
 			// test printing out some contour points
 			if (i % 8 == 3) {
-				printf("Contour:%i [%lu points]\n", i, contours_poly[i].size());
-				for (size_t j = 0; j < contours_poly[i].size(); j++) {
-					printf("(%i,%i)", contours[i][j].x, contours[i][j].y);
-					if (j != contours_poly[i].size() - 1) { printf(","); }
-				}
-				printf("\n");
+			  printf("Contour:%lu [%lu points]\n", i, contours_poly[i].size());
+			  for (size_t j = 0; j < contours_poly[i].size(); j++) {
+			    printf("(%i,%i)", contours[i][j].x, contours[i][j].y);
+			    if (j != contours_poly[i].size() - 1) { printf(","); }
+			  }
+			  printf("\n");
 			}
 		}
 
@@ -321,7 +321,7 @@ public:
 		std::vector<cv::Vec3b> colors; // uninitialized.  Let sortColorsInImage fill it.
 		sortColorsInImage(&kmeans_image, colors); // prints out which colors are in image
 		for (size_t i = 0; i < colors.size(); i++) {
-			if (debug) printf("Defined color #%d: [%d,%d,%d] = brightness norm:%f\n", i, colors[i][0], colors[i][1], colors[i][2], norm(colors[i]));
+			if (debug) printf("Defined color #%lu: [%d,%d,%d] = brightness norm:%f\n", i, colors[i][0], colors[i][1], colors[i][2], norm(colors[i]));
 		}
 
 		if (debug) {
@@ -593,7 +593,7 @@ public:
 			if (num_pixels >= min_region_pixels) {
 				W.setPenColor(region_colors[r][2], region_colors[r][1], region_colors[r][0]);
 				if (use_random_colors) { W.setPenColor(rng.uniform(100, 200), rng.uniform(100, 200), rng.uniform(100, 200)); }
-				if (debug) printf("%i region: %lu pixels %i,%i,%i\n", r, regions[r].size(), region_colors[r][2], region_colors[r][1], region_colors[r][0]);
+				if (debug) printf("%lu region: %lu pixels %i,%i,%i\n", r, regions[r].size(), region_colors[r][2], region_colors[r][1], region_colors[r][0]);
 				W.drawRegion(regions[r]);
 			}
 		}

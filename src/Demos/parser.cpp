@@ -440,7 +440,7 @@ public:
 	  if (debug) { 
 	    printf("REGION %d.%d [%d,%d](%d,%d,%d): %lu points\n",num_regions,num_regions_for_a_color,
 		   region[0].x,region[0].y,
-		   colors[c][0],colors[c][1],colors[c][2],region.size();)
+		   colors[c][0],colors[c][1],colors[c][2],region.size());
 	  }
 	  if ((region.size()>=min_region_pixels) {
 	    for (int i=0; i<(int)region.size(); i++) {
