@@ -10,7 +10,7 @@
 #include "pugixml.cpp"
 #endif
 #include "drawwindow.cpp"
-#include "paint_util.cpp"
+#include "paint_util.h"
 
 class PolyLine;
 class PixelRegion;

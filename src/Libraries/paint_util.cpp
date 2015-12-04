@@ -1,3 +1,5 @@
+#pragma once
+
 #include "paint_util.h"
 
 namespace paint_util{
@@ -16,6 +18,7 @@ namespace paint_util{
 		return str;
 	}
 
+		// don't put things in this helper file that use non-standard g++ libraries
 	/* std::vector<int> getQColor(QString col) {
 		std::string col2 = col.toUtf8().constData();
 		return getColor(col2);
