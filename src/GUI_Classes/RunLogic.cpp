@@ -216,6 +216,9 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s, bool simulated){
 	}
 	for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
+	// ABC: TBD use RTP to paint using simulated brush strokes
+	if (simulated) { Ava->curBrush->setDrawMode("paint"); }
+
 	RTP.defineBrush(Ava->curBrush);
 	RTP.definePaths();
 	std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();

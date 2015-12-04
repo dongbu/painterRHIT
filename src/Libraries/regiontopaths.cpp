@@ -41,14 +41,13 @@ public:
   void setColor(cv::Scalar c) { color = c; }
   void setColor(int r, int g, int b) { color = cv::Scalar(b, g, r); }
   cv::Scalar getColor() { return color; }
+
   void setDrawMode(std::string mode = "normal") {
     if (mode.compare("normal") == 0) { draw_mode = 1; }
     if (mode.compare("paint") == 0) { draw_mode = 2; }
   }
 
   void setDrawOffset(int x = 0, int y = 0) { draw_offset = cv::Point(x, y); }
-
-
 
   std::string getColorXML() {
     std::string line;
@@ -717,6 +716,7 @@ public:
     strokes.clear();
   }
 
+  // w,h = dimensions of grid that will contain the region to analyze.  b=how many pixels you want in a display border
   RegionToPaths(int w, int h, int b = 0) {
     width = w;
     height = h;

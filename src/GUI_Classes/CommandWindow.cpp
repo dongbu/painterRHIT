@@ -83,9 +83,9 @@ void CommandWindow::setupDelayTime()
 {
 	delayTime->setFixedWidth(40);
 	delayTime->setMinimum(0);
-	delayTime->setMaximum(300);
-	delayTime->setSingleStep(1);
-	delayTime->setValue(20);
+	delayTime->setMaximum(3000);
+	delayTime->setSingleStep(10);
+	delayTime->setValue(50);
 	ui->toolBar->insertSeparator(ui->actionPlay);
 	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
 	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
