@@ -80,9 +80,6 @@ public:
 	//	clearWindow();
 	//}
 
-	cv::Vec3b getColor(int i, int j) {
-		return grid.at<cv::Vec3b>(cv::Point(i, j));
-	}
 
 	//void setLineType(std::string type) {
 	void setLineType(const char* type) {
@@ -199,6 +196,17 @@ public:
 		else {
 			return getPixel(cv::Point(0, 0)); // yah silly 
 		}
+	}
+
+	cv::Vec3b getColor(int i, int j) {
+		return grid.at<cv::Vec3b>(cv::Point(i, j));
+	}
+
+	// returns true if x,y color is rgb
+	bool testPixel(int x, int y, int r, int g, int b) {
+		cv::Vec3b pix = getPixel(x, y);
+		if (pix[0] == b && pix[1] == g && pix[2] == r) { return true; }
+		return false;	
 	}
 
 	void drawRegion(std::vector<cv::Point> pixels) { // could be changed to pass reference but I've not figured out how to access vector

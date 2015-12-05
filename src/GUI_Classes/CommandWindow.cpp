@@ -51,7 +51,7 @@ ui(new Ui::CommandWindow)
 	modeBox = new QComboBox();
 	delayTimeLabel = new QLabel("delay (ms): ");
 	QStringList modes;
-	modes << "Simulate Idealized Brush" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
+	modes << "Simulate Magic Marker" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
 	modeBox->addItems(modes);
 	ui->toolBar->insertWidget(ui->actionPlay, modeBox);
 	connect(modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMode()));

@@ -16,7 +16,7 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
 	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	clearClicked();
 	simWin->hideWindow();
-	mode = "Simulate Idealized Brush";
+	mode = "Simulate Magic Marker";
 }
 
 /**
@@ -162,18 +162,26 @@ void RunLogic::runClicked() {
 	if (running) return; //don't start multiple window threads (that's bad...)
 	running = true;
 	stepTaken = NEITHER;
-	if (mode == "Simulate Idealized Brush") {
-		auto d1 = std::async(&RunLogic::paintThread, this, simWin, true);
+
+	// shouldn't be needed as defined in the menu options
+	//Ava->curBrush = new Brush(30, 20, "ellipse");
+
+	// this should be a user-defined toggle (eventually)
+	this->Ava->curBrush->setDrawMode("paint");
+
+	if (mode == "Simulate Magic Marker") {
+		this->Ava->curBrush->setDrawMode("normal");
+		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Simulate Real Brush") {
-		printf("mode not yet implemented\n");
+		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Non-touch robot motion") {
 		printf("mode not yet developed\n");
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected) { printf("Please connect the robot before continuing\n"); return; }
-		auto d1 = std::async(&RunLogic::paintThread, this, simWin, false);
+		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
 		printf("mode not yet implemented\n");
@@ -181,7 +189,7 @@ void RunLogic::runClicked() {
 }
 
 //thread to handle actual drawing.
-void RunLogic::paintThread(DrawWindow *W, bool simulated){
+void RunLogic::paintThread(DrawWindow *W){
 	while (running && currentShapeIndex < stopIndex) {
 		Shape *s = this->shapes->at(currentShapeIndex); //Updating shape
 
@@ -190,11 +198,11 @@ void RunLogic::paintThread(DrawWindow *W, bool simulated){
 			return;
 		}
 
-		this->setAvaPenColor(simulated, s);
+		this->setAvaPenColor(s);
 
 		emit updateCommandList(currentShapeIndex, "runningBot");
-		if (s->fill) { paintFill(W, s, simulated); } //paint fill
-		else { drawPolyLine(s->toPolyline()->points,simulated,W); } //paint polyline
+		if (s->fill) { paintFill(W, s); } //paint fill
+		else { drawPolyLine(s->toPolyline()->points,W); } //paint polyline
 		emit updateCommandList(currentShapeIndex, "finishedSim");
 
 		currentShapeIndex++;
@@ -204,36 +212,120 @@ void RunLogic::paintThread(DrawWindow *W, bool simulated){
 }
 
 //paint a fill object
-void RunLogic::paintFill(DrawWindow *W, Shape *s, bool simulated){
+void RunLogic::paintFill(DrawWindow *W, Shape *s){
 	RegionToPaths RTP = RegionToPaths(width, height, 30);
 	PixelRegion *p = s->toPixelRegion();
 	std::vector<cv::Point> pts = p->getPoints();
 
-	for (int j = 0; j < W->grid.size().height; j++) {
-		for (int k = 0; k < W->grid.size().width; k++) {
-			RTP.addOverpaintablePixel(k, j);
+	RTP.setAllPixels("overpaintable");
+
+	// don't let brush/pen overpaint non-white pixels
+	for (int i = 0; i < W->width; i++) {
+		for (int j = 0; j < W->height; j++) {
+			if (!W->testPixel(i, j, 255, 255, 255)) {
+				RTP.addUntouchablePixel(i,j);
+			}
 		}
 	}
-	for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 
-	// ABC: TBD use RTP to paint using simulated brush strokes
-	if (simulated) { Ava->curBrush->setDrawMode("paint"); }
+	for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
+	// put a halo of N pixels around the desired region where allowed to paintover (could be done in define path too)
+	RTP.expandOverpaintableAroundDesired(3); 
 
 	RTP.defineBrush(Ava->curBrush);
-	RTP.definePaths();
-	std::vector<std::vector<cv::Point>> pathVec = RTP.getBrushStrokes();
 
-	for (size_t i = 0; i < pathVec.size(); i++){ //running through vector of polylines
-		this->drawPolyLine(pathVec.at(i), simulated, W);
+	RTP.definePaths();
+
+	/*	DrawWindow DebugW(width, height, "debug window");
+	RTP.definePaths(&DebugW);
+	DebugW.moveWindow(400, 200);
+	DebugW.show(); */
+
+	// note: getBrushStrokes returns vector of *contiguous* pixel points
+	std::vector<std::vector<cv::Point>> brush_strokes = RTP.getBrushStrokes();
+
+	// ABC: TBD toggle between "pen" and "paint"
+	if (0) { Ava->curBrush->setDrawMode("paint"); }
+
+	for (size_t i = 0; i < brush_strokes.size(); i++){ //running through vector of polylines
+		//this->drawPolyLine(brush_strokes.at(i), W);
+		printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(),brush_strokes.at(i).size());
+		this->doStroke(brush_strokes.at(i), W);
 	}
 }
 
-void RunLogic::drawPolyLine(std::vector<cv::Point> pts, bool simulated, DrawWindow *W) {
+
+// given contiguous pts, draw them in the simulator and optionally using robot
+void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
+	int nloops = 0;
+	int done = 0;
+	while (!done){
+		nloops++;
+		
+		// attempt to draw stroke in simulator window
+		// TBD: somewhere need to set toggle if simulating real paint
+		Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
+		Ava->curBrush->drawContiguousPoints(W, &pts);
+
+		// if want to use the robot, do so
+		if (0 && Ava->connected && running) {
+			int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
+			int maxPixelstoTry = 10000;  // some limit as expected to run out of paint (unless perhaps using a pen)
+			int c = 0;
+			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
+				c++;
+				if (c < maxPixelstoTry) {
+					Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+					//update loop vars
+					prevX = pts.at(i).x;
+					prevY = pts.at(i).y;
+				}
+			}
+		}
+
+		// check results of work to see if done
+		std::vector<cv::Point> errors; // potentially non-contiguous points that still need to be painted
+		double score; // what % of pixels are of the desired paint color
+		int webcam_feedback = 0; // eventually a toggle
+		if (webcam_feedback){
+			//cv::mat WEBCAM_IMAGE = Ava->getWebcamImageOfPainting();
+			//score = brush.scorePaintPoints(&WEBCAM_IMAGE, &stroke, &errors, .1, .1);
+		} else {
+			score = Ava->curBrush->scorePaintPoints(W, &pts, &errors, .1, .1);
+		}	
+				
+		if (score>0.0 && score < 0.99) { //not: if score=0, then rerun the entire stroke
+			// redefine pts to be all the points starting from the first error
+			cv::Point first_error = errors.at(0);
+			std::vector<cv::Point> next_loop_pts;
+			int found=0;
+			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
+				if (pts.at(i).x == first_error.x && pts.at(i).y == first_error.y) { found = 1; }
+				if (found) {
+					next_loop_pts.push_back(pts.at(i));
+				}
+			}
+			printf(" reloop %i (score:%.2f) - %lu -> %lu points\n", nloops, 100*score, pts.size(),next_loop_pts.size());
+			pts = next_loop_pts;
+			Sleep(100);
+		}
+		//Sleep(30);
+
+		// loop limit just so it doesn't loop forever in case brush fails to fully cover stroke
+		if (score > 0.99 || nloops>12) { done = 1; }
+		
+		W->show();
+	}
+}
+
+
+void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 	int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
+
 	for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
 		if (!running) { return; }
 
-		if (Ava->connected && !simulated) { //connected, polyline
+		if (Ava->connected) { //connected, polyline
 			Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
 			Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y);
 		}
@@ -245,17 +337,16 @@ void RunLogic::drawPolyLine(std::vector<cv::Point> pts, bool simulated, DrawWind
 
 		W->show();
 	}
+	Sleep(30);
 	Ava->strokeInProgress = false;
 }
 
-void RunLogic::setAvaPenColor(bool simulated, Shape *s) {
-	if (!simulated && Ava->paint.size() >= 2){
-		Ava->curBrush = new Brush(30, 20, "ellipse");
+void RunLogic::setAvaPenColor(Shape *s) {
+	if (Ava->paint.size() >= 2){
 		cv::Scalar temp = s->getPenColor();
 		Ava->decidePaint(temp[0], temp[1], temp[2]);
 	}
 	else {
-		Ava->curBrush = new Brush(10, 10, "ellipse");
 		Ava->curBrush->setColor(s->getPenColor());
 	}
 }
