@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
       int loop = 0;
       while (!done) {
 	loop++;
-	brush.loadPaintPixel(50);
+	brush.loadPaintPixels(50);
 	brush.drawContiguousPoints(&P, &stroke);
 
 	// draw a yellow rectangle at the beginning of the stroke

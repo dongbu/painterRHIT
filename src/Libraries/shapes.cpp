@@ -12,6 +12,11 @@
 #include "drawwindow.cpp"
 #include "paint_util.h"
 
+// dunno why apple needs .cpp
+#ifdef __APPLE__
+#include "paint_util.cpp"
+#endif
+
 class PolyLine;
 class PixelRegion;
 

@@ -290,14 +290,14 @@ protected:
 	int min_region_pixels; // smallest number of pixels to be in a region
 	int reduce_specs_loops;
 	cv::Mat kmeans_image;
-	std::vector<std::vector<cv::Point> > regions; // array of arrays of pixels in a region
-	std::vector<cv::Vec3b> region_colors;
 
 public:
 	void setNumColors(int num) { colors = num; }
 	void setBlurLoops(int num) { blur_loops = num; }
 	void setMinPixelsInRegion(int min = 5) { min_region_pixels = min; }
 	void setReduceSpecsLoops(int num) { reduce_specs_loops = num; }
+	std::vector<std::vector<cv::Point> > regions; // array of arrays of pixels in a region
+	std::vector<cv::Vec3b> region_colors;
 
 	int parseImage(cv::Mat image, int group_same_color_regions = 1) {
 		kmeansSegment kmeans(colors);
