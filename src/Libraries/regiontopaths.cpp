@@ -384,8 +384,8 @@ public:
       for (int j = 0; j < height; j++) {
 	//if (grid[i*height+j] == 1) { W->setPenColor(100,100,100); } // grey
 	if (grid[i*height + j] == 1) { W->setPenColor(0, 0, 0); } // black
-	if (grid[i*height + j] == 2) { W->setPenColor(50, 250, 150); } // blue/green
-	if (grid[i*height + j] == 3) { W->setPenColor(250, 50, 50); } // red
+	if (grid[i*height + j] == 2) { W->setPenColor(15, 100, 80); } // blue/green
+	if (grid[i*height + j] == 3) { W->setPenColor(150, 50, 50); } // red
 	W->drawPixel(i + offsetx, j + offsety);
       }
     }
@@ -452,7 +452,7 @@ public:
     defineBoundaryFromGrid(1, &boundary);
     if (debug) printf("Region boundary has %i points\n", (int)boundary.size());
 
-    if (0) {
+    if (0) { // debugging
       DrawWindow GW = DrawWindow(W->width, W->height, "region"); // w,h
       putGridOnWindow(&GW);
       GW.moveWindow(300, 300);
@@ -501,7 +501,7 @@ public:
 	  } else {
 	    num_ok_pixels += num_ok_pixels_interior;
 
-	    if (!use_best_placement_only) {
+	    if (1 || !use_best_placement_only) { // so long as the brush perimter is touching the desired region edge
 	      int bb_x = brush_boundary[bb_id].x;
 	      int bb_y = brush_boundary[bb_id].y;
 	      one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
@@ -520,8 +520,14 @@ public:
 	if (1 || use_best_placement_only) {
 	  int bb_x = brush_boundary[ok_point_id].x;
 	  int bb_y = brush_boundary[ok_point_id].y;
-	  one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
-	  candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
+
+	  // do a final check to make sure that the interior doesn't touch an untouchable pixel
+	  int num_ok_pixels_interior = imageOnlyHasColor(&brush_interior, x - bb_x, y - bb_y);
+	  if (num_ok_pixels_interior>0) { // can paint the interior
+	    one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
+	    candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
+	  }
+
 	}
 	//printf(" point %i,%i is a candidate if brush at %i %i\n",x,y,bb_x,bb_y);
 	if (W) { W->setPenColor(0, 255, 0); W->drawPixel(x + border, y + border); }
@@ -564,7 +570,7 @@ public:
       printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
       num_loops++;
 
-      if (0) {
+      if (0) { // debugging
 	W->show();
 	int done=0;
 	while (!done) { int k = cv::waitKey(33); if (k==27) { done=1; }}
@@ -595,17 +601,17 @@ public:
     }
   }
 
-  // simple sort bool
-  static bool comparePoints(cv::Point p1, cv::Point p2) { return (p1.x < p2.x); }
-
   // returns a vector of candidate brush location points(NOTE: points are always contiguous)
   std::vector<std::vector<cv::Point> > getBrushStrokes() {
     if (strokes.empty()) { defineBrushStrokes(); }
     return strokes;
   }
 
+  // simple sort bool
+  static bool comparePoints(cv::Point p1, cv::Point p2) { return (p1.x < p2.x); }
+
   // calculates a vector of candidate brush location points by finding connected points in candidate_pixels
-  void defineBrushStrokes() {
+  void defineBrushStrokes(int skip_single_points=0) {
     cv::Point brush_center = brush->getCenter();
 
     // make a grid with 1=brush location, 0=otherwise
@@ -701,6 +707,7 @@ public:
       }
     }
 
+    if (skip_single_points) { return; }
     //return;
 
     // at this point, all the points with 1+ neighbors have already been made into paths...
