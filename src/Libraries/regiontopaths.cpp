@@ -39,8 +39,8 @@ public:
   int getHeight() { return height; }
   cv::Point getCenter() { return cv::Point(centerx, centery); }
   std::vector<cv::Point> getPixels() { return pixels; }
-  void setColor(cv::Scalar c) { color = c; }
   void setColor(int r, int g, int b) { color = cv::Scalar(b, g, r); }
+  void setColor(cv::Scalar c) { setColor(c[0], c[1], c[2]); }
   cv::Scalar getColor() { return color; }
   void setDefaultPaintAmount(double a) { default_paint_amount = a; }
 
@@ -90,7 +90,7 @@ public:
       int py = pixels[b].y;
       int x = pt.x - centerx + px + draw_offset.x;
       int y = pt.y - centery + py + draw_offset.y;
-      //printf("%i %i %i %i\n",px,py,x,y);
+      //printf("draw px (%i %i) (%i %i)\n",px,py,x,y);
       if (draw_mode == 1) {
 	W->drawPixel(x, y);
       }
@@ -144,53 +144,106 @@ public:
   // returns 0-1 how close color
   double colorDistance(cv::Scalar c1, cv::Scalar c2) {
     int norm = std::abs(c1[0] - c2[0]) + std::abs(c1[1] - c2[1]) + std::abs(c1[2] - c2[2]);
-    //printf("N1:%i\n",norm);
+    //printf("N1:%3i (%3.0f,%3.0f,%3.0f) (%3.0f,%3.0f,%3.0f)\n",norm, c1[0],c1[1],c1[2], c2[0],c2[1],c2[2]);
     return (double)norm / (255. * 3.);
   }
 
   // returns what fraction of brush pixels of grid at a point are close to brush color
-  double scorePaintPoint(cv::Mat *grid, cv::Point pt, double max_distance) {
+  double getPercentGoodPixels(cv::Mat *grid, cv::Point pt, double max_distance) {
     int num_pixels = (int)pixels.size();
-    if (!num_pixels) { return 0.0; }
+    if (!num_pixels) { return 0.001; }
     int num_bad_pixels = 0;
     for (int b = 0; b < num_pixels; b++) {
       int px = pixels[b].x;
       int py = pixels[b].y;
-      int x = pt.x + px + draw_offset.x;
-      int y = pt.y + py + draw_offset.y;
+      int x = pt.x + px - centerx + draw_offset.x;
+      int y = pt.y + py - centery + draw_offset.y;
       cv::Vec3b grid_color = grid->at<cv::Vec3b>(cv::Point(x, y));
+      //printf("(%i,%i) ",x,y);
       double distance = colorDistance(grid_color, color);
       if (distance > max_distance) { num_bad_pixels++; }
     }
     return (double)(num_pixels - num_bad_pixels) / (double)num_pixels;
   }
 
-  // returns the % of pixels that are adequately covered by the brush
-  double scorePaintPoints(DrawWindow *W, std::vector<cv::Point> *points, std::vector<cv::Point> *errors = NULL,
+  // returns the % of points that have less than max_pixel_bad_ratio % pixels that are not close to the brush color
+  double getPercentGoodPaintPoints(DrawWindow *W, std::vector<cv::Point> *points, std::vector<cv::Point> *errors = NULL,
 			  double max_pixel_bad_ratio = 0, double max_distance = 0) {
     if (!max_pixel_bad_ratio) { max_pixel_bad_ratio = .1; }
     if (!max_distance) { max_distance = .2; }
     int num_pixels = (int)points->size();
     int num_bad_pixels = 0;
+    //printf("NUM:%d\n",num_pixels);
+
     if (!num_pixels) { return 0; } // note: not needed
     for (int i = 0; i < num_pixels; i++) {
-      double score_point = scorePaintPoint(&W->grid, points->at(i), max_distance);
-      if (score_point < max_pixel_bad_ratio) {
+      double percent_good = getPercentGoodPixels(&W->grid, points->at(i), max_distance);
+      //if (num_pixels>50) { printf("pt%2i (%i,%i) => %f\n",i,points->at(i).x,points->at(i).y,percent_good); }
+      if (percent_good < max_pixel_bad_ratio) {
 	num_bad_pixels++;
 	if (errors) { errors->push_back(points->at(i)); }
       }
-      //printf("P%i: (%i,%i), %f  NBAD:%i\n",i,points[i].x,points[i].y,score_point,num_bad_pixels);
+      //printf("P%i: (%i,%i), %f  NBAD:%i\n",i,points->at(i).x,points->at(i).y,score_point,num_bad_pixels);
     }
     return (double)(num_pixels - num_bad_pixels) / (double)num_pixels;
   }
 
   // returns the % of pixels along a line are adequately covered by the brush
-  double scorePaintLine(DrawWindow *W, int p1x, int p1y, int p2x, int p2y, std::vector<cv::Point> *errors = NULL,
+  double getPercentGoodPaintLine(DrawWindow *W, int p1x, int p1y, int p2x, int p2y, std::vector<cv::Point> *errors = NULL,
 			double max_pixel_bad_ratio = 0, double max_distance = 0) {
     PixelTools Tool;
     std::vector<cv::Point> points = Tool.getPixelsBetweenPoints(p1x, p1y, p2x, p2y);
-    return scorePaintPoints(W, &points, errors, max_pixel_bad_ratio, max_distance);
+    return getPercentGoodPaintPoints(W, &points, errors, max_pixel_bad_ratio, max_distance);
   }
+
+  // test to see if drawing brush points on W makes it become more close to *Painting
+  int testIfStrokeImprovesPainting(DrawWindow *W, std::vector<cv::Point> *points, DrawWindow *Painting) {
+
+    int maxx=0;
+    int maxy=0;
+    int minx=999999;
+    int miny=999999;
+    
+    int num_pixels = (int)points->size();
+    for (int i = 0; i < num_pixels; i++) {
+      cv::Point pt = points->at(i);
+      if (pt.x>maxx) { maxx=pt.x; }
+      if (pt.y>maxy) { maxy=pt.y; }
+      if (pt.x<minx) { minx=pt.x; }
+      if (pt.y<miny) { miny=pt.y; }
+    }
+    // define a region of interest a bit larger than where the stroke will go
+    cv::Rect roi = cv::Rect(fmax(0,minx-width),fmax(0,miny-height),
+			    fmin(W->width,maxx+width),fmin(W->height,maxy+height));
+    //roi = cv::Rect(0,0,src.cols,src.rows);
+    cv::Mat paintROI = W->grid(roi).clone();
+
+    // paint a stroke
+    drawPoints(W,points);
+
+    cv::Mat newpaintROI = W->grid(roi).clone();
+    cv::Scalar default_canvas_color=cv::Scalar(0,255,0); // eventually might pass as arg
+
+    // see if it's better than before
+    cv::Mat origimageROI = Painting->grid(roi).clone();
+
+    PixelTools Tools = PixelTools();
+    double origDiff = Tools.calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI,default_canvas_color);
+    double newDiff = Tools.calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI,default_canvas_color);
+    //printf("compare NEW:%f ORIG:%f", newDiff,origDiff); 
+    
+    // if not, revert back to the original
+    if (newDiff>=origDiff) {
+      cv::Mat destinationROI = W->grid( roi );
+      paintROI.copyTo( destinationROI );
+      printf(" brush stroke makes painting WORSE\n"); 
+      return 0;
+    } else {
+      printf(" brush stroke makes painting BETTER\n"); 
+    }
+    return 1;
+  }
+
 
   Brush(int w, int h, std::string type = "rectangle", int show_brush = 0) {
     // create brush mask
@@ -431,13 +484,25 @@ public:
   void drawBrushStrokes(DrawWindow *W, int offsetx = 0, int offsety = 0) {
     offsety = border;
     offsetx = border;
-
+   
     // draws the brush along every stroke
-    for (int i = 0; i < (int)strokes.size(); i++) {
-      for (int j = 0; j < (int)strokes[i].size(); j++) {
-	brush->draw(W, strokes[i][j].x + offsetx, strokes[i][j].y + offsety);
+    int skipped=0;
+    int nstrokes = (int)strokes.size();
+    for (int i = 0; i < nstrokes; i++) {
+
+      std::vector<cv::Point> errors;
+      double score = brush->getPercentGoodPaintPoints(W, &strokes[i], &errors, 0.98, 0.1); // what % have less than 2% missing/bad brush pixels
+      if (score>0.999) { // very strict... requires all the the points to have coverage
+	skipped++;
+	//printf("Skipped stroke %i as it's redundant w/ score = %f, %i skipped\n",i,score,skipped);
+      } else {
+	//printf("painted stroke %i as it's not redundant w/ score = %f, %i skipped\n",i,score,skipped);
+	for (int j = 0; j < (int)strokes[i].size(); j++) {
+	  brush->draw(W, strokes[i][j].x + offsetx, strokes[i][j].y + offsety);
+	}
       }
     }
+    printf("Drew %i out of %i strokes (%i were redundant)\n",nstrokes-skipped,nstrokes,skipped);
     //drawBoundaries(W,offsetx,offsety); 
   }
 
@@ -546,14 +611,14 @@ public:
     if (debug) printf("Found %lu total candidate_pixels\n", candidate_pixels.size());
     if (debug) printf("Found %lu untouchable_boundary_pixels\n", untouchable_boundary_pixels.size());
 
-    if (1 && W) {
+    if (W) {
       W->setPenColor(0, 0, 255);
       for (int i = 0; i < (int)candidate_pixels.size(); i++) {
 	int x = candidate_pixels[i].x + 2; // so easier to see
 	int y = candidate_pixels[i].y + 2;
 	W->drawPixel(x + border, y + border);
       }
-      printf("drew candidate_pixels\n");
+      //printf("drew candidate_pixels\n");
     }
   }
 
@@ -563,11 +628,11 @@ public:
     definePath(W);
     initial_boundary = boundary;
     uint64 start = GetTimeMs64();
-    cv::Point brush_center = brush->getCenter();
+    
     int num_loops = 1;
     int max_loops = 20;
     while (1 && num_loops <= max_loops && one_border_candidate_pixels.size()>0) {
-      printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
+      //printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
       num_loops++;
 
       if (0) { // debugging

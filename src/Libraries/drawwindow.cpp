@@ -98,7 +98,7 @@ public:
 		pen_color_vec[2] = r;
 	}
 	void setPenColor(cv::Vec3b c) { setPenColor(c[2], c[1], c[0]); }
-	void setPenColor(cv::Scalar c) { setPenColor(c[0], c[1], c[2]); }
+	void setPenColor(cv::Scalar c) { setPenColor(c[2], c[1], c[0]); }
 
 	void drawLine(cv::Point pt1, cv::Point pt2) {
 		cv::line(grid, pt1, pt2, pen_color, pen_thickness, line_type);
