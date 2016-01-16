@@ -1,6 +1,8 @@
 #include "regiontopaths.cpp"
 #include <ctime> // for random number generator
 
+#include <GLUT/glut.h>
+
 // demo to create paths for a brush in a region
 
 void defineDemoRegion(RegionToPaths *rtp, int w, int h) {

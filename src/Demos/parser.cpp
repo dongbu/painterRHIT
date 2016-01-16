@@ -1,5 +1,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+
+//#include <GLUT/glut.h>
+
 #include <iostream>
 #include <fstream>
 #include <stdio.h>

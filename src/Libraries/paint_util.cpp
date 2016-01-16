@@ -16,10 +16,10 @@ namespace paint_util{
 		return str;
 	}
 
-	std::vector<int> getQColor(QString col) {
+  /*	std::vector<int> getQColor(QString col) {
 		std::string col2 = col.toUtf8().constData();
 		return getColor(col2);
-	}
+		}*/
 	std::vector<int> getColor(std::string col){
 		std::vector<int> toReplace;
 		if (col == "black") {

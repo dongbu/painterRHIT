@@ -307,7 +307,7 @@ void autoPaint(int candidate_multiplier=1) {
   Mat paint_image = Mat::zeros( s.height, s.width, CV_8UC3 );
   namedWindow( "paint_window", CV_WINDOW_AUTOSIZE );
   imshow( "paint_window", paint_image );
-  moveWindow("paint_window",win_w(2),win_h(1)); 
+  moveWindow("paint_window",win_w(1),win_h(0)); 
 
   // brush stroke parameters
   int thickness=g_line_width;
@@ -1293,7 +1293,7 @@ int main( int argc, char** argv )
   }  
 
   // resize so max dim is 800
-  int max_dim=300;
+  int max_dim=800;
   double scale = (double) max_dim / (double) fmax(src.cols,src.rows);
   cv::resize(src, src, cv::Size(), scale, scale);
 
@@ -1365,6 +1365,7 @@ int main( int argc, char** argv )
 
     } else if (k == int('n')) { // reset canvas
       canvas_image.setTo(g_default_canvas_color); // redVal,greenVal,blueVal
+      imshow( "canvas_window", canvas_image );
   
     } else if (k == int('s')) { // paint one color on canvas
       singlePaintColorOnCanvas();
