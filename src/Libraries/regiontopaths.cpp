@@ -9,7 +9,6 @@
 #else
 #include <sys/time.h>
 #include <ctime>
-#include "paint_util.cpp"
 #endif
 
 
@@ -25,7 +24,6 @@ protected:
   int width, height, centerx, centery;
   int style; // 1=square, 2=ellipse
   int draw_mode; //1=opaque, 2=simulate paint
-  double default_paint_amount = 50.0; // how many pixel units of paint when loaded
   std::vector<cv::Point> pixels;
   cv::Point draw_offset; // used when want to draw brush offset from 0,0
   cv::Scalar color;
@@ -39,17 +37,17 @@ public:
   int getHeight() { return height; }
   cv::Point getCenter() { return cv::Point(centerx, centery); }
   std::vector<cv::Point> getPixels() { return pixels; }
+  void setColor(cv::Scalar c) { color = c; }
   void setColor(int r, int g, int b) { color = cv::Scalar(b, g, r); }
-  void setColor(cv::Scalar c) { setColor(c[0], c[1], c[2]); }
   cv::Scalar getColor() { return color; }
-  void setDefaultPaintAmount(double a) { default_paint_amount = a; }
-
   void setDrawMode(std::string mode = "normal") {
     if (mode.compare("normal") == 0) { draw_mode = 1; }
     if (mode.compare("paint") == 0) { draw_mode = 2; }
   }
 
   void setDrawOffset(int x = 0, int y = 0) { draw_offset = cv::Point(x, y); }
+
+
 
   std::string getColorXML() {
     std::string line;
@@ -70,10 +68,8 @@ public:
     return line;
   }
 
-  // put 'amount' of paint on each brush pixel (amount is approx enough to paint 1 pixel worth of paint)
-  void loadPaintPixels(double amount = 0.0) {
-    if (!amount) { amount = default_paint_amount; }
-
+  // put 'amount' of paint on each brush pixel
+  void loadPaintPixel(double amount) {
     for (int i = 0; i < (int)pixels.size(); i++) {
       float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
       pixel_paint[pixels[i].x*height + pixels[i].y] = amount * (.9 + 2 * r);
@@ -83,6 +79,7 @@ public:
   // draw the brush at a single point
   void draw(DrawWindow *W, cv::Point pt) {
     W->setPenColor(color);
+    cv::Vec3b canvas_color;
     int num_pixels = (int)pixels.size();
 
     for (int b = 0; b < (int)pixels.size(); b++) {
@@ -90,7 +87,7 @@ public:
       int py = pixels[b].y;
       int x = pt.x - centerx + px + draw_offset.x;
       int y = pt.y - centery + py + draw_offset.y;
-      //printf("draw px (%i %i) (%i %i)\n",px,py,x,y);
+      //printf("%i %i %i %i\n",px,py,x,y);
       if (draw_mode == 1) {
 	W->drawPixel(x, y);
       }
@@ -108,11 +105,8 @@ public:
 	double opacity = std::fmin(1, 1.0 / num_pixels * paint_used * paint);
 	if (opacity > 0) {
 	  //printf("P%i: (%i,%i)  %f %f %f\n",b,px,py,paint,opacity,paint_used);
-	  //cv::Vec3b canvas_color = W->getPixel(x, y);
-	  cv::Vec3b canvas_color = W->getColor(x, y);
+	  canvas_color = W->getPixel(x, y);
 	  for (int i = 0; i < 3; i++) { canvas_color[i] = (1 - opacity)*canvas_color[i] + opacity*color[i]; }
-	  // dunno why next line is needed but i'm tired/lazy to debug today
-	  //int t = canvas_color[0]; canvas_color[0] = canvas_color[2]; canvas_color[2] = t;
 	  W->setPenColor(canvas_color);
 	  W->drawPixel(x, y);
 	}
@@ -144,106 +138,53 @@ public:
   // returns 0-1 how close color
   double colorDistance(cv::Scalar c1, cv::Scalar c2) {
     int norm = std::abs(c1[0] - c2[0]) + std::abs(c1[1] - c2[1]) + std::abs(c1[2] - c2[2]);
-    //printf("N1:%3i (%3.0f,%3.0f,%3.0f) (%3.0f,%3.0f,%3.0f)\n",norm, c1[0],c1[1],c1[2], c2[0],c2[1],c2[2]);
+    //printf("N1:%i\n",norm);
     return (double)norm / (255. * 3.);
   }
 
   // returns what fraction of brush pixels of grid at a point are close to brush color
-  double getPercentGoodPixels(cv::Mat *grid, cv::Point pt, double max_distance) {
+  double scorePaintPoint(cv::Mat *grid, cv::Point pt, double max_distance) {
     int num_pixels = (int)pixels.size();
-    if (!num_pixels) { return 0.001; }
+    if (!num_pixels) { return 0.0; }
     int num_bad_pixels = 0;
     for (int b = 0; b < num_pixels; b++) {
       int px = pixels[b].x;
       int py = pixels[b].y;
-      int x = pt.x + px - centerx + draw_offset.x;
-      int y = pt.y + py - centery + draw_offset.y;
+      int x = pt.x + px + draw_offset.x;
+      int y = pt.y + py + draw_offset.y;
       cv::Vec3b grid_color = grid->at<cv::Vec3b>(cv::Point(x, y));
-      //printf("(%i,%i) ",x,y);
       double distance = colorDistance(grid_color, color);
       if (distance > max_distance) { num_bad_pixels++; }
     }
     return (double)(num_pixels - num_bad_pixels) / (double)num_pixels;
   }
 
-  // returns the % of points that have less than max_pixel_bad_ratio % pixels that are not close to the brush color
-  double getPercentGoodPaintPoints(DrawWindow *W, std::vector<cv::Point> *points, std::vector<cv::Point> *errors = NULL,
+  // returns the % of pixels that are adequately covered by the brush
+  double scorePaintPoints(DrawWindow *W, std::vector<cv::Point> *points, std::vector<cv::Point> *errors = NULL,
 			  double max_pixel_bad_ratio = 0, double max_distance = 0) {
     if (!max_pixel_bad_ratio) { max_pixel_bad_ratio = .1; }
     if (!max_distance) { max_distance = .2; }
     int num_pixels = (int)points->size();
     int num_bad_pixels = 0;
-    //printf("NUM:%d\n",num_pixels);
-
     if (!num_pixels) { return 0; } // note: not needed
     for (int i = 0; i < num_pixels; i++) {
-      double percent_good = getPercentGoodPixels(&W->grid, points->at(i), max_distance);
-      //if (num_pixels>50) { printf("pt%2i (%i,%i) => %f\n",i,points->at(i).x,points->at(i).y,percent_good); }
-      if (percent_good < max_pixel_bad_ratio) {
+      double score_point = scorePaintPoint(&W->grid, points->at(i), max_distance);
+      if (score_point < max_pixel_bad_ratio) {
 	num_bad_pixels++;
 	if (errors) { errors->push_back(points->at(i)); }
       }
-      //printf("P%i: (%i,%i), %f  NBAD:%i\n",i,points->at(i).x,points->at(i).y,score_point,num_bad_pixels);
+      //printf("P%i: (%i,%i), %f  NBAD:%i\n",i,points[i].x,points[i].y,score_point,num_bad_pixels);
     }
     return (double)(num_pixels - num_bad_pixels) / (double)num_pixels;
   }
 
   // returns the % of pixels along a line are adequately covered by the brush
-  double getPercentGoodPaintLine(DrawWindow *W, int p1x, int p1y, int p2x, int p2y, std::vector<cv::Point> *errors = NULL,
+  double scorePaintLine(DrawWindow *W, int p1x, int p1y, int p2x, int p2y, std::vector<cv::Point> *errors = NULL,
 			double max_pixel_bad_ratio = 0, double max_distance = 0) {
     PixelTools Tool;
     std::vector<cv::Point> points = Tool.getPixelsBetweenPoints(p1x, p1y, p2x, p2y);
-    return getPercentGoodPaintPoints(W, &points, errors, max_pixel_bad_ratio, max_distance);
+    return scorePaintPoints(W, &points, errors, max_pixel_bad_ratio, max_distance);
   }
-
-  // test to see if drawing brush points on W makes it become more close to *Painting
-  int testIfStrokeImprovesPainting(DrawWindow *W, std::vector<cv::Point> *points, DrawWindow *Painting) {
-
-    int maxx=0;
-    int maxy=0;
-    int minx=999999;
-    int miny=999999;
-    
-    int num_pixels = (int)points->size();
-    for (int i = 0; i < num_pixels; i++) {
-      cv::Point pt = points->at(i);
-      if (pt.x>maxx) { maxx=pt.x; }
-      if (pt.y>maxy) { maxy=pt.y; }
-      if (pt.x<minx) { minx=pt.x; }
-      if (pt.y<miny) { miny=pt.y; }
-    }
-    // define a region of interest a bit larger than where the stroke will go
-    cv::Rect roi = cv::Rect(fmax(0,minx-width),fmax(0,miny-height),
-			    fmin(W->width,maxx+width),fmin(W->height,maxy+height));
-    //roi = cv::Rect(0,0,src.cols,src.rows);
-    cv::Mat paintROI = W->grid(roi).clone();
-
-    // paint a stroke
-    drawPoints(W,points);
-
-    cv::Mat newpaintROI = W->grid(roi).clone();
-    cv::Scalar default_canvas_color=cv::Scalar(0,255,0); // eventually might pass as arg
-
-    // see if it's better than before
-    cv::Mat origimageROI = Painting->grid(roi).clone();
-
-    PixelTools Tools = PixelTools();
-    double origDiff = Tools.calcDiffBetweenImages(&origimageROI,&paintROI,&paintROI,default_canvas_color);
-    double newDiff = Tools.calcDiffBetweenImages(&origimageROI,&newpaintROI,&paintROI,default_canvas_color);
-    //printf("compare NEW:%f ORIG:%f", newDiff,origDiff); 
-    
-    // if not, revert back to the original
-    if (newDiff>=origDiff) {
-      cv::Mat destinationROI = W->grid( roi );
-      paintROI.copyTo( destinationROI );
-      printf(" brush stroke makes painting WORSE\n"); 
-      return 0;
-    } else {
-      printf(" brush stroke makes painting BETTER\n"); 
-    }
-    return 1;
-  }
-
 
   Brush(int w, int h, std::string type = "rectangle", int show_brush = 0) {
     // create brush mask
@@ -364,6 +305,7 @@ public:
     int num_ok_pixels = 0;
     cv::Vec3b icolor;
     for (int i = 0; i < (int)points->size(); i++) {
+      //p = points[i];  xxx
       p = points->at(i);
 
       int x = p.x + offsetx;
@@ -379,7 +321,8 @@ public:
 	  //if (debug) printf(" - - - %i,%i is ok\n",x,y);
 	  num_ok_pixels++;
 	}
-      } else {
+      }
+      else {
 	return 0; // only if you don't want to put brush outside of paper
       }
     }
@@ -437,8 +380,8 @@ public:
       for (int j = 0; j < height; j++) {
 	//if (grid[i*height+j] == 1) { W->setPenColor(100,100,100); } // grey
 	if (grid[i*height + j] == 1) { W->setPenColor(0, 0, 0); } // black
-	if (grid[i*height + j] == 2) { W->setPenColor(15, 100, 80); } // blue/green
-	if (grid[i*height + j] == 3) { W->setPenColor(150, 50, 50); } // red
+	if (grid[i*height + j] == 2) { W->setPenColor(50, 250, 150); } // blue/green
+	if (grid[i*height + j] == 3) { W->setPenColor(250, 50, 50); } // red
 	W->drawPixel(i + offsetx, j + offsety);
       }
     }
@@ -484,25 +427,13 @@ public:
   void drawBrushStrokes(DrawWindow *W, int offsetx = 0, int offsety = 0) {
     offsety = border;
     offsetx = border;
-   
-    // draws the brush along every stroke
-    int skipped=0;
-    int nstrokes = (int)strokes.size();
-    for (int i = 0; i < nstrokes; i++) {
 
-      std::vector<cv::Point> errors;
-      double score = brush->getPercentGoodPaintPoints(W, &strokes[i], &errors, 0.98, 0.1); // what % have less than 2% missing/bad brush pixels
-      if (score>0.999) { // very strict... requires all the the points to have coverage
-	skipped++;
-	//printf("Skipped stroke %i as it's redundant w/ score = %f, %i skipped\n",i,score,skipped);
-      } else {
-	//printf("painted stroke %i as it's not redundant w/ score = %f, %i skipped\n",i,score,skipped);
-	for (int j = 0; j < (int)strokes[i].size(); j++) {
-	  brush->draw(W, strokes[i][j].x + offsetx, strokes[i][j].y + offsety);
-	}
+    // draws the brush along every stroke
+    for (int i = 0; i < (int)strokes.size(); i++) {
+      for (int j = 0; j < (int)strokes[i].size(); j++) {
+	brush->draw(W, strokes[i][j].x + offsetx, strokes[i][j].y + offsety);
       }
     }
-    printf("Drew %i out of %i strokes (%i were redundant)\n",nstrokes-skipped,nstrokes,skipped);
     //drawBoundaries(W,offsetx,offsety); 
   }
 
@@ -516,16 +447,6 @@ public:
     // find the pixels at the boundary of the region you want to paint
     defineBoundaryFromGrid(1, &boundary);
     if (debug) printf("Region boundary has %i points\n", (int)boundary.size());
-
-    if (0) { // debugging
-      DrawWindow GW = DrawWindow(W->width, W->height, "region"); // w,h
-      putGridOnWindow(&GW);
-      GW.moveWindow(300, 300);
-      GW.show();
-      W->show();
-      int done=0;
-      while (!done) { int k = cv::waitKey(33); if (k==27) { done=1; }}
-    }
 
     uint64 start = GetTimeMs64();
 
@@ -547,12 +468,8 @@ public:
       // pixels on each side of the overpaintable pixels... so the brush interior is at
       // the boundary of the desired paint region.  As this is rare, take speed over accuracy
 
-      // if 1, then only pick 1 candidate location for brush for this boundary pixel
-      // seems to be better if set=0 so to use all possible brush locations for this boundary pixel
-      int use_best_placement_only=0; 
-
-      for (int bb_id = 0; bb_id < (int)brush_boundary.size(); bb_id++) { // faster
-	//for (int bb_id=0; bb_id<(int)brush_pixels.size(); bb_id++) { // slower
+      for (int bb_id = 0; bb_id < (int)brush_boundary.size(); bb_id++) {
+	//for (int bb_id=0; bb_id<(int)brush_pixels.size(); bb_id++) { 
 	int bb_x = brush_boundary[bb_id].x;
 	int bb_y = brush_boundary[bb_id].y;
 	//printf(" - offset %i,%i\n",bb_x,bb_y);
@@ -563,15 +480,9 @@ public:
 	  int num_ok_pixels_interior = imageOnlyHasColor(&brush_interior, x - bb_x, y - bb_y);
 	  if (num_ok_pixels_interior < (int)brush_interior.size()) { // if can't paint the interior, then scrap it
 	    num_ok_pixels = 0;
-	  } else {
+	  }
+	  else {
 	    num_ok_pixels += num_ok_pixels_interior;
-
-	    if (1 || !use_best_placement_only) { // so long as the brush perimter is touching the desired region edge
-	      int bb_x = brush_boundary[bb_id].x;
-	      int bb_y = brush_boundary[bb_id].y;
-	      one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
-	      candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
-	    }
 	  }
 	}
 
@@ -582,23 +493,15 @@ public:
       }
 
       if (ok_point_id >= 0) { // if found a point to put the brush
-	if (1 || use_best_placement_only) {
-	  int bb_x = brush_boundary[ok_point_id].x;
-	  int bb_y = brush_boundary[ok_point_id].y;
-
-	  // do a final check to make sure that the interior doesn't touch an untouchable pixel
-	  int num_ok_pixels_interior = imageOnlyHasColor(&brush_interior, x - bb_x, y - bb_y);
-	  if (num_ok_pixels_interior>0) { // can paint the interior
-	    one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
-	    candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
-	  }
-
-	}
+	int bb_x = brush_boundary[ok_point_id].x;
+	int bb_y = brush_boundary[ok_point_id].y;
+	one_border_candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
+	candidate_pixels.push_back(cv::Point(x - bb_x, y - bb_y));
 	//printf(" point %i,%i is a candidate if brush at %i %i\n",x,y,bb_x,bb_y);
 	if (W) { W->setPenColor(0, 255, 0); W->drawPixel(x + border, y + border); }
       }
       else {
-	if (W) { W->setPenColor(255, 0, 0); W->drawPixel(x + border, y + border); }
+	if (W) { W->setPenColor(0, 0, 255); W->drawPixel(x + border, y + border); }
 	// record pixels that can't be touched by the brush w/o painting over untouchable pixels
 	untouchable_boundary_pixels.push_back(boundary[i]);
       }
@@ -612,13 +515,13 @@ public:
     if (debug) printf("Found %lu untouchable_boundary_pixels\n", untouchable_boundary_pixels.size());
 
     if (W) {
-      W->setPenColor(0, 0, 255);
+      W->setPenColor(0, 255, 255);
       for (int i = 0; i < (int)candidate_pixels.size(); i++) {
 	int x = candidate_pixels[i].x + 2; // so easier to see
 	int y = candidate_pixels[i].y + 2;
 	W->drawPixel(x + border, y + border);
       }
-      //printf("drew candidate_pixels\n");
+      printf("drew candidate_pixels\n");
     }
   }
 
@@ -628,27 +531,22 @@ public:
     definePath(W);
     initial_boundary = boundary;
     uint64 start = GetTimeMs64();
-    
+
     int num_loops = 1;
-    int max_loops = 20;
-    while (1 && num_loops <= max_loops && one_border_candidate_pixels.size()>0) {
-      //printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
+    while (1 && num_loops < 20 && one_border_candidate_pixels.size()>0) {
+      //printf("IMA6.5 %i %i\n", num_loops, (int)one_border_candidate_pixels.size());
       num_loops++;
-
-      if (0) { // debugging
-	W->show();
-	int done=0;
-	while (!done) { int k = cv::waitKey(33); if (k==27) { done=1; }}
-	W->clearWindow();
-      }
-
       // update the grid and consider everything painted to be ok to paint over again
       for (int i = 0; i < (int)candidate_pixels.size(); i++) {
 	for (int b = 0; b < (int)brush_pixels.size(); b++) {
-	  int x = candidate_pixels[i].x + brush_pixels[b].x;// - brush_center.x;
-	  int y = candidate_pixels[i].y + brush_pixels[b].y;// - brush_center.y;
-	  addOverpaintablePixel(x, y); 
-	  //addUntouchablePixel(x, y);
+	  int x = candidate_pixels[i].x + brush_pixels[b].x;
+	  int y = candidate_pixels[i].y + brush_pixels[b].y;
+	  if (x < 0 || y < 0 || x >= width || y >= height) {
+	    //printf("out of range: x:%i y:%i  %i x %i\n",x,y,width,height); // crashes if x>=width
+	  }
+	  else {
+	    addOverpaintablePixel(x, y);
+	  }
 	}
       }
       definePath(W);
@@ -666,17 +564,17 @@ public:
     }
   }
 
-  // returns a vector of candidate brush location points(NOTE: points are always contiguous)
+  // simple sort bool
+  static bool comparePoints(cv::Point p1, cv::Point p2) { return (p1.x < p2.x); }
+
+  // returns a vector of candidate brush location points
   std::vector<std::vector<cv::Point> > getBrushStrokes() {
     if (strokes.empty()) { defineBrushStrokes(); }
     return strokes;
   }
 
-  // simple sort bool
-  static bool comparePoints(cv::Point p1, cv::Point p2) { return (p1.x < p2.x); }
-
-  // calculates a vector of candidate brush location points by finding connected points in candidate_pixels
-  void defineBrushStrokes(int skip_single_points=0) {
+  // calculates a vector of candidate brush location points
+  void defineBrushStrokes() {
     cv::Point brush_center = brush->getCenter();
 
     // make a grid with 1=brush location, 0=otherwise
@@ -688,7 +586,6 @@ public:
       cgrid[x * height + y] = 1;
     }
 
-    // sort the pixels left to right
     std::sort(candidate_pixels.begin(), candidate_pixels.end(), comparePoints);
 
     // find all the candidate_pixels that have only 1 neighbor candidate_pixels (e.g., start of line)
@@ -772,9 +669,6 @@ public:
       }
     }
 
-    if (skip_single_points) { return; }
-    //return;
-
     // at this point, all the points with 1+ neighbors have already been made into paths...
     // so the rest are single points
     for (int i = 0; i < (int)candidate_pixels.size(); i++) {
@@ -789,17 +683,10 @@ public:
 
       if (!found && cgrid[x*height + y] == 1) {
 	std::vector <cv::Point> stroke;
-	stroke.push_back(cv::Point(x + brush_center.x, y + brush_center.y));
+	stroke.push_back(cv::Point(x, y));
 	strokes.push_back(stroke);
       }
     }
-  }
-
-  void setAllPixels(std::string mode = "overpaintable") {
-    int num = 2;
-    if (mode.compare("untouchable") == 0) { num = 3; }
-    if (mode.compare("desired") == 0) { num = 1; }
-    for (int i = 0; i < width*height; i++) { grid[i] = num; }
   }
 
   // set which pixel you don't want covered
@@ -817,30 +704,6 @@ public:
     grid[i*height + j] = 1;
   }
 
-  // put a halo of d pixels around the desired region where allowed to paintover
-  void expandOverpaintableAroundDesired(int d) {
-    for (int i = 0; i < width; i++) {
-      for (int j = 0; j < height; j++) {
-	int left = std::max(i - d, 0);
-	int right = std::min(i + d, width - d);
-	int top = std::max(j - d, 0);
-	int bottom = std::min(j + d, height - d);
-	if (grid[i*height + j] == 3) { // if i'm untouchable, see if I'm near a desired pixel
-	  int is_near = 0;
-	  for (int n = left; n <= right; n++) {
-	    for (int m = top; m <= bottom; m++) {
-	      if (grid[n*height + m] == 1) {
-		is_near = 1;
-	      }
-	    }
-	  }
-	  // if near, make this pixel overpaintable
-	  if (is_near) { grid[i*height + j] = 2; }
-	}
-      }
-    }
-  }
-
   void clear() { // clears all variables for reuse
     for (int i = 0; i < width*height; i++) { grid[i] = 3; } // default all pixels are untouchable
     // maybe skip reseeting these: brush_boundary brush_interior brush_pixels
@@ -853,7 +716,6 @@ public:
     strokes.clear();
   }
 
-  // w,h = dimensions of grid that will contain the region to analyze.  b=how many pixels you want in a display border
   RegionToPaths(int w, int h, int b = 0) {
     width = w;
     height = h;
