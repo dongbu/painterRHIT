@@ -386,8 +386,7 @@ void CommandWindow::showTime() {
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
 
-//void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
-void CommandWindow::cellChange(int curRow) { emit highlightShape(curRow); }
+void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
 
 std::vector<int> getQColor(QString col) {
 	std::string col2 = col.toUtf8().constData();

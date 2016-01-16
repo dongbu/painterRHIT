@@ -109,7 +109,7 @@ public:
         ColorLabel->setText(QApplication::translate("kMeans", "Color Count", 0));
         MinSizeLabel->setText(QApplication::translate("kMeans", "Minimum Region Size (pixels)", 0));
         ColorInput->setText(QApplication::translate("kMeans", "2", 0));
-        SizeInput->setText(QApplication::translate("kMeans", "1", 0));
+        SizeInput->setText(QApplication::translate("kMeans", "5", 0));
         cancel->setText(QApplication::translate("kMeans", "Cancel", 0));
         accept->setText(QApplication::translate("kMeans", "Accept", 0));
     } // retranslateUi

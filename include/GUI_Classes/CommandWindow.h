@@ -43,8 +43,7 @@ private slots:
     void deleteCommandClicked();
     void launchRightClick(QPoint p);
     void menuSort(QAction *a);
-	//void cellChange(int curRow, int curCol, int prevRow, int prevCol);
-	void cellChange(int curRow);
+	void cellChange(int curRow, int curCol, int prevRow, int prevCol);
 	void updateMode();
 	void disableModeSetting();
 	void enableModeSetting();
