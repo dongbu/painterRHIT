@@ -10,10 +10,15 @@
 #include "pugixml.cpp"
 #endif
 #include "drawwindow.cpp"
+#include "paint_util.h"
+
+// dunno why apple needs .cpp
+#ifdef __APPLE__
+#include "paint_util.cpp"
+#endif
 
 class PolyLine;
 class PixelRegion;
-
 
 class Shape {
 protected:
@@ -65,7 +70,9 @@ public:
 		isBreakPoint = toggle;
 	}
 
-	virtual void draw(DrawWindow *W) { printf("hey, you should know how to draw yourself\n"); }
+	virtual void draw(DrawWindow *W) { 
+		printf("hey, you should know how to draw yourself (%i x %i)\n",W->width,W->height); 
+	}
 
 	virtual PolyLine* toPolyline(){
 		printf("if you are seeing this message, this class cannot convert to polyline\n");
@@ -130,13 +137,15 @@ protected:
 
 public:
 	void addPoint(cv::Point pt) { points.push_back(pt); }
-	void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
-	void addPoint(int i, int j, int dup_check) { // add point if it doesn't exist yet
+	//void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
+	void addPoint(int i, int j, int dup_check=1) { // add point if it doesn't exist yet
 		int found = 0;
-		for (int n = 0; n < (int)points.size(); n++) {
-			if (points[n].x == i && points[n].y == j) {
-				found = 1;
-				n = (int)points.size();
+		if (dup_check) {
+			for (int n = 0; n < (int)points.size(); n++) {
+				if (points[n].x == i && points[n].y == j) {
+					found = 1;
+					n = (int)points.size();
+				}
 			}
 		}
 		if (!found) addPoint(cv::Point(i, j));
@@ -600,6 +609,7 @@ public:
 				return shapes.at(i);
 			}
 		}
+		return NULL;
 	}
 
 	// ABC: should be renamed to something like getNumShapes as length is ambiguous

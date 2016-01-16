@@ -51,13 +51,14 @@ ui(new Ui::CommandWindow)
 	modeBox = new QComboBox();
 	delayTimeLabel = new QLabel("delay (ms): ");
 	QStringList modes;
-	modes << "Simulate Idealized Brush" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
+	modes << "Simulate Magic Marker" << "Simulate Real Brush" << "Non-touch robot motion" << "Paint w/o feedback" << "Paint w/ feedback";
 	modeBox->addItems(modes);
 	ui->toolBar->insertWidget(ui->actionPlay, modeBox);
 	connect(modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMode()));
 
 	delayTime = new QSpinBox();
-	setupDelayTime(delayTime);
+	//setupDelayTime(delayTime);
+	setupDelayTime();
 	ui->toolBar->insertSeparator(ui->actionPlay);
 	connect(delayTime, SIGNAL(valueChanged(int)), this, SLOT(updateMode()));
 
@@ -77,13 +78,14 @@ CommandWindow::~CommandWindow()
 /**
 / @brief Sets up DelayTime
 */
-void CommandWindow::setupDelayTime(QSpinBox *DelayTime)
+//void CommandWindow::setupDelayTime(QSpinBox *DelayTime)
+void CommandWindow::setupDelayTime()
 {
 	delayTime->setFixedWidth(40);
 	delayTime->setMinimum(0);
-	delayTime->setMaximum(30);
-	delayTime->setSingleStep(1);
-	delayTime->setValue(2);
+	delayTime->setMaximum(3000);
+	delayTime->setSingleStep(10);
+	delayTime->setValue(50);
 	ui->toolBar->insertSeparator(ui->actionPlay);
 	delayTimeLabel_action = ui->toolBar->insertWidget(ui->actionPlay, delayTimeLabel);
 	delayTime_action = ui->toolBar->insertWidget(ui->actionPlay, delayTime);
@@ -384,11 +386,17 @@ void CommandWindow::showTime() {
 	ui->TimeEllapsed->setAlignment(Qt::AlignCenter);
 }
 
-void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
+//void CommandWindow::cellChange(int curRow, int curCol, int prevRow, int prevCol) { emit highlightShape(curRow); }
+void CommandWindow::cellChange(int curRow) { emit highlightShape(curRow); }
+
+std::vector<int> getQColor(QString col) {
+	std::string col2 = col.toUtf8().constData();
+	return paint_util::getColor(col2);
+}
 
 void CommandWindow::colorChangeConfirmed() {
 	colorForm->hide();
-	std::vector<int> NewRGB = paint_util::getQColor(colorUi.comboBox->currentText());
+	std::vector<int> NewRGB = getQColor(colorUi.comboBox->currentText());
 	cv::Scalar OldRGB = shapes->at(ui->tableWidget->currentRow())->getPenColor();
 	if (NewRGB[0] == -1) return; //no change detected.
 

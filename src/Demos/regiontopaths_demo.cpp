@@ -53,6 +53,17 @@ int main(int argc, char** argv) {
   //if (argv[2]) { h = atoi(argv[2]); }
   //if (argv[3]) { int seed = atoi(argv[3]); rng(seed); }
 
+    char* g_image_filename="/Users/andrew/Desktop/demo.png";
+    if (argv[1]) { g_image_filename = argv[1]; }
+    
+    cv::Mat src = cv::imread( g_image_filename, 1 );
+    if (src.empty()) {
+      std::cout << "!!! Failed imread()\n ./colors <image filename>" << std::endl;
+      return -1;
+    }  
+    w=src.cols;
+    h=src.rows;
+
   DrawWindow W = DrawWindow(w + 2 * border, h + 2 * border, "Region"); // w,h
   W.moveWindow(0, 50);
 
@@ -65,7 +76,20 @@ int main(int argc, char** argv) {
   while (!done) {
 
     RTP.clear();
-    defineDemoRegion(&RTP, w, h);
+    if (1) { // rectangles
+      defineDemoRegion(&RTP, w, h);
+    } else {
+      for (int i=0;i<w;i++) {
+	for (int j=0; j<h; j++) {
+	  cv::Vec3b px=src.at<cv::Vec3b>(cv::Point(i,j));
+	  if (px[1]>100 && px[0]<155) { RTP.addOverpaintablePixel(i,j); }
+	  else if (px[0]==0 && px[2]==0 && px[2]==0) {
+	    RTP.addDesiredPixel(i,j);
+	  }
+	}
+      }
+    }
+
 
     W.clearWindow(230, 230, 230); // default background is white
     W.setPenColor(0, 0, 0);
@@ -139,7 +163,7 @@ int main(int argc, char** argv) {
       int loop = 0;
       while (!done) {
 	loop++;
-	brush.loadPaintPixel(50);
+	brush.loadPaintPixels(50);
 	brush.drawContiguousPoints(&P, &stroke);
 
 	// draw a yellow rectangle at the beginning of the stroke

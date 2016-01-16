@@ -168,5 +168,39 @@ public:
     defineBoundary(&image, region_color, boundary, interior, minx, miny);
   }
 
+
+  // returns a number that estimates the difference between 2 images
+  // if canvas_mat is defined, then discount pixels in it that have the default canvas rgb
+  // canvas_mat is basically a mask... show regions that have yet to be painted (requires default_canvas_color defined)
+  double calcDiffBetweenImages(cv::Mat* mat1, cv::Mat* mat2, cv::Mat* canvas_mat=NULL, cv::Scalar default_canvas_color=NULL) {
+    double diff=0;
+    
+    double weight = 1.0; // how much to weigh a pixels 'difference'
+    for (int i=0; i<mat1->cols; i++) {
+      for (int j=0; j<mat2->rows; j++) {
+	
+	// discount "improving" places that have yet to be painted (this code shows limited benefit)
+	// the goal is to avoid strokes that partially paint over other paint
+	weight=1.0;
+	if (canvas_mat) {
+	  cv::Vec3b canvas_color = canvas_mat->at<cv::Vec3b>(cv::Point(i,j));
+	  if (canvas_color[0]==default_canvas_color[0] &&
+	      canvas_color[1]==default_canvas_color[1] &&
+	      canvas_color[2]==default_canvas_color[2]) { 
+	    weight=.1; 
+	  }
+	}
+	
+	cv::Vec3b color1 = mat1->at<cv::Vec3b>(cv::Point(i,j));
+	cv::Vec3b color2 = mat2->at<cv::Vec3b>(cv::Point(i,j));
+	
+	double distance = sqrt((color1[0]-color2[0])*(color1[0]-color2[0]) + (color1[1]-color2[1])*(color1[1]-color2[1]) + (color1[2]-color2[2])*(color1[2]-color2[2]));
+	diff += distance * weight;
+	//double distance = cv::norm(color1-color2);
+      }
+    }
+    return diff;
+  }
+
   PixelTools() {  }
 };
