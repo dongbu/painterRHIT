@@ -65,6 +65,11 @@ public:
 		return line;
 	}
 
+	virtual std::string getText(){
+		std::string line = "";
+		return line;
+	}
+
 
 	void toggleBreakPoint(bool toggle) {
 		isBreakPoint = toggle;
@@ -106,6 +111,17 @@ public:
 		}
 		line.append("</points>");
 		line.append("</shape>");
+		return line;
+	}
+
+	//create ABB text file for polyline
+	virtual std::string getText(){
+		std::string line;
+		line.append("blue,");
+		for (int i = 0; i < (int)points.size(); i++){
+			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
+		}
+		line.append(";");
 		return line;
 	}
 
@@ -163,6 +179,17 @@ public:
 		}
 		line.append("</points>");
 		line.append("</shape>");
+		return line;
+	}
+
+	//create ABB text file for pixel region
+	virtual std::string getText(){
+		std::string line;
+		line.append("blue,");
+		for (int i = 0; i < (int)points.size(); i++) {
+			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
+		}
+		line.append(";");
 		return line;
 	}
 
@@ -276,6 +303,17 @@ public:
 		return line;
 	}
 
+	//create ABB text file for polypoints
+	virtual std::string getText(){
+		std::string line;
+		line.append("blue,");
+		for (int i = 0; i < (int)points.size(); i++) {
+			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
+		}
+		line.append(";");
+		return line;
+	}
+
 	virtual void draw(DrawWindow *W) {
 		cv::Scalar color = getPenColor();
 		W->setPenColor(color[0], color[1], color[2]);
@@ -335,6 +373,15 @@ public:
 		line.append(paint_util::string_format("<corners pt1x=\"%i\" pt1y=\"%i\" pt2x=\"%i\" pt2y=\"%i\"></corners>",
 			pt1.x, pt1.y, pt2.x, pt2.y));
 		line.append("</shape>");
+		return line;
+	}
+
+	//create ABB text file for rectangle
+	virtual std::string getText(){
+		std::string line;
+		line.append("blue,");
+		line.append(paint_util::string_format("%i,%i,%i,%i,", pt1.x, pt1.y, pt2.x, pt2.y));
+		line.append(";");
 		return line;
 	}
 
@@ -416,6 +463,17 @@ public:
 		return line;
 	}
 
+
+	//create ABB text file for an elipse
+	virtual std::string getText(){
+		std::string line;
+		line.append("blue,");
+		//line.append(paint_util::string_format("\"%i\",\"%i\",\"%i\",\"%i\",", pt1.x, pt1.y, pt2.x, pt2.y));
+		//please no
+		line.append(";");
+		return line;
+	}
+
 	virtual void draw(DrawWindow *W) {
 		cv::Scalar color = getPenColor();
 		W->setPenColor(color[0], color[1], color[2]);
@@ -450,6 +508,14 @@ public:
 			line.append("\n");
 		}
 		line.append("</shapes>\n");
+		return line;
+	}
+
+	std::string getText(){
+		std::string line = "";
+		for (int i = 0; i < (int)shapes.size(); i++){
+			line.append(shapes[i]->getText());
+		}
 		return line;
 	}
 
