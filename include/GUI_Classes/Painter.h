@@ -38,8 +38,8 @@ public slots:
     void save(std::string projectLocation);
     void load(std::string projectLocation);
 	void loadRobot(std::string robotLocation);
-	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length);
-	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize);
+	void loadPhotoCanny(cv::Mat image, int threshold, int min_line_length, int skip_freq);
+	void loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, int skip_freq);
 	void newClicked();
 	void resize(int *width, int *height);
 	void murderousRampage();

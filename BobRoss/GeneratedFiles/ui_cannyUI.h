@@ -32,10 +32,12 @@ public:
     QVBoxLayout *verticalLayout;
     QLabel *ThresholdLabel;
     QLabel *MinLengthLabel;
+    QLabel *SkipLabel;
     QVBoxLayout *verticalLayout_2;
     QLineEdit *ThresholdInput;
     QLineEdit *LengthInput;
-    QWidget *widget;
+    QLineEdit *SkipInput;
+    QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *cancel;
     QPushButton *accept;
@@ -44,10 +46,10 @@ public:
     {
         if (canny->objectName().isEmpty())
             canny->setObjectName(QStringLiteral("canny"));
-        canny->resize(271, 137);
+        canny->resize(278, 147);
         horizontalLayoutWidget = new QWidget(canny);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(0, 10, 266, 80));
+        horizontalLayoutWidget->setGeometry(QRect(0, 10, 266, 81));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -62,6 +64,11 @@ public:
         MinLengthLabel->setObjectName(QStringLiteral("MinLengthLabel"));
 
         verticalLayout->addWidget(MinLengthLabel);
+
+        SkipLabel = new QLabel(horizontalLayoutWidget);
+        SkipLabel->setObjectName(QStringLiteral("SkipLabel"));
+
+        verticalLayout->addWidget(SkipLabel);
 
 
         horizontalLayout->addLayout(verticalLayout);
@@ -78,21 +85,26 @@ public:
 
         verticalLayout_2->addWidget(LengthInput);
 
+        SkipInput = new QLineEdit(horizontalLayoutWidget);
+        SkipInput->setObjectName(QStringLiteral("SkipInput"));
+
+        verticalLayout_2->addWidget(SkipInput);
+
 
         horizontalLayout->addLayout(verticalLayout_2);
 
-        widget = new QWidget(canny);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(0, 100, 261, 30));
-        horizontalLayout_2 = new QHBoxLayout(widget);
+        layoutWidget = new QWidget(canny);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 100, 261, 30));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        cancel = new QPushButton(widget);
+        cancel = new QPushButton(layoutWidget);
         cancel->setObjectName(QStringLiteral("cancel"));
 
         horizontalLayout_2->addWidget(cancel);
 
-        accept = new QPushButton(widget);
+        accept = new QPushButton(layoutWidget);
         accept->setObjectName(QStringLiteral("accept"));
 
         horizontalLayout_2->addWidget(accept);
@@ -108,8 +120,10 @@ public:
         canny->setWindowTitle(QApplication::translate("canny", "Dialog", 0));
         ThresholdLabel->setText(QApplication::translate("canny", "Threshold (%)", 0));
         MinLengthLabel->setText(QApplication::translate("canny", "Minimum Line Length (pixels)", 0));
+        SkipLabel->setText(QApplication::translate("canny", "Skip Frequency", 0));
         ThresholdInput->setText(QApplication::translate("canny", "50", 0));
         LengthInput->setText(QApplication::translate("canny", "5", 0));
+        SkipInput->setText(QApplication::translate("canny", "1", 0));
         cancel->setText(QApplication::translate("canny", "Cancel", 0));
         accept->setText(QApplication::translate("canny", "Accept", 0));
     } // retranslateUi

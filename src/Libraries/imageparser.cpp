@@ -206,7 +206,7 @@ public:
 		return 1;
 	}
 
-	void defineShapes(Shapes *S) {
+	void defineShapes(Shapes *S, int skip_freq = 1) {
 		// simplify contours
 		std::vector<std::vector<cv::Point> > contours_poly(contours.size());
 		for (size_t i = 0; i < contours.size(); i++) {
@@ -221,7 +221,7 @@ public:
 
 			if ((signed)contours_poly[i].size()>min_contour_length) {
 				// printf("Contour:%i [%lu points]\n",i,contours_poly[i].size());
-				for (size_t j = 0; j < contours_poly[i].size(); j++) {
+				for (size_t j = 0; j < contours_poly[i].size(); j+=skip_freq) {
 					//printf("(%i,%i)",contours[i][j].x,contours[i][j].y);
 					//if (j!=contours_poly[i].size()-1) { printf(","); }
 					PL->addPoint(contours_poly[i][j].x, contours_poly[i][j].y);
@@ -601,7 +601,7 @@ public:
 		//while (cv::waitKey(33)<0) { }
 	}
 
-	void defineShapes(Shapes *S) {
+	void defineShapes(Shapes *S, int skip_freq = 1) {
 		cv::RNG rng(12345);
 		for (size_t r = 0; r < regions.size(); r++) {
 			int num_pixels = regions[r].size();

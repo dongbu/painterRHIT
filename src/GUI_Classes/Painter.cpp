@@ -133,7 +133,7 @@ void Painter::loadRobot(std::string robotLocation) {
 }
 
 //load photo canny from location.
-void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
+void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length, int skip_freq){
 	logic->clearSimWin(); //white
 	logic->hideSimWin();
 
@@ -141,7 +141,7 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 	IPC.setMinContourLength(min_line_length);
 	IPC.setCannyThreshold(threshold);
 	IPC.parseImage(image);
-	IPC.defineShapes(shapes);
+	IPC.defineShapes(shapes, skip_freq);
 
 	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
@@ -150,7 +150,7 @@ void Painter::loadPhotoCanny(cv::Mat image, int threshold, int min_line_length){
 }
 
 //load photo kmeans from location.
-void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) {
+void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, int skip_freq) {
 	logic->clearSimWin(); //white
 	logic->hideSimWin();
 
@@ -158,7 +158,7 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize) 
 	IPK.setNumColors(colorCount);
 	IPK.setMinPixelsInRegion(minRegionSize);
 	IPK.parseImage(image);
-	IPK.defineShapes(shapes);
+	IPK.defineShapes(shapes, skip_freq);
 
 	sketch->cvWindow->clearWindow(255, 255, 255);
 	shapes->drawAll(sketch->cvWindow); //redraw window
@@ -193,8 +193,8 @@ void Painter::showGUI(){
 	connect(sketch, SIGNAL(save(std::string)), this, SLOT(save(std::string)));
 	connect(sketch, SIGNAL(load(std::string)), this, SLOT(load(std::string)));
 	connect(sketch, SIGNAL(loadRobot(std::string)), this, SLOT(loadRobot(std::string)));
-	connect(sketch, SIGNAL(loadPhotoCanny(cv::Mat, int, int)), this, SLOT(loadPhotoCanny(cv::Mat, int, int)));
-	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int)));
+	connect(sketch, SIGNAL(loadPhotoCanny(cv::Mat, int, int, int)), this, SLOT(loadPhotoCanny(cv::Mat, int, int, int)));
+	connect(sketch, SIGNAL(loadPhotoKmeans(cv::Mat, int, int, int)), this, SLOT(loadPhotoKmeans(cv::Mat, int, int, int)));
 	connect(sketch, SIGNAL(prodOtherWindows()), commandWin, SLOT(populate()));
 	connect(sketch, SIGNAL(prodOtherWindows()), logic, SLOT(shapesChanged()));
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));

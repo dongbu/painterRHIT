@@ -116,8 +116,8 @@ signals:
 	void save(std::string);
 	void load(std::string);
 	void loadRobot(std::string);
-	void loadPhotoCanny(cv::Mat, int, int);
-	void loadPhotoKmeans(cv::Mat, int, int);
+	void loadPhotoCanny(cv::Mat, int, int, int);
+	void loadPhotoKmeans(cv::Mat, int, int, int);
 };
 
 #endif // SKETCHPAD_H

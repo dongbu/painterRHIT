@@ -73,6 +73,7 @@ void Sketchpad::setupQt() {
 	kMeansForm->setWindowTitle("kMeans Options");
 	kMeansUi.ColorInput->setValidator(new QIntValidator(1, 64));
 	kMeansUi.SizeInput->setValidator(new QIntValidator(1, 500));
+	kMeansUi.SkipInput->setValidator(new QIntValidator(1, 100));
 	kMeansUi.accept->setDisabled(true);
 	connect(kMeansUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
 	connect(kMeansUi.accept, SIGNAL(clicked()), this, SLOT(kMeansAdjusted()));
@@ -83,6 +84,7 @@ void Sketchpad::setupQt() {
 	cannyForm->setWindowTitle("Canny Options");
 	cannyUi.ThresholdInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.LengthInput->setValidator(new QIntValidator(1, 100));
+	cannyUi.SkipInput->setValidator(new QIntValidator(1, 100));
 	cannyUi.accept->setDisabled(true);
 	connect(cannyUi.cancel, SIGNAL(clicked()), this, SLOT(editingCanceled()));
 	connect(cannyUi.accept, SIGNAL(clicked()), this, SLOT(cannyAdjusted()));
@@ -400,11 +402,13 @@ void Sketchpad::kMeansAdjusted() {
 	if (colorCount == 0) colorCount = 1; //don't let them have 0 colors.
 	int minPixel = kMeansUi.SizeInput->text().toInt();
 	if (minPixel == 0) minPixel = 1; //don't let them have empty regions.
+	int skipFreq = kMeansUi.SkipInput->text().toInt();
+	if (skipFreq <= 0){ skipFreq = 1; } //no
 	this->redraw();
 	emit prodOtherWindows();
 
 	printf("loading photo kMeans\n");
-	emit loadPhotoKmeans(savedPicture, colorCount, minPixel);
+	emit loadPhotoKmeans(savedPicture, colorCount, minPixel, skipFreq);
 	printf("finished loading photo kMeans\n");
 	kMeansUi.accept->setDisabled(false);
 }
@@ -419,12 +423,13 @@ void Sketchpad::cannyAdjusted() {
 	if (minLength == 0) minLength = 1; //don't let them have dimensionless lines.
 	int threshold = cannyUi.ThresholdInput->text().toInt();
 	if (threshold == 0) threshold = 1; //don't let them have 0% threshold.
-
+	int skipFreq = cannyUi.SkipInput->text().toInt();
+	if (skipFreq <= 0){ skipFreq = 1; } //no
 	this->redraw();
 	emit prodOtherWindows();
 
 	printf("loading photo canny\n");
-	emit loadPhotoCanny(savedPicture, threshold, minLength);
+	emit loadPhotoCanny(savedPicture, threshold, minLength, skipFreq);
 	printf("finished loading photo canny\n");
 	cannyUi.accept->setDisabled(false);
 }

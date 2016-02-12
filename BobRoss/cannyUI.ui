@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>271</width>
-    <height>137</height>
+    <width>278</width>
+    <height>147</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>10</y>
      <width>266</width>
-     <height>80</height>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -36,6 +36,13 @@
        <widget class="QLabel" name="MinLengthLabel">
         <property name="text">
          <string>Minimum Line Length (pixels)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="SkipLabel">
+        <property name="text">
+         <string>Skip Frequency</string>
         </property>
        </widget>
       </item>
@@ -57,14 +64,21 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLineEdit" name="SkipInput">
+        <property name="text">
+         <string>1</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>100</y>
      <width>261</width>
      <height>30</height>

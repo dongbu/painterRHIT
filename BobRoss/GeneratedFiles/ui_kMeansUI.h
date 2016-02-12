@@ -32,9 +32,11 @@ public:
     QVBoxLayout *verticalLayout;
     QLabel *ColorLabel;
     QLabel *MinSizeLabel;
+    QLabel *SkipLabel;
     QVBoxLayout *verticalLayout_2;
     QLineEdit *ColorInput;
     QLineEdit *SizeInput;
+    QLineEdit *SkipInput;
     QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *cancel;
@@ -44,10 +46,10 @@ public:
     {
         if (kMeans->objectName().isEmpty())
             kMeans->setObjectName(QStringLiteral("kMeans"));
-        kMeans->resize(267, 138);
+        kMeans->resize(268, 148);
         horizontalLayoutWidget = new QWidget(kMeans);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 10, 251, 80));
+        horizontalLayoutWidget->setGeometry(QRect(10, 10, 251, 81));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -63,6 +65,11 @@ public:
 
         verticalLayout->addWidget(MinSizeLabel);
 
+        SkipLabel = new QLabel(horizontalLayoutWidget);
+        SkipLabel->setObjectName(QStringLiteral("SkipLabel"));
+
+        verticalLayout->addWidget(SkipLabel);
+
 
         horizontalLayout->addLayout(verticalLayout);
 
@@ -77,6 +84,11 @@ public:
         SizeInput->setObjectName(QStringLiteral("SizeInput"));
 
         verticalLayout_2->addWidget(SizeInput);
+
+        SkipInput = new QLineEdit(horizontalLayoutWidget);
+        SkipInput->setObjectName(QStringLiteral("SkipInput"));
+
+        verticalLayout_2->addWidget(SkipInput);
 
 
         horizontalLayout->addLayout(verticalLayout_2);
@@ -108,8 +120,10 @@ public:
         kMeans->setWindowTitle(QApplication::translate("kMeans", "Dialog", 0));
         ColorLabel->setText(QApplication::translate("kMeans", "Color Count", 0));
         MinSizeLabel->setText(QApplication::translate("kMeans", "Minimum Region Size (pixels)", 0));
+        SkipLabel->setText(QApplication::translate("kMeans", "Skip Frequency", 0));
         ColorInput->setText(QApplication::translate("kMeans", "2", 0));
         SizeInput->setText(QApplication::translate("kMeans", "5", 0));
+        SkipInput->setText(QApplication::translate("kMeans", "1", 0));
         cancel->setText(QApplication::translate("kMeans", "Cancel", 0));
         accept->setText(QApplication::translate("kMeans", "Accept", 0));
     } // retranslateUi
