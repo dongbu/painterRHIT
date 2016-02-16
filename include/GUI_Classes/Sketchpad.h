@@ -28,6 +28,9 @@ public:
 	DrawWindow *cvWindow;
 	CVImageWidget *translator;
 
+	int getWidth();
+	int getHeight();
+
 private:
 	void closeEvent(QCloseEvent *event);
 

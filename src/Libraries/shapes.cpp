@@ -121,7 +121,7 @@ public:
 		for (int i = 0; i < (int)points.size(); i++){
 			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
 		}
-		line.append(";");
+		line.append(";,");
 		return line;
 	}
 
@@ -189,7 +189,7 @@ public:
 		for (int i = 0; i < (int)points.size(); i++) {
 			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
 		}
-		line.append(";");
+		line.append(";,");
 		return line;
 	}
 
@@ -310,7 +310,7 @@ public:
 		for (int i = 0; i < (int)points.size(); i++) {
 			line.append(paint_util::string_format("%i,%i,", points[i].x, points[i].y));
 		}
-		line.append(";");
+		line.append(";,");
 		return line;
 	}
 
@@ -381,7 +381,7 @@ public:
 		std::string line;
 		line.append("blue,");
 		line.append(paint_util::string_format("%i,%i,%i,%i,", pt1.x, pt1.y, pt2.x, pt2.y));
-		line.append(";");
+		line.append(";,");
 		return line;
 	}
 
@@ -470,7 +470,7 @@ public:
 		line.append("blue,");
 		//line.append(paint_util::string_format("\"%i\",\"%i\",\"%i\",\"%i\",", pt1.x, pt1.y, pt2.x, pt2.y));
 		//please no
-		line.append(";");
+		line.append(";,");
 		return line;
 	}
 

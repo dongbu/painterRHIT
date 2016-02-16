@@ -667,8 +667,11 @@ void Sketchpad::changeSize(){
 }
 
 void Sketchpad::changeSize(int *width, int *height) {
-	this->setFixedHeight(*height + ui->toolBar_2->height() + ui->menubar->height() + 15);
-	this->setFixedWidth(*width + 20);
+	//previously as follows.  See setFixedSize params.
+	//this->setFixedHeight(heightStuff)
+	//this->setFixedWidth(widthStuff)
+	this->setFixedSize(*width + 20, *height + ui->toolBar_2->height() + ui->menubar->height() + 15);
+	
 	QRect r = QApplication::desktop()->availableGeometry();
 	this->move(r.right() - (*width + 35), r.top());
 
@@ -687,3 +690,10 @@ void Sketchpad::brushChanged() {
 
 void Sketchpad::hideBrushUi() { brushForm->hide(); }
 void Sketchpad::showBrushUi() { brushForm->show();  }
+
+int Sketchpad::getWidth(){
+	return this->cvWindow->width;
+}
+int Sketchpad::getHeight(){
+	return this->cvWindow->height;
+}
