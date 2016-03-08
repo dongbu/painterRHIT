@@ -610,7 +610,7 @@ public:
 				PR->setPenColor(region_colors[r][0], region_colors[r][1], region_colors[r][2]);
 				if (use_random_colors) { PR->setPenColor(rng.uniform(100, 200), rng.uniform(100, 200), rng.uniform(100, 200)); }
 
-				for (size_t p = 0; p < regions[r].size(); p++) {
+				for (size_t p = 0; p < regions[r].size(); p+= skip_freq) {
 					PR->addPoint(regions[r][p].x, regions[r][p].y);
 				}
 				S->addShape(PR);
