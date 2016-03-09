@@ -1,6 +1,8 @@
 #pragma once
 
 #include <opencv/cv.h>
+#include <QProgressBar.h>
+#include <QApplication.h>
 
 #ifdef __APPLE__
 #include "kmeansSegment.cpp"
@@ -290,6 +292,7 @@ protected:
 	int min_region_pixels; // smallest number of pixels to be in a region
 	int reduce_specs_loops;
 	cv::Mat kmeans_image;
+	QProgressBar *progress;
 
 public:
 	void setNumColors(int num) { colors = num; }
@@ -601,21 +604,40 @@ public:
 		//while (cv::waitKey(33)<0) { }
 	}
 
+	/**
+	This function takes an extraordinary time with KMEANS
+
+	*/
 	void defineShapes(Shapes *S, int skip_freq = 1) {
+		progress = new QProgressBar();
+		progress->setMinimum(0);
+		progress->setMaximum(regions.size());
+		progress->setValue(0);
+		progress->setFixedWidth(300);
+		progress->setWindowTitle("creating pixel region " + QString::number(0) + " of " + QString::number(0));
+		progress->show();
+		QApplication::instance()->processEvents();
 		cv::RNG rng(12345);
-		for (size_t r = 0; r < regions.size(); r++) {
+		for (int r = 0; r < regions.size(); r++) {
+			progress->setWindowTitle("creating pixel region " + QString::number(r+1) + " of " + QString::number(regions.size()));
 			int num_pixels = regions[r].size();
 			if (num_pixels >= min_region_pixels) {
 				PixelRegion *PR = new PixelRegion();
 				PR->setPenColor(region_colors[r][0], region_colors[r][1], region_colors[r][2]);
 				if (use_random_colors) { PR->setPenColor(rng.uniform(100, 200), rng.uniform(100, 200), rng.uniform(100, 200)); }
 
-				for (size_t p = 0; p < regions[r].size(); p+= skip_freq) {
+				progress->setMaximum(regions[r].size());
+				for (int p = 0; p < regions[r].size(); p += skip_freq) {
 					PR->addPoint(regions[r][p].x, regions[r][p].y);
+					progress->setValue(p);
+					QApplication::instance()->processEvents();
 				}
+				progress->setValue(0);
 				S->addShape(PR);
 			}
 		}
+		progress->close();
+
 	}
 
 	ImageParserKmeans() : ImageParser() { colors = 10; min_region_pixels = 10; reduce_specs_loops = 10; }
