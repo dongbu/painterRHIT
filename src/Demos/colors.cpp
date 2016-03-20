@@ -167,7 +167,7 @@ void defineGradients(Mat* original, double *gradArray, double *magnitudes, int g
 	double mag = sqrt(dx*dx + dy*dy);
 	gradArray[index]=directionRAD;
 	magnitudes[index]=mag;
-	if (i%1000==0) { printf("%5i: [%i,%i] Rad:%5.3f, Deg:%5.1f, Mag:%.2f\n",i,dx,dy,directionRAD,directionDEG,mag); }
+	if (0 && i%1000==0) { printf("%5d: [%i,%i] Rad:%5.3f, Deg:%5.1f, Mag:%.2f\n",i,dx,dy,directionRAD,directionDEG,mag); }
       }
     }
   }
@@ -255,7 +255,7 @@ void showGradients() {
     for (int i=0; i<num_lines; i++) {
       int x = rng.uniform(0,src.cols);
       int y = rng.uniform(0,src.rows);  
-      double rad = gradients[src.rows*y + x];
+      double rad = gradients[src.cols*y + x];
       
       int thickness=1;
       int lineType=8;
@@ -274,9 +274,10 @@ void showGradients() {
   Mat lines_image = Mat::zeros( s.height, s.width, CV_8UC3 );
   int num_lines=src.rows*src.cols/10;
   for (int i=0; i<num_lines; i++) {
-    int x = rng.uniform(0,src.cols);
-    int y = rng.uniform(0,src.rows);
-    double rad = gradients[src.rows*y + x];
+    int x = rng.uniform(0,src.cols-1);
+    int y = rng.uniform(0,src.rows-1);
+    //printf("%d/%d (%d,%d)\n",i,num_lines,x,y);
+    double rad = gradients[src.cols*y + x];
    
     // get pixel color (lets try kmeans one)
     Vec3b color = kmeans_image.at<Vec3b>(Point(x,y));
