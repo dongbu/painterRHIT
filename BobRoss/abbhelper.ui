@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ABBHelper</class>
+ <widget class="QWidget" name="ABBHelper">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>489</width>
+    <height>375</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>451</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="3">
+     <widget class="QLabel" name="label_BlueTitle">
+      <property name="text">
+       <string>Blue</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label_SampleTitle">
+      <property name="text">
+       <string>Sample</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_GreenTitle">
+      <property name="text">
+       <string>Green</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_RedTitle">
+      <property name="text">
+       <string>Red</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="checkBox_c2">
+      <property name="text">
+       <string>Color 2</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="checkBox_c4">
+      <property name="text">
+       <string>Color 4</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QCheckBox" name="checkBox_c6">
+      <property name="text">
+       <string>Color 6</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkBox_c1">
+      <property name="text">
+       <string>Color 1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="checkBox_c5">
+      <property name="text">
+       <string>Color 5</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="checkBox_c3">
+      <property name="text">
+       <string>Color 3</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_SlotTitle">
+      <property name="text">
+       <string>Slot In Use</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QLabel" name="label_c1Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="4">
+     <widget class="QLabel" name="label_c2Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4">
+     <widget class="QLabel" name="label_c3Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="4">
+     <widget class="QLabel" name="label_c4Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="4">
+     <widget class="QLabel" name="label_c5Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4">
+     <widget class="QLabel" name="label_c6Sample">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QSpinBox" name="spinBox_c1R"/>
+    </item>
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="spinBox_c1G"/>
+    </item>
+    <item row="1" column="3">
+     <widget class="QSpinBox" name="spinBox_c1B"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="spinBox_c2R"/>
+    </item>
+    <item row="2" column="2">
+     <widget class="QSpinBox" name="spinBox_c2G"/>
+    </item>
+    <item row="2" column="3">
+     <widget class="QSpinBox" name="spinBox_c2B"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QSpinBox" name="spinBox_c3R"/>
+    </item>
+    <item row="3" column="2">
+     <widget class="QSpinBox" name="spinBox_c3G"/>
+    </item>
+    <item row="3" column="3">
+     <widget class="QSpinBox" name="spinBox_c3B"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSpinBox" name="spinBox_c4R"/>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="spinBox_c4G"/>
+    </item>
+    <item row="4" column="3">
+     <widget class="QSpinBox" name="spinBox_C4B"/>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSpinBox" name="spinBox_c5R"/>
+    </item>
+    <item row="5" column="2">
+     <widget class="QSpinBox" name="spinBox_c5G"/>
+    </item>
+    <item row="5" column="3">
+     <widget class="QSpinBox" name="spinBox_c5B"/>
+    </item>
+    <item row="6" column="1">
+     <widget class="QSpinBox" name="spinBox_c6R"/>
+    </item>
+    <item row="6" column="2">
+     <widget class="QSpinBox" name="spinBox_c6G"/>
+    </item>
+    <item row="6" column="3">
+     <widget class="QSpinBox" name="spinBox_c6B"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="label_Port">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Port:</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>330</y>
+     <width>341</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="spinBox_comNum">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>20</y>
+     <width>42</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
