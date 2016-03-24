@@ -73,10 +73,10 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
     <Import Project="property files\boost_x64.props" />
-    <Import Project="property files\Cyton.props" />
     <Import Project="property files\MyProps.props" />
     <Import Project="property files\OpenCV_x64.props" />
     <Import Project="property files\Qt_x64.props" />
+    <Import Project="property files\Cyton_x64.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
@@ -377,30 +377,26 @@
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CVImageWidget.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing CVImageWidget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/Libraries/CVImageWidget.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CVImageWidget.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing CVImageWidget.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -415,30 +411,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\CommandWindow.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CommandWindow.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing CommandWindow.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/CommandWindow.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CommandWindow.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing CommandWindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -453,30 +445,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\CytonRunner.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CytonRunner.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing CytonRunner.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/CytonRunner.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CytonRunner.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing CytonRunner.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -491,30 +479,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\Painter.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Painter.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing Painter.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/Painter.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Painter.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing Painter.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -529,30 +513,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\Sketchpad.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Sketchpad.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing Sketchpad.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/Sketchpad.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Sketchpad.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing Sketchpad.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -657,30 +637,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\runLogic.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing runLogic.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing runLogic.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/runLogic.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing runLogic.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing runLogic.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -815,30 +791,26 @@ endlocal
     <CustomBuild Include="..\include\GUI_Classes\workspacewizard.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.0-20150629\include" "-IC:\libraries\boost_1_60_0" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing workspacewizard.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing workspacewizard.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
 if errorlevel 1 goto VCEnd
-
 if errorlevel 1 goto VCEnd
 endlocal
-"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(NOINHERIT)\."</Command>
+"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I.\GeneratedFiles" "-fstdafx.h" "-f../../include/GUI_Classes/workspacewizard.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing workspacewizard.h...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing workspacewizard.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -2569,7 +2541,7 @@ endlocal
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_Win32="msvc_2015" />
+      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_Win32="msvc_2015" Qt5Version_x0020_x64="msvc_2015_64" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
