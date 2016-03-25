@@ -9,6 +9,7 @@
 #include "imageparser.cpp"
 #include "Webcam.cpp"
 #include "WorkspaceWizard.h"
+#include "ABBRunner.h"
 
 namespace Ui {
 	class Sketchpad;
@@ -23,6 +24,7 @@ public:
 	~Sketchpad();
 
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 	bool connected;
 	Ui::Sketchpad *ui;
 	DrawWindow *cvWindow;

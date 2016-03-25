@@ -35,7 +35,8 @@ SOURCES +=\
     ../src/Libraries/regiontopaths.cpp \
     ../src/Libraries/shapes.cpp \
     ../src/Libraries/webcam.cpp \
-    ../src/GUI_Classes/StartWindow.cpp
+    ../src/GUI_Classes/StartWindow.cpp \
+    ../include/GUI_Classes/abbhelper.cpp
 
 HEADERS  += \
     ../include/GUI_Classes/CommandWindow.h \
@@ -49,7 +50,8 @@ HEADERS  += \
     ../include/Libraries/kmeansSegment.hpp \
     ../include/Libraries/pugiconfig.hpp \
     ../include/Libraries/pugixml.hpp \
-    ../include/GUI_Classes/StartWindow.h
+    ../include/GUI_Classes/StartWindow.h \
+    ../include/GUI_Classes/abbhelper.h
 
 FORMS    += \
     CommandWindow.ui \
@@ -57,7 +59,8 @@ FORMS    += \
     Sketchpad.ui \
     workspacewizard.ui \
     StartWindow.ui \
-    kMeansUI.ui
+    kMeansUI.ui \
+    ../include/GUI_Classes/abbhelper.ui
 
 RESOURCES += \
     myres.qrc

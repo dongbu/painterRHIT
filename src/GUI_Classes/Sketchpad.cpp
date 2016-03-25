@@ -629,8 +629,11 @@ void Sketchpad::setCyton(){
 }
 
 void Sketchpad::connectRobot(){
+	printf("robot selected\n");
 	if (robotSelected == 1){
 		printf("connect to ABB\n");
+		chappie = new ABBRunner();
+
 	}
 	else if (robotSelected == 0){
 		if (!Ava->connected){
