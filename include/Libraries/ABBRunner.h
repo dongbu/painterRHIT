@@ -1,6 +1,16 @@
 #pragma once
-class ABBRunner
+
+#include "stdafx.h"
+#include "abbhelper.h"
+
+namespace Ui {
+	class ABBRunner;
+}
+
+class ABBRunner: public QDialog
 {
+	Q_OBJECT
+
 public:
 	ABBRunner();
 	~ABBRunner();
@@ -18,6 +28,10 @@ public:
 
 private:
 	ABBHelper *helps;
+
+private slots:
+	void acceptedWin();
+	void canceledWin();
 
 
 };

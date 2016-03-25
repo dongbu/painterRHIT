@@ -56,7 +56,7 @@ public:
     QSpinBox *spinBox_c3B;
     QSpinBox *spinBox_c4R;
     QSpinBox *spinBox_c4G;
-    QSpinBox *spinBox_C4B;
+    QSpinBox *spinBox_c4B;
     QSpinBox *spinBox_c5R;
     QSpinBox *spinBox_c5G;
     QSpinBox *spinBox_c5B;
@@ -135,127 +135,169 @@ public:
 
         label_c1Sample = new QLabel(gridLayoutWidget);
         label_c1Sample->setObjectName(QStringLiteral("label_c1Sample"));
+        label_c1Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c1Sample, 1, 4, 1, 1);
 
         label_c2Sample = new QLabel(gridLayoutWidget);
         label_c2Sample->setObjectName(QStringLiteral("label_c2Sample"));
+        label_c2Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c2Sample, 2, 4, 1, 1);
 
         label_c3Sample = new QLabel(gridLayoutWidget);
         label_c3Sample->setObjectName(QStringLiteral("label_c3Sample"));
+        label_c3Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c3Sample, 3, 4, 1, 1);
 
         label_c4Sample = new QLabel(gridLayoutWidget);
         label_c4Sample->setObjectName(QStringLiteral("label_c4Sample"));
+        label_c4Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c4Sample, 4, 4, 1, 1);
 
         label_c5Sample = new QLabel(gridLayoutWidget);
         label_c5Sample->setObjectName(QStringLiteral("label_c5Sample"));
+        label_c5Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c5Sample, 5, 4, 1, 1);
 
         label_c6Sample = new QLabel(gridLayoutWidget);
         label_c6Sample->setObjectName(QStringLiteral("label_c6Sample"));
+        label_c6Sample->setEnabled(false);
 
         gridLayout->addWidget(label_c6Sample, 6, 4, 1, 1);
 
         spinBox_c1R = new QSpinBox(gridLayoutWidget);
         spinBox_c1R->setObjectName(QStringLiteral("spinBox_c1R"));
+        spinBox_c1R->setEnabled(false);
+        spinBox_c1R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c1R, 1, 1, 1, 1);
 
         spinBox_c1G = new QSpinBox(gridLayoutWidget);
         spinBox_c1G->setObjectName(QStringLiteral("spinBox_c1G"));
+        spinBox_c1G->setEnabled(false);
+        spinBox_c1G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c1G, 1, 2, 1, 1);
 
         spinBox_c1B = new QSpinBox(gridLayoutWidget);
         spinBox_c1B->setObjectName(QStringLiteral("spinBox_c1B"));
+        spinBox_c1B->setEnabled(false);
+        spinBox_c1B->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c1B, 1, 3, 1, 1);
 
         spinBox_c2R = new QSpinBox(gridLayoutWidget);
         spinBox_c2R->setObjectName(QStringLiteral("spinBox_c2R"));
+        spinBox_c2R->setEnabled(false);
+        spinBox_c2R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c2R, 2, 1, 1, 1);
 
         spinBox_c2G = new QSpinBox(gridLayoutWidget);
         spinBox_c2G->setObjectName(QStringLiteral("spinBox_c2G"));
+        spinBox_c2G->setEnabled(false);
+        spinBox_c2G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c2G, 2, 2, 1, 1);
 
         spinBox_c2B = new QSpinBox(gridLayoutWidget);
         spinBox_c2B->setObjectName(QStringLiteral("spinBox_c2B"));
+        spinBox_c2B->setEnabled(false);
+        spinBox_c2B->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c2B, 2, 3, 1, 1);
 
         spinBox_c3R = new QSpinBox(gridLayoutWidget);
         spinBox_c3R->setObjectName(QStringLiteral("spinBox_c3R"));
+        spinBox_c3R->setEnabled(false);
+        spinBox_c3R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c3R, 3, 1, 1, 1);
 
         spinBox_c3G = new QSpinBox(gridLayoutWidget);
         spinBox_c3G->setObjectName(QStringLiteral("spinBox_c3G"));
+        spinBox_c3G->setEnabled(false);
+        spinBox_c3G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c3G, 3, 2, 1, 1);
 
         spinBox_c3B = new QSpinBox(gridLayoutWidget);
         spinBox_c3B->setObjectName(QStringLiteral("spinBox_c3B"));
+        spinBox_c3B->setEnabled(false);
+        spinBox_c3B->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c3B, 3, 3, 1, 1);
 
         spinBox_c4R = new QSpinBox(gridLayoutWidget);
         spinBox_c4R->setObjectName(QStringLiteral("spinBox_c4R"));
+        spinBox_c4R->setEnabled(false);
+        spinBox_c4R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c4R, 4, 1, 1, 1);
 
         spinBox_c4G = new QSpinBox(gridLayoutWidget);
         spinBox_c4G->setObjectName(QStringLiteral("spinBox_c4G"));
+        spinBox_c4G->setEnabled(false);
+        spinBox_c4G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c4G, 4, 2, 1, 1);
 
-        spinBox_C4B = new QSpinBox(gridLayoutWidget);
-        spinBox_C4B->setObjectName(QStringLiteral("spinBox_C4B"));
+        spinBox_c4B = new QSpinBox(gridLayoutWidget);
+        spinBox_c4B->setObjectName(QStringLiteral("spinBox_c4B"));
+        spinBox_c4B->setEnabled(false);
+        spinBox_c4B->setMaximum(255);
 
-        gridLayout->addWidget(spinBox_C4B, 4, 3, 1, 1);
+        gridLayout->addWidget(spinBox_c4B, 4, 3, 1, 1);
 
         spinBox_c5R = new QSpinBox(gridLayoutWidget);
         spinBox_c5R->setObjectName(QStringLiteral("spinBox_c5R"));
+        spinBox_c5R->setEnabled(false);
+        spinBox_c5R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c5R, 5, 1, 1, 1);
 
         spinBox_c5G = new QSpinBox(gridLayoutWidget);
         spinBox_c5G->setObjectName(QStringLiteral("spinBox_c5G"));
+        spinBox_c5G->setEnabled(false);
+        spinBox_c5G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c5G, 5, 2, 1, 1);
 
         spinBox_c5B = new QSpinBox(gridLayoutWidget);
         spinBox_c5B->setObjectName(QStringLiteral("spinBox_c5B"));
+        spinBox_c5B->setEnabled(false);
+        spinBox_c5B->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c5B, 5, 3, 1, 1);
 
         spinBox_c6R = new QSpinBox(gridLayoutWidget);
         spinBox_c6R->setObjectName(QStringLiteral("spinBox_c6R"));
+        spinBox_c6R->setEnabled(false);
+        spinBox_c6R->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c6R, 6, 1, 1, 1);
 
         spinBox_c6G = new QSpinBox(gridLayoutWidget);
         spinBox_c6G->setObjectName(QStringLiteral("spinBox_c6G"));
+        spinBox_c6G->setEnabled(false);
+        spinBox_c6G->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c6G, 6, 2, 1, 1);
 
         spinBox_c6B = new QSpinBox(gridLayoutWidget);
         spinBox_c6B->setObjectName(QStringLiteral("spinBox_c6B"));
+        spinBox_c6B->setEnabled(false);
+        spinBox_c6B->setMaximum(255);
 
         gridLayout->addWidget(spinBox_c6B, 6, 3, 1, 1);
 
         label_Port = new QLabel(ABBHelper);
         label_Port->setObjectName(QStringLiteral("label_Port"));
-        label_Port->setGeometry(QRect(30, 20, 47, 13));
+        label_Port->setGeometry(QRect(60, 20, 51, 21));
         buttonBox = new QDialogButtonBox(ABBHelper);
         buttonBox->setObjectName(QStringLiteral("buttonBox"));
         buttonBox->setGeometry(QRect(130, 330, 341, 32));
@@ -263,7 +305,9 @@ public:
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
         spinBox_comNum = new QSpinBox(ABBHelper);
         spinBox_comNum->setObjectName(QStringLiteral("spinBox_comNum"));
-        spinBox_comNum->setGeometry(QRect(90, 20, 42, 22));
+        spinBox_comNum->setGeometry(QRect(90, 20, 61, 22));
+        spinBox_comNum->setMinimum(1);
+        spinBox_comNum->setMaximum(50);
 
         retranslateUi(ABBHelper);
 
@@ -272,7 +316,7 @@ public:
 
     void retranslateUi(QWidget *ABBHelper)
     {
-        ABBHelper->setWindowTitle(QApplication::translate("ABBHelper", "Form", 0));
+        ABBHelper->setWindowTitle(QApplication::translate("ABBHelper", "ABB Parameters", 0));
         label_BlueTitle->setText(QApplication::translate("ABBHelper", "Blue", 0));
         label_SampleTitle->setText(QApplication::translate("ABBHelper", "Sample", 0));
         label_GreenTitle->setText(QApplication::translate("ABBHelper", "Green", 0));
@@ -290,7 +334,8 @@ public:
         label_c4Sample->setText(QString());
         label_c5Sample->setText(QString());
         label_c6Sample->setText(QString());
-        label_Port->setText(QApplication::translate("ABBHelper", "Port:", 0));
+        label_Port->setText(QApplication::translate("ABBHelper", "<html><head/><body><p><span style=\" font-size:10pt;\">Port:</span></p></body></html>", 0));
+        spinBox_comNum->setPrefix(QApplication::translate("ABBHelper", "COM", 0));
     } // retranslateUi
 
 };

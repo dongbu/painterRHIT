@@ -171,6 +171,12 @@
     <ClCompile Include="..\src\Libraries\ABBRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc_ABBRunner.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_ABBRunner.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
@@ -356,6 +362,9 @@
     <CustomBuild Include="abbhelper.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\include\Libraries\ABBRunner.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CommandWindow.ui">
@@ -397,9 +406,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_brushUI.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Libraries\ABBRunner.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

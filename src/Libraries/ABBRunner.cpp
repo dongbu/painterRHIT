@@ -1,6 +1,6 @@
-#include "stdafx.h"
+
 #include "ABBRunner.h"
-#include "abbhelper.h"
+#include <qobject.h>
 
 
 ABBRunner::ABBRunner()
@@ -8,6 +8,8 @@ ABBRunner::ABBRunner()
 
 	helps= new ABBHelper();
 	helps->show();
+	connect(helps, SIGNAL(acceptedABB()), this, SLOT(acceptedWin()));
+	connect(helps, SIGNAL(canceledABB()), this, SLOT(canceledWin()));
 	
 
 }
@@ -46,4 +48,12 @@ bool ABBRunner::changeColor(int colorNum) {
 void ABBRunner::abort(std::string fI) {
 	std::cout << fI;
 	//TODO force close serial port
+}
+
+void ABBRunner::acceptedWin() {
+	printf("TODO: actually do serial stuff\n");
+}
+
+void ABBRunner::canceledWin() {
+	//let other stuff know we never tried to connect
 }
