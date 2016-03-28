@@ -171,13 +171,20 @@ Sketchpad::~Sketchpad()
 void Sketchpad::closeEvent(QCloseEvent *event) {
 	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
 	if (!unsaved) {
+		if (chappie) {
+			chappie->abort();
+		}
 		this->close();
 	}
 	else {
 		QMessageBox::StandardButton dialog;
 		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
 			QMessageBox::Yes | QMessageBox::No);
-		if (dialog == QMessageBox::Yes) { this->close(); }
+		if (dialog == QMessageBox::Yes) { 
+			if (chappie) {
+				chappie->abort();
+			}
+			this->close(); }
 		else { event->ignore(); }
 	}
 }

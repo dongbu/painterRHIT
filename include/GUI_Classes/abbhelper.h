@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <qcheckbox.h>
 
+
 namespace Ui {
 class ABBHelper;
 }
@@ -16,7 +17,12 @@ class ABBHelper : public QWidget
 public:
     explicit ABBHelper(QWidget *parent = 0);
     ~ABBHelper();
-	void check();
+
+	bool colorUsed[6]; //true if using color in spot
+	int colorR[6];
+	int colorG[6];
+	int colorB[6];
+	int portNum;
 
 
 private:
