@@ -154,17 +154,20 @@ protected:
 public:
 	void addPoint(cv::Point pt) { points.push_back(pt); }
 	//void addPoint(int i, int j) { addPoint(cv::Point(i, j)); }
-	void addPoint(int i, int j, int dup_check=1) { // add point if it doesn't exist yet
-		int found = 0;
+	void addPoint(int i, int j, int dup_check=0) { // add point if it doesn't exist yet
 		if (dup_check) {
+			int found = 0;
 			for (int n = 0; n < (int)points.size(); n++) {
 				if (points[n].x == i && points[n].y == j) {
 					found = 1;
 					n = (int)points.size();
 				}
 			}
+			if (!found) addPoint(cv::Point(i, j));
 		}
-		if (!found) addPoint(cv::Point(i, j));
+		else {
+			addPoint(cv::Point(i, j));
+		}
 	}
 
 	void setStyle(int s = 1) { style = s; }
