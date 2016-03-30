@@ -42,6 +42,7 @@ MODULE Painter
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
     ! *** Variables ***  
     VAR iodev iodev1;
+    VAR rawbytes rawMsgData;
     ! Store image size, in pixels
     VAR num sizeX;
     VAR num sizeY;
@@ -137,9 +138,11 @@ MODULE Painter
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
-        WaitTime 0.1;
+        WaitTime 0.1;        
         WriteStrBin iodev1, "READY\0A";
-        response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
+        ReadRawBytes iodev1, rawMsgData \Time:=0.1
+        UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData)) ! TODO: Check and verify that I am not truncating anything. 
+        ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
         IF endTokenPos > StrLen(response) THEN
@@ -232,6 +235,8 @@ MODULE Painter
         LOCAL VAR num dBtype;
         LOCAL VAR num dAval;
         LOCAL VAR num dBval;
+        LOCAL VAR num specialCheckIndex;
+        LOCAL VAR string remainingMessage;
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
@@ -248,8 +253,16 @@ MODULE Painter
                 TPWrite "Bad coordinates in the file: mangled first in pair";
                 result := FALSE;
             endif
-            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters)); ! should be Y:170
+            
+            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters)); ! should contain Y:170 
             dataIndex := StrFind(dB, 1, ":"); ! finding the ':' in Y:170
+            specialCheckIndex:= StrFind(db, 1, ",");
+            if (specialCheckIndex > StrLen(db)) then
+            ! Oh boy, We have a list of coords!
+                dB:= StrPart(parameters, splitNum+1, specialCheckIndex-1);
+                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters));
+                
+            endif 
             
             IF dataIndex < StrLen(dB) THEN 
                             ! continue processing
@@ -347,7 +360,10 @@ MODULE Painter
         LOCAL VAR string params;
         LOCAL VAR num distanceTravelled := 0;
         WHILE loop = TRUE DO
-            response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
+            ReadRawBytes iodev1, rawMsgData \Time:=0.1
+            UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData)) ! TODO: Check and verify that I am not truncating anything. 
+        
+            ! // does not work m8. response := ReadStr(iodev1\RemoveCR\DiscardHeaders); 
             ! Slice this up into directive and parameters
             splitNum := StrFind(response, 1, ":");
             ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
