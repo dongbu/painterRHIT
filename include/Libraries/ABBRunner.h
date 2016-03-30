@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "abbhelper.h"
-#include <windows.h>
+#include <Windows.h>
 
 namespace Ui {
 	class ABBRunner;
@@ -31,6 +31,8 @@ public:
 
 	bool connected;
 	HANDLE hSerial;
+	//CSerial cereal;
+
 
 private:
 	ABBHelper *helps;

@@ -304,6 +304,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\src\Libraries\Serial.cpp" />
     <ClCompile Include="..\src\Libraries\shapes.cpp" />
     <ClCompile Include="..\src\Libraries\paint_util.cpp" />
     <ClCompile Include="Debug\moc_abbhelper.cpp">
@@ -2352,6 +2353,7 @@ endlocal
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp" "-fstdafx.h" "-f../../include/Libraries/ABBRunner.h"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\GeneratedFiles" "-IC:\Program Files (x86)\Robai\Cyton Epsilon 1500 Viewer_4.0.12-20160307\include" "-IC:\Qt\5.6\msvc2015_64\include" "-IC:\libraries\opencv\build\include" "-I.\..\include\GUI_Classes" "-I.\..\src\Libraries" "-I.\..\include\Libraries" "-IC:\libraries\boost_1_60_0"</Command>
     </CustomBuild>
+    <ClInclude Include="..\include\Libraries\Serial.h" />
     <ClInclude Include="GeneratedFiles\ui_brushUI.h" />
     <ClInclude Include="GeneratedFiles\ui_cannyUI.h" />
     <ClInclude Include="GeneratedFiles\ui_colorChangeUI.h" />

@@ -1,6 +1,9 @@
 
 #include "ABBRunner.h"
 #include <qobject.h>
+#include <tchar.h>
+#include <stdio.h>
+
 
 
 
@@ -42,11 +45,15 @@ bool ABBRunner::sendCoord(int x, int y) {
 
 //connects to the suplied port, and returns true if successful, false otherwise.
 bool ABBRunner::connectToSerial(int port) {
-
 	//setting up connection (only works windows right now)
 	std::string portLabel = "COM" + std::to_string(port);
-	LPCWSTR portS = (LPCWSTR)portLabel.c_str();
-	this->hSerial = CreateFile(portS,
+	wchar_t fn[16];
+	wsprintf(fn, L"\\\\.\\COM%d", port);
+	TCHAR *pcCommPort = (TCHAR*)(fn);
+	printf("Attempting to connect to: \"");
+	std::cout << portLabel;
+	printf("\"\n");
+	this->hSerial = CreateFile(pcCommPort,
 		GENERIC_READ | GENERIC_WRITE,
 		0,
 		0,
@@ -55,15 +62,24 @@ bool ABBRunner::connectToSerial(int port) {
 		0);
 
 	if (hSerial == INVALID_HANDLE_VALUE) {
-		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
+		DWORD error = GetLastError();
+		if (error == ERROR_FILE_NOT_FOUND) {
 			printf("serial port \"");
 			std::cout << portLabel;
 			printf("\" does not exist\n");
 		}
 		else {
-			printf("Failed to connect\n");
+			printf("Unnable to connect\n");
+			std::ostringstream stream;
+			stream << error;
+			std::cout << "error code: " << stream.str();
+			printf("\n");
+
 		}
+		abort();
 		return false;
+
+
 	}
 
 	//setting parameters (baud rate, stop bits, etc)
@@ -126,8 +142,9 @@ void ABBRunner::abort() {
 	printf("Closing Serial Port \"COM");
 	std::cout << helps->portNum;
 	printf("\"\n");
+	//cereal.Close();
 	CloseHandle(hSerial);
-	//TODO force close serial port
+	////TODO force close serial port
 }
 
 void ABBRunner::acceptedWin() {
@@ -148,18 +165,21 @@ void ABBRunner::acceptedWin() {
 
 bool ABBRunner::sendCanvasInfo() {
 	//TODO, finish this
-	std::string message = "hello there";
+	std::string message = "hello there;";
+	printf("Sending Canvas Info\n");
 	if(sendSerial(message)) {
 		std::cout << getSerialResponse();
 		return false;
 	}
+	printf("failed to send canvas info\n");
 	return false;
 }
 
 bool ABBRunner:: sendSerial(std::string message) {
-	char szBuff[sizeof(message) + 1] = { *message.c_str() };
-	DWORD dwBytesWrite = 0;
-	if (!WriteFile(hSerial, szBuff, sizeof(message), &dwBytesWrite, NULL)) {
+	char szBuff[sizeof(message) + 1];
+	memcpy(szBuff, message.c_str(), sizeof(message));
+	DWORD dwBytesWrite;
+	if (!WriteFile(hSerial, &szBuff, sizeof(message), &dwBytesWrite, NULL)) {
 		printf("failed to write to serial\n");
 		abort();
 		return false;
@@ -178,7 +198,6 @@ std::string ABBRunner::getSerialResponse() {
 	}
 
 	return szBuff;
-	
 }
 
 void ABBRunner::canceledWin() {
