@@ -139,9 +139,10 @@ MODULE Painter
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
         WaitTime 0.1;        
-        WriteStrBin iodev1, "READY\0A";
-        ReadRawBytes iodev1, rawMsgData \Time:=0.1
-        UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData)) ! TODO: Check and verify that I am not truncating anything. 
+        WriteStrBin iodev1, "READY\03";
+        ReadRawBytes iodev1, rawMsgData \Time:=0.1;
+        UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+        
         ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
@@ -158,21 +159,21 @@ MODULE Painter
         
         IF response = "SIZE" THEN
             ! Expected 'response' to be SIZE:X400,Y200;
-            WriteStrBin iodev1, "Thanks for size! " + params + "\0A";
+            !WriteStrBin iodev1, "Thanks for size! " + params + "\03";
             result:=readSize(params);
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
-                WriteStrBin iodev1, "OK\0A";
+                WriteStrBin iodev1, "OK\03";
                 result:=paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
             ELSE 
-                WriteStrBin iodev1, "FAILED\0A";
+                WriteStrBin iodev1, "FAILED\03";
             ENDIF 
         ELSEIF response = "COORD" THEN
             ! Expected 'response' to be COORD:X200,Y201
-            WriteStrBin iodev1, "Thanks for coord! " + params + "\0A";
+            WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
         ELSE
             ! Response could have been NEXT: or SWAP:A or END:
-            WriteStrBin iodev1, "Thanks for nothing! " + directive + "\0A";
+            WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
         ENDIF
         Close iodev1;
     ENDPROC
@@ -360,7 +361,7 @@ MODULE Painter
         LOCAL VAR string params;
         LOCAL VAR num distanceTravelled := 0;
         WHILE loop = TRUE DO
-            ReadRawBytes iodev1, rawMsgData \Time:=0.1
+            ReadRawBytes iodev1, rawMsgData \Time:=0.1;
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData)) ! TODO: Check and verify that I am not truncating anything. 
         
             ! // does not work m8. response := ReadStr(iodev1\RemoveCR\DiscardHeaders); 
@@ -380,7 +381,7 @@ MODULE Painter
             ELSE 
                 ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
                 TPWrite "Command Error: Missing semicolon to terminate command";
-                WriteStrBin iodev1, "FAILED\0A";
+                WriteStrBin iodev1, "FAILED\03";
                 loop:= FALSE;
             ENDIF 
             
@@ -399,17 +400,17 @@ MODULE Painter
     !***********************************************************    
     FUNC bool directiveNoParams(string directive)
         IF directive = "NEXT" THEN 
-            WriteStrBin iodev1, "NEXT\0A";
+            WriteStrBin iodev1, "NEXT\03";
             newStroke:=TRUE;
             
         ELSEIF directive = "END" THEN 
-            WriteStrBin iodev1, "END\0A";
+            WriteStrBin iodev1, "END\03";
             moveToFinish;
             RETURN FALSE;
         ELSE 
             ErrLog 4800, "Command Error", "Unknown Command",directive,"-","-";
             TPWrite "Command Error: Unknown Command";
-            WriteStrBin iodev1, "FAILED\0A";
+            WriteStrBin iodev1, "FAILED\03";
             RETURN FALSE;
         ENDIF 
             
@@ -440,22 +441,22 @@ MODULE Painter
             ! correctly if NEXT was called before this
             newStroke:=FALSE;
             IF testCheck = TRUE THEN 
-            WriteStrBin iodev1, "OK\0A";
+            WriteStrBin iodev1, "OK\03";
             RETURN TRUE;
             ELSE 
-                WriteStrBin iodev1, "FAILED\0A";
+                WriteStrBin iodev1, "FAILED\03";
                 RETURN FALSE;
             ENDIF 
         ELSEIF directive = "SWAP" THEN 
                currentColor := params;
                !TODO: clean here!
                GotoPaint(currentColor);
-               WriteStrBin iodev1, "SWAP\0A";
+               WriteStrBin iodev1, "SWAP\03";
                RETURN TRUE; 
         ELSE 
             ErrLog 4800, "Command Error", "Unknown Command",directive,params,"-";
             TPWrite "Command Error: Unknown Command";
-            WriteStrBin iodev1, "FAILED\0A";
+            WriteStrBin iodev1, "FAILED\03";
             RETURN FALSE; 
         ENDIF 
      RETURN FALSE;

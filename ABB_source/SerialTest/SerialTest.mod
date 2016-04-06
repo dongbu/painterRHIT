@@ -23,7 +23,7 @@ MODULE SerialTest
     VAR iodev terminal;
     VAR string response;
     VAR rawbytes rawDataIn;
-    VAR num timeDelay := 1;
+    VAR num timeDelay := 0.1;
     
     VAR num index;
     
