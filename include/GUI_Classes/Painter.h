@@ -6,6 +6,7 @@
 #include "SketchPad.h"
 #include "RunLogic.h"
 #include "imageparser.cpp"
+#include "ABBRunner.h"
 
 class Painter : public QObject
 
@@ -29,6 +30,7 @@ private:
     CommandWindow *commandWin;
     RunLogic *logic;
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 
 	std::string getXMLHelper(std::string xml);
 	void parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo);

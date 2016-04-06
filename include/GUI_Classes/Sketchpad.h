@@ -20,7 +20,7 @@ class Sketchpad : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
+	explicit Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, ABBRunner *Chappie, Webcam *W, QWidget *parent = 0);
 	~Sketchpad();
 
 	CytonRunner *Ava;
