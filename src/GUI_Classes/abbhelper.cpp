@@ -176,10 +176,54 @@ void ABBHelper::updateColors() {
 
 
 void ABBHelper::acceptPressed() {
-	printf("-------\n");
-	emit acceptedABB();
-	printf("-------\n");
 	this->close();
+	this->portNum = ui->spinBox_comNum->value();
+
+	//color 1
+	this->colorUsed[0] = (ui->checkBox_c1->isChecked());
+	if (colorUsed[0]) {
+		this->colorR[0] = ui->spinBox_c1R->value();
+		this->colorG[0] = ui->spinBox_c1G->value();
+		this->colorB[0] = ui->spinBox_c1B->value();
+	}
+	//color 2
+	this->colorUsed[1] = (ui->checkBox_c2->isChecked());
+	if (colorUsed[1]) {
+		this->colorR[1] = ui->spinBox_c2R->value();
+		this->colorG[1] = ui->spinBox_c2G->value();
+		this->colorB[1] = ui->spinBox_c2B->value();
+	}
+	//color 3
+	this->colorUsed[2] = (ui->checkBox_c3->isChecked());
+	if (colorUsed[2]) {
+		this->colorR[2] = ui->spinBox_c3R->value();
+		this->colorG[2] = ui->spinBox_c3G->value();
+		this->colorB[2] = ui->spinBox_c3B->value();
+	}
+	//color 4
+	this->colorUsed[3] = (ui->checkBox_c4->isChecked());
+	if (colorUsed[3]) {
+		this->colorR[3] = ui->spinBox_c4R->value();
+		this->colorG[3] = ui->spinBox_c4G->value();
+		this->colorB[3] = ui->spinBox_c4B->value();
+	}
+	//color 5
+	this->colorUsed[4] = (ui->checkBox_c5->isChecked());
+	if (colorUsed[4]) {
+		this->colorR[4] = ui->spinBox_c5R->value();
+		this->colorG[4] = ui->spinBox_c5G->value();
+		this->colorB[4] = ui->spinBox_c5B->value();
+	}
+	//color 6
+	this->colorUsed[5] = (ui->checkBox_c6->isChecked());
+	if (colorUsed[5]) {
+		this->colorR[5] = ui->spinBox_c6R->value();
+		this->colorG[5] = ui->spinBox_c6G->value();
+		this->colorB[5] = ui->spinBox_c6B->value();
+	}
+	
+	//done with colors, tell ABBRunner
+	emit acceptedABB();
 }
 
 

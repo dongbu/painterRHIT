@@ -23,15 +23,13 @@ MODULE SerialTest
     VAR iodev terminal;
     VAR string response;
     VAR rawbytes rawDataIn;
-    VAR num timeDelay := 0.1;
-    
+    VAR num timeDelay := 1;    
     VAR num index;
     
     PROC main()
-        !        !Add your code here
         Open "COM1:",terminal\Bin;
 
-        WriteStrBin terminal,"Hello!\0A\0D";
+        !WriteStrBin terminal,"\02Hello!\03";
         WaitTime 5;
         ClearRawBytes rawDataIn;
         ReadRawBytes terminal,rawDataIn\Time:=timeDelay;
@@ -41,24 +39,18 @@ MODULE SerialTest
 
         index:=StrFind(response, 1, ";");
         IF index < StrLen(response) THEN
-            response := StrPart(response, 1, index);
+            response := StrPart(response, 1, index-1);
+            ! Note: TP commands are not allowed in auto mode
+            !TPErase;
+            !TPWrite response;
         ENDIF 
 
-        WriteStrBin terminal,response +"\0A\0D";
+        WriteStrBin terminal,"\06";
         
         Close terminal;
-        !Stop;
-        !ErrLog 4800, response, "", "", "","";
         
     ENDPROC
     
 
 
-    !    FUNC string getResponse()
-    !        local var byte readMe:=ReadBin(terminal \Time:=5);
-    !        response := ByteToStr(readMe\char);
-    !        WHILE((readMe=-1) or (not response = ";")) DO 
-
-    !        ENDWHILE 
-    !    ENDFUNC 
 ENDMODULE

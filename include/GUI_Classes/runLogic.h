@@ -5,6 +5,7 @@
 #include "DrawWindow.cpp"
 #include "Shapes.cpp"
 #include "CytonRunner.h"
+#include "ABBRunner.h"
 
 class RunLogic : public QObject
 
@@ -18,7 +19,7 @@ class RunLogic : public QObject
 	};
 
 public:
-    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
+    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava, ABBRunner *chappie);
 	
 	int width, height;
 
@@ -38,6 +39,7 @@ private:
     Shapes *shapes;
 	int COMMAND_DELAY;
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 
 	DrawWindow *simWin;
 

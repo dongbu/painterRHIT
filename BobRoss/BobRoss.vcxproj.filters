@@ -177,6 +177,9 @@
     <ClCompile Include="Release\moc_ABBRunner.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Libraries\Serial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
@@ -406,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_brushUI.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Libraries\Serial.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@ using namespace cv;
  * @param W
  * @param parent
  */
-Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent) :
+Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, ABBRunner *chappie, Webcam *W, QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
@@ -20,6 +20,7 @@ ui(new Ui::Sketchpad)
 	this->height = height;
 	this->shapes = ss;
 	this->Ava = Ava;
+	this->chappie = chappie;
 	this->Web = W;
 	this->paintingNamePath = "unpathed";
 	this->title = "unnamed";
@@ -171,13 +172,20 @@ Sketchpad::~Sketchpad()
 void Sketchpad::closeEvent(QCloseEvent *event) {
 	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
 	if (!unsaved) {
+		if (chappie) {
+			chappie->abort();
+		}
 		this->close();
 	}
 	else {
 		QMessageBox::StandardButton dialog;
 		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
 			QMessageBox::Yes | QMessageBox::No);
-		if (dialog == QMessageBox::Yes) { this->close(); }
+		if (dialog == QMessageBox::Yes) { 
+			if (chappie) {
+				chappie->abort();
+			}
+			this->close(); }
 		else { event->ignore(); }
 	}
 }
@@ -631,8 +639,14 @@ void Sketchpad::setCyton(){
 void Sketchpad::connectRobot(){
 	printf("robot selected\n");
 	if (robotSelected == 1){
-		printf("connect to ABB\n");
-		chappie = new ABBRunner();
+		if (!chappie->connected) {
+			chappie->connectWin();
+			ui->actionConnect->setText("Disconnect");
+		}
+		else {
+			chappie->abort();
+			ui->actionConnect->setText("Connect");
+		}
 
 	}
 	else if (robotSelected == 0){
