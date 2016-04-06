@@ -147,9 +147,8 @@ MODULE Painter
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
         IF endTokenPos > StrLen(response) THEN
-            ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
-            TPWrite "Command Error: Missing semicolon to terminate command";
-        ELSE
+            throwError "semicolon", response;
+        ELSE            
             response:=StrPart(response,1, endTokenPos-1); ! trim string to ignore end token.
         ENDIF
         splitNum := StrFind(response, 1, ":");
@@ -220,7 +219,7 @@ MODULE Painter
     !   This takes a string and puts the x, y into globals tX and tY
     !
     !***********************************************************
-    FUNC bool processCoordinates(string parameters)
+    FUNC bool processCoordinates(string parameters, bool contiguous)
         ! exampleParams are X:230,Y:170;
         ! note: it may or may not contain a semicolon
         ! Slice this up into directive and parameters
@@ -238,6 +237,7 @@ MODULE Painter
         LOCAL VAR num dBval;
         LOCAL VAR num specialCheckIndex;
         LOCAL VAR string remainingMessage;
+        LOCAL VAR bool multiCoordMessage := FALSE;
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
@@ -250,8 +250,8 @@ MODULE Painter
                 ENDIF 
             ELSE 
                 ! throw error!
-                ErrLog 4800, "Coord Error", "Mangled coordinates in first pair","-","-","-";
-                TPWrite "Bad coordinates in the file: mangled first in pair";
+                throwError "coord", dA;
+                
                 result := FALSE;
             endif
             
@@ -262,7 +262,7 @@ MODULE Painter
             ! Oh boy, We have a list of coords!
                 dB:= StrPart(parameters, splitNum+1, specialCheckIndex-1);
                 remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters));
-                
+                multiCoordMessage:=TRUE;
             endif 
             
             IF dataIndex < StrLen(dB) THEN 
@@ -287,29 +287,32 @@ MODULE Painter
                     ENDIF 
                 ELSE 
                     ! throw error!
-                ErrLog 4800, "Coord Error", "Mangled coordinates in second pair","-","-","-";
-                TPWrite "Bad coordinates in the file: mangled second in pair";
+                throwError "coord", dB;
                 result := FALSE;
                 ok:= TRUE;
                 endif
                 ! check and see if OK changed to false again.
                 IF ok = FALSE THEN
-                    ErrLog 4800, "Coord Error", "Multiple X or Y coords recieved","Expected to see coordinates of the format X:###,Y:###","Saw two declarations of X or Y","-";
-                    TPWrite "Bad coordinates in the file: duplicated";
+                    throwError "multicoord", parameters;                    
                     result := FALSE;
                 ENDIF 
             ELSE
                 ! we have a problem. X or Y not found
-                    ErrLog 4800, "Coord Error", "Missing X or Y coords","Expected to see coordinates of the format X:###,Y:### ","Saw missing declaration of X or Y in second of pair","Missing Second pair declaration";
-                    TPWrite "Bad coordinates in the file: missing second pair dec";
+                    throwError "missingcoord", parameters;  
                     result := FALSE;
             ENDIF 
         ELSE 
             ! we have a problem. Throw an error. 
-            ErrLog 4800, "Coord Error", "Missing X or Y coords","Expected to see coordinates of the format X:###,Y:### ","Saw missing declaration of X or Y in first of pair","Missing First pair declaration";
-            TPWrite "Bad coordinates in the file: missing first pair dec";
+            throwError "missingcoord", parameters;  
+            
             result := FALSE;
         ENDIF
+        
+        ! NOTE: Recursion here! Warning: this may or may not be good. TODO: test this
+        IF multiCoordMessage = TRUE AND result = TRUE THEN 
+            result := processCoordinates(remainingMessage, TRUE);
+        ENDIF 
+        
         RETURN result;
     endfunc 
     
@@ -339,7 +342,8 @@ MODULE Painter
             ENDIF
                 
         ELSE
-            ErrLog 4800, "Data Error", "The canvas size data was malformed","","","You should have seen other errors before this.";
+            throwError "canvas", parameters;  
+            
         ENDIF
         
         RETURN result;
@@ -354,24 +358,30 @@ MODULE Painter
     !
     !***********************************************************    
     FUNC bool paintLoop()
+        ! TODO: Properly handle extra colons and Test this. Warining: Changed directives without parameters to not include the colon ':' character. Changed how this case was handled.
         LOCAL VAR bool loop := TRUE;
         LOCAL VAR string response;
         LOCAL VAR num splitNum;
         LOCAL VAR string directive;
         LOCAL VAR string params;
         LOCAL VAR num distanceTravelled := 0;
+        LOCAL VAR num endTokenPos;
         WHILE loop = TRUE DO
             ReadRawBytes iodev1, rawMsgData \Time:=0.1;
-            UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData)) ! TODO: Check and verify that I am not truncating anything. 
+            UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+            endTokenPos:=StrFind(response, 1, ";");
+            IF endTokenPos > StrLen(response) THEN
+                throwError "semicolon", response;
+            ELSE            
+                response:=StrPart(response,1, endTokenPos-1); ! trim string to ignore end token.
+            ENDIF
         
-            ! // does not work m8. response := ReadStr(iodev1\RemoveCR\DiscardHeaders); 
             ! Slice this up into directive and parameters
             splitNum := StrFind(response, 1, ":");
             ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
-            IF splitNum = StrLen(response) THEN 
-                directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
+            IF splitNum > StrLen(response) THEN 
                 
-                loop:=directiveNoParams(directive);
+                loop:=directiveNoParams(response);
                 
             ELSEIF splitNum < StrLen(response) THEN 
                 directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
@@ -379,8 +389,8 @@ MODULE Painter
                 
                 loop:= directiveWithParams(directive, params);
             ELSE 
-                ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
-                TPWrite "Command Error: Missing semicolon to terminate command";
+                ErrLog 4800, "Command Error", "Colon at end of message is extraneous",response,"-","-";
+                TPWrite "Command Error: Extra colon at command termination";
                 WriteStrBin iodev1, "FAILED\03";
                 loop:= FALSE;
             ENDIF 
@@ -399,6 +409,7 @@ MODULE Painter
     !
     !***********************************************************    
     FUNC bool directiveNoParams(string directive)
+        ! TODO: Test this
         IF directive = "NEXT" THEN 
             WriteStrBin iodev1, "NEXT\03";
             newStroke:=TRUE;
@@ -408,8 +419,7 @@ MODULE Painter
             moveToFinish;
             RETURN FALSE;
         ELSE 
-            ErrLog 4800, "Command Error", "Unknown Command",directive,"-","-";
-            TPWrite "Command Error: Unknown Command";
+            throwError "unknown", directive;  
             WriteStrBin iodev1, "FAILED\03";
             RETURN FALSE;
         ENDIF 
@@ -426,9 +436,12 @@ MODULE Painter
     !
     !***********************************************************  
     FUNC bool directiveWithParams(string directive, string params)
-        LOCAL VAR bool result := processCoordinates(params);
-        LOCAL VAR bool testCheck:=true;
+        ! TODO: test this
+        LOCAL VAR bool result;
+        LOCAL VAR bool testCheck;
         IF directive = "COORD" THEN 
+            result := processCoordinates(params, FALSE);
+            testCheck:=true;
             IF firstTimeRun THEN
                 GotoPaint(currentColor);
                 firstTimeRun := FALSE; 
@@ -454,8 +467,7 @@ MODULE Painter
                WriteStrBin iodev1, "SWAP\03";
                RETURN TRUE; 
         ELSE 
-            ErrLog 4800, "Command Error", "Unknown Command",directive,params,"-";
-            TPWrite "Command Error: Unknown Command";
+            throwError "unknown", directive;  
             WriteStrBin iodev1, "FAILED\03";
             RETURN FALSE; 
         ENDIF 
@@ -536,6 +548,7 @@ MODULE Painter
     !
     !***********************************************************
     PROC GotoPaint(string colorToPaint)
+        ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
         !over target
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
@@ -614,4 +627,36 @@ MODULE Painter
         ! Actual nice strokes nuked for now. FUTURE: Create actual nice quaternion strokes. 
         paintStrokeQuat:=ZeroZeroQuat;
     ENDPROC
+    !***********************************************************
+    !
+    ! procedure  throwError(int errorType)
+    !       
+    !          Handles all error throwing and program halting. 
+    !
+    !***********************************************************    
+    proc throwError(string errorType, string response)
+        IF errorType = "semicolon" THEN
+            ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
+            TPWrite "Command Error: Missing semicolon to terminate command";
+        ELSEIF errorType = "coord" THEN 
+            ErrLog 4800, "Coord Error", "Mangled coordinates in pair",response,"-","-";
+            TPWrite "Bad coordinates in the file: mangled in pair";
+        ELSEIF errorType = "multicoord" THEN 
+            ErrLog 4800, "Coord Error", "Multiple X or Y coords recieved","Expected to see coordinates of the format X:###,Y:###","Saw two declarations of X or Y",response;
+            TPWrite "Bad coordinates in the file: duplicated";
+        ELSEIF errorType = "missingcoord" THEN 
+            ErrLog 4800, "Coord Error", "Missing X or Y coords","Expected to see coordinates of the format X:###,Y:### ","Saw missing declaration of X or Y in pair",response;
+            TPWrite "Bad coordinates in the file: missing pair dec";
+        ELSEIF errorType = "canvas" THEN 
+            ErrLog 4800, "Data Error", "The canvas size data was malformed",response,"","You should have seen other errors before this.";
+            TPWrite "Bad canvas size data";
+        ELSEIF errorType = "unknown" THEN 
+           ErrLog 4800, "Command Error", "Unknown Command",response,"-","-";
+            TPWrite "Command Error: Unknown Command";
+        ELSE 
+            ErrLog 4800, "Generic Error", "Generic Message",response,"-","-";
+            TPWrite "Generic Error: Unknown";
+        ENDIF 
+        
+    endproc
 ENDMODULE
