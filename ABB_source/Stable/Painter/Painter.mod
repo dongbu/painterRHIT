@@ -85,11 +85,8 @@ MODULE Painter
 
     VAR robtarget overClean;
     VAR robtarget clean;
-    VAR robtarget overDryer;
-    VAR robtarget dryer;
     !    
     VAR bool newStroke;
-    VAR num distanceTravelled := 0;
     ! UI Variables/Constants
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1 of the controller", "- The PC is connected to the serial calbe","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
@@ -97,7 +94,6 @@ MODULE Painter
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
-    VAR string lastColor := "A";
     
     !***********************************************************
     !
@@ -133,12 +129,12 @@ MODULE Painter
     !
     !***********************************************************    
     PROC paintProgram()
-        VAR bool result;
-        VAR string response;
-        VAR num splitnum;
-        VAR string directive;
-        VAR string params;
-        VAR num endTokenPos;
+        LOCAL VAR bool result;
+        LOCAL VAR string response;
+        LOCAL VAR num splitnum;
+        LOCAL VAR string directive;
+        LOCAL VAR string params;
+        LOCAL VAR num endTokenPos;
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
@@ -167,7 +163,7 @@ MODULE Painter
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
                 WriteStrBin iodev1, "\06";
-                paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
+                result:=paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
             ELSE 
                 WriteStrBin iodev1, "\15";
             ENDIF 
@@ -230,26 +226,20 @@ MODULE Painter
         ! note: it may or may not contain a semicolon
         ! Slice this up into directive and parameters
         
-        VAR num splitNum;
-        
+        LOCAL VAR num splitNum := StrFind(parameters, 1, ",");
         ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
-        VAR bool ok;
-        VAR bool result;
-        VAR string dA;
-        VAR string dB ;
-        VAR num dataIndex ;
-        VAR string dAtype;
-        VAR string dBtype;
-        VAR num dAval;
-        VAR num dBval;
-        VAR num specialCheckIndex;
-        VAR string remainingMessage;
-        VAR bool multiCoordMessage;
-        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
-        result  := TRUE;
-        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
-        multiCoordMessage := FALSE;
-        splitNum:= StrFind(parameters, 1, ",");
+        LOCAL VAR bool ok;
+        LOCAL VAR bool result := TRUE;
+        LOCAL VAR string dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        LOCAL VAR string dB ;
+        LOCAL VAR num dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        LOCAL VAR num dAtype;
+        LOCAL VAR num dBtype;
+        LOCAL VAR num dAval;
+        LOCAL VAR num dBval;
+        LOCAL VAR num specialCheckIndex;
+        LOCAL VAR string remainingMessage;
+        LOCAL VAR bool multiCoordMessage := FALSE;
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
@@ -339,8 +329,8 @@ MODULE Painter
     !***********************************************************    
     FUNC bool readSize(string parameters)   
         
-        VAR bool result;
-        result := processCoordinates(parameters, FALSE);
+        LOCAL VAR bool result := processCoordinates(parameters);
+        
         IF result = TRUE THEN
             ! are we over the size constraints and in need of a scaling factor?
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
@@ -369,15 +359,15 @@ MODULE Painter
     !   loops and reads from the serial channel, and passes the commands to subroutines.
     !
     !***********************************************************    
-    proc paintLoop()
+    FUNC bool paintLoop()
         ! TODO: Properly handle extra colons and Test this. Warining: Changed directives without parameters to not include the colon ':' character. Changed how this case was handled.
-        VAR bool loop := TRUE;
-        VAR string response;
-        VAR num splitNum;
-        VAR string directive;
-        VAR string params;
-        
-        VAR num endTokenPos;
+        LOCAL VAR bool loop := TRUE;
+        LOCAL VAR string response;
+        LOCAL VAR num splitNum;
+        LOCAL VAR string directive;
+        LOCAL VAR string params;
+        LOCAL VAR num distanceTravelled := 0;
+        LOCAL VAR num endTokenPos;
         WHILE loop = TRUE DO
             ReadRawBytes iodev1, rawMsgData \Time:=0.1;
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
@@ -410,7 +400,8 @@ MODULE Painter
             
         ENDWHILE
         
-    endproc
+        RETURN loop;
+    ENDFUNC
     !***********************************************************
     !
     ! function result directiveNoParams(string)
@@ -449,8 +440,8 @@ MODULE Painter
     !***********************************************************  
     FUNC bool directiveWithParams(string directive, string params)
         ! TODO: test this
-        VAR bool result;
-        VAR bool testCheck;
+        LOCAL VAR bool result;
+        LOCAL VAR bool testCheck;
         IF directive = "COORD" THEN 
             result := processCoordinates(params, FALSE);
             testCheck:=true;
