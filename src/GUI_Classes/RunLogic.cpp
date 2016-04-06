@@ -291,9 +291,10 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 			//cv::mat WEBCAM_IMAGE = Ava->getWebcamImageOfPainting();
 			//score = brush.scorePaintPoints(&WEBCAM_IMAGE, &stroke, &errors, .1, .1);
 		} else {
-			score = Ava->curBrush->scorePaintPoints(W, &pts, &errors, .1, .1);
+			//score = Ava->curBrush->scorePaintPoints(W, &pts, &errors, .1, .1); //this line is causing crashing, atm.
+			score = 0;
 		}	
-				
+
 		if (score>0.0 && score < 0.99) { //not: if score=0, then rerun the entire stroke
 			// redefine pts to be all the points starting from the first error
 			cv::Point first_error = errors.at(0);
@@ -309,6 +310,7 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 			pts = next_loop_pts;
 			Sleep(100);
 		}
+
 		//Sleep(30);
 
 		// loop limit just so it doesn't loop forever in case brush fails to fully cover stroke
