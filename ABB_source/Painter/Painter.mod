@@ -162,17 +162,19 @@ MODULE Painter
             result:=readSize(params);
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
-                WriteStrBin iodev1, "OK\03";
+                WriteStrBin iodev1, "\06";
                 result:=paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
             ELSE 
-                WriteStrBin iodev1, "FAILED\03";
+                WriteStrBin iodev1, "\15";
             ENDIF 
         ELSEIF response = "COORD" THEN
             ! Expected 'response' to be COORD:X200,Y201
-            WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
+            WriteStrBin iodev1, "\15";
+            !WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
         ELSE
             ! Response could have been NEXT: or SWAP:A or END:
-            WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
+            WriteStrBin iodev1, "\15";
+            !WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
         ENDIF
         Close iodev1;
     ENDPROC
@@ -389,9 +391,10 @@ MODULE Painter
                 
                 loop:= directiveWithParams(directive, params);
             ELSE 
+                WriteStrBin iodev1, "\15";
                 ErrLog 4800, "Command Error", "Colon at end of message is extraneous",response,"-","-";
                 TPWrite "Command Error: Extra colon at command termination";
-                WriteStrBin iodev1, "FAILED\03";
+                
                 loop:= FALSE;
             ENDIF 
             
@@ -420,7 +423,7 @@ MODULE Painter
             RETURN FALSE;
         ELSE 
             throwError "unknown", directive;  
-            WriteStrBin iodev1, "FAILED\03";
+            
             RETURN FALSE;
         ENDIF 
             
@@ -454,10 +457,10 @@ MODULE Painter
             ! correctly if NEXT was called before this
             newStroke:=FALSE;
             IF testCheck = TRUE THEN 
-            WriteStrBin iodev1, "OK\03";
+            WriteStrBin iodev1, "\06";
             RETURN TRUE;
             ELSE 
-                WriteStrBin iodev1, "FAILED\03";
+                WriteStrBin iodev1, "\15";
                 RETURN FALSE;
             ENDIF 
         ELSEIF directive = "SWAP" THEN 
@@ -468,7 +471,7 @@ MODULE Painter
                RETURN TRUE; 
         ELSE 
             throwError "unknown", directive;  
-            WriteStrBin iodev1, "FAILED\03";
+            
             RETURN FALSE; 
         ENDIF 
      RETURN FALSE;
@@ -486,6 +489,7 @@ MODULE Painter
     !*********************************************************** 
     func bool checkForBadPoints(num Xcoord, num Ycoord)
         IF (Xcoord>sizeX) OR (Ycoord>sizeY) THEN
+            WriteStrBin iodev1, "\15";
             ErrLog 4800, "Coord Error", "One of the coordinates is outside expected bounds","Coordinates larger than image size are not allowed","-","-";
             TPWrite "Bad coordinates in the file: outside expected bounds";
             MoveL overA,v500,fine,paintBrush;
@@ -493,6 +497,7 @@ MODULE Painter
             RETURN FALSE; 
         ENDIF
         IF  (Xcoord<0) OR (Ycoord<0) THEN
+            WriteStrBin iodev1, "\15";
             ErrLog 4800, "Coord Error", "Negative Coordinates are not allowed.","-","-","-";
             TPWrite "Bad coordinates in the file: outside expected bounds";
             MoveL overA,v500,fine,paintBrush;
@@ -635,6 +640,7 @@ MODULE Painter
     !
     !***********************************************************    
     proc throwError(string errorType, string response)
+        WriteStrBin iodev1, "\15";
         IF errorType = "semicolon" THEN
             ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
             TPWrite "Command Error: Missing semicolon to terminate command";
