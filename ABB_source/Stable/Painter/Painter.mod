@@ -85,8 +85,11 @@ MODULE Painter
 
     VAR robtarget overClean;
     VAR robtarget clean;
+    VAR robtarget overDryer;
+    VAR robtarget dryer;
     !    
     VAR bool newStroke;
+    VAR num distanceTravelled := 0;
     ! UI Variables/Constants
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1 of the controller", "- The PC is connected to the serial calbe","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
@@ -94,6 +97,7 @@ MODULE Painter
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
+    VAR string lastColor := "A";
     
     !***********************************************************
     !
@@ -103,20 +107,28 @@ MODULE Painter
     !
     !***********************************************************
     PROC main()
-        
-        answer:= UIMessageBox(
-            \Header:="Pre-Paint Com Checks"
-            \MsgArray:=my_message
-            \BtnArray:=my_buttons
-            \Icon:=iconInfo);
-        IF answer = 1 THEN
-            ! Operator said ready
-            paintProgram;
-!        ELSEIF answer = 2 THEN 
-!            ! operator said abort
-!        ELSE 
-!            ! no such case defined. 
-        ENDIF 
+        IF PPMovedInManMode() THEN
+            answer:= UIMessageBox(
+                \Header:="Pre-Paint Com Checks"
+                \MsgArray:=my_message
+                \BtnArray:=my_buttons
+                \Icon:=iconInfo);
+            IF answer = 1 THEN
+                ! Operator said ready
+                paintProgram;
+    !        ELSEIF answer = 2 THEN 
+    !            ! operator said abort
+    !        ELSE 
+    !            ! no such case defined. 
+            ENDIF 
+
+        ELSE
+
+        paintProgram;
+
+        ENDIF
+
+
         
 
     ENDPROC
@@ -129,18 +141,18 @@ MODULE Painter
     !
     !***********************************************************    
     PROC paintProgram()
-        LOCAL VAR bool result;
-        LOCAL VAR string response;
-        LOCAL VAR num splitnum;
-        LOCAL VAR string directive;
-        LOCAL VAR string params;
-        LOCAL VAR num endTokenPos;
+        VAR bool result;
+        VAR string response;
+        VAR num splitnum;
+        VAR string directive;
+        VAR string params;
+        VAR num endTokenPos;
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
         WaitTime 0.1;        
-        WriteStrBin iodev1, "READY\03";
-        ReadRawBytes iodev1, rawMsgData \Time:=0.1;
+        WriteStrBin iodev1, "\03";
+        ReadRawBytes iodev1, rawMsgData \Time:=1;
         UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
         
         ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
@@ -163,7 +175,7 @@ MODULE Painter
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
                 WriteStrBin iodev1, "\06";
-                result:=paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
+                paintLoop;  ! When this is called for the first time, it will be after obtaining the image size. 
             ELSE 
                 WriteStrBin iodev1, "\15";
             ENDIF 
@@ -226,20 +238,26 @@ MODULE Painter
         ! note: it may or may not contain a semicolon
         ! Slice this up into directive and parameters
         
-        LOCAL VAR num splitNum := StrFind(parameters, 1, ",");
+        VAR num splitNum;
+        
         ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
-        LOCAL VAR bool ok;
-        LOCAL VAR bool result := TRUE;
-        LOCAL VAR string dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
-        LOCAL VAR string dB ;
-        LOCAL VAR num dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
-        LOCAL VAR num dAtype;
-        LOCAL VAR num dBtype;
-        LOCAL VAR num dAval;
-        LOCAL VAR num dBval;
-        LOCAL VAR num specialCheckIndex;
-        LOCAL VAR string remainingMessage;
-        LOCAL VAR bool multiCoordMessage := FALSE;
+        VAR bool ok;
+        VAR bool result;
+        VAR string dA;
+        VAR string dB ;
+        VAR num dataIndex ;
+        VAR string dAtype;
+        VAR string dBtype;
+        VAR num dAval;
+        VAR num dBval;
+        VAR num specialCheckIndex;
+        VAR string remainingMessage;
+        VAR bool multiCoordMessage;
+        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        result  := TRUE;
+        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        multiCoordMessage := FALSE;
+        splitNum:= StrFind(parameters, 1, ",");
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
@@ -329,8 +347,8 @@ MODULE Painter
     !***********************************************************    
     FUNC bool readSize(string parameters)   
         
-        LOCAL VAR bool result := processCoordinates(parameters);
-        
+        VAR bool result;
+        result := processCoordinates(parameters, FALSE);
         IF result = TRUE THEN
             ! are we over the size constraints and in need of a scaling factor?
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
@@ -359,15 +377,15 @@ MODULE Painter
     !   loops and reads from the serial channel, and passes the commands to subroutines.
     !
     !***********************************************************    
-    FUNC bool paintLoop()
+    proc paintLoop()
         ! TODO: Properly handle extra colons and Test this. Warining: Changed directives without parameters to not include the colon ':' character. Changed how this case was handled.
-        LOCAL VAR bool loop := TRUE;
-        LOCAL VAR string response;
-        LOCAL VAR num splitNum;
-        LOCAL VAR string directive;
-        LOCAL VAR string params;
-        LOCAL VAR num distanceTravelled := 0;
-        LOCAL VAR num endTokenPos;
+        VAR bool loop := TRUE;
+        VAR string response;
+        VAR num splitNum;
+        VAR string directive;
+        VAR string params;
+        
+        VAR num endTokenPos;
         WHILE loop = TRUE DO
             ReadRawBytes iodev1, rawMsgData \Time:=0.1;
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
@@ -400,8 +418,7 @@ MODULE Painter
             
         ENDWHILE
         
-        RETURN loop;
-    ENDFUNC
+    endproc
     !***********************************************************
     !
     ! function result directiveNoParams(string)
@@ -440,8 +457,8 @@ MODULE Painter
     !***********************************************************  
     FUNC bool directiveWithParams(string directive, string params)
         ! TODO: test this
-        LOCAL VAR bool result;
-        LOCAL VAR bool testCheck;
+        VAR bool result;
+        VAR bool testCheck;
         IF directive = "COORD" THEN 
             result := processCoordinates(params, FALSE);
             testCheck:=true;
@@ -607,6 +624,10 @@ MODULE Painter
             MoveL overClean,v500,z0,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             MoveL overClean,v500,z0,paintBrush;
+            MoveL overDryer,v500,z0,paintBrush;
+            MoveL dryer,v100,fine,paintBrush;
+            MoveL overDryer,v500,z0,paintBrush;
+            
         ENDIF
         !over target
         IF (newStroke=TRUE) THEN
