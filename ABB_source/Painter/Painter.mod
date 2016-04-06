@@ -107,20 +107,28 @@ MODULE Painter
     !
     !***********************************************************
     PROC main()
-        
-        answer:= UIMessageBox(
-            \Header:="Pre-Paint Com Checks"
-            \MsgArray:=my_message
-            \BtnArray:=my_buttons
-            \Icon:=iconInfo);
-        IF answer = 1 THEN
-            ! Operator said ready
-            paintProgram;
-!        ELSEIF answer = 2 THEN 
-!            ! operator said abort
-!        ELSE 
-!            ! no such case defined. 
-        ENDIF 
+        IF PPMovedInManMode() THEN
+            answer:= UIMessageBox(
+                \Header:="Pre-Paint Com Checks"
+                \MsgArray:=my_message
+                \BtnArray:=my_buttons
+                \Icon:=iconInfo);
+            IF answer = 1 THEN
+                ! Operator said ready
+                paintProgram;
+    !        ELSEIF answer = 2 THEN 
+    !            ! operator said abort
+    !        ELSE 
+    !            ! no such case defined. 
+            ENDIF 
+
+        ELSE
+
+        paintProgram;
+
+        ENDIF
+
+
         
 
     ENDPROC
