@@ -151,7 +151,7 @@ MODULE Painter
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
         WaitTime 0.1;        
-        WriteStrBin iodev1, "\03";
+        WriteStrBin iodev1, "\05";
         ReadRawBytes iodev1, rawMsgData \Time:=5;
         UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
         
@@ -164,9 +164,9 @@ MODULE Painter
             response:=StrPart(response,1, endTokenPos-1); ! trim string to ignore end token.
         ENDIF
         splitNum := StrFind(response, 1, ":");
-        ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+        ! note: StrPart( string, startIndexInclusive, length)
         directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-        params := StrPart(response, splitNum+1, Strlen(response));
+        params := StrPart(response, splitNum+1, Strlen(response) - (splitnum + 1) );
         
         IF response = "SIZE" THEN
             ! Expected 'response' to be SIZE:X400,Y200;
@@ -240,7 +240,7 @@ MODULE Painter
         
         VAR num splitNum;
         
-        ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+        ! note: StrPart( string, startIndexInclusive, length)
         VAR bool ok;
         VAR bool result;
         VAR string dA;
@@ -253,15 +253,19 @@ MODULE Painter
         VAR num specialCheckIndex;
         VAR string remainingMessage;
         VAR bool multiCoordMessage;
-        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        
         result  := TRUE;
-        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        
         multiCoordMessage := FALSE;
         splitNum:= StrFind(parameters, 1, ",");
+        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        
+        
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
-            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)), dAval); ! should trim the X: from X:230 and parse 230
+            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)-3), dAval); ! should trim the X: from X:230 and parse 230
             IF ok = TRUE THEN 
                 IF dAtype = "X" OR dAtype = "x" THEN                
                     tX:=dAval;
@@ -275,20 +279,20 @@ MODULE Painter
                 result := FALSE;
             endif
             
-            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters)); ! should contain Y:170 
+            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters) - splitNum - 1); ! should contain Y:170 
             dataIndex := StrFind(dB, 1, ":"); ! finding the ':' in Y:170
             specialCheckIndex:= StrFind(db, 1, ",");
             if (specialCheckIndex > StrLen(db)) then
             ! Oh boy, We have a list of coords!
-                dB:= StrPart(parameters, splitNum+1, specialCheckIndex-1);
-                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters));
+                dB:= StrPart(parameters, splitNum+1, specialCheckIndex - (splitNum+1) );
+                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters) - (specialCheckIndex+1));
                 multiCoordMessage:=TRUE;
             endif 
             
             IF dataIndex < StrLen(dB) THEN 
                             ! continue processing
                 dBtype := StrPart(dB, 1, 1); ! Should be X
-                ok:=StrToVal(StrPart(dB, 3, StrLen(dB)), dBval);
+                ok:=StrToVal(StrPart(dB, 3, StrLen(dB) - 3), dBval);
                 IF ok = TRUE THEN 
                     IF dBtype = "X" OR dBtype = "x" THEN
                         IF dAtype = "Y" OR dAtype = "y" THEN 
@@ -426,14 +430,14 @@ MODULE Painter
         
             ! Slice this up into directive and parameters
             splitNum := StrFind(response, 1, ":");
-            ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+            ! note: StrPart( string, startIndexInclusive, length)
             IF splitNum > StrLen(response) THEN 
                 
                 loop:=directiveNoParams(response);
                 
             ELSEIF splitNum < StrLen(response) THEN 
                 directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-                params := StrPart(response, splitNum+1, Strlen(response));  
+                params := StrPart(response, splitNum+1, Strlen(response) - (splitNum + 1));  
                 
                 loop:= directiveWithParams(directive, params);
             ELSE 
