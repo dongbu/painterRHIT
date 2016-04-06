@@ -7,12 +7,13 @@
  * @param height
  * @param shapes
  */
-RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava) {
+RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava, ABBRunner *Chappie) {
 	COMMAND_DELAY = 10; //ms
 	this->width = width;
 	this->height = height;
 	this->shapes = shapes;
 	this->Ava = Ava;
+	this->chappie = Chappie;
 	this->simWin = new DrawWindow(width, height, "Simulation Window");
 	clearClicked();
 	simWin->hideWindow();
@@ -180,7 +181,7 @@ void RunLogic::runClicked() {
 		printf("mode not yet developed\n");
 	}
 	else if (mode == "Paint w/o feedback") {
-		if (!Ava->connected) { printf("Please connect the robot before continuing\n"); return; }
+		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
@@ -208,6 +209,9 @@ void RunLogic::paintThread(DrawWindow *W){
 		currentShapeIndex++;
 	}
 	if (currentShapeIndex == stopIndex) currentShapeIndex--;
+	if (chappie->connected) {
+		chappie->end();
+	}
 	running = false;
 }
 
@@ -268,14 +272,22 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 		Ava->curBrush->drawContiguousPoints(W, &pts);
 
 		// if want to use the robot, do so
-		if (0 && Ava->connected && running) {
+		if ((Ava->connected || chappie->connected) && running) { //if(0 && Ava->connected && running){
 			int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
+			chappie->sendCoord(prevX, prevY);
 			int maxPixelstoTry = 10000;  // some limit as expected to run out of paint (unless perhaps using a pen)
 			int c = 0;
 			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
 				c++;
 				if (c < maxPixelstoTry) {
-					Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+					if (Ava->connected) {
+						Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
+					}
+					else if (chappie->connected) {////////////////////////////////////////////////////////////////////////////////////////////////////////
+						if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
+							break;
+						}
+					}
 					//update loop vars
 					prevX = pts.at(i).x;
 					prevY = pts.at(i).y;
@@ -316,11 +328,23 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 		
 		W->show();
 	}
+
+	if (chappie->connected) {
+		if (!chappie->next()) {
+			return;
+		}
+	}
 }
 
 
 void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 	int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
+
+	if (chappie->connected) {
+		if (!chappie->sendCoord(prevX, prevY)) {
+			return;
+		}
+	}
 
 	for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
 		if (!running) { return; }
@@ -330,20 +354,32 @@ void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 			Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y);
 		}
 		else { Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y); }
-
+		if (chappie->connected) {
+			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
+				return;
+			}
+		}
 		//update loop vars
 		prevX = pts.at(i).x;
 		prevY = pts.at(i).y;
 
 		W->show();
 	}
+	if (chappie->connected) {
+		if (!chappie->next()) {
+			return;
+		}
+	}
 	Sleep(30);
 	Ava->strokeInProgress = false;
 }
 
 void RunLogic::setAvaPenColor(Shape *s) {
+	cv::Scalar temp = s->getPenColor();
+	if (chappie->connected) {
+		chappie->decidePaint(temp[0], temp[1], temp[2]);
+	}
 	if (Ava->paint.size() >= 2){
-		cv::Scalar temp = s->getPenColor();
 		Ava->decidePaint(temp[0], temp[1], temp[2]);
 	}
 	else {

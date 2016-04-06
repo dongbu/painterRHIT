@@ -21,6 +21,7 @@ Painter::Painter() {
 	width = new int(600);
 	height = new int(600);
 	Ava = new CytonRunner(width, height);
+	chappie = new ABBRunner(width, height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
 	Web = new Webcam(width, height);
@@ -177,9 +178,9 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, 
  */
 void Painter::showGUI(){
 	stuffshowing = true;
-	sketch = new Sketchpad(width, height, shapes, Ava, Web);
+	sketch = new Sketchpad(width, height, shapes, Ava, chappie, Web);
 	commandWin = new CommandWindow(shapes);
-	logic = new RunLogic(*width, *height, shapes, Ava);
+	logic = new RunLogic(*width, *height, shapes, Ava, chappie);
 
 	//commandWindow && runLogic connections
 	connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
