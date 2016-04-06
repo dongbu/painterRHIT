@@ -152,7 +152,7 @@ MODULE Painter
         ClearIOBuff iodev1;
         WaitTime 0.1;        
         WriteStrBin iodev1, "\03";
-        ReadRawBytes iodev1, rawMsgData \Time:=1;
+        ReadRawBytes iodev1, rawMsgData \Time:=5;
         UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
         
         ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
@@ -368,6 +368,33 @@ MODULE Painter
         
         RETURN result;
     ENDFUNC 
+    !***********************************************************
+    !
+    ! function result readSerial()
+    !           Returns string on completion. 
+    !
+    !   reads from the serial channel, returning commands sent. 
+    ! Note: this effectively never times out. 
+    !
+    !***********************************************************        
+    func string readSerial()
+        VAR bool passed := TRUE;
+        VAR string response;
+        VAR rawBytes rawMsgData;
+        ReadRawBytes iodev1, rawMsgData \Time:=1;           
+           
+        ERROR
+            IF ERRNO = ERR_DEV_MAXTIME THEN
+                ! do something
+                passed := FALSE;
+            ENDIF        
+        IF passed = TRUE THEN 
+            UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+            RETURN response;
+        ELSE 
+            RETURN readSerial();
+        ENDIF 
+    ENDFUNC
     
     !***********************************************************
     !
@@ -387,8 +414,9 @@ MODULE Painter
         
         VAR num endTokenPos;
         WHILE loop = TRUE DO
-            ReadRawBytes iodev1, rawMsgData \Time:=0.1;
-            UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+            
+            response := readSerial();
+            
             endTokenPos:=StrFind(response, 1, ";");
             IF endTokenPos > StrLen(response) THEN
                 throwError "semicolon", response;
@@ -662,6 +690,7 @@ MODULE Painter
     !***********************************************************    
     proc throwError(string errorType, string response)
         WriteStrBin iodev1, "\15";
+        Close iodev1;
         IF errorType = "semicolon" THEN
             ErrLog 4800, "Command Error", "Missing ';' terminator in message",response,"-","-";
             TPWrite "Command Error: Missing semicolon to terminate command";
