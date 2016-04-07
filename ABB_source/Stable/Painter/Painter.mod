@@ -50,7 +50,7 @@ MODULE Painter
     ! X target
     VAR num YTGT:=0;
     ! Y Target
-    VAR num lastX:=0;
+    VAR num lastX:=500;
     VAR num lastY:=0;
     ! processing coordinates
     VAR num tX;
@@ -150,10 +150,12 @@ MODULE Painter
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
+        ClearRawBytes rawMsgData;
         WaitTime 0.1;        
         WriteStrBin iodev1, "\05";
         ReadRawBytes iodev1, rawMsgData \Time:=5;
         UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+        ClearIOBuff iodev1;
         
         ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
         ! Slice this up into directive and parameters
@@ -166,9 +168,9 @@ MODULE Painter
         splitNum := StrFind(response, 1, ":");
         ! note: StrPart( string, startIndexInclusive, length)
         directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-        params := StrPart(response, splitNum+1, Strlen(response) - (splitnum + 1) );
+        params := StrPart(response, splitNum+1, Strlen(response) - (splitnum + 1) + 1);
         
-        IF response = "SIZE" THEN
+        IF directive = "SIZE" THEN
             ! Expected 'response' to be SIZE:X400,Y200;
             !WriteStrBin iodev1, "Thanks for size! " + params + "\03";
             result:=readSize(params);
@@ -179,13 +181,14 @@ MODULE Painter
             ELSE 
                 WriteStrBin iodev1, "\15";
             ENDIF 
-        ELSEIF response = "COORD" THEN
+        ELSE 
             ! Expected 'response' to be COORD:X200,Y201
             WriteStrBin iodev1, "\15";
             !WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
-        ELSE
+        !ELSE
             ! Response could have been NEXT: or SWAP:A or END:
-            WriteStrBin iodev1, "\15";
+        !    throwError "canvas", response;  
+        !    WriteStrBin iodev1, "\15";
             !WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
         ENDIF
         Close iodev1;
@@ -279,20 +282,20 @@ MODULE Painter
                 result := FALSE;
             endif
             
-            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters) - splitNum - 1); ! should contain Y:170 
+            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters) - (splitNum+ 1) + 1); ! should contain Y:170 
             dataIndex := StrFind(dB, 1, ":"); ! finding the ':' in Y:170
             specialCheckIndex:= StrFind(db, 1, ",");
-            if (specialCheckIndex > StrLen(db)) then
+            if (specialCheckIndex < StrLen(db)) THEN ! TODO: This does not currently work!! RUH_ROH
             ! Oh boy, We have a list of coords!
-                dB:= StrPart(parameters, splitNum+1, specialCheckIndex - (splitNum+1) );
-                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters) - (specialCheckIndex+1));
+                dB:= StrPart(parameters, splitNum+1, specialCheckIndex  - (splitNum) );
+                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters) - (specialCheckIndex) + 1);
                 multiCoordMessage:=TRUE;
             endif 
             
             IF dataIndex < StrLen(dB) THEN 
                             ! continue processing
                 dBtype := StrPart(dB, 1, 1); ! Should be X
-                ok:=StrToVal(StrPart(dB, 3, StrLen(dB) - 3), dBval);
+                ok:=StrToVal(StrPart(dB, 3, StrLen(dB) - 3 + 1), dBval);
                 IF ok = TRUE THEN 
                     IF dBtype = "X" OR dBtype = "x" THEN
                         IF dAtype = "Y" OR dAtype = "y" THEN 
@@ -355,6 +358,8 @@ MODULE Painter
         result := processCoordinates(parameters, FALSE);
         IF result = TRUE THEN
             ! are we over the size constraints and in need of a scaling factor?
+            sizeX := tX;
+            sizeY := tY;
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
                 ! the Y proportion should be the scaling factor, as it was the smaller number
                 IF ((canvasXmax-canvasXmin)/sizeX) > ((canvasYmax-canvasYmin)/sizeY) THEN
@@ -363,7 +368,9 @@ MODULE Painter
                     SF:=(canvasXmax-canvasXmin)/sizeX;
                 ENDIF
                     
-            ENDIF
+            ELSE
+                throwError "canvas", parameters;  
+            ENDIF 
                 
         ELSE
             throwError "canvas", parameters;  
@@ -385,7 +392,7 @@ MODULE Painter
         VAR bool passed := TRUE;
         VAR string response;
         VAR rawBytes rawMsgData;
-        ReadRawBytes iodev1, rawMsgData \Time:=1;           
+        ReadRawBytes iodev1, rawMsgData \Time:=100;   
            
         ERROR
             IF ERRNO = ERR_DEV_MAXTIME THEN
@@ -394,9 +401,12 @@ MODULE Painter
             ENDIF        
         IF passed = TRUE THEN 
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+            ClearIOBuff iodev1;            
             RETURN response;
+             
+            
         ELSE 
-            RETURN readSerial();
+            RETURN "";
         ENDIF 
     ENDFUNC
     
@@ -420,6 +430,9 @@ MODULE Painter
         WHILE loop = TRUE DO
             
             response := readSerial();
+            WHILE response = "" DO
+                response := readSerial();
+            ENDWHILE
             
             endTokenPos:=StrFind(response, 1, ";");
             IF endTokenPos > StrLen(response) THEN
@@ -437,7 +450,7 @@ MODULE Painter
                 
             ELSEIF splitNum < StrLen(response) THEN 
                 directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-                params := StrPart(response, splitNum+1, Strlen(response) - (splitNum + 1));  
+                params := StrPart(response, splitNum+1, Strlen(response) - (splitNum + 1) + 1);  
                 
                 loop:= directiveWithParams(directive, params);
             ELSE 
@@ -717,6 +730,6 @@ MODULE Painter
             ErrLog 4800, "Generic Error", "Generic Message",response,"-","-";
             TPWrite "Generic Error: Unknown";
         ENDIF 
-        
+       
     endproc
 ENDMODULE
