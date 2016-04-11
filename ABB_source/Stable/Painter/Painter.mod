@@ -507,6 +507,9 @@ MODULE Painter
         IF directive = "COORD" THEN 
             result := processCoordinates(params, FALSE);
             testCheck:=true;
+            ! TESTING: Send back OK before command execution if it passes. Should slow down serial lag. 
+            WriteStrBin iodev1, "\06";
+            ! END TESTING
             IF firstTimeRun THEN
                 GotoPaint(currentColor);
                 firstTimeRun := FALSE; 
@@ -519,7 +522,7 @@ MODULE Painter
             ! correctly if NEXT was called before this
             newStroke:=FALSE;
             IF testCheck = TRUE THEN 
-            WriteStrBin iodev1, "\06";
+            !WriteStrBin iodev1, "\06";
             RETURN TRUE;
             ELSE 
                 WriteStrBin iodev1, "\15";
@@ -527,9 +530,11 @@ MODULE Painter
             ENDIF 
         ELSEIF directive = "SWAP" THEN 
                currentColor := params;
-               !TODO: clean here!
+                ! TESTING: Send back OK before command execution if it passes. Should slow down serial lag. 
+                WriteStrBin iodev1, "\06";
+                ! END TESTING
                GotoPaint(currentColor);
-               WriteStrBin iodev1, "\06";
+               !WriteStrBin iodev1, "\06";
                RETURN TRUE; 
         ELSE 
             throwError "unknown", directive;  
