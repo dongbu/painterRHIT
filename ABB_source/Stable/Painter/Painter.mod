@@ -36,7 +36,7 @@ MODULE Painter
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
     ! Orientation constants
-    VAR orient ZeroZeroQuat:=[0.7071067811,0,0.7071067811,0];    
+    VAR orient ZeroZeroQuat:=[0.7071067811,0.01906,0.7071067811,0.01904];    
        
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
@@ -50,7 +50,7 @@ MODULE Painter
     ! X target
     VAR num YTGT:=0;
     ! Y Target
-    VAR num lastX:=376;
+    VAR num lastX:=500;
     VAR num lastY:=0;
     ! processing coordinates
     VAR num tX;
@@ -64,6 +64,7 @@ MODULE Painter
 
     ! Locations of the painting targets. 
     VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
+    VAR orient paintCupQuat:=[0.51863, 0.50936, 0.49498, -0.476];
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
@@ -196,29 +197,29 @@ MODULE Painter
     !
     !***********************************************************
     PROC initializeColors()
-        overA:=[[376,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorA:=[[376,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overA:=[[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorA:=[[376,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overB:=[[426,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorB:=[[426,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overB:=[[426,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorB:=[[426,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overC:=[[476,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorC:=[[476,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overC:=[[476,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorC:=[[476,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overD:=[[526,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorD:=[[526,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overD:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorD:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overE:=[[576,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorE:=[[576,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overE:=[[576,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorE:=[[576,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overF:=[[626,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorF:=[[626,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overF:=[[626,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorF:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
             ! TODO: Accurately describe these locations. 
-        overClean:=[[426,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[426,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[476,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[476,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[426,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[426,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overDryer:=[[476,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[476,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
     ENDPROC
     !***********************************************************
@@ -423,13 +424,19 @@ MODULE Painter
         VAR num splitNum;
         VAR string directive;
         VAR string params;
+        VAR num timeoutCounter:= 0;
         
         VAR num endTokenPos;
         WHILE loop = TRUE DO
-            
+            timeoutCounter := 0;
             response := readSerial();
             WHILE response = "" DO
                 response := readSerial();
+                timeoutCounter:= timeoutCounter + 1;
+                IF timeoutCounter > 20 THEN
+                    moveToFinish;
+                    Break;
+                ENDIF
             ENDWHILE
             TPWrite response;
             
@@ -629,9 +636,13 @@ MODULE Painter
         IF not firstTimeRun THEN 
             ! Move off the canvas before getting paint. 
             !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-            MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-            
+            MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+            MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        ELSE 
+            MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+            firstTimeRun := FALSE; ! prevents double-dipping at start. 
         ENDIF 
+            
         IF (colorToPaint="A") THEN
             !over paint
             MoveL overA,v500,z0,paintBrush;
@@ -692,6 +703,7 @@ MODULE Painter
             lastY:=YTGT;
         ENDIF
         IF NOT firstTimeRun THEN 
+        MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
         ENDIF 
