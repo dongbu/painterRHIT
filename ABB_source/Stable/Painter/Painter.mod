@@ -202,29 +202,29 @@ MODULE Painter
     !
     !***********************************************************
     PROC initializeColors()
-        overA:=[[514+brushLength,75,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorA:=[[514+brushLength,75,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overA:=[[376,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorA:=[[376,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overB:=[[514+brushLength,50,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorB:=[[514+brushLength,50,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overB:=[[426,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorB:=[[426,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overC:=[[514+brushLength,25,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorC:=[[514+brushLength,25,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overC:=[[476,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorC:=[[476,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overD:=[[514+brushLength,0,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorD:=[[514+brushLength,0,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overD:=[[526,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorD:=[[526,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overE:=[[514+brushLength,-25,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorE:=[[514+brushLength,-25,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overE:=[[576,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorE:=[[576,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overF:=[[514+brushLength,-50,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorF:=[[514+brushLength,-50,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overF:=[[626,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorF:=[[626,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
             ! TODO: Accurately describe these locations. 
-        overClean:=[[514+brushLength,-50,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[514+brushLength,-50,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[514+brushLength,-50,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[514+brushLength,-50,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[426,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[426,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overDryer:=[[476,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[476,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
     ENDPROC
     !***********************************************************
@@ -392,16 +392,18 @@ MODULE Painter
         VAR bool passed := TRUE;
         VAR string response;
         VAR rawBytes rawMsgData;
-        ReadRawBytes iodev1, rawMsgData \Time:=100;   
+        ReadRawBytes iodev1, rawMsgData \Time:=25;   
            
         ERROR
             IF ERRNO = ERR_DEV_MAXTIME THEN
                 ! do something
                 passed := FALSE;
+                RETURN "";
             ENDIF        
         IF passed = TRUE THEN 
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
-            ClearIOBuff iodev1;            
+            ClearIOBuff iodev1; 
+            
             RETURN response;
              
             
@@ -476,11 +478,12 @@ MODULE Painter
     FUNC bool directiveNoParams(string directive)
         ! TODO: Test this
         IF directive = "NEXT" THEN 
-            WriteStrBin iodev1, "NEXT\03";
+            WriteStrBin iodev1, "\06";
             newStroke:=TRUE;
+            RETURN TRUE;
             
         ELSEIF directive = "END" THEN 
-            WriteStrBin iodev1, "END\03";
+            WriteStrBin iodev1, "\06";
             moveToFinish;
             RETURN FALSE;
         ELSE 
@@ -529,7 +532,7 @@ MODULE Painter
                currentColor := params;
                !TODO: clean here!
                GotoPaint(currentColor);
-               WriteStrBin iodev1, "SWAP\03";
+               WriteStrBin iodev1, "\06";
                RETURN TRUE; 
         ELSE 
             throwError "unknown", directive;  
