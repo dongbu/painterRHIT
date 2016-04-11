@@ -50,8 +50,8 @@ MODULE Painter
     ! X target
     VAR num YTGT:=0;
     ! Y Target
-    VAR num lastX:=500;
-    VAR num lastY:=0;
+    VAR num lastX:=376;
+    VAR num lastY:=-270;
     ! processing coordinates
     VAR num tX;
     VAR num tY;
@@ -92,7 +92,7 @@ MODULE Painter
     VAR num distanceTravelled := 0;
     ! UI Variables/Constants
     VAR btnres answer;
-    CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1 of the controller", "- The PC is connected to the serial calbe","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
+    CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
     CONST string my_buttons{2}:=["Ready","Abort"];
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
@@ -123,7 +123,7 @@ MODULE Painter
             ENDIF 
 
         ELSE
-
+        TPWrite "Program Started. Assuming that BobRoss host is online on COM1";
         paintProgram;
 
         ENDIF
@@ -147,17 +147,19 @@ MODULE Painter
         VAR string directive;
         VAR string params;
         VAR num endTokenPos;
+        
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
         ClearRawBytes rawMsgData;
-        WaitTime 0.1;        
+        WaitTime 0.1;                 
         WriteStrBin iodev1, "\05";
-        ReadRawBytes iodev1, rawMsgData \Time:=5;
-        UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
-        ClearIOBuff iodev1;
+        response := readSerial();
+        WHILE response = "" DO
+            response := readSerial();
+        ENDWHILE
+            
         
-        ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
         IF endTokenPos > StrLen(response) THEN
@@ -181,12 +183,7 @@ MODULE Painter
                 WriteStrBin iodev1, "\15";
             ENDIF 
         ELSE 
-            ! Expected 'response' to be COORD:X200,Y201
             WriteStrBin iodev1, "\15";
-        !ELSE
-            ! Response could have been NEXT: or SWAP:A or END:
-        !    throwError "canvas", response;  
-        !    WriteStrBin iodev1, "\15";
         ENDIF
         Close iodev1;
     ENDPROC
@@ -265,7 +262,7 @@ MODULE Painter
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
-            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)-3), dAval); ! should trim the X: from X:230 and parse 230
+            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)-2), dAval); ! should trim the X: from X:230 and parse 230
             IF ok = TRUE THEN 
                 IF dAtype = "X" OR dAtype = "x" THEN                
                     tX:=dAval;
@@ -603,7 +600,10 @@ MODULE Painter
     !***********************************************************
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
-        MoveL [[0,150,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        IF NOT firstTimeRun THEN 
+        MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        ENDIF 
+        MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         Stop;
     ENDPROC 
     !***********************************************************
@@ -618,10 +618,11 @@ MODULE Painter
         ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
         !over target
-        IF NOT firstTimeRun THEN 
-            MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+        IF not firstTimeRun THEN 
+            ! Move off the canvas before getting paint. 
+            !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
             MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-            firstTimeRun := FALSE;
+            
         ENDIF 
         IF (colorToPaint="A") THEN
             !over paint
@@ -682,8 +683,10 @@ MODULE Painter
             lastX:=XTGT;
             lastY:=YTGT;
         ENDIF
+        IF NOT firstTimeRun THEN 
         MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+        ENDIF 
         lastColor:=colorToPaint;
     ENDPROC
     
