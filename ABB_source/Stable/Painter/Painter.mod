@@ -172,7 +172,6 @@ MODULE Painter
         
         IF directive = "SIZE" THEN
             ! Expected 'response' to be SIZE:X400,Y200;
-            !WriteStrBin iodev1, "Thanks for size! " + params + "\03";
             result:=readSize(params);
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
@@ -184,12 +183,10 @@ MODULE Painter
         ELSE 
             ! Expected 'response' to be COORD:X200,Y201
             WriteStrBin iodev1, "\15";
-            !WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
         !ELSE
             ! Response could have been NEXT: or SWAP:A or END:
         !    throwError "canvas", response;  
         !    WriteStrBin iodev1, "\15";
-            !WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
         ENDIF
         Close iodev1;
     ENDPROC
@@ -624,6 +621,7 @@ MODULE Painter
         IF NOT firstTimeRun THEN 
             MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
             MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+            firstTimeRun := FALSE;
         ENDIF 
         IF (colorToPaint="A") THEN
             !over paint
