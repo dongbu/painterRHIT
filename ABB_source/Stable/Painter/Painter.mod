@@ -36,7 +36,7 @@ MODULE Painter
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
     ! Orientation constants
-    VAR orient ZeroZeroQuat:=[0.7071067811,0,0.7071067811,0];    
+    VAR orient ZeroZeroQuat:=[0.7071067811,0.01906,0.7071067811,0.01904];    
        
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
