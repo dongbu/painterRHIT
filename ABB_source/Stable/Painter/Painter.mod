@@ -606,7 +606,7 @@ MODULE Painter
     !***********************************************************
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
-        MoveL [[0,150,canvasHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        MoveL [[0,150,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         Stop;
     ENDPROC 
     !***********************************************************
@@ -621,8 +621,10 @@ MODULE Painter
         ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
         !over target
-        MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-        MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        IF NOT firstTimeRun THEN 
+            MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+            MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        ENDIF 
         IF (colorToPaint="A") THEN
             !over paint
             MoveL overA,v500,z0,paintBrush;
