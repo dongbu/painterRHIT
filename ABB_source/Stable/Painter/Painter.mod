@@ -51,7 +51,7 @@ MODULE Painter
     VAR num YTGT:=0;
     ! Y Target
     VAR num lastX:=376;
-    VAR num lastY:=-270;
+    VAR num lastY:=0;
     ! processing coordinates
     VAR num tX;
     VAR num tY;
@@ -63,7 +63,7 @@ MODULE Painter
     VAR num vectorMag;
 
     ! Locations of the painting targets. 
-    VAR orient paintStrokeQuat:=[0.7071067811,0,0.7071067811,0]; 
+    VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
@@ -283,6 +283,8 @@ MODULE Painter
             ! Oh boy, We have a list of coords!
                 dB:= StrPart(parameters, splitNum+1, specialCheckIndex  - (splitNum) );
                 remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters) - (specialCheckIndex) + 1);
+                TPWrite "Multi-coord message:";
+                TPWrite remainingMessage;
                 multiCoordMessage:=TRUE;
             endif 
             
@@ -429,6 +431,7 @@ MODULE Painter
             WHILE response = "" DO
                 response := readSerial();
             ENDWHILE
+            TPWrite response;
             
             endTokenPos:=StrFind(response, 1, ";");
             IF endTokenPos > StrLen(response) THEN
