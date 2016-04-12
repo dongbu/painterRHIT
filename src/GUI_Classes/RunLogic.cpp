@@ -1,6 +1,7 @@
 #include "RunLogic.h"
 #include <windows.h>
 #include <stdlib.h>
+#include <math.h>
 
 /**
  * @brief constructor
@@ -258,7 +259,7 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 	if (0) { Ava->curBrush->setDrawMode("paint"); }
 
 	for (size_t i = 0; i < brush_strokes.size(); i++) { //running through vector of polylines
-		printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(), brush_strokes.at(i).size());
+		//printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(), brush_strokes.at(i).size());
 		this->doStroke(brush_strokes.at(i), W, false);
 	}
 }
@@ -275,19 +276,10 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSm
 		// TBD: somewhere need to set toggle if simulating real paint
 		Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
 		Ava->curBrush->drawContiguousPoints(W, &pts);
-
 		// if want to use the robot, do so
 		if ((Ava->connected || chappie->connected) && running) { //if(0 && Ava->connected && running){
 			int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
 			if (chappie->connected) {
-				if (ignoreSmall) { ////////GUNNAR FIX THIS!!!!!!!!!!!!!!!!!!!!/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					int tempX = abs(pts.at(0).x - pts.at(pts.size() - 1).x);
-					int tempY = abs(pts.at(0).y - pts.at(pts.size() - 1).y);
-					if ((pts.size() <= 2 && (tempX <= 5 && tempY <= 5)) || (tempX <= 3 && tempY <= 3)) {
-						printf("ignoring stroke\n");
-						return;
-					}
-				}
 				chappie->sendCoord(prevX, prevY);
 			}
 			int maxPixelstoTry = 10000;  // some limit as expected to run out of paint (unless perhaps using a pen)
@@ -295,16 +287,18 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSm
 			for (int i = 1; i < pts.size(); i++) { //running through points in one stroke
 				c++;
 				if (c < maxPixelstoTry) {
+					i = straighten(pts, i);
 					if (Ava->connected) {
 						Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
 					}
 					else if (chappie->connected) {////////////////////////////////////////////////////////////////////////////////////////////////////////
 						done = 1;
-						if (i == pts.size() - 1 || i%10 == 0) {
+						//i = straighten(pts, i);
+						//if (i == pts.size() - 1 || i%10 == 0) {
 						if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
 							break;
 						}
-						}
+						//}
 					}
 					//update loop vars
 					prevX = pts.at(i).x;
@@ -406,4 +400,27 @@ void RunLogic::setAvaPenColor(Shape *s) {
 	else {
 		Ava->curBrush->setColor(s->getPenColor());
 	}
+}
+
+int RunLogic::straighten(std::vector<cv::Point> pts, int index) {
+	if (endCheck(pts, index)) { return pts.size() - 1; }
+	int done = 0;
+
+	double a1 = angleDiff(pts.at(index), pts.at(index + 1));
+	double a2;
+	while (!done) {
+		index++;
+		if (endCheck(pts, index)) { return pts.size() - 1; }
+		a2 = angleDiff(pts.at(index), pts.at(index + 1));
+		done = abs(a1 - a2) > 0.122173; // 7 degrees
+	}
+	return index;
+}
+
+bool RunLogic::endCheck(std::vector<cv::Point> pts, int index) {
+	return index >= pts.size() - 1;
+}
+
+double RunLogic::angleDiff(cv::Point p1, cv::Point p2) {
+	return atan2((p1.y - p2.y), (p1.x - p2.x));
 }
