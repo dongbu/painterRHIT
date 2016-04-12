@@ -387,6 +387,7 @@ void Sketchpad::loadPhotoClicked() {
 		widthDim = widthDim / scale;
 		heightDim = heightDim / scale;
 		changeSize(&widthDim, &heightDim);
+		chappie->setSize(widthDim, heightDim);
 
 		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 		cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);

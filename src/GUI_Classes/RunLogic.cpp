@@ -1,5 +1,6 @@
 #include "RunLogic.h"
 #include <windows.h>
+#include <stdlib.h>
 
 /**
  * @brief constructor
@@ -50,10 +51,10 @@ void RunLogic::pauseClicked() { running = false; }
 void RunLogic::forwardClicked() {
 
 	this->simWin->showWindow();
-	if (stepTaken == BACKWARD){
+	if (stepTaken == BACKWARD) {
 		currentShapeIndex++;
 	}
-	if (currentShapeIndex >= shapes->length()){
+	if (currentShapeIndex >= shapes->length()) {
 		stepTaken = NEITHER;
 		return;
 	}
@@ -68,7 +69,7 @@ void RunLogic::forwardClicked() {
 void RunLogic::backwardClicked() {
 
 
-	if (currentShapeIndex == 0 && stopIndex == 0){
+	if (currentShapeIndex == 0 && stopIndex == 0) {
 		stepTaken = NEITHER;
 		return;
 	}
@@ -116,7 +117,7 @@ void RunLogic::runOnly(int index) {
 }
 
 //clear away everything and reset variables.
-void RunLogic::reset(){
+void RunLogic::reset() {
 	stepTaken = NEITHER;
 	shapes->clear();
 	clearClicked();
@@ -130,25 +131,25 @@ void RunLogic::updateMode(QString mode, int delay) {
 }
 
 //resets stepTaken to NEITHER
-void RunLogic::resetStepTaken(){
+void RunLogic::resetStepTaken() {
 	stepTaken = NEITHER;
 }
 
 //hides the simwin
-void RunLogic::hideSimWin(){
+void RunLogic::hideSimWin() {
 	this->simWin->hideWindow();
 }
 //clears the simwin to white
-void RunLogic::clearSimWin(){
+void RunLogic::clearSimWin() {
 	this->simWin->clearWindow(255, 255, 255);
 }
 
 //makes an entirely new simwin
-void RunLogic::resetSimWin(int width, int height, std::string string){
+void RunLogic::resetSimWin(int width, int height, std::string string) {
 	this->simWin = new DrawWindow(width, height, string);
 }
 //shows the simwin
-void RunLogic::showSimWin(){
+void RunLogic::showSimWin() {
 	this->simWin->showWindow();
 	this->simWin->show();
 }
@@ -182,6 +183,7 @@ void RunLogic::runClicked() {
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
+		Ava->curBrush = new Brush(4, 4, "ellipse");
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
@@ -190,7 +192,7 @@ void RunLogic::runClicked() {
 }
 
 //thread to handle actual drawing.
-void RunLogic::paintThread(DrawWindow *W){
+void RunLogic::paintThread(DrawWindow *W) {
 	while (running && currentShapeIndex < stopIndex) {
 		Shape *s = this->shapes->at(currentShapeIndex); //Updating shape
 
@@ -203,7 +205,7 @@ void RunLogic::paintThread(DrawWindow *W){
 
 		emit updateCommandList(currentShapeIndex, "runningBot");
 		if (s->fill) { paintFill(W, s); } //paint fill
-		else { drawPolyLine(s->toPolyline()->points,W); } //paint polyline
+		else { drawPolyLine(s->toPolyline()->points, W); } //paint polyline
 		emit updateCommandList(currentShapeIndex, "finishedSim");
 
 		currentShapeIndex++;
@@ -216,7 +218,7 @@ void RunLogic::paintThread(DrawWindow *W){
 }
 
 //paint a fill object
-void RunLogic::paintFill(DrawWindow *W, Shape *s){
+void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 	RegionToPaths RTP = RegionToPaths(width, height, 30);
 	PixelRegion *p = s->toPixelRegion();
 	std::vector<cv::Point> pts = p->getPoints();
@@ -227,15 +229,19 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s){
 	for (int i = 0; i < W->width; i++) {
 		for (int j = 0; j < W->height; j++) {
 			if (!W->testPixel(i, j, 255, 255, 255)) {
-				RTP.addUntouchablePixel(i,j);
+				RTP.addUntouchablePixel(i, j);
 			}
 		}
 	}
 
-	for (size_t i = 0; i < pts.size(); i++){ RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
+	for (size_t i = 0; i < pts.size(); i++) { RTP.addDesiredPixel(pts.at(i).x, pts.at(i).y); }
 	// put a halo of N pixels around the desired region where allowed to paintover (could be done in define path too)
-	RTP.expandOverpaintableAroundDesired(3); 
+	RTP.expandOverpaintableAroundDesired(3);
 
+	if (chappie->connected) {
+		Ava->curBrush->setWidth(10);
+		Ava->curBrush->setHeight(10);
+	}
 	RTP.defineBrush(Ava->curBrush);
 
 	RTP.definePaths();
@@ -251,21 +257,20 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s){
 	// ABC: TBD toggle between "pen" and "paint"
 	if (0) { Ava->curBrush->setDrawMode("paint"); }
 
-	for (size_t i = 0; i < brush_strokes.size(); i++){ //running through vector of polylines
-		//this->drawPolyLine(brush_strokes.at(i), W);
-		printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(),brush_strokes.at(i).size());
-		this->doStroke(brush_strokes.at(i), W);
+	for (size_t i = 0; i < brush_strokes.size(); i++) { //running through vector of polylines
+		printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(), brush_strokes.at(i).size());
+		this->doStroke(brush_strokes.at(i), W, false);
 	}
 }
 
 
 // given contiguous pts, draw them in the simulator and optionally using robot
-void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
+void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall) {
 	int nloops = 0;
 	int done = 0;
-	while (!done){
+	while (!done) {
 		nloops++;
-		
+
 		// attempt to draw stroke in simulator window
 		// TBD: somewhere need to set toggle if simulating real paint
 		Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
@@ -274,18 +279,31 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 		// if want to use the robot, do so
 		if ((Ava->connected || chappie->connected) && running) { //if(0 && Ava->connected && running){
 			int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
-			chappie->sendCoord(prevX, prevY);
+			if (chappie->connected) {
+				if (ignoreSmall) { ////////GUNNAR FIX THIS!!!!!!!!!!!!!!!!!!!!/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					int tempX = abs(pts.at(0).x - pts.at(pts.size() - 1).x);
+					int tempY = abs(pts.at(0).y - pts.at(pts.size() - 1).y);
+					if ((pts.size() <= 2 && (tempX <= 5 && tempY <= 5)) || (tempX <= 3 && tempY <= 3)) {
+						printf("ignoring stroke\n");
+						return;
+					}
+				}
+				chappie->sendCoord(prevX, prevY);
+			}
 			int maxPixelstoTry = 10000;  // some limit as expected to run out of paint (unless perhaps using a pen)
 			int c = 0;
-			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
+			for (int i = 1; i < pts.size(); i++) { //running through points in one stroke
 				c++;
 				if (c < maxPixelstoTry) {
 					if (Ava->connected) {
 						Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
 					}
 					else if (chappie->connected) {////////////////////////////////////////////////////////////////////////////////////////////////////////
+						done = 1;
+						if (i == pts.size() - 1 || i%10 == 0) {
 						if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
 							break;
+						}
 						}
 					}
 					//update loop vars
@@ -299,26 +317,27 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 		std::vector<cv::Point> errors; // potentially non-contiguous points that still need to be painted
 		double score; // what % of pixels are of the desired paint color
 		int webcam_feedback = 0; // eventually a toggle
-		if (webcam_feedback){
+		if (webcam_feedback) {
 			//cv::mat WEBCAM_IMAGE = Ava->getWebcamImageOfPainting();
 			//score = brush.scorePaintPoints(&WEBCAM_IMAGE, &stroke, &errors, .1, .1);
-		} else {
+		}
+		else {
 			//score = Ava->curBrush->scorePaintPoints(W, &pts, &errors, .1, .1); //this line is causing crashing, atm.
 			score = 0;
-		}	
+		}
 
-		if (score>0.0 && score < 0.99) { //not: if score=0, then rerun the entire stroke
+		if (score > 0.0 && score < 0.99) { //not: if score=0, then rerun the entire stroke
 			// redefine pts to be all the points starting from the first error
 			cv::Point first_error = errors.at(0);
 			std::vector<cv::Point> next_loop_pts;
-			int found=0;
+			int found = 0;
 			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
 				if (pts.at(i).x == first_error.x && pts.at(i).y == first_error.y) { found = 1; }
 				if (found) {
 					next_loop_pts.push_back(pts.at(i));
 				}
 			}
-			printf(" reloop %i (score:%.2f) - %lu -> %lu points\n", nloops, 100*score, pts.size(),next_loop_pts.size());
+			printf(" reloop %i (score:%.2f) - %lu -> %lu points\n", nloops, 100 * score, pts.size(), next_loop_pts.size());
 			pts = next_loop_pts;
 			Sleep(100);
 		}
@@ -326,8 +345,8 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W){
 		//Sleep(30);
 
 		// loop limit just so it doesn't loop forever in case brush fails to fully cover stroke
-		if (score > 0.99 || nloops>12) { done = 1; }
-		
+		if (score > 0.99 || nloops > 12) { done = 1; }
+
 		W->show();
 	}
 
@@ -381,7 +400,7 @@ void RunLogic::setAvaPenColor(Shape *s) {
 	if (chappie->connected) {
 		chappie->decidePaint(temp[0], temp[1], temp[2]);
 	}
-	if (Ava->paint.size() >= 2){
+	if (Ava->paint.size() >= 2) {
 		Ava->decidePaint(temp[0], temp[1], temp[2]);
 	}
 	else {

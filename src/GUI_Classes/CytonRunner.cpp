@@ -24,7 +24,7 @@ CytonRunner::CytonRunner(int *width, int *height){
 	this->height = height; //initialization
 
 	//current brush initialization
-	curBrush = new Brush(30, 20, "ellipse");
+	curBrush = new Brush(40, 20, "ellipse");
 	curBrush->setColor(200, 200, 200);
 }
 

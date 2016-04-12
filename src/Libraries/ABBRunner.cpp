@@ -8,7 +8,7 @@
 
 
 //CONSTRUCTOR/DESTRUCTOR///////////////////////
-ABBRunner::ABBRunner(int *width, int* height)
+ABBRunner::ABBRunner(int width, int height)
 {
 	this->width = width;
 	this->height = height;
@@ -25,7 +25,9 @@ ABBRunner::~ABBRunner()
 //ACCESSIBLE SERIAL COMMANDS///////////////////
 //Used to send coordinates over serial.  Returns true if recieves success, false otherwise.
 bool ABBRunner::sendCoord(int x, int y) {
-	printf("sending coordinate pair\n");
+	if (!connected) {
+		return false;
+	}
 	std::string command = "COORD:X:" + std::to_string(x) + ",Y:" + std::to_string(y) + ";";
 	if (sendSerial(command)) {
 		if (getSerialResponse()) {
@@ -38,6 +40,7 @@ bool ABBRunner::sendCoord(int x, int y) {
 
 //call this if something goes wrong.
 void ABBRunner::abort() {
+	connected = false;
 	printf("Closing Serial Port \"COM");
 	std::cout << helps->portNum;
 	printf("\"\n");
@@ -46,7 +49,9 @@ void ABBRunner::abort() {
 
 //tells the robot that the end of a stroke sequence has been reached
 bool ABBRunner::next() {
-	printf("next stroke\n");
+	if (!connected) {
+		return false;
+	}
 	if (sendSerial("NEXT;")) {
 		if (!getSerialResponse()) {
 			return false;
@@ -58,11 +63,17 @@ bool ABBRunner::next() {
 
 //tells the robot that we are done painting.  Calls abort at end
 void ABBRunner::end() {
+	if (!connected) {
+		return;
+	}
 	sendSerial("END;");
 	abort();
 }
 
 void ABBRunner::decidePaint(int r, int g, int b) {
+	if (!connected) {
+		return;
+	}
 	int closestId = 0;
 	int closestNum = -1;
 	//loop to find smallest distance
@@ -84,10 +95,21 @@ void ABBRunner::decidePaint(int r, int g, int b) {
 }
 ////////////////////////////////////////////////
 
+//ACCESSIBLE PROPERTIES
+void ABBRunner::setSize(int w, int h) {
+	this->width = w;
+	this->height = h;
+	printf("ABB size set to: w:");
+	std::cout << this->width << " h:" << this->height << "\n";
+}
+///////////////////////////////////////////////
+
 
 //INTERNAL SERIAL WORK////////////////////////
 bool ABBRunner::sendCanvasInfo() {
-
+	if (!connected) {
+		return false;
+	}
 	for (int i = 0; i < 60; i++) {
 		char szBuff[2] = { 0 };
 		DWORD dwBytesRead = 0;
@@ -96,7 +118,7 @@ bool ABBRunner::sendCanvasInfo() {
 			abort();
 			return false;
 		}
-		if (szBuff[0] == 3) {
+		if (szBuff[0] == 5) {
 			printf("ABB Ready\n");
 			break;
 		}
@@ -109,8 +131,7 @@ bool ABBRunner::sendCanvasInfo() {
 
 
 
-	std::string message = "SIZE:X:" + std::to_string(*this->width) + ",Y:" + std::to_string(*this->height) + ";";
-	printf("Sending Canvas Info\n");
+	std::string message = "SIZE:X:" + std::to_string(this->width) + ",Y:" + std::to_string(this->height) + ";";
 	if(sendSerial(message)) {
 		if (getSerialResponse()) {
 			return true;
@@ -121,6 +142,11 @@ bool ABBRunner::sendCanvasInfo() {
 }
 
 bool ABBRunner:: sendSerial(std::string message) {
+	if (!connected) {
+		return false;
+	}
+	std::cout << message;
+	printf("\n");
 	char szBuff[sizeof(message) + 1];
 	memcpy(szBuff, message.c_str(), sizeof(message));
 	DWORD dwBytesWrite;
@@ -134,6 +160,9 @@ bool ABBRunner:: sendSerial(std::string message) {
 
 //recieves response from ABB, aborting if failed.
 bool ABBRunner::getSerialResponse() {
+	if (!connected) {
+		return false;
+	}
 	char szBuff[2] = { 0 };
 	DWORD dwBytesRead = 0;
 	if (!ReadFile(hSerial, szBuff, 1, &dwBytesRead, NULL)) {
@@ -212,7 +241,7 @@ bool ABBRunner::connectToSerial(int port) {
 		abort();
 		return false;
 	}
-	dcbSerialParams.BaudRate = CBR_9600;//baud rate of 19200
+	dcbSerialParams.BaudRate = CBR_115200;//baud rate of 19200
 	dcbSerialParams.ByteSize = 8;
 	dcbSerialParams.StopBits = ONESTOPBIT;
 	dcbSerialParams.Parity = NOPARITY;
@@ -228,8 +257,8 @@ bool ABBRunner::connectToSerial(int port) {
 
 	//setting timeouts
 	COMMTIMEOUTS timeouts = { 0 };
-	timeouts.ReadIntervalTimeout = 5000;
-	timeouts.ReadTotalTimeoutConstant = 5000;
+	timeouts.ReadIntervalTimeout = 15000;
+	timeouts.ReadTotalTimeoutConstant = 15000;
 	timeouts.ReadTotalTimeoutMultiplier = 10;
 	timeouts.WriteTotalTimeoutConstant = 100;
 	timeouts.WriteTotalTimeoutMultiplier = 10;
@@ -239,13 +268,15 @@ bool ABBRunner::connectToSerial(int port) {
 		abort();
 		return false;
 	}
-
+	connected = true;
 	return true;
 }
 
 //used to let the ABB know over serial that we are switching colors. Returns true if recieves success, false otherwise.
 bool ABBRunner::changeColor(int colorNum) {
-	printf("changing color\n");
+	if (!connected) {
+		return false;
+	}
 	std::string colorLet = "A";
 	switch (colorNum) {
 	case 0:
@@ -288,12 +319,6 @@ void ABBRunner::connectWin() {
 	helps->show();
 	connect(helps, SIGNAL(acceptedABB()), this, SLOT(acceptedWin()));
 	connect(helps, SIGNAL(canceledABB()), this, SLOT(canceledWin()));
-}
-
-//sets the size of canvas
-void ABBRunner::setSize(int width, int height) {
-	this->width = &width;
-	this->height = &height;
 }
 
 void ABBRunner::acceptedWin() {

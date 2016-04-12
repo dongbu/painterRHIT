@@ -45,7 +45,7 @@ private:
 
 	void paintFill(DrawWindow *W, Shape *s);
 	void setAvaPenColor(Shape *s);
-	void doStroke(std::vector<cv::Point> pts, DrawWindow *W);
+	void doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall = false);
 	void drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W);
 
 	STEP stepTaken;

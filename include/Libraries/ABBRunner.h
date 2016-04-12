@@ -13,13 +13,15 @@ class ABBRunner: public QDialog
 	Q_OBJECT
 
 public:
-	ABBRunner(int *width, int *height);
+	ABBRunner(int width, int height);
 	~ABBRunner();
 
 	bool next();
 	void end();
 	bool sendCoord(int x, int y);
 	void decidePaint(int r, int g, int b);
+
+	void setSize(int w, int h);
 
 	void abort();
 
@@ -30,7 +32,6 @@ public:
 
 	bool connected;
 	void connectWin();
-	void setSize(int width, int height);
 
 
 
@@ -44,8 +45,8 @@ private:
 
 	HANDLE hSerial;
 
-	int *width;
-	int *height;
+	int width;
+	int height;
 
 private slots:
 	void acceptedWin();

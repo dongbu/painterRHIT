@@ -37,6 +37,12 @@ public:
 
 	int getWidth() { return width; }
 	int getHeight() { return height; }
+	void setWidth(int w) {
+		this->width = w;
+	}
+	void setHeight(int h) {
+		this->height = h;
+	}
 	cv::Point getCenter() { return cv::Point(centerx, centery); }
 	std::vector<cv::Point> getPixels() { return pixels; }
 	void setColor(int r, int g, int b) { color = cv::Scalar(b, g, r); }
