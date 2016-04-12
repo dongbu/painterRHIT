@@ -36,7 +36,7 @@ MODULE Painter
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
     ! Orientation constants
-    VAR orient ZeroZeroQuat:=[0.7071067811,0,0.7071067811,0];    
+    VAR orient ZeroZeroQuat:=[0.7071067811,0.01906,0.7071067811,0.01904];    
        
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
@@ -50,7 +50,7 @@ MODULE Painter
     ! X target
     VAR num YTGT:=0;
     ! Y Target
-    VAR num lastX:=0;
+    VAR num lastX:=376;
     VAR num lastY:=0;
     ! processing coordinates
     VAR num tX;
@@ -63,7 +63,7 @@ MODULE Painter
     VAR num vectorMag;
 
     ! Locations of the painting targets. 
-    VAR orient paintStrokeQuat:=[0.7071067811,0,0.7071067811,0]; 
+    VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
@@ -92,7 +92,7 @@ MODULE Painter
     VAR num distanceTravelled := 0;
     ! UI Variables/Constants
     VAR btnres answer;
-    CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1 of the controller", "- The PC is connected to the serial calbe","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
+    CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
     CONST string my_buttons{2}:=["Ready","Abort"];
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
@@ -123,7 +123,7 @@ MODULE Painter
             ENDIF 
 
         ELSE
-
+        TPWrite "Program Started. Assuming that BobRoss host is online on COM1";
         paintProgram;
 
         ENDIF
@@ -147,15 +147,19 @@ MODULE Painter
         VAR string directive;
         VAR string params;
         VAR num endTokenPos;
+        
         initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
-        WaitTime 0.1;        
-        WriteStrBin iodev1, "\03";
-        ReadRawBytes iodev1, rawMsgData \Time:=5;
-        UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+        ClearRawBytes rawMsgData;
+        WaitTime 0.1;                 
+        WriteStrBin iodev1, "\05";
+        response := readSerial();
+        WHILE response = "" DO
+            response := readSerial();
+        ENDWHILE
+            
         
-        ! //does not work response := ReadStr(iodev1\RemoveCR\DiscardHeaders);
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
         IF endTokenPos > StrLen(response) THEN
@@ -164,13 +168,12 @@ MODULE Painter
             response:=StrPart(response,1, endTokenPos-1); ! trim string to ignore end token.
         ENDIF
         splitNum := StrFind(response, 1, ":");
-        ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+        ! note: StrPart( string, startIndexInclusive, length)
         directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-        params := StrPart(response, splitNum+1, Strlen(response));
+        params := StrPart(response, splitNum+1, Strlen(response) - (splitnum + 1) + 1);
         
-        IF response = "SIZE" THEN
+        IF directive = "SIZE" THEN
             ! Expected 'response' to be SIZE:X400,Y200;
-            !WriteStrBin iodev1, "Thanks for size! " + params + "\03";
             result:=readSize(params);
             IF result = TRUE THEN
                 ! do other stuff! WoohoooooooooO!OOO!O!O!O!OO!O!O!O
@@ -179,14 +182,8 @@ MODULE Painter
             ELSE 
                 WriteStrBin iodev1, "\15";
             ENDIF 
-        ELSEIF response = "COORD" THEN
-            ! Expected 'response' to be COORD:X200,Y201
+        ELSE 
             WriteStrBin iodev1, "\15";
-            !WriteStrBin iodev1, "Thanks for coord! " + params + "\03";
-        ELSE
-            ! Response could have been NEXT: or SWAP:A or END:
-            WriteStrBin iodev1, "\15";
-            !WriteStrBin iodev1, "Thanks for nothing! " + directive + "\03";
         ENDIF
         Close iodev1;
     ENDPROC
@@ -199,29 +196,29 @@ MODULE Painter
     !
     !***********************************************************
     PROC initializeColors()
-        overA:=[[514+brushLength,75,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorA:=[[514+brushLength,75,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overA:=[[376,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorA:=[[376,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overB:=[[514+brushLength,50,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorB:=[[514+brushLength,50,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overB:=[[426,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorB:=[[426,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overC:=[[514+brushLength,25,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorC:=[[514+brushLength,25,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overC:=[[476,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorC:=[[476,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overD:=[[514+brushLength,0,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorD:=[[514+brushLength,0,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overD:=[[526,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorD:=[[526,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overE:=[[514+brushLength,-25,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorE:=[[514+brushLength,-25,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overE:=[[576,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorE:=[[576,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overF:=[[514+brushLength,-50,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorF:=[[514+brushLength,-50,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overF:=[[626,-290,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorF:=[[626,-290,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
             ! TODO: Accurately describe these locations. 
-        overClean:=[[514+brushLength,-50,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[514+brushLength,-50,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[514+brushLength,-50,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[514+brushLength,-50,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[426,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[426,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overDryer:=[[476,-315,cleanerHeight+brushLength],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[476,-315,cleanerHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
     ENDPROC
     !***********************************************************
@@ -240,7 +237,7 @@ MODULE Painter
         
         VAR num splitNum;
         
-        ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+        ! note: StrPart( string, startIndexInclusive, length)
         VAR bool ok;
         VAR bool result;
         VAR string dA;
@@ -253,15 +250,19 @@ MODULE Painter
         VAR num specialCheckIndex;
         VAR string remainingMessage;
         VAR bool multiCoordMessage;
-        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        
         result  := TRUE;
-        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        
         multiCoordMessage := FALSE;
         splitNum:= StrFind(parameters, 1, ",");
+        dA := StrPart(parameters, 1, splitNum - 1); ! Should be X:230 - We don't care about the ','
+        dataIndex := StrFind(dA, 1, ":"); ! finding the ':' in X:230
+        
+        
         IF dataIndex < StrLen(dA) THEN
             ! continue processing
             dAtype := StrPart(dA, 1, 1); ! Should be X
-            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)), dAval); ! should trim the X: from X:230 and parse 230
+            ok:=StrToVal(StrPart(dA, 3, StrLen(dA)-2), dAval); ! should trim the X: from X:230 and parse 230
             IF ok = TRUE THEN 
                 IF dAtype = "X" OR dAtype = "x" THEN                
                     tX:=dAval;
@@ -275,20 +276,22 @@ MODULE Painter
                 result := FALSE;
             endif
             
-            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters)); ! should contain Y:170 
+            dB:= StrPart(parameters, splitNum + 1, StrLen(parameters) - (splitNum+ 1) + 1); ! should contain Y:170 
             dataIndex := StrFind(dB, 1, ":"); ! finding the ':' in Y:170
             specialCheckIndex:= StrFind(db, 1, ",");
-            if (specialCheckIndex > StrLen(db)) then
+            if (specialCheckIndex < StrLen(db)) THEN ! TODO: This does not currently work!! RUH_ROH
             ! Oh boy, We have a list of coords!
-                dB:= StrPart(parameters, splitNum+1, specialCheckIndex-1);
-                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters));
+                dB:= StrPart(parameters, splitNum+1, specialCheckIndex  - (splitNum) );
+                remainingMessage := StrPart(parameters, specialCheckIndex+1, StrLen(parameters) - (specialCheckIndex) + 1);
+                TPWrite "Multi-coord message:";
+                TPWrite remainingMessage;
                 multiCoordMessage:=TRUE;
             endif 
             
             IF dataIndex < StrLen(dB) THEN 
                             ! continue processing
                 dBtype := StrPart(dB, 1, 1); ! Should be X
-                ok:=StrToVal(StrPart(dB, 3, StrLen(dB)), dBval);
+                ok:=StrToVal(StrPart(dB, 3, StrLen(dB) - 3 + 1), dBval);
                 IF ok = TRUE THEN 
                     IF dBtype = "X" OR dBtype = "x" THEN
                         IF dAtype = "Y" OR dAtype = "y" THEN 
@@ -351,6 +354,8 @@ MODULE Painter
         result := processCoordinates(parameters, FALSE);
         IF result = TRUE THEN
             ! are we over the size constraints and in need of a scaling factor?
+            sizeX := tX;
+            sizeY := tY;
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
                 ! the Y proportion should be the scaling factor, as it was the smaller number
                 IF ((canvasXmax-canvasXmin)/sizeX) > ((canvasYmax-canvasYmin)/sizeY) THEN
@@ -359,7 +364,9 @@ MODULE Painter
                     SF:=(canvasXmax-canvasXmin)/sizeX;
                 ENDIF
                     
-            ENDIF
+            ELSE
+                throwError "canvas", parameters;  
+            ENDIF 
                 
         ELSE
             throwError "canvas", parameters;  
@@ -381,18 +388,23 @@ MODULE Painter
         VAR bool passed := TRUE;
         VAR string response;
         VAR rawBytes rawMsgData;
-        ReadRawBytes iodev1, rawMsgData \Time:=1;           
+        ReadRawBytes iodev1, rawMsgData \Time:=25;   
            
         ERROR
             IF ERRNO = ERR_DEV_MAXTIME THEN
                 ! do something
                 passed := FALSE;
+                RETURN "";
             ENDIF        
         IF passed = TRUE THEN 
             UnpackRawBytes rawMsgData, 1, response \ASCII:=(RawBytesLen(rawMsgData));
+            ClearIOBuff iodev1; 
+            
             RETURN response;
+             
+            
         ELSE 
-            RETURN readSerial();
+            RETURN "";
         ENDIF 
     ENDFUNC
     
@@ -416,6 +428,10 @@ MODULE Painter
         WHILE loop = TRUE DO
             
             response := readSerial();
+            WHILE response = "" DO
+                response := readSerial();
+            ENDWHILE
+            TPWrite response;
             
             endTokenPos:=StrFind(response, 1, ";");
             IF endTokenPos > StrLen(response) THEN
@@ -426,14 +442,14 @@ MODULE Painter
         
             ! Slice this up into directive and parameters
             splitNum := StrFind(response, 1, ":");
-            ! note: StrPart( string, startIndexInclusive, endIndexInclusive)
+            ! note: StrPart( string, startIndexInclusive, length)
             IF splitNum > StrLen(response) THEN 
                 
                 loop:=directiveNoParams(response);
                 
             ELSEIF splitNum < StrLen(response) THEN 
                 directive := StrPart(response, 1, splitNum - 1); ! We don't care about the ':'
-                params := StrPart(response, splitNum+1, Strlen(response));  
+                params := StrPart(response, splitNum+1, Strlen(response) - (splitNum + 1) + 1);  
                 
                 loop:= directiveWithParams(directive, params);
             ELSE 
@@ -459,11 +475,12 @@ MODULE Painter
     FUNC bool directiveNoParams(string directive)
         ! TODO: Test this
         IF directive = "NEXT" THEN 
-            WriteStrBin iodev1, "NEXT\03";
+            WriteStrBin iodev1, "\06";
             newStroke:=TRUE;
+            RETURN TRUE;
             
         ELSEIF directive = "END" THEN 
-            WriteStrBin iodev1, "END\03";
+            WriteStrBin iodev1, "\06";
             moveToFinish;
             RETURN FALSE;
         ELSE 
@@ -512,7 +529,7 @@ MODULE Painter
                currentColor := params;
                !TODO: clean here!
                GotoPaint(currentColor);
-               WriteStrBin iodev1, "SWAP\03";
+               WriteStrBin iodev1, "\06";
                RETURN TRUE; 
         ELSE 
             throwError "unknown", directive;  
@@ -586,7 +603,10 @@ MODULE Painter
     !***********************************************************
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
-        MoveL [[0,150,canvasHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        IF NOT firstTimeRun THEN 
+        MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        ENDIF 
+        MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         Stop;
     ENDPROC 
     !***********************************************************
@@ -601,8 +621,12 @@ MODULE Painter
         ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
         !over target
-        MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-        MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        IF not firstTimeRun THEN 
+            ! Move off the canvas before getting paint. 
+            !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+            MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+            
+        ENDIF 
         IF (colorToPaint="A") THEN
             !over paint
             MoveL overA,v500,z0,paintBrush;
@@ -662,8 +686,10 @@ MODULE Painter
             lastX:=XTGT;
             lastY:=YTGT;
         ENDIF
+        IF NOT firstTimeRun THEN 
         MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+        ENDIF 
         lastColor:=colorToPaint;
     ENDPROC
     
@@ -713,6 +739,6 @@ MODULE Painter
             ErrLog 4800, "Generic Error", "Generic Message",response,"-","-";
             TPWrite "Generic Error: Unknown";
         ENDIF 
-        
+       
     endproc
 ENDMODULE
