@@ -18,7 +18,7 @@ MODULE Painter
     ! *** Constants ***
     ! Commonly Tweaked declarations
     CONST num brushLength:=200;
-    CONST num paintHeight:=10;
+    CONST num paintHeight:=5;
     CONST num cleanerHeight:=100; ! TODO: actually find out what this is. 
     !CONST num dryerHeight:=100; ! TODO: actually find out what this is. 
     CONST num canvasHeight:=0;
@@ -99,6 +99,8 @@ MODULE Painter
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
     VAR string lastColor := "A";
+    VAR num serialTimeout := 25;
+    VAR bool doubleDip := FALSE ;
     
     !***********************************************************
     !
@@ -119,8 +121,6 @@ MODULE Painter
                 paintProgram;
     !        ELSEIF answer = 2 THEN 
     !            ! operator said abort
-    !        ELSE 
-    !            ! no such case defined. 
             ENDIF 
 
         ELSE
@@ -197,30 +197,30 @@ MODULE Painter
     !
     !***********************************************************
     PROC initializeColors()
-        overA:=[[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorA:=[[376,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overA:=[[276,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorA:=[[276,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        
+        overB:=[[326,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorB:=[[326,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        
+        overC:=[[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorC:=[[376,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overB:=[[426,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorB:=[[426,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overD:=[[426,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorD:=[[426,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overC:=[[476,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorC:=[[476,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overE:=[[476,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorE:=[[476,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-        overD:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorD:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overE:=[[576,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorE:=[[576,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overF:=[[626,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorF:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overF:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorF:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
             ! TODO: Accurately describe these locations. 
         overClean:=[[426,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         clean:=[[426,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         overDryer:=[[476,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         dryer:=[[476,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        
+        firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
     !
@@ -357,6 +357,11 @@ MODULE Painter
             ! are we over the size constraints and in need of a scaling factor?
             sizeX := tX;
             sizeY := tY;
+            
+            IF sizeX <= 5 OR sizeY <= 5 THEN
+                throwError "canvas", parameters;
+            ENDIF 
+            
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
                 ! the Y proportion should be the scaling factor, as it was the smaller number
                 IF ((canvasXmax-canvasXmin)/sizeX) > ((canvasYmax-canvasYmin)/sizeY) THEN
@@ -368,6 +373,8 @@ MODULE Painter
             ELSE
                 throwError "canvas", parameters;  
             ENDIF 
+            
+
                 
         ELSE
             throwError "canvas", parameters;  
@@ -389,7 +396,7 @@ MODULE Painter
         VAR bool passed := TRUE;
         VAR string response;
         VAR rawBytes rawMsgData;
-        ReadRawBytes iodev1, rawMsgData \Time:=25;   
+        ReadRawBytes iodev1, rawMsgData \Time:=serialTimeout;   
            
         ERROR
             IF ERRNO = ERR_DEV_MAXTIME THEN
@@ -438,6 +445,7 @@ MODULE Painter
                     Break;
                 ENDIF
             ENDWHILE
+            serialTimeout := 0.1;
             TPWrite response;
             
             endTokenPos:=StrFind(response, 1, ";");
@@ -508,19 +516,16 @@ MODULE Painter
     !
     !***********************************************************  
     FUNC bool directiveWithParams(string directive, string params)
-        ! TODO: test this
         VAR bool result;
         VAR bool testCheck;
         IF directive = "COORD" THEN 
             result := processCoordinates(params, FALSE);
             testCheck:=true;
-            ! TESTING: Send back OK before command execution if it passes. Should slow down serial lag. 
+            doubleDip := FALSE;
+
             WriteStrBin iodev1, "\06";
-            ! END TESTING
-            IF firstTimeRun THEN
-                GotoPaint(currentColor);
-                firstTimeRun := FALSE; 
-            endif
+                
+            
             testCheck:=checkForBadPoints( tX,tY);
             XTGT:=(SF*tX)+canvasXmin;
             YTGT:=(SF*tY)+canvasYmin;
@@ -534,13 +539,19 @@ MODULE Painter
             ELSE 
                 WriteStrBin iodev1, "\15";
                 RETURN FALSE;
-            ENDIF 
+            ENDIF
+            
+            firstTimeRun := FALSE; 
+            
         ELSEIF directive = "SWAP" THEN 
+                newStroke := TRUE; 
                currentColor := params;
                 ! TESTING: Send back OK before command execution if it passes. Should slow down serial lag. 
                 WriteStrBin iodev1, "\06";
                 ! END TESTING
                GotoPaint(currentColor);
+               
+               doubleDip := TRUE ;
                !WriteStrBin iodev1, "\06";
                RETURN TRUE; 
         ELSE 
@@ -566,16 +577,14 @@ MODULE Painter
             WriteStrBin iodev1, "\15";
             ErrLog 4800, "Coord Error", "One of the coordinates is outside expected bounds","Coordinates larger than image size are not allowed","-","-";
             TPWrite "Bad coordinates in the file: outside expected bounds";
-            MoveL overA,v500,fine,paintBrush;
-            Stop;
+            moveToFinish;
             RETURN FALSE; 
         ENDIF
         IF  (Xcoord<0) OR (Ycoord<0) THEN
             WriteStrBin iodev1, "\15";
             ErrLog 4800, "Coord Error", "Negative Coordinates are not allowed.","-","-","-";
             TPWrite "Bad coordinates in the file: outside expected bounds";
-            MoveL overA,v500,fine,paintBrush;
-            Stop;
+            moveToFinish;
             RETURN FALSE;
         ENDIF
             RETURN TRUE;
@@ -616,9 +625,9 @@ MODULE Painter
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
         IF NOT firstTimeRun THEN 
-        MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
         ENDIF 
-        MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+        MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
         Stop;
     ENDPROC 
     !***********************************************************
@@ -633,68 +642,73 @@ MODULE Painter
         ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
         !over target
-        IF not firstTimeRun THEN 
+        IF (not firstTimeRun) AND (not doubleDip) THEN 
             ! Move off the canvas before getting paint. 
             !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-            MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-            MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-        ELSE 
-            MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-            firstTimeRun := FALSE; ! prevents double-dipping at start. 
+            IF lastY > 0 OR lastX > 500 THEN 
+                MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
+                MoveL [[400,-270,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z150,paintBrush;
+            ELSE 
+                MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
+            ENDIF 
+
         ENDIF 
+            
+            
+  
             
         IF (colorToPaint="A") THEN
             !over paint
-            MoveL overA,v500,z0,paintBrush;
+            MoveL overA,v500,z50,paintBrush;
             !into paint
             MoveL colorA,v100,fine,paintBrush;
             !over paint
-            MoveL overA,v500,z0,paintBrush;
+            MoveL overA,v500,z50,paintBrush;
 
         ELSEIF (colorToPaint="B") THEN
             !over paint
-            MoveL overB,v500,z0,paintBrush;
+            MoveL overB,v500,z50,paintBrush;
             !into paint
             MoveL colorB,v100,fine,paintBrush;
             !over paint
-            MoveL overB,v500,z0,paintBrush;
+            MoveL overB,v500,z50,paintBrush;
         ELSEIF (colorToPaint="C") THEN
             !over paint
-            MoveL overC,v500,z0,paintBrush;
+            MoveL overC,v500,z50,paintBrush;
             !into paint
             MoveL colorC,v100,fine,paintBrush;
             !over paint
-            MoveL overC,v500,z0,paintBrush;
+            MoveL overC,v500,z50,paintBrush;
         ELSEIF (colorToPaint="D") THEN
             !over paint
-            MoveL overD,v500,z0,paintBrush;
+            MoveL overD,v500,z50,paintBrush;
             !into paint
             MoveL colorD,v100,fine,paintBrush;
             !over paint
-            MoveL overD,v500,z0,paintBrush;
+            MoveL overD,v500,z50,paintBrush;
         ELSEIF (colorToPaint="E") THEN
             !over paint
-            MoveL overE,v500,z0,paintBrush;
+            MoveL overE,v500,z50,paintBrush;
             !into paint
             MoveL colorE,v100,fine,paintBrush;
             !over paint
-            MoveL overE,v500,z0,paintBrush;
+            MoveL overE,v500,z50,paintBrush;
         ELSEIF (colorToPaint="F") THEN
             !over paint
-            MoveL overF,v500,z0,paintBrush;
+            MoveL overF,v500,z50,paintBrush;
             !into paint
             MoveL colorF,v100,fine,paintBrush;
             !over paint
-            MoveL overF,v500,z0,paintBrush;
+            MoveL overF,v500,z50,paintBrush;
 
         ELSEIF (NOT (colorToPaint=lastColor)) THEN
             !NEED TO CLEAN
-            MoveL overClean,v500,z0,paintBrush;
+            MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
-            MoveL overClean,v500,z0,paintBrush;
-            MoveL overDryer,v500,z0,paintBrush;
+            MoveL overClean,v500,z50,paintBrush;
+            MoveL overDryer,v500,z20,paintBrush;
             MoveL dryer,v100,fine,paintBrush;
-            MoveL overDryer,v500,z0,paintBrush;
+            MoveL overDryer,v500,z50,paintBrush;
             
         ENDIF
         !over target
@@ -702,12 +716,16 @@ MODULE Painter
             lastX:=XTGT;
             lastY:=YTGT;
         ENDIF
-        IF NOT firstTimeRun THEN 
-        MoveL [[376,-290,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-        MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
-        MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+        IF (NOT firstTimeRun) AND (NOT doubleDip) THEN 
+            IF lastY > 0 THEN
+                MoveL [[500,0,canvasHeight+70],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
+            ENDIF 
+            MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush;
+            MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
+
         ENDIF 
         lastColor:=colorToPaint;
+    
     ENDPROC
     
     !***********************************************************
@@ -756,6 +774,6 @@ MODULE Painter
             ErrLog 4800, "Generic Error", "Generic Message",response,"-","-";
             TPWrite "Generic Error: Unknown";
         ENDIF 
-       
+        moveToFinish;
     endproc
 ENDMODULE
