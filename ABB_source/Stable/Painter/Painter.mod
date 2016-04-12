@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.1
+    ! Version: 0.2
     !
     !***********************************************************
     
@@ -64,7 +64,8 @@ MODULE Painter
 
     ! Locations of the painting targets. 
     VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
-    VAR orient paintCupQuat:=[0.51863, 0.50936, 0.49498, -0.476];
+    VAR orient paintCupQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
+    VAR orient paintcleanerQuat:=[0.51863, 0.50936, 0.49498, -0.476];
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
@@ -84,7 +85,9 @@ MODULE Painter
     VAR robtarget overF;
     VAR robtarget colorF;
 
+    VAR robtarget approachClean;
     VAR robtarget overClean;
+    VAR robtarget transClean;
     VAR robtarget clean;
     VAR robtarget overDryer;
     VAR robtarget dryer;
@@ -101,6 +104,9 @@ MODULE Painter
     VAR string lastColor := "A";
     VAR num serialTimeout := 25;
     VAR bool doubleDip := FALSE ;
+    VAR bool brushClean := FALSE; 
+    VAR bool brushDirty := FALSE;
+    VAR bool isRotated := FALSE;
     
     !***********************************************************
     !
@@ -216,10 +222,12 @@ MODULE Painter
         colorF:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
             ! TODO: Accurately describe these locations. 
-        overClean:=[[426,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[426,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[476,-315,cleanerHeight+brushLength],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[476,-315,cleanerHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        approachClean:=[[474,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[474,-447,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        transClean:=[[474,-447,334.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[474,-447,260],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overDryer:=[[306,-447,334.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[306,-447,250],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
@@ -355,12 +363,21 @@ MODULE Painter
         result := processCoordinates(parameters, FALSE);
         IF result = TRUE THEN
             ! are we over the size constraints and in need of a scaling factor?
-            sizeX := tX;
-            sizeY := tY;
+            IF tX > tY THEN 
+                isRotated := TRUE;
+                sizeY := tX;
+                sizeX := tY;                
+            else 
+                sizeX := tX;
+                sizeY := tY;   
+            ENDIF
+
             
             IF sizeX <= 5 OR sizeY <= 5 THEN
                 throwError "canvas", parameters;
             ENDIF 
+            
+
             
             IF (sizeX > (canvasXmax-canvasXmin)) OR (sizeY > (canvasYmax-canvasYmin))THEN
                 ! the Y proportion should be the scaling factor, as it was the smaller number
@@ -374,13 +391,15 @@ MODULE Painter
                 throwError "canvas", parameters;  
             ENDIF 
             
-
+            
                 
         ELSE
             throwError "canvas", parameters;  
             
         ENDIF
-        
+        ! Just in case of trouble later on.         
+        XTGT:=(SF*tX)+canvasXmin;
+        YTGT:=(SF*tY)+canvasYmin;
         RETURN result;
     ENDFUNC 
     !***********************************************************
@@ -440,7 +459,8 @@ MODULE Painter
             WHILE response = "" DO
                 response := readSerial();
                 timeoutCounter:= timeoutCounter + 1;
-                IF timeoutCounter > 20 THEN
+                IF timeoutCounter > 50 THEN
+                    TPWrite "Aborting: Timeout";
                     moveToFinish;
                     Break;
                 ENDIF
@@ -518,6 +538,8 @@ MODULE Painter
     FUNC bool directiveWithParams(string directive, string params)
         VAR bool result;
         VAR bool testCheck;
+        VAR num tempA;
+        VAR num tempB;
         IF directive = "COORD" THEN 
             result := processCoordinates(params, FALSE);
             testCheck:=true;
@@ -525,7 +547,12 @@ MODULE Painter
 
             WriteStrBin iodev1, "\06";
                 
-            
+            IF isRotated THEN 
+                tempA := tX;
+                tempB := tY;  
+                tX:= tempB;
+                tY:= tempA; 
+            ENDIF
             testCheck:=checkForBadPoints( tX,tY);
             XTGT:=(SF*tX)+canvasXmin;
             YTGT:=(SF*tY)+canvasYmin;
@@ -533,15 +560,20 @@ MODULE Painter
             ! After moving, update our case. This ensures that we are starting new strokes
             ! correctly if NEXT was called before this
             newStroke:=FALSE;
+            
+            firstTimeRun := FALSE;
+            
             IF testCheck = TRUE THEN 
             !WriteStrBin iodev1, "\06";
+            
+            
             RETURN TRUE;
             ELSE 
                 WriteStrBin iodev1, "\15";
                 RETURN FALSE;
             ENDIF
             
-            firstTimeRun := FALSE; 
+             
             
         ELSEIF directive = "SWAP" THEN 
                 newStroke := TRUE; 
@@ -602,17 +634,32 @@ MODULE Painter
         niceStroke;
         ConfL\Off;
         IF distanceTravelled>=PAINT_MAX_DIST OR newStroke=TRUE THEN
-            !if we've gone maximum distance or we reach the end of a line. 
+            !if we've gone maximum distance or we reach the end of a line.
+            IF distanceTravelled > (PAINT_MAX_DIST / 2) THEN 
             GotoPaint(currentColor);
             distanceTravelled:=0;
+            ENDIF 
+            
         ENDIF
         IF NOT (newStroke=TRUE) THEN
             distanceTravelled:=distanceTravelled+vectorMag;
         ENDIF
+        
+        IF brushClean THEN
+            IF NOT newStroke THEN 
+            MoveL [[lastX,lastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush;
+            MoveL [[lastX,lastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush;
+            ELSE
+                MoveL [[XCoord,YCoord,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush;
+                
+            ENDIF 
+            brushClean:= FALSE;
+        endif
+        
         MoveL [[XCoord,YCoord,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z0,paintBrush;
         lastX:=XTGT;
         lastY:=YTGT;
-
+        brushDirty:=TRUE;
         ! This moves to point at 100 mm/sec. 
     ENDPROC
     !***********************************************************
@@ -624,6 +671,15 @@ MODULE Painter
     !***********************************************************
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
+            MoveL approachClean, v500,z50,paintBrush;
+            MoveL overClean,v500,z50,paintBrush;
+            MoveL clean,v100,fine,paintBrush;
+            WaitTime 2.5;
+            MoveL transClean, v100, z0, paintBrush;           
+            MoveL overDryer,v500,z20,paintBrush;
+            MoveL dryer,v100,fine,paintBrush;
+            MoveL overDryer,v500,z50,paintBrush;
+            MoveL approachClean, v500,z50,paintBrush;
         IF NOT firstTimeRun THEN 
         MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
         ENDIF 
@@ -641,21 +697,35 @@ MODULE Painter
     PROC GotoPaint(string colorToPaint)
         ! NOTE: Dirty cases here! TODO: test this
         ConfL\Off;
-        !over target
-        IF (not firstTimeRun) AND (not doubleDip) THEN 
+        
+        IF (newStroke=TRUE) THEN
+            lastX:=XTGT;
+            lastY:=YTGT;
+        ENDIF
+        
+        IF brushDirty THEN 
+            ! Area commented - was necessary for changing quaternion.
             ! Move off the canvas before getting paint. 
             !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-            IF lastY > 0 OR lastX > 500 THEN 
-                MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
-                MoveL [[400,-270,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z150,paintBrush;
-            ELSE 
-                MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
-            ENDIF 
-
+            !IF lastY > 0 OR lastX > 500 THEN 
+            !    MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
+            !    MoveL [[400,-270,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z150,paintBrush;
+            !ELSE 
+                MoveL [[lastX,lastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
+            !ENDIF 
+            brushDirty:=FALSE;
         ENDIF 
             
-            
-  
+        IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
+            !NEED TO CLEAN
+            MoveL approachClean, v500,z50,paintBrush;
+            MoveL overClean,v500,z50,paintBrush;
+            thrash 3;          
+            MoveL overDryer,v500,z20,paintBrush;
+            MoveL dryer,v100,fine,paintBrush;
+            MoveL overDryer,v500,z50,paintBrush;
+            MoveL approachClean, v500,z50,paintBrush;
+        ENDIF 
             
         IF (colorToPaint="A") THEN
             !over paint
@@ -700,34 +770,23 @@ MODULE Painter
             MoveL colorF,v100,fine,paintBrush;
             !over paint
             MoveL overF,v500,z50,paintBrush;
-
-        ELSEIF (NOT (colorToPaint=lastColor)) THEN
-            !NEED TO CLEAN
-            MoveL overClean,v500,z50,paintBrush;
-            MoveL clean,v100,fine,paintBrush;
-            MoveL overClean,v500,z50,paintBrush;
-            MoveL overDryer,v500,z20,paintBrush;
-            MoveL dryer,v100,fine,paintBrush;
-            MoveL overDryer,v500,z50,paintBrush;
             
         ENDIF
-        !over target
-        IF (newStroke=TRUE) THEN
-            lastX:=XTGT;
-            lastY:=YTGT;
-        ENDIF
-        IF (NOT firstTimeRun) AND (NOT doubleDip) THEN 
-            IF lastY > 0 THEN
-                MoveL [[500,0,canvasHeight+70],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
-            ENDIF 
-            MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush;
-            MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
 
-        ENDIF 
         lastColor:=colorToPaint;
+        brushClean:=TRUE;
     
     ENDPROC
     
+    PROC thrash(num count)
+        VAR num counter:=1;
+        WHILE counter <= count DO
+            MoveL clean,v100,fine,paintBrush;
+            WaitTime 0.5;
+            MoveL transClean, v100, z0, paintBrush;
+            counter := counter + 1;
+        ENDWHILE
+    ENDPROC 
     !***********************************************************
     !
     ! procedure  niceStroke()
