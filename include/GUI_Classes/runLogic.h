@@ -53,7 +53,7 @@ private:
 	int straighten(std::vector<cv::Point> pts, int index);
 	bool endCheck(std::vector<cv::Point> pts, int index);
 	double angleDiff(cv::Point p1, cv::Point p2);
-	
+	bool RunLogic::tooClose(cv::Point p1, cv::Point p2);
 
 public slots:
 	void updateMode(QString mode, int delay);

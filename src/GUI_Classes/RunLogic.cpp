@@ -259,93 +259,26 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 	if (0) { Ava->curBrush->setDrawMode("paint"); }
 
 	for (size_t i = 0; i < brush_strokes.size(); i++) { //running through vector of polylines
-		//printf("doing stroke %lu/%lu (%lu points)\n", i, brush_strokes.size(), brush_strokes.at(i).size());
 		this->doStroke(brush_strokes.at(i), W, false);
+		printf("\nNEXT STROKE:\n");
 	}
 }
 
 
 // given contiguous pts, draw them in the simulator and optionally using robot
 void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall) {
-	int nloops = 0;
-	int done = 0;
-	while (!done) {
-		nloops++;
-
-		// attempt to draw stroke in simulator window
-		// TBD: somewhere need to set toggle if simulating real paint
-		Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
-		Ava->curBrush->drawContiguousPoints(W, &pts);
-		// if want to use the robot, do so
-		if ((Ava->connected || chappie->connected) && running) { //if(0 && Ava->connected && running){
-			int prevX = pts.at(0).x; int prevY = pts.at(0).y; //initializing loop vars
-			if (chappie->connected) {
-				chappie->sendCoord(prevX, prevY);
-			}
-			int maxPixelstoTry = 10000;  // some limit as expected to run out of paint (unless perhaps using a pen)
-			int c = 0;
-			for (int i = 1; i < pts.size(); i++) { //running through points in one stroke
-				c++;
-				if (c < maxPixelstoTry) {
-					i = straighten(pts, i);
-					if (Ava->connected) {
-						Ava->stroke(cv::Point(prevX, prevY), pts.at(i));
-					}
-					else if (chappie->connected) {////////////////////////////////////////////////////////////////////////////////////////////////////////
-						done = 1;
-						if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
-							break;
-						}
-					}
-					//update loop vars
-					prevX = pts.at(i).x;
-					prevY = pts.at(i).y;
-				}
-			}
-		}
-
-		// check results of work to see if done
-		std::vector<cv::Point> errors; // potentially non-contiguous points that still need to be painted
-		double score; // what % of pixels are of the desired paint color
-		int webcam_feedback = 0; // eventually a toggle
-		if (webcam_feedback) {
-			//cv::mat WEBCAM_IMAGE = Ava->getWebcamImageOfPainting();
-			//score = brush.scorePaintPoints(&WEBCAM_IMAGE, &stroke, &errors, .1, .1);
-		}
-		else {
-			//score = Ava->curBrush->scorePaintPoints(W, &pts, &errors, .1, .1); //this line is causing crashing, atm.
-			score = 0;
-		}
-
-		if (score > 0.0 && score < 0.99) { //not: if score=0, then rerun the entire stroke
-			// redefine pts to be all the points starting from the first error
-			cv::Point first_error = errors.at(0);
-			std::vector<cv::Point> next_loop_pts;
-			int found = 0;
-			for (size_t i = 1; i < pts.size(); i++) { //running through points in one stroke
-				if (pts.at(i).x == first_error.x && pts.at(i).y == first_error.y) { found = 1; }
-				if (found) {
-					next_loop_pts.push_back(pts.at(i));
-				}
-			}
-			printf(" reloop %i (score:%.2f) - %lu -> %lu points\n", nloops, 100 * score, pts.size(), next_loop_pts.size());
-			pts = next_loop_pts;
-			Sleep(100);
-		}
-
-		//Sleep(30);
-
-		// loop limit just so it doesn't loop forever in case brush fails to fully cover stroke
-		if (score > 0.99 || nloops > 12) { done = 1; }
-
-		W->show();
-	}
-
-	if (chappie->connected) {
-		if (!chappie->next()) {
-			return;
+	Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
+	Ava->curBrush->drawContiguousPoints(W, &pts);
+	if(running) {//if (chappie->connected && running) { 
+		for (int i = 0; i < pts.size(); i++) { //running through points in one stroke
+			i = straighten(pts, i);
+			printf("%d/%d\n", i,pts.size()-1);
+			//if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) { break; }
 		}
 	}
+
+	W->show();
+	chappie->next();
 }
 
 
@@ -400,14 +333,16 @@ void RunLogic::setAvaPenColor(Shape *s) {
 }
 
 int RunLogic::straighten(std::vector<cv::Point> pts, int index) {
-	if (endCheck(pts, index)) { return pts.size() - 1; }
-	int done = 0;
+	if (index == 0) { return index; }					 //of course you draw the first point, you twit
+	if (endCheck(pts, index)) { return pts.size() - 1; } //of course you draw the last point, you twit
+	int done = 0; int originalIndex = index;
 
 	double a1 = angleDiff(pts.at(index), pts.at(index + 1));
 	double a2;
 	while (!done) {
 		index++;
-		if (endCheck(pts, index)) { return pts.size() - 1; }
+		if (endCheck(pts, index)) { return pts.size() - 1; } //of course you draw the last point, you twit
+		if (tooClose(pts.at(index), pts.at(originalIndex))) { continue; }
 		a2 = angleDiff(pts.at(index), pts.at(index + 1));
 		done = abs(a1 - a2) > 0.122173; // 7 degrees
 	}
@@ -420,4 +355,8 @@ bool RunLogic::endCheck(std::vector<cv::Point> pts, int index) {
 
 double RunLogic::angleDiff(cv::Point p1, cv::Point p2) {
 	return atan2((p1.y - p2.y), (p1.x - p2.x));
+}
+
+bool RunLogic::tooClose(cv::Point p1, cv::Point p2) {
+	return 10 > sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
