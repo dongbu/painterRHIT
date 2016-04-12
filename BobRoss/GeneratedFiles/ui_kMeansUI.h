@@ -101,16 +101,21 @@ public:
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
         cancel = new QPushButton(layoutWidget);
         cancel->setObjectName(QStringLiteral("cancel"));
+        cancel->setAutoDefault(false);
 
         horizontalLayout_2->addWidget(cancel);
 
         accept = new QPushButton(layoutWidget);
         accept->setObjectName(QStringLiteral("accept"));
+        accept->setAutoDefault(false);
 
         horizontalLayout_2->addWidget(accept);
 
 
         retranslateUi(kMeans);
+
+        accept->setDefault(true);
+
 
         QMetaObject::connectSlotsByName(kMeans);
     } // setupUi

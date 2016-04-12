@@ -221,7 +221,7 @@ public:
 
 			if ((signed)contours_poly[i].size()>min_contour_length) {
 				// printf("Contour:%i [%lu points]\n",i,contours_poly[i].size());
-				for (size_t j = 0; j < contours_poly[i].size(); j+=skip_freq) {
+				for (size_t j = 0; j < contours_poly[i].size(); j++) {
 					//printf("(%i,%i)",contours[i][j].x,contours[i][j].y);
 					//if (j!=contours_poly[i].size()-1) { printf(","); }
 					PL->addPoint(contours_poly[i][j].x, contours_poly[i][j].y);
@@ -612,7 +612,7 @@ public:
 				PixelRegion *PR = new PixelRegion();
 				PR->setPenColor(region_colors[r][0], region_colors[r][1], region_colors[r][2]);
 
-				for (int p = 0; p < regions[r].size(); p += skip_freq) {
+				for (int p = 0; p < regions[r].size(); p ++) {
 					PR->addPoint(regions[r][p].x, regions[r][p].y);
 				}
 				S->addShape(PR);

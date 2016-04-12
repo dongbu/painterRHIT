@@ -23,7 +23,13 @@ int main(int argc, char *argv[])
 	//console window//
 	AllocConsole();
 
-	SetConsoleTitleA("Robot Artist v3 (4/11/16)");
+	std::string  titleString = "Robot Artist V3 (";
+	std::string date = __DATE__;
+	std::string titleEnd = ")";
+
+
+
+	SetConsoleTitleA((titleString + date + titleEnd).c_str());
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);

@@ -257,8 +257,8 @@ bool ABBRunner::connectToSerial(int port) {
 
 	//setting timeouts
 	COMMTIMEOUTS timeouts = { 0 };
-	timeouts.ReadIntervalTimeout = 15000;
-	timeouts.ReadTotalTimeoutConstant = 15000;
+	timeouts.ReadIntervalTimeout = 25000;
+	timeouts.ReadTotalTimeoutConstant = 25000;
 	timeouts.ReadTotalTimeoutMultiplier = 10;
 	timeouts.WriteTotalTimeoutConstant = 100;
 	timeouts.WriteTotalTimeoutMultiplier = 10;
