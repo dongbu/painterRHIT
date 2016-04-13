@@ -184,7 +184,7 @@ void RunLogic::runClicked() {
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
-		Ava->curBrush = new Brush(3, 3, "ellipse");
+		Ava->curBrush = new Brush(4, 4, "ellipse");
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
@@ -273,6 +273,8 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSm
 		for (int i = 0; i < pts.size(); i++) { //running through points in one stroke
 			i = straighten(pts, i);
 			//printf("%d/%d\n", i,pts.size()-1);
+			W->show();
+			chappie->update();
 			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) { break; }
 		}
 	}
@@ -300,6 +302,8 @@ void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 		}
 		else { Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y); }
 		if (chappie->connected) {
+			chappie->update();
+			W->show();
 			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
 				return;
 			}
@@ -342,6 +346,7 @@ int RunLogic::straighten(std::vector<cv::Point> pts, int index) {
 	while (!done) {
 		index++;
 		if (endCheck(pts, index)) { return pts.size() - 1; } //of course you draw the last point, you twit
+		if (tooFar(pts.at(index), pts.at(originalIndex))) { return index; }
 		if (tooClose(pts.at(index), pts.at(originalIndex))) { continue; }
 		a2 = angleDiff(pts.at(index), pts.at(index + 1));
 		done = abs(a1 - a2) > 0.122173; // 7 degrees
@@ -359,4 +364,8 @@ double RunLogic::angleDiff(cv::Point p1, cv::Point p2) {
 
 bool RunLogic::tooClose(cv::Point p1, cv::Point p2) {
 	return 10 > sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+}
+
+bool RunLogic::tooFar(cv::Point p1, cv::Point p2) {
+	return 50 < sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
