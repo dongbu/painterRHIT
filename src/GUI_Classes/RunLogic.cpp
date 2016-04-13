@@ -184,7 +184,7 @@ void RunLogic::runClicked() {
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
-		Ava->curBrush = new Brush(6, 6, "ellipse");
+		Ava->curBrush = new Brush(3, 3, "ellipse");
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
@@ -269,11 +269,11 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall) {
 	Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
 	Ava->curBrush->drawContiguousPoints(W, &pts);
-	if(running) {//if (chappie->connected && running) { 
+	if (chappie->connected && running) { 
 		for (int i = 0; i < pts.size(); i++) { //running through points in one stroke
 			i = straighten(pts, i);
-			printf("%d/%d\n", i,pts.size()-1);
-			//if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) { break; }
+			//printf("%d/%d\n", i,pts.size()-1);
+			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) { break; }
 		}
 	}
 
