@@ -718,12 +718,8 @@ MODULE Painter
             
         IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
             !NEED TO CLEAN
-            MoveL approachClean, v500,z50,paintBrush;
-            MoveL overClean,v500,z50,paintBrush;
-            thrash 3;          
-            MoveL overDryer,v500,z20,paintBrush;
-            MoveL dryer,v100,fine,paintBrush;
-            MoveL overDryer,v500,z50,paintBrush;
+            MoveL approachClean, v500,z50,paintBrush;           
+            cleanCycle 3;    
             MoveL approachClean, v500,z50,paintBrush;
         ENDIF 
             
@@ -778,12 +774,16 @@ MODULE Painter
     
     ENDPROC
     
-    PROC thrash(num count)
+    PROC cleanCycle(num count)
         VAR num counter:=1;
         WHILE counter <= count DO
+            MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             WaitTime 0.5;
             MoveL transClean, v100, z0, paintBrush;
+            MoveL overDryer,v500,z20,paintBrush;
+            MoveL dryer,v100,fine,paintBrush;
+            MoveL overDryer,v500,z50,paintBrush;
             counter := counter + 1;
         ENDWHILE
     ENDPROC 
