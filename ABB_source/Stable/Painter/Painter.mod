@@ -221,13 +221,12 @@ MODULE Painter
         overF:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         colorF:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
-            ! TODO: Accurately describe these locations. 
-        approachClean:=[[474,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overClean:=[[474,-447,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        transClean:=[[474,-447,334.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[474,-447,260],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[306,-447,334.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[306,-447,250],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[465,-449,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        transClean:=[[465,-449,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[465,-449,267],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overDryer:=[[277,-452,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[277,-452,168],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
@@ -512,6 +511,7 @@ MODULE Painter
         IF directive = "NEXT" THEN 
             WriteStrBin iodev1, "\06";
             newStroke:=TRUE;
+            
             RETURN TRUE;
             
         ELSEIF directive = "END" THEN 
@@ -639,7 +639,10 @@ MODULE Painter
             GotoPaint(currentColor);
             distanceTravelled:=0;
             ENDIF 
-            
+            IF newStroke AND (NOT firstTimeRun) THEN 
+                MoveL [[lastX,lastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush; 
+                MoveL [[XCoord,YCoord,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush; 
+            ENDIF 
         ENDIF
         IF NOT (newStroke=TRUE) THEN
             distanceTravelled:=distanceTravelled+vectorMag;
@@ -719,7 +722,7 @@ MODULE Painter
         IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
             !NEED TO CLEAN
             MoveL approachClean, v500,z50,paintBrush;           
-            cleanCycle 3;    
+            cleanCycle 2;    
             MoveL approachClean, v500,z50,paintBrush;
         ENDIF 
             
@@ -783,6 +786,7 @@ MODULE Painter
             MoveL transClean, v100, z0, paintBrush;
             MoveL overDryer,v500,z20,paintBrush;
             MoveL dryer,v100,fine,paintBrush;
+            WaitTime 1;
             MoveL overDryer,v500,z50,paintBrush;
             counter := counter + 1;
         ENDWHILE
