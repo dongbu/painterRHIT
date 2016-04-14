@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.2
+    ! Version: 0.3
     !
     !***********************************************************
     
@@ -85,6 +85,12 @@ MODULE Painter
     VAR robtarget overF;
     VAR robtarget colorF;
 
+    VAR robtarget overG;
+    VAR robtarget colorG;
+
+    VAR robtarget overH;
+    VAR robtarget colorH;
+    
     VAR robtarget approachClean;
     VAR robtarget overClean;
     VAR robtarget transClean;
@@ -165,7 +171,7 @@ MODULE Painter
         WHILE response = "" DO
             response := readSerial();
         ENDWHILE
-            
+            TPWrite response;
         
         ! Slice this up into directive and parameters
         endTokenPos:=StrFind(response, 1, ";");
@@ -221,6 +227,12 @@ MODULE Painter
         overF:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         colorF:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
 
+        overG:=[[576,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorG:=[[576,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+
+        overH:=[[626,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        colorH:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        
         approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         overClean:=[[465,-449,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         transClean:=[[465,-449,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
@@ -340,9 +352,9 @@ MODULE Painter
         ENDIF
         
         ! NOTE: Recursion here! Warning: this may or may not be good. TODO: test this
-        IF multiCoordMessage = TRUE AND result = TRUE THEN 
-            result := processCoordinates(remainingMessage, TRUE);
-        ENDIF 
+        !IF multiCoordMessage = TRUE AND result = TRUE THEN 
+        !    result := processCoordinates(remainingMessage, TRUE);
+        !ENDIF 
         
         RETURN result;
     endfunc 
@@ -464,7 +476,7 @@ MODULE Painter
                     Break;
                 ENDIF
             ENDWHILE
-            serialTimeout := 0.1;
+            !serialTimeout := 0.1;
             TPWrite response;
             
             endTokenPos:=StrFind(response, 1, ";");
@@ -687,6 +699,8 @@ MODULE Painter
         MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
         ENDIF 
         MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        WriteStrBin iodev1, "\15";
+        Close iodev1;
         Stop;
     ENDPROC 
     !***********************************************************
@@ -769,7 +783,20 @@ MODULE Painter
             MoveL colorF,v100,fine,paintBrush;
             !over paint
             MoveL overF,v500,z50,paintBrush;
-            
+        ELSEIF (colorToPaint="G") THEN
+            !over paint
+            MoveL overG,v500,z50,paintBrush;
+            !into paint
+            MoveL colorG,v100,fine,paintBrush;
+            !over paint
+            MoveL overG,v500,z50,paintBrush;
+        ELSEIF (colorToPaint="H") THEN
+            !over paint
+            MoveL overH,v500,z50,paintBrush;
+            !into paint
+            MoveL colorH,v100,fine,paintBrush;
+            !over paint
+            MoveL overH,v500,z50,paintBrush;            
         ENDIF
 
         lastColor:=colorToPaint;
