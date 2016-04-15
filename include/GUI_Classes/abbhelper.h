@@ -18,10 +18,10 @@ public:
     explicit ABBHelper(QWidget *parent = 0);
     ~ABBHelper();
 
-	bool colorUsed[6]; //true if using color in spot
-	int colorR[6];
-	int colorG[6];
-	int colorB[6];
+	bool colorUsed[8]; //true if using color in spot
+	int colorR[8];
+	int colorG[8];
+	int colorB[8];
 	int portNum;
 
 

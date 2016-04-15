@@ -31,6 +31,8 @@ void ABBHelper::connectCheckBoxes() {
 	connect(ui->checkBox_c4, SIGNAL(stateChanged(int)), this, SLOT(updateSpins(int)));
 	connect(ui->checkBox_c5, SIGNAL(stateChanged(int)), this, SLOT(updateSpins(int)));
 	connect(ui->checkBox_c6, SIGNAL(stateChanged(int)), this, SLOT(updateSpins(int)));
+	connect(ui->checkBox_c7, SIGNAL(stateChanged(int)), this, SLOT(updateSpins(int)));
+	connect(ui->checkBox_c8, SIGNAL(stateChanged(int)), this, SLOT(updateSpins(int)));
 }
 
 //connect the spinboxes to update samples
@@ -59,12 +61,18 @@ void ABBHelper::setupSpinBoxes() {
 	connect(ui->spinBox_c6R, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
 	connect(ui->spinBox_c6G, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
 	connect(ui->spinBox_c6B, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
-
+	//color 7
+	connect(ui->spinBox_c7R, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
+	connect(ui->spinBox_c7G, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
+	connect(ui->spinBox_c7B, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
+	//color 8
+	connect(ui->spinBox_c8R, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
+	connect(ui->spinBox_c8G, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
+	connect(ui->spinBox_c8B, SIGNAL(valueChanged(int)), this, SLOT(updateColors()));
 }
 
 //update the spinBoxes to be enabled/disabled based on check boxes
 void ABBHelper::updateSpins(int val) {
-
 	bool enable1 = ui->checkBox_c1->isChecked();
 	ui->label_c1Sample->setEnabled(enable1);
 	ui->spinBox_c1R->setEnabled(enable1);
@@ -101,7 +109,19 @@ void ABBHelper::updateSpins(int val) {
 	ui->spinBox_c6G->setEnabled(enable6);
 	ui->spinBox_c6B->setEnabled(enable6);
 
-	if (enable1 || enable2 || enable3 || enable4 || enable5 || enable6) {
+	bool enable7 = ui->checkBox_c7->isChecked();
+	ui->label_c7Sample->setEnabled(enable7);
+	ui->spinBox_c7R->setEnabled(enable7);
+	ui->spinBox_c7G->setEnabled(enable7);
+	ui->spinBox_c7B->setEnabled(enable7);
+
+	bool enable8 = ui->checkBox_c8->isChecked();
+	ui->label_c8Sample->setEnabled(enable8);
+	ui->spinBox_c8R->setEnabled(enable8);
+	ui->spinBox_c8G->setEnabled(enable8);
+	ui->spinBox_c8B->setEnabled(enable8);
+
+	if (enable1 || enable2 || enable3 || enable4 || enable5 || enable6 || enable7 || enable8) {
 		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	}
 	else {
@@ -171,7 +191,25 @@ void ABBHelper::updateColors() {
 	c6Pal.setColor(QPalette::Window, c6Col);
 	ui->label_c6Sample->setPalette(c6Pal);
 
-
+	//update c7
+	ui->label_c7Sample->setAutoFillBackground(true);
+	QPalette c7Pal = ui->label_c7Sample->palette();
+	int r7 = ui->spinBox_c7R->value();
+	int g7 = ui->spinBox_c7G->value();
+	int b7 = ui->spinBox_c7B->value();
+	QColor c7Col = QColor(r7, g7, b7);
+	c7Pal.setColor(QPalette::Window, c7Col);
+	ui->label_c7Sample->setPalette(c7Pal);
+	
+	//update c8
+	ui->label_c8Sample->setAutoFillBackground(true);
+	QPalette c8Pal = ui->label_c8Sample->palette();
+	int r8 = ui->spinBox_c8R->value();
+	int g8 = ui->spinBox_c8G->value();
+	int b8 = ui->spinBox_c8B->value();
+	QColor c8Col = QColor(r8, g8, b8);
+	c8Pal.setColor(QPalette::Window, c8Col);
+	ui->label_c8Sample->setPalette(c8Pal);
 }
 
 
@@ -220,6 +258,22 @@ void ABBHelper::acceptPressed() {
 		this->colorR[5] = ui->spinBox_c6R->value();
 		this->colorG[5] = ui->spinBox_c6G->value();
 		this->colorB[5] = ui->spinBox_c6B->value();
+	}
+
+	//color 7
+	this->colorUsed[6] = (ui->checkBox_c7->isChecked());
+	if (colorUsed[6]) {
+		this->colorR[6] = ui->spinBox_c7R->value();
+		this->colorG[6] = ui->spinBox_c7G->value();
+		this->colorB[6] = ui->spinBox_c7B->value();
+	}
+
+	//color 8
+	this->colorUsed[7] = (ui->checkBox_c8->isChecked());
+	if (colorUsed[7]) {
+		this->colorR[7] = ui->spinBox_c8R->value();
+		this->colorG[7] = ui->spinBox_c8G->value();
+		this->colorB[7] = ui->spinBox_c8B->value();
 	}
 	
 	//done with colors, tell ABBRunner

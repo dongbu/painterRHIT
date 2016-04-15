@@ -28,6 +28,12 @@ class Ui_ABBHelper
 public:
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
+    QCheckBox *checkBox_c7;
+    QSpinBox *spinBox_c7R;
+    QSpinBox *spinBox_c7G;
+    QSpinBox *spinBox_c7B;
+    QSpinBox *spinBox_c8R;
+    QSpinBox *spinBox_c8G;
     QLabel *label_BlueTitle;
     QLabel *label_SampleTitle;
     QLabel *label_GreenTitle;
@@ -63,6 +69,10 @@ public:
     QSpinBox *spinBox_c6R;
     QSpinBox *spinBox_c6G;
     QSpinBox *spinBox_c6B;
+    QCheckBox *checkBox_c8;
+    QSpinBox *spinBox_c8B;
+    QLabel *label_c7Sample;
+    QLabel *label_c8Sample;
     QLabel *label_Port;
     QDialogButtonBox *buttonBox;
     QSpinBox *spinBox_comNum;
@@ -74,10 +84,50 @@ public:
         ABBHelper->resize(489, 375);
         gridLayoutWidget = new QWidget(ABBHelper);
         gridLayoutWidget->setObjectName(QStringLiteral("gridLayoutWidget"));
-        gridLayoutWidget->setGeometry(QRect(10, 60, 451, 251));
+        gridLayoutWidget->setGeometry(QRect(10, 60, 451, 272));
         gridLayout = new QGridLayout(gridLayoutWidget);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
+        checkBox_c7 = new QCheckBox(gridLayoutWidget);
+        checkBox_c7->setObjectName(QStringLiteral("checkBox_c7"));
+
+        gridLayout->addWidget(checkBox_c7, 7, 0, 1, 1);
+
+        spinBox_c7R = new QSpinBox(gridLayoutWidget);
+        spinBox_c7R->setObjectName(QStringLiteral("spinBox_c7R"));
+        spinBox_c7R->setEnabled(false);
+        spinBox_c7R->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c7R, 7, 1, 1, 1);
+
+        spinBox_c7G = new QSpinBox(gridLayoutWidget);
+        spinBox_c7G->setObjectName(QStringLiteral("spinBox_c7G"));
+        spinBox_c7G->setEnabled(false);
+        spinBox_c7G->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c7G, 7, 2, 1, 1);
+
+        spinBox_c7B = new QSpinBox(gridLayoutWidget);
+        spinBox_c7B->setObjectName(QStringLiteral("spinBox_c7B"));
+        spinBox_c7B->setEnabled(false);
+        spinBox_c7B->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c7B, 7, 3, 1, 1);
+
+        spinBox_c8R = new QSpinBox(gridLayoutWidget);
+        spinBox_c8R->setObjectName(QStringLiteral("spinBox_c8R"));
+        spinBox_c8R->setEnabled(false);
+        spinBox_c8R->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c8R, 8, 1, 1, 1);
+
+        spinBox_c8G = new QSpinBox(gridLayoutWidget);
+        spinBox_c8G->setObjectName(QStringLiteral("spinBox_c8G"));
+        spinBox_c8G->setEnabled(false);
+        spinBox_c8G->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c8G, 8, 2, 1, 1);
+
         label_BlueTitle = new QLabel(gridLayoutWidget);
         label_BlueTitle->setObjectName(QStringLiteral("label_BlueTitle"));
 
@@ -295,6 +345,30 @@ public:
 
         gridLayout->addWidget(spinBox_c6B, 6, 3, 1, 1);
 
+        checkBox_c8 = new QCheckBox(gridLayoutWidget);
+        checkBox_c8->setObjectName(QStringLiteral("checkBox_c8"));
+
+        gridLayout->addWidget(checkBox_c8, 8, 0, 1, 1);
+
+        spinBox_c8B = new QSpinBox(gridLayoutWidget);
+        spinBox_c8B->setObjectName(QStringLiteral("spinBox_c8B"));
+        spinBox_c8B->setEnabled(false);
+        spinBox_c8B->setMaximum(255);
+
+        gridLayout->addWidget(spinBox_c8B, 8, 3, 1, 1);
+
+        label_c7Sample = new QLabel(gridLayoutWidget);
+        label_c7Sample->setObjectName(QStringLiteral("label_c7Sample"));
+        label_c7Sample->setEnabled(false);
+
+        gridLayout->addWidget(label_c7Sample, 7, 4, 1, 1);
+
+        label_c8Sample = new QLabel(gridLayoutWidget);
+        label_c8Sample->setObjectName(QStringLiteral("label_c8Sample"));
+        label_c8Sample->setEnabled(false);
+
+        gridLayout->addWidget(label_c8Sample, 8, 4, 1, 1);
+
         label_Port = new QLabel(ABBHelper);
         label_Port->setObjectName(QStringLiteral("label_Port"));
         label_Port->setGeometry(QRect(60, 20, 51, 21));
@@ -317,16 +391,17 @@ public:
     void retranslateUi(QWidget *ABBHelper)
     {
         ABBHelper->setWindowTitle(QApplication::translate("ABBHelper", "ABB Parameters", 0));
+        checkBox_c7->setText(QApplication::translate("ABBHelper", "Color G", 0));
         label_BlueTitle->setText(QApplication::translate("ABBHelper", "Blue", 0));
         label_SampleTitle->setText(QApplication::translate("ABBHelper", "Sample", 0));
         label_GreenTitle->setText(QApplication::translate("ABBHelper", "Green", 0));
         label_RedTitle->setText(QApplication::translate("ABBHelper", "Red", 0));
-        checkBox_c2->setText(QApplication::translate("ABBHelper", "Color 2", 0));
-        checkBox_c4->setText(QApplication::translate("ABBHelper", "Color 4", 0));
-        checkBox_c6->setText(QApplication::translate("ABBHelper", "Color 6", 0));
-        checkBox_c1->setText(QApplication::translate("ABBHelper", "Color 1", 0));
-        checkBox_c5->setText(QApplication::translate("ABBHelper", "Color 5", 0));
-        checkBox_c3->setText(QApplication::translate("ABBHelper", "Color 3", 0));
+        checkBox_c2->setText(QApplication::translate("ABBHelper", "Color B", 0));
+        checkBox_c4->setText(QApplication::translate("ABBHelper", "Color D", 0));
+        checkBox_c6->setText(QApplication::translate("ABBHelper", "Color F", 0));
+        checkBox_c1->setText(QApplication::translate("ABBHelper", "Color A", 0));
+        checkBox_c5->setText(QApplication::translate("ABBHelper", "Color E", 0));
+        checkBox_c3->setText(QApplication::translate("ABBHelper", "Color C", 0));
         label_SlotTitle->setText(QApplication::translate("ABBHelper", "Slot In Use", 0));
         label_c1Sample->setText(QString());
         label_c2Sample->setText(QString());
@@ -334,6 +409,9 @@ public:
         label_c4Sample->setText(QString());
         label_c5Sample->setText(QString());
         label_c6Sample->setText(QString());
+        checkBox_c8->setText(QApplication::translate("ABBHelper", "Color H", 0));
+        label_c7Sample->setText(QString());
+        label_c8Sample->setText(QString());
         label_Port->setText(QApplication::translate("ABBHelper", "<html><head/><body><p><span style=\" font-size:10pt;\">Port:</span></p></body></html>", 0));
         spinBox_comNum->setPrefix(QApplication::translate("ABBHelper", "COM", 0));
     } // retranslateUi

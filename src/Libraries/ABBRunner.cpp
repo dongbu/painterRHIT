@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 
-
+#define maxColors 8
 
 //CONSTRUCTOR/DESTRUCTOR///////////////////////
 ABBRunner::ABBRunner(int width, int height)
@@ -42,9 +42,21 @@ bool ABBRunner::sendCoord(int x, int y) {
 void ABBRunner::abort() {
 	connected = false;
 	printf("Closing Serial Port \"COM");
-	std::cout << helps->portNum;
+	if (helps != NULL) {
+		if (helps->portNum != NULL) {
+			std::cout << helps->portNum;
+		}
+		else {
+			std::cout << "#2#";
+		}
+	}
+	else {
+		std::cout << "#1#";
+	}
 	printf("\"\n");
-	CloseHandle(hSerial);
+	if (hSerial) {
+		CloseHandle(hSerial);
+	}
 }
 
 //tells the robot that the end of a stroke sequence has been reached
@@ -77,7 +89,7 @@ void ABBRunner::decidePaint(int r, int g, int b) {
 	int closestId = 0;
 	int closestNum = -1;
 	//loop to find smallest distance
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < maxColors; i++) {
 		if (!colorUsed[i]) {
 			continue;
 		}
@@ -297,8 +309,15 @@ bool ABBRunner::changeColor(int colorNum) {
 	case 5:
 		colorLet = "F";
 		break;
+	case 6:
+		colorLet = "G";
+		break;
+	case 7:
+		colorLet = "H";
+		break;
 	default:
-		colorLet = "G";//G for Garbage
+		colorLet = "J"; //J for junk
+		printf("check max colors and compare with changeColor function\n");
 		break;
 	}
 	std::string command = "SWAP:" + colorLet + ";";
@@ -315,6 +334,7 @@ bool ABBRunner::changeColor(int colorNum) {
 //SETUP WINDOWS/////////////////////////////////
 //shows the window for connecting to ABB
 void ABBRunner::connectWin() {
+	printf("connect win called\n");
 	helps = new ABBHelper();
 	helps->show();
 	connect(helps, SIGNAL(acceptedABB()), this, SLOT(acceptedWin()));
@@ -322,7 +342,7 @@ void ABBRunner::connectWin() {
 }
 
 void ABBRunner::acceptedWin() {
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < maxColors; i++) {
 		this->colorUsed[i] = helps->colorUsed[i];
 		this->colorR[i] = helps->colorR[i];
 		this->colorG[i] = helps->colorG[i];

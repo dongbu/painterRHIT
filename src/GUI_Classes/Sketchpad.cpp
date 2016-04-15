@@ -641,6 +641,7 @@ void Sketchpad::connectRobot(){
 	printf("robot selected\n");
 	if (robotSelected == 1){
 		if (!chappie->connected) {
+			Sleep(100);
 			chappie->connectWin();
 			ui->actionConnect->setText("Disconnect");
 		}

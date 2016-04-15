@@ -260,7 +260,6 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 
 	for (size_t i = 0; i < brush_strokes.size(); i++) { //running through vector of polylines
 		this->doStroke(brush_strokes.at(i), W, false);
-		printf("\nNEXT STROKE:\n");
 	}
 }
 
@@ -302,8 +301,6 @@ void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 		}
 		else { Ava->curBrush->drawLine(W, prevX, prevY, pts.at(i).x, pts.at(i).y); }
 		if (chappie->connected) {
-			chappie->update();
-			W->show();
 			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) {
 				return;
 			}

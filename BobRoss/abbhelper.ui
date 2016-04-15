@@ -19,10 +19,67 @@
      <x>10</x>
      <y>60</y>
      <width>451</width>
-     <height>251</height>
+     <height>272</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="checkBox_c7">
+      <property name="text">
+       <string>Color G</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QSpinBox" name="spinBox_c7R">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QSpinBox" name="spinBox_c7G">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QSpinBox" name="spinBox_c7B">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QSpinBox" name="spinBox_c8R">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QSpinBox" name="spinBox_c8G">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="3">
      <widget class="QLabel" name="label_BlueTitle">
       <property name="text">
@@ -54,42 +111,42 @@
     <item row="2" column="0">
      <widget class="QCheckBox" name="checkBox_c2">
       <property name="text">
-       <string>Color 2</string>
+       <string>Color B</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
      <widget class="QCheckBox" name="checkBox_c4">
       <property name="text">
-       <string>Color 4</string>
+       <string>Color D</string>
       </property>
      </widget>
     </item>
     <item row="6" column="0">
      <widget class="QCheckBox" name="checkBox_c6">
       <property name="text">
-       <string>Color 6</string>
+       <string>Color F</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QCheckBox" name="checkBox_c1">
       <property name="text">
-       <string>Color 1</string>
+       <string>Color A</string>
       </property>
      </widget>
     </item>
     <item row="5" column="0">
      <widget class="QCheckBox" name="checkBox_c5">
       <property name="text">
-       <string>Color 5</string>
+       <string>Color E</string>
       </property>
      </widget>
     </item>
     <item row="3" column="0">
      <widget class="QCheckBox" name="checkBox_c3">
       <property name="text">
-       <string>Color 3</string>
+       <string>Color C</string>
       </property>
      </widget>
     </item>
@@ -337,6 +394,43 @@
       </property>
       <property name="maximum">
        <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QCheckBox" name="checkBox_c8">
+      <property name="text">
+       <string>Color H</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="3">
+     <widget class="QSpinBox" name="spinBox_c8B">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QLabel" name="label_c7Sample">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="4">
+     <widget class="QLabel" name="label_c8Sample">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>
