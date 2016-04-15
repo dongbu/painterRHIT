@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.3
+    ! Version: 0.4
     !
     !***********************************************************
     
@@ -97,13 +97,15 @@ MODULE Painter
     VAR robtarget clean;
     VAR robtarget overDryer;
     VAR robtarget dryer;
+    VAR robtarget dryerL;
+    VAR robtarget dryerH;
     !    
     VAR bool newStroke;
     VAR num distanceTravelled := 0;
     ! UI Variables/Constants
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
-    CONST string my_buttons{2}:=["Ready","Abort"];
+    CONST string my_buttons{4}:=["Ready","Clean", "Super-Dry","Abort"];
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
@@ -122,27 +124,36 @@ MODULE Painter
     !
     !***********************************************************
     PROC main()
-        IF PPMovedInManMode() THEN
-            answer:= UIMessageBox(
-                \Header:="Pre-Paint Com Checks"
-                \MsgArray:=my_message
-                \BtnArray:=my_buttons
-                \Icon:=iconInfo);
-            IF answer = 1 THEN
-                ! Operator said ready
-                paintProgram;
-    !        ELSEIF answer = 2 THEN 
-    !            ! operator said abort
-            ENDIF 
-
-        ELSE
-        TPWrite "Program Started. Assuming that BobRoss host is online on COM1";
-        paintProgram;
-
-        ENDIF
-
-
-        
+        ConfL\Off;
+        initializeColors;
+            
+        answer:= UIMessageBox(
+            \Header:="Pre-Paint Com Checks"
+            \MsgArray:=my_message
+            \BtnArray:=my_buttons
+            \Icon:=iconInfo);
+        IF answer = 1 THEN
+            ! Operator said ready
+            paintProgram;
+        ELSEIF answer = 2 THEN 
+            ! operator said clean
+            MoveL approachClean, v500,z50,paintBrush;
+            cleanCycle 1;
+            MoveL approachClean, v500,z50,paintBrush;
+            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        ELSEIF answer = 3 THEN 
+            MoveL approachClean, v500,z50,paintBrush;
+            MoveL overDryer,v500,z20,paintBrush;
+            MoveL dryer,v100,fine,paintBrush;
+            WaitTime 3;
+            MoveL overDryer,v500,z50,paintBrush;
+            MoveL approachClean, v500,z50,paintBrush;
+            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        ELSE 
+            ! Really? You hit "Abort?"
+            Stop;
+        ENDIF      
+       
 
     ENDPROC
     
@@ -161,7 +172,6 @@ MODULE Painter
         VAR string params;
         VAR num endTokenPos;
         
-        initializeColors;
         Open "COM1:", iodev1 \Bin;
         ClearIOBuff iodev1;
         ClearRawBytes rawMsgData;
@@ -169,6 +179,7 @@ MODULE Painter
         WriteStrBin iodev1, "\05";
         response := readSerial();
         WHILE response = "" DO
+            WriteStrBin iodev1, "\05";
             response := readSerial();
         ENDWHILE
             TPWrite response;
@@ -236,9 +247,11 @@ MODULE Painter
         approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         overClean:=[[465,-449,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         transClean:=[[465,-449,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[465,-449,267],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[465,-449,265],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         overDryer:=[[277,-452,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[277,-452,168],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[276,-452,166],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerL:=[[276,-452,164],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerH:=[[276,-452,168],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
@@ -687,21 +700,15 @@ MODULE Painter
     PROC moveToFinish()
         ! TODO: To be tested. We want to move to a nice parking spot when we are done. 
             MoveL approachClean, v500,z50,paintBrush;
-            MoveL overClean,v500,z50,paintBrush;
-            MoveL clean,v100,fine,paintBrush;
-            WaitTime 2.5;
-            MoveL transClean, v100, z0, paintBrush;           
-            MoveL overDryer,v500,z20,paintBrush;
-            MoveL dryer,v100,fine,paintBrush;
-            MoveL overDryer,v500,z50,paintBrush;
+            cleanCycle 2;
             MoveL approachClean, v500,z50,paintBrush;
         IF NOT firstTimeRun THEN 
         MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
         ENDIF 
         MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
         WriteStrBin iodev1, "\15";
-        Close iodev1;
-        Stop;
+        Close iodev1;        
+        main;
     ENDPROC 
     !***********************************************************
     !
@@ -736,7 +743,7 @@ MODULE Painter
         IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
             !NEED TO CLEAN
             MoveL approachClean, v500,z50,paintBrush;           
-            cleanCycle 2;    
+            cleanCycle 1;    
             MoveL approachClean, v500,z50,paintBrush;
         ENDIF 
             
@@ -821,6 +828,18 @@ MODULE Painter
             MoveL overDryer,v500,z50,paintBrush;
             counter := counter + 1;
         ENDWHILE
+            MoveL overClean,v500,z50,paintBrush;
+            MoveL clean,v100,fine,paintBrush;
+            WaitTime 1;
+            MoveL transClean, v100, z0, paintBrush;
+            MoveL overDryer,v500,z20,paintBrush;
+            MoveL dryerL,v100,fine,paintBrush;
+            WaitTime 0.5;
+            MoveL dryer,v5,fine,paintBrush;
+            WaitTime 0.5;
+            MoveL dryerH,v10,fine,paintBrush; 
+            WaitTime 0.5;
+            MoveL overDryer,v500,z50,paintBrush;
     ENDPROC 
     !***********************************************************
     !
