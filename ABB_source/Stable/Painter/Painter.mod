@@ -470,13 +470,13 @@ MODULE Painter
             WHILE response = "" DO
                 response := readSerial();
                 timeoutCounter:= timeoutCounter + 1;
-                IF timeoutCounter > 50 THEN
+                IF timeoutCounter > 500 THEN
                     TPWrite "Aborting: Timeout";
                     moveToFinish;
                     Break;
                 ENDIF
             ENDWHILE
-            !serialTimeout := 0.1;
+            serialTimeout := 0.1;
             TPWrite response;
             
             endTokenPos:=StrFind(response, 1, ";");
@@ -742,19 +742,23 @@ MODULE Painter
             
         IF (colorToPaint="A") THEN
             !over paint
+            MoveL overC,v500,z50,paintBrush;
             MoveL overA,v500,z50,paintBrush;
             !into paint
             MoveL colorA,v100,fine,paintBrush;
             !over paint
             MoveL overA,v500,z50,paintBrush;
+            MoveL overC,v500,z50,paintBrush;
 
         ELSEIF (colorToPaint="B") THEN
             !over paint
+            MoveL overC,v500,z50,paintBrush;
             MoveL overB,v500,z50,paintBrush;
             !into paint
             MoveL colorB,v100,fine,paintBrush;
             !over paint
             MoveL overB,v500,z50,paintBrush;
+            MoveL overC,v500,z50,paintBrush;
         ELSEIF (colorToPaint="C") THEN
             !over paint
             MoveL overC,v500,z50,paintBrush;
