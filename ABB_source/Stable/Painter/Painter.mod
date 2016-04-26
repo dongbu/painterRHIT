@@ -36,7 +36,7 @@ MODULE Painter
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
     ! Orientation constants
-    VAR orient ZeroZeroQuat:=[0.7071067811,0.01906,0.7071067811,0.01904];    
+    VAR orient ZeroZeroQuat:=[0.70427,0.02028,0.71115,0.01996];    
        
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
@@ -63,9 +63,9 @@ MODULE Painter
     VAR num vectorMag;
 
     ! Locations of the painting targets. 
-    VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
-    VAR orient paintCupQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
-    VAR orient paintcleanerQuat:=[0.51863, 0.50936, 0.49498, -0.476];
+    VAR orient paintStrokeQuat:=[0.70427,0.02028,0.71115,0.01996]; 
+    VAR orient paintCupQuat:=[0.70427,0.02028,0.71115,0.01996]; 
+    VAR orient paintcleanerQuat:=[0.51854, 0.50842, 0.49217, -0.47999];
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
