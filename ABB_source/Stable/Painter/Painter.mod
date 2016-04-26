@@ -104,7 +104,7 @@ MODULE Painter
     ! UI Variables/Constants
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
-    CONST string my_buttons{4}:=["Ready","Clean", "Super-Dry","Abort"];
+    CONST string my_buttons{5}:=["Ready","Clean", "Super-Dry","Home", "Park"];
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
@@ -148,8 +148,11 @@ MODULE Painter
             MoveL overDryer,v500,z50,paintBrush;
             MoveL approachClean, v500,z50,paintBrush;
             MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        ELSEIF answer = 4 THEN 
+            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
         ELSE 
-            ! Really? You hit "Abort?"
+            ! Parking spot for storage. 
+            MoveL [[489,0,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
             Stop;
         ENDIF      
        
