@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.4
+    ! Version: 0.3a - For Brush Cleaner v0.2
     !
     !***********************************************************
     
@@ -93,7 +93,6 @@ MODULE Painter
     
     VAR robtarget approachClean;
     VAR robtarget overClean;
-    VAR robtarget transClean;
     VAR robtarget clean;
     VAR robtarget overDryer;
     VAR robtarget dryer;
@@ -245,13 +244,13 @@ MODULE Painter
         colorH:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
         approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overClean:=[[465,-449,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        transClean:=[[465,-449,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[465,-449,265],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[277,-452,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[276,-452,166],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryerL:=[[276,-452,164],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryerH:=[[276,-452,168],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[452.3,-482.4,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[452.3,-482.4,272],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        
+        overDryer:=[[225.9,-476,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[225.9,-476,166.5],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerL:=[[225.9,-476,163.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerH:=[[225.9,-476,169.3],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
@@ -821,7 +820,7 @@ MODULE Painter
             MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             WaitTime 0.5;
-            MoveL transClean, v100, z0, paintBrush;
+            MoveL overClean, v100, z0, paintBrush;
             MoveL overDryer,v500,z20,paintBrush;
             MoveL dryer,v100,fine,paintBrush;
             WaitTime 1;
@@ -831,7 +830,7 @@ MODULE Painter
             MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             WaitTime 1;
-            MoveL transClean, v100, z0, paintBrush;
+            MoveL overClean, v100, z0, paintBrush;
             MoveL overDryer,v500,z20,paintBrush;
             MoveL dryerL,v100,fine,paintBrush;
             WaitTime 0.5;
