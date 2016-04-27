@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.4
+    ! Version: 0.3a - For Brush Cleaner v0.2
     !
     !***********************************************************
     
@@ -36,7 +36,7 @@ MODULE Painter
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
     ! Orientation constants
-    VAR orient ZeroZeroQuat:=[0.7071067811,0.01906,0.7071067811,0.01904];    
+    VAR orient ZeroZeroQuat:=[0.70427,0.02028,0.71115,0.01996];    
        
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
@@ -63,9 +63,9 @@ MODULE Painter
     VAR num vectorMag;
 
     ! Locations of the painting targets. 
-    VAR orient paintStrokeQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
-    VAR orient paintCupQuat:=[0.7071067811,0.01906,0.7071067811,0.01904]; 
-    VAR orient paintcleanerQuat:=[0.51863, 0.50936, 0.49498, -0.476];
+    VAR orient paintStrokeQuat:=[0.70427,0.02028,0.71115,0.01996]; 
+    VAR orient paintCupQuat:=[0.70427,0.02028,0.71115,0.01996]; 
+    VAR orient paintcleanerQuat:=[0.51854, 0.50842, 0.49217, -0.47999];
     ! Change these in procedure: initializeColors
     VAR robtarget overA;
     VAR robtarget colorA;
@@ -93,7 +93,6 @@ MODULE Painter
     
     VAR robtarget approachClean;
     VAR robtarget overClean;
-    VAR robtarget transClean;
     VAR robtarget clean;
     VAR robtarget overDryer;
     VAR robtarget dryer;
@@ -105,7 +104,7 @@ MODULE Painter
     ! UI Variables/Constants
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
-    CONST string my_buttons{4}:=["Ready","Clean", "Super-Dry","Abort"];
+    CONST string my_buttons{5}:=["Ready","Clean", "Super-Dry","Home", "Park"];
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
@@ -149,8 +148,11 @@ MODULE Painter
             MoveL overDryer,v500,z50,paintBrush;
             MoveL approachClean, v500,z50,paintBrush;
             MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        ELSEIF answer = 4 THEN 
+            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
         ELSE 
-            ! Really? You hit "Abort?"
+            ! Parking spot for storage. 
+            MoveL [[489,0,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
             Stop;
         ENDIF      
        
@@ -245,13 +247,13 @@ MODULE Painter
         colorH:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
         approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overClean:=[[465,-449,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        transClean:=[[465,-449,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[465,-449,265],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        overDryer:=[[277,-452,342],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryer:=[[276,-452,166],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryerL:=[[276,-452,164],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        dryerH:=[[276,-452,168],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        overClean:=[[452.3,-482.4,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[452.3,-482.4,272],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        
+        overDryer:=[[225.9,-476,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryer:=[[225.9,-476,166.5],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerL:=[[225.9,-476,163.6],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        dryerH:=[[225.9,-476,169.3],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         firstTimeRun := TRUE;
     ENDPROC
     !***********************************************************
@@ -821,7 +823,7 @@ MODULE Painter
             MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             WaitTime 0.5;
-            MoveL transClean, v100, z0, paintBrush;
+            MoveL overClean, v100, z0, paintBrush;
             MoveL overDryer,v500,z20,paintBrush;
             MoveL dryer,v100,fine,paintBrush;
             WaitTime 1;
@@ -831,7 +833,7 @@ MODULE Painter
             MoveL overClean,v500,z50,paintBrush;
             MoveL clean,v100,fine,paintBrush;
             WaitTime 1;
-            MoveL transClean, v100, z0, paintBrush;
+            MoveL overClean, v100, z0, paintBrush;
             MoveL overDryer,v500,z20,paintBrush;
             MoveL dryerL,v100,fine,paintBrush;
             WaitTime 0.5;
