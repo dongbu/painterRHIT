@@ -62,7 +62,7 @@ public:
     {
         if (CommandWindow->objectName().isEmpty())
             CommandWindow->setObjectName(QStringLiteral("CommandWindow"));
-        CommandWindow->resize(369, 538);
+        CommandWindow->resize(426, 538);
         actionPlay = new QAction(CommandWindow);
         actionPlay->setObjectName(QStringLiteral("actionPlay"));
         QIcon icon;
@@ -92,7 +92,7 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 10, 351, 411));
+        layoutWidget->setGeometry(QRect(10, 10, 401, 411));
         verticalLayout_2 = new QVBoxLayout(layoutWidget);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -156,7 +156,7 @@ public:
         CommandWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(CommandWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 369, 26));
+        menubar->setGeometry(QRect(0, 0, 426, 26));
         menuSimulator = new QMenu(menubar);
         menuSimulator->setObjectName(QStringLiteral("menuSimulator"));
         CommandWindow->setMenuBar(menubar);

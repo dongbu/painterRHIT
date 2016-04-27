@@ -5,6 +5,7 @@ int NAME_COL = 1;
 int BREAK_COL = 2;
 int SIM_COL = 3;
 int PAINT_COL = 4;
+int POS_COL = 5;
 
 /**
  * @brief constructor
@@ -27,7 +28,7 @@ ui(new Ui::CommandWindow)
 	minuteCount = 0;
 	minPrep = false;
 
-	ui->tableWidget->setColumnCount(5);
+	ui->tableWidget->setColumnCount(6);
 	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(launchRightClick(QPoint)));
 	connect(ui->tableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(cellChange(int, int, int, int)));
@@ -100,13 +101,14 @@ void CommandWindow::buildColorChangeDialog(QDialog *colorForm)
 	colorUi.setupUi(colorForm);
 	colorForm->setWindowTitle("Color Options");
 	colorUi.tableWidget->setRowCount(0);
-	colorUi.tableWidget->setColumnCount(5);
+	colorUi.tableWidget->setColumnCount(6);
 	colorUi.tableWidget->insertRow(ui->tableWidget->rowCount());
 	colorUi.tableWidget->setHorizontalHeaderItem(RGB_COL, new QTableWidgetItem("RGB"));
 	colorUi.tableWidget->setHorizontalHeaderItem(BREAK_COL, new QTableWidgetItem("Break"));
 	colorUi.tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
 	colorUi.tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
 	colorUi.tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
+	colorUi.tableWidget->setHorizontalHeaderItem(POS_COL, new QTableWidgetItem("pos"));
 	colorUi.tableWidget->resizeColumnsToContents();
 	colorUi.ChangeAll->setChecked(true);
 	connect(colorUi.ConfirmButton, SIGNAL(pressed()), this, SLOT(colorChangeConfirmed()));
@@ -161,8 +163,10 @@ void CommandWindow::populate(){
 	ui->tableWidget->setHorizontalHeaderItem(SIM_COL, new QTableWidgetItem("Simulated"));
 	ui->tableWidget->setHorizontalHeaderItem(PAINT_COL, new QTableWidgetItem("Painted"));
 	ui->tableWidget->setHorizontalHeaderItem(NAME_COL, new QTableWidgetItem("Type"));
+	ui->tableWidget->setHorizontalHeaderItem(POS_COL, new QTableWidgetItem("pos"));
 
 	//refilling the list with shape data
+	std::vector<cv::Scalar> existingColors;
 	for (int i = 0; i < shapes->length(); i++){
 		QString name = QString::fromStdString(shapes->at(i)->type);
 
@@ -189,12 +193,26 @@ void CommandWindow::populate(){
 		cv::Scalar penCol = shapes->at(i)->getPenColor(); //color col
 		ui->tableWidget->item(i, RGB_COL)->setBackgroundColor(QColor(penCol[0], penCol[1], penCol[2]));
 
+		bool alreadyExistingColor = 0;
+		for (int j = 0; j < existingColors.size(); j++) {
+			if (penCol[0] == existingColors.at(j)[0] && penCol[1] == existingColors.at(j)[1] && penCol[2] == existingColors.at(j)[2]) {
+				alreadyExistingColor = 1;
+				shapes->at(i)->pos = 'A' + j;
+				break;
+			}
+		}
+		if (!alreadyExistingColor) {
+			shapes->at(i)->pos = 'A' + existingColors.size();
+			existingColors.push_back(penCol);
+		}
+		ui->tableWidget->setItem(i, POS_COL, new QTableWidgetItem(QString(shapes->at(i)->pos)));
 
 		//centering
 		ui->tableWidget->item(i, BREAK_COL)->setTextAlignment(Qt::AlignCenter);
 		ui->tableWidget->item(i, NAME_COL)->setTextAlignment(Qt::AlignCenter);
 		ui->tableWidget->item(i, SIM_COL)->setTextAlignment(Qt::AlignCenter);
 		ui->tableWidget->item(i, PAINT_COL)->setTextAlignment(Qt::AlignCenter);
+		ui->tableWidget->item(i, POS_COL)->setTextAlignment(Qt::AlignCenter);
 
 		//resizing
 		ui->tableWidget->resizeColumnsToContents();
