@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.3a - For Brush Cleaner v0.2
+    ! Version: 0.4 - Arbitrary paint locations
     !
     !***********************************************************
     
@@ -19,10 +19,16 @@ MODULE Painter
     ! Commonly Tweaked declarations
     CONST num brushLength:=200;
     CONST num paintHeight:=5;
-    CONST num cleanerHeight:=100; ! TODO: actually find out what this is. 
-    !CONST num dryerHeight:=100; ! TODO: actually find out what this is. 
     CONST num canvasHeight:=0;
     CONST num PAINT_MAX_DIST:=50;
+    
+    ! Of Relation to Colors:
+    CONST num firstPaint{2}:=[276, -290];
+    CONST num paintCupRadius:=50; ! The center-to-center spacings between paint cups (See: dixie cup :D )
+    CONST num maxPaintX:=626;
+    VAR num paintCupYOffset;
+    VAR num cupIndex;     
+    
     ! Canvas size Declarations
     ! * The largest usable square area the robot can draw in is 500mm wide by 150mm tall
     ! * This is a rectangular large canvas, about 19.6" by 9.8"
@@ -30,66 +36,51 @@ MODULE Painter
     CONST num canvasXmax:=650;
     CONST num canvasYmin:=-250;
     CONST num canvasYmax:=250;  
+    
     ! Used in the conversion of pixels to mm on the canvas
-    CONST num XOffset:=260;
-    CONST num YOffset:=-150;
+    !CONST num XOffset:=260;! Unused - by default, corner of image goes to min y min x of canvas. 
+    !CONST num YOffset:=-150; ! Unused - by default, corner of image goes to min y min x of canvas. 
+    
     ! Scaling factor for when we load an image (Default 0.5)
     VAR num SF:=0.5;
+    
     ! Orientation constants
     VAR orient ZeroZeroQuat:=[0.70427,0.02028,0.71115,0.01996];    
-       
+    VAR orient paintStrokeQuat; ! set to zero-zero in initializeProgram
+    VAR orient paintCupQuat;    ! but these values are exposed for special cases where we may want them changed. 
+    VAR orient paintcleanerQuat:=[0.51854, 0.50842, 0.49217, -0.47999]; 
+    
     ! Describes the paintbrush location. TODO: verify with metric calipers. 
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
+    
     ! *** Variables ***  
     VAR iodev iodev1;
     VAR rawbytes rawMsgData;
+    
     ! Store image size, in pixels
     VAR num sizeX;
     VAR num sizeY;
-    VAR num XTGT:=0;
-    ! X target
-    VAR num YTGT:=0;
-    ! Y Target
+    VAR num XTGT:=0; ! X target (processed)
+    VAR num YTGT:=0; ! Y Target (processed)
     VAR num lastX:=500;
     VAR num lastY:=0;
-    ! processing coordinates
+    ! Temporary values for processing coordinates
     VAR num tX;
     VAR num tY;
     !
-
+    ! Velocity values for processing coordinates. Note: Is not true velocity, just step-relative velocity.
     VAR num vX;
     VAR num vY;
-
+    
+    ! Used in distance calculation
     VAR num vectorMag;
 
     ! Locations of the painting targets. 
-    VAR orient paintStrokeQuat:=[0.70427,0.02028,0.71115,0.01996]; 
-    VAR orient paintCupQuat:=[0.70427,0.02028,0.71115,0.01996]; 
-    VAR orient paintcleanerQuat:=[0.51854, 0.50842, 0.49217, -0.47999];
+ 
     ! Change these in procedure: initializeColors
-    VAR robtarget overA;
-    VAR robtarget colorA;
-
-    VAR robtarget overB;
-    VAR robtarget colorB;
-
-    VAR robtarget overC;
-    VAR robtarget colorC;
-
-    VAR robtarget overD;
-    VAR robtarget colorD;
-
-    VAR robtarget overE;
-    VAR robtarget colorE;
-
-    VAR robtarget overF;
-    VAR robtarget colorF;
-
-    VAR robtarget overG;
-    VAR robtarget colorG;
-
-    VAR robtarget overH;
-    VAR robtarget colorH;
+    VAR robtarget overPaint;
+    VAR robtarget inPaint;
+    VAR robtarget approachPaint;
     
     VAR robtarget approachClean;
     VAR robtarget overClean;
@@ -105,6 +96,7 @@ MODULE Painter
     VAR btnres answer;
     CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
     CONST string my_buttons{5}:=["Ready","Clean", "Super-Dry","Home", "Park"];
+    
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
     VAR string currentColor:= "A";
@@ -124,7 +116,7 @@ MODULE Painter
     !***********************************************************
     PROC main()
         ConfL\Off;
-        initializeColors;
+        initializeProgram;
             
         answer:= UIMessageBox(
             \Header:="Pre-Paint Com Checks"
@@ -221,34 +213,29 @@ MODULE Painter
     !   This sets up all targets in the program. 
     !
     !***********************************************************
-    PROC initializeColors()
-        overA:=[[276,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorA:=[[276,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+    PROC initializeProgram()
+        ! FirstTimeRun Flags
+        firstTimeRun :=TRUE;
+        currentColor:= "A";
+        lastColor := "A";
+        cupIndex := 0;
+        overPaint := [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        inPaint:= [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        serialTimeout := 25;
+        doubleDip := FALSE ;
+        brushClean := FALSE; 
+        brushDirty := FALSE;
+        isRotated := FALSE;
+        ! 
+       paintStrokeQuat:=ZeroZeroQuat; 
+        paintCupQuat:=ZeroZeroQuat;
         
-        overB:=[[326,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorB:=[[326,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        approachPaint := [[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
-        overC:=[[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorC:=[[376,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overD:=[[426,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorD:=[[426,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overE:=[[476,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorE:=[[476,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overF:=[[526,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorF:=[[526,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overG:=[[576,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorG:=[[576,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-
-        overH:=[[626,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        colorH:=[[626,-290,paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
         approachClean:=[[465,-290,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         overClean:=[[452.3,-482.4,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        clean:=[[452.3,-482.4,272],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+        clean:=[[452.3,-482.4,269],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
         overDryer:=[[225.9,-476,350],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         dryer:=[[225.9,-476,166.5],paintcleanerQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
@@ -721,99 +708,79 @@ MODULE Painter
     !
     !***********************************************************
     PROC GotoPaint(string colorToPaint)
-        ! NOTE: Dirty cases here! TODO: test this
-        ConfL\Off;
-        
-        IF (newStroke=TRUE) THEN
-            lastX:=XTGT;
-            lastY:=YTGT;
-        ENDIF
-        
-        IF brushDirty THEN 
-            ! Area commented - was necessary for changing quaternion.
-            ! Move off the canvas before getting paint. 
-            !MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-            !IF lastY > 0 OR lastX > 500 THEN 
-            !    MoveL [[LastX,LastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
-            !    MoveL [[400,-270,canvasHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z150,paintBrush;
-            !ELSE 
-                MoveL [[lastX,lastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
-            !ENDIF 
-            brushDirty:=FALSE;
-        ENDIF 
-            
-        IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
-            !NEED TO CLEAN
-            MoveL approachClean, v500,z50,paintBrush;           
-            cleanCycle 1;    
-            MoveL approachClean, v500,z50,paintBrush;
-        ENDIF 
-            
-        IF (colorToPaint="A") THEN
-            !over paint
-            MoveL overC,v500,z50,paintBrush;
-            MoveL overA,v500,z50,paintBrush;
-            !into paint
-            MoveL colorA,v100,fine,paintBrush;
-            !over paint
-            MoveL overA,v500,z50,paintBrush;
-            MoveL overC,v500,z50,paintBrush;
+        ! Whack this color into shape!
+        VAR byte part;
+        VAR num maxPerRow;
 
-        ELSEIF (colorToPaint="B") THEN
-            !over paint
-            MoveL overC,v500,z50,paintBrush;
-            MoveL overB,v500,z50,paintBrush;
-            !into paint
-            MoveL colorB,v100,fine,paintBrush;
-            !over paint
-            MoveL overB,v500,z50,paintBrush;
-            MoveL overC,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="C") THEN
-            !over paint
-            MoveL overC,v500,z50,paintBrush;
-            !into paint
-            MoveL colorC,v100,fine,paintBrush;
-            !over paint
-            MoveL overC,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="D") THEN
-            !over paint
-            MoveL overD,v500,z50,paintBrush;
-            !into paint
-            MoveL colorD,v100,fine,paintBrush;
-            !over paint
-            MoveL overD,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="E") THEN
-            !over paint
-            MoveL overE,v500,z50,paintBrush;
-            !into paint
-            MoveL colorE,v100,fine,paintBrush;
-            !over paint
-            MoveL overE,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="F") THEN
-            !over paint
-            MoveL overF,v500,z50,paintBrush;
-            !into paint
-            MoveL colorF,v100,fine,paintBrush;
-            !over paint
-            MoveL overF,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="G") THEN
-            !over paint
-            MoveL overG,v500,z50,paintBrush;
-            !into paint
-            MoveL colorG,v100,fine,paintBrush;
-            !over paint
-            MoveL overG,v500,z50,paintBrush;
-        ELSEIF (colorToPaint="H") THEN
-            !over paint
-            MoveL overH,v500,z50,paintBrush;
-            !into paint
-            MoveL colorH,v100,fine,paintBrush;
-            !over paint
-            MoveL overH,v500,z50,paintBrush;            
-        ENDIF
+        
+        IF (StrLen(colorToPaint) > 1) THEN
+            throwError "paint", colorToPaint;
+        ENDIF 
+        
+                        
+            ConfL\Off;
+            
+            IF (newStroke=TRUE) THEN
+                lastX:=XTGT;
+                lastY:=YTGT;
+            ENDIF
+            
+            IF brushDirty THEN 
+                MoveL [[lastX,lastY,canvasHeight+70],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;             
+                brushDirty:=FALSE;
+            ENDIF 
+                
+            IF (NOT (colorToPaint=lastColor)) AND (NOT firstTimeRun ) THEN
+                !NEED TO CLEAN
+                MoveL approachClean, v500,z50,paintBrush;           
+                cleanCycle 1;    
+                MoveL approachClean, v500,z50,paintBrush;
+            ENDIF 
+        
+           IF NOT (colorToPaint = lastColor) THEN 
+                paintCupYOffset :=0;
+                maxPerRow:= (maxPaintX - firstPaint{1})/50;
+                part := StrToByte(colorToPaint\Char);
+     
+                IF (part >= 65) AND (part <=90) THEN 
+                    TPWrite "Accepted and converted:"+colorToPaint;
+                    ! Recall from earlier. 
+                        !CONST num firstPaint{2}:=[276, -290];
+                        !CONST num paintCupRadius:=50; ! The center-to-center spacings between paint cups (See: dixie cup :D )
+                        !CONST num maxPaintX:=626;
+                        !CONST num maxPaintY:=-340;
+                    cupIndex := part - 65;
+                    WHILE ((firstPaint{1} + (paintCupRadius * cupIndex)) > maxPaintX) DO
+                        paintCupYOffset:= paintCupYOffset+1;
+                        cupIndex := cupIndex - maxPerRow - 1; ! lol @ zero-based indexing in a 1-based indexing world. 
+                        TPWrite "Overflow! Rolling back and travelling along Y-axis: index now " + NumToStr(cupIndex, 0);
+                    ENDWHILE
+                    
+                    overPaint := [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+                    inPaint:= [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+                
+                ELSE 
+                    TPWrite "INVALID PAINT. DISQUALIFIED!";
+                    throwError "paint", colorToPaint;
+                ENDIF  
+            ENDIF
+            IF (cupIndex < 3) THEN
+                !over paint
+                MoveL approachPaint,v500,z50,paintBrush;
+            ENDIF 
+                MoveL overPaint,v500,z50,paintBrush;
+                !into paint
+                MoveL inPaint,v100,fine,paintBrush;
+                !over paint
+                MoveL overPaint,v500,z50,paintBrush;
+            IF (cupIndex < 3) THEN
+                !over paint
+                MoveL approachPaint,v500,z50,paintBrush;
+            ENDIF 
 
-        lastColor:=colorToPaint;
-        brushClean:=TRUE;
+            lastColor:=colorToPaint;
+            brushClean:=TRUE;
+    
     
     ENDPROC
     
@@ -882,6 +849,10 @@ MODULE Painter
         ELSEIF errorType = "canvas" THEN 
             ErrLog 4800, "Data Error", "The canvas size data was malformed",response,"","You should have seen other errors before this.";
             TPWrite "Bad canvas size data";
+        ELSEIF errorType = "paint" THEN 
+           ErrLog 4800, "Paint Error", "Out of bounds paint",response,"-","-";
+            TPWrite "Command Error: Paint Command is bad";
+         
         ELSEIF errorType = "unknown" THEN 
            ErrLog 4800, "Command Error", "Unknown Command",response,"-","-";
             TPWrite "Command Error: Unknown Command";
