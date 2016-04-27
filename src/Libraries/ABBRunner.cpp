@@ -8,7 +8,7 @@
 #define maxColors 8
 
 //CONSTRUCTOR/DESTRUCTOR///////////////////////
-ABBRunner::ABBRunner(int width, int height)
+ABBRunner::ABBRunner(int width, int height, Shapes *shape)
 {
 	this->width = width;
 	this->height = height;

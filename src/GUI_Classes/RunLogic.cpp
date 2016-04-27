@@ -184,7 +184,7 @@ void RunLogic::runClicked() {
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
-		Ava->curBrush = new Brush(4, 4, "ellipse");
+		Ava->curBrush = new Brush(2, 2, "ellipse");
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
