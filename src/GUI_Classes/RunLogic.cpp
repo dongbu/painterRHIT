@@ -323,7 +323,7 @@ void RunLogic::drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W) {
 void RunLogic::setAvaPenColor(Shape *s) {
 	cv::Scalar temp = s->getPenColor();
 	if (chappie->connected) {
-		chappie->decidePaint(temp[0], temp[1], temp[2]);
+		chappie->decidePaint(s->pos);
 	}
 	if (Ava->paint.size() >= 2) {
 		Ava->decidePaint(temp[0], temp[1], temp[2]);

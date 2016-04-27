@@ -20,13 +20,13 @@ public:
 	bool next();
 	void end();
 	bool sendCoord(int x, int y);
-	void decidePaint(int r, int g, int b);
+	bool decidePaint(char col);
 
 	void setSize(int w, int h);
 
 	void abort();
 
-	Shapes shape;
+	Shapes *shape;
 
 	bool connected;
 	void connectWin();
@@ -39,7 +39,6 @@ private:
 	bool getSerialResponse();
 	bool connectToSerial(int port);
 	bool sendCanvasInfo();
-	bool changeColor(int colorNum);
 
 	HANDLE hSerial;
 
