@@ -34,6 +34,7 @@ public:
 	bool fill;
 	bool hasPainted;
 	bool hasSimulated;
+	char pos = 'A';
 
 	void setID(int i) { id = i; }
 	int getID(int i = -1) {

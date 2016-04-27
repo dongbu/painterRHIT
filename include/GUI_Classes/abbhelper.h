@@ -2,6 +2,7 @@
 #define ABBHELPER_H
 
 #include "stdafx.h"
+#include "shapes.cpp"
 #include <QWidget>
 #include <qcheckbox.h>
 
@@ -18,24 +19,16 @@ public:
     explicit ABBHelper(QWidget *parent = 0);
     ~ABBHelper();
 
-	bool colorUsed[8]; //true if using color in spot
-	int colorR[8];
-	int colorG[8];
-	int colorB[8];
 	int portNum;
+
+	void setConfirmationPanel(Shapes *shape);
 
 
 private:
 	Ui::ABBHelper *ui;
-	void connectCheckBoxes();
-	void setupSpinBoxes();
 
-public slots:
-	
 
 private slots :
-	void updateColors();
-	void updateSpins(int val);
 	void acceptPressed();
 	void cancelPressed();
 

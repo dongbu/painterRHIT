@@ -21,9 +21,9 @@ Painter::Painter() {
 	width = new int(600);
 	height = new int(600);
 	Ava = new CytonRunner(width, height);
-	chappie = new ABBRunner(*width, *height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
+	chappie = new ABBRunner(*width, *height, this->shapes);
 	Web = new Webcam(width, height);
 }
 

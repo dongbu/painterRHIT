@@ -5,14 +5,14 @@
 #include <stdio.h>
 
 
-#define maxColors 8
 
 //CONSTRUCTOR/DESTRUCTOR///////////////////////
-ABBRunner::ABBRunner(int width, int height)
+ABBRunner::ABBRunner(int width, int height, Shapes *shape)
 {
 	this->width = width;
 	this->height = height;
 	this->connected = false;
+	this->shape = shape;
 }
 
 
@@ -82,28 +82,21 @@ void ABBRunner::end() {
 	abort();
 }
 
-void ABBRunner::decidePaint(int r, int g, int b) {
+//sends the spot we are getting paint from
+bool ABBRunner::decidePaint(char col) {
 	if (!connected) {
-		return;
+		return false;
 	}
-	int closestId = 0;
-	int closestNum = -1;
-	//loop to find smallest distance
-	for (int i = 0; i < maxColors; i++) {
-		if (!colorUsed[i]) {
-			continue;
+	std::string color = col + "";
+	std::string command = "SWAP:" + color + ";";
+	if (sendSerial(command)) {
+		if (!getSerialResponse()) {
+			return false;
 		}
-		int r1, g1, b1;
-		r1 = colorR[i];
-		g1 = colorG[i];
-		b1 = colorB[i];
-		int distance = sqrt(pow(r - r1, 2) + pow(g - g1, 2) + pow(b - b1, 2));
-		if (distance < closestNum || closestNum == -1) {
-			closestId = i;
-			closestNum = distance;
-		}
+		return true;
 	}
-	changeColor(closestId);
+	return false;
+
 }
 ////////////////////////////////////////////////
 
@@ -283,52 +276,6 @@ bool ABBRunner::connectToSerial(int port) {
 	connected = true;
 	return true;
 }
-
-//used to let the ABB know over serial that we are switching colors. Returns true if recieves success, false otherwise.
-bool ABBRunner::changeColor(int colorNum) {
-	if (!connected) {
-		return false;
-	}
-	std::string colorLet = "A";
-	switch (colorNum) {
-	case 0:
-		colorLet = "A";
-		break;
-	case 1:
-		colorLet = "B";
-		break;
-	case 2:
-		colorLet = "C";
-		break;
-	case 3:
-		colorLet = "D";
-		break;
-	case 4:
-		colorLet = "E";
-		break;
-	case 5:
-		colorLet = "F";
-		break;
-	case 6:
-		colorLet = "G";
-		break;
-	case 7:
-		colorLet = "H";
-		break;
-	default:
-		colorLet = "J"; //J for junk
-		printf("check max colors and compare with changeColor function\n");
-		break;
-	}
-	std::string command = "SWAP:" + colorLet + ";";
-	if (sendSerial(command)) {
-		if (!getSerialResponse()) {
-			return false;
-		}
-		return true;
-	}
-	return false;
-}
 ///////////////////////////////////////////////
 
 //SETUP WINDOWS/////////////////////////////////
@@ -336,18 +283,16 @@ bool ABBRunner::changeColor(int colorNum) {
 void ABBRunner::connectWin() {
 	printf("connect win called\n");
 	helps = new ABBHelper();
+	printf("done creating object\n");
+	helps->setConfirmationPanel(this->shape);
+	printf("done doing thing\n");
 	helps->show();
+	printf("done shown\n");
 	connect(helps, SIGNAL(acceptedABB()), this, SLOT(acceptedWin()));
 	connect(helps, SIGNAL(canceledABB()), this, SLOT(canceledWin()));
 }
 
 void ABBRunner::acceptedWin() {
-	for (int i = 0; i < maxColors; i++) {
-		this->colorUsed[i] = helps->colorUsed[i];
-		this->colorR[i] = helps->colorR[i];
-		this->colorG[i] = helps->colorG[i];
-		this->colorB[i] = helps->colorB[i];
-	}
 	if (connectToSerial(helps->portNum)) {
 		printf("successfully connected to serial\n");
 		sendCanvasInfo();

@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "abbhelper.h"
+#include "Shapes.cpp"
 #include <Windows.h>
 
 namespace Ui {
@@ -13,22 +14,19 @@ class ABBRunner: public QDialog
 	Q_OBJECT
 
 public:
-	ABBRunner(int width, int height);
+	ABBRunner(int width, int height, Shapes *shape);
 	~ABBRunner();
 
 	bool next();
 	void end();
 	bool sendCoord(int x, int y);
-	void decidePaint(int r, int g, int b);
+	bool decidePaint(char col);
 
 	void setSize(int w, int h);
 
 	void abort();
 
-	bool colorUsed [8]; //true if using color in spot
-	int colorR[8];
-	int colorG[8];
-	int colorB[8];
+	Shapes *shape;
 
 	bool connected;
 	void connectWin();
@@ -41,7 +39,6 @@ private:
 	bool getSerialResponse();
 	bool connectToSerial(int port);
 	bool sendCanvasInfo();
-	bool changeColor(int colorNum);
 
 	HANDLE hSerial;
 
