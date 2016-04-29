@@ -34,8 +34,8 @@ MODULE Painter
     ! * This is a rectangular large canvas, about 19.6" by 9.8"
     CONST num canvasXmin:=400;
     CONST num canvasXmax:=650;
-    CONST num canvasYmin:=-250;
-    CONST num canvasYmax:=250;  
+    CONST num canvasYmin:=-230;
+    CONST num canvasYmax:=270;  
     
     ! Used in the conversion of pixels to mm on the canvas
     !CONST num XOffset:=260;! Unused - by default, corner of image goes to min y min x of canvas. 
@@ -214,7 +214,12 @@ MODULE Painter
     !
     !***********************************************************
     PROC initializeProgram()
+        
+        paintStrokeQuat:=ZeroZeroQuat; 
+        paintCupQuat:=ZeroZeroQuat;
+        
         ! FirstTimeRun Flags
+        
         firstTimeRun :=TRUE;
         currentColor:= "A";
         lastColor := "A";
@@ -227,8 +232,7 @@ MODULE Painter
         brushDirty := FALSE;
         isRotated := FALSE;
         ! 
-       paintStrokeQuat:=ZeroZeroQuat; 
-        paintCupQuat:=ZeroZeroQuat;
+
         
         approachPaint := [[376,-290,paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         
@@ -387,7 +391,7 @@ MODULE Painter
 
             
             IF sizeX <= 5 OR sizeY <= 5 THEN
-                throwError "canvas", parameters;
+                throwError "canvas", parameters + " ::SizeWayTooSmall";
             ENDIF 
             
 
@@ -401,13 +405,13 @@ MODULE Painter
                 ENDIF
                     
             ELSE
-                throwError "canvas", parameters;  
+                SF:=1;
             ENDIF 
             
             
                 
         ELSE
-            throwError "canvas", parameters;  
+            throwError "canvas", parameters+ " ::CoordProcFail";  
             
         ENDIF
         ! Just in case of trouble later on.         
