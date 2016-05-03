@@ -19,8 +19,7 @@ MODULE Painter
     ! Commonly Tweaked declarations
     CONST num brushLength:=200;
     CONST num paintHeight:=5;
-    CONST num canvasHeight:=0;
-    CONST num PAINT_MAX_DIST:=50;
+    PERS num canvasHeight:=31; ! 0 for painting on the floor of the work cell. 
     CONST num PAINT_MAX_DIST:=30;
     
     ! Of Relation to Colors:
@@ -33,10 +32,10 @@ MODULE Painter
     ! Canvas size Declarations
     ! * The largest usable square area the robot can draw in is 500mm wide by 150mm tall
     ! * This is a rectangular large canvas, about 19.6" by 9.8"
-    CONST num canvasXmin:=400;
-    CONST num canvasXmax:=650;
-    CONST num canvasYmin:=-230;
-    CONST num canvasYmax:=270;  
+    PERS num canvasXmin:=400;
+    PERS num canvasXmax:=705;
+    PERS num canvasYmin:=-230;
+    PERS num canvasYmax:=75;  
     
     ! Used in the conversion of pixels to mm on the canvas
     !CONST num XOffset:=260;! Unused - by default, corner of image goes to min y min x of canvas. 
