@@ -8,7 +8,7 @@ MODULE Painter
     !
     ! Author: drongla, crookjj, doughezj, horvegc
     !
-    ! Version: 0.4 - Arbitrary paint locations
+    ! Version: 0.5 - resizable canvas tools
     !
     !***********************************************************
     
@@ -93,9 +93,7 @@ MODULE Painter
     VAR bool newStroke;
     VAR num distanceTravelled := 0;
     ! UI Variables/Constants
-    VAR btnres answer;
-    CONST string my_message{5}:= ["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss is running on the PC","- BobRoss has opened the serial channel on the PC"];
-    CONST string my_buttons{5}:=["Ready","Clean", "Super-Dry","Home", "Park"];
+    
     
     ! First-loop flags
     VAR bool firstTimeRun := TRUE;
@@ -115,33 +113,26 @@ MODULE Painter
     !
     !***********************************************************
     PROC main()
+        VAR btnres answer;
+        VAR string currentSize;
+        currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm";
         ConfL\Off;
         initializeProgram;
             
         answer:= UIMessageBox(
             \Header:="Pre-Paint Com Checks"
-            \MsgArray:=my_message
-            \BtnArray:=my_buttons
+            \MsgArray:=["Please check and verify the following:","- The serial cable is connected to COM1", "- The PC is connected to the serial cable","- BobRoss has opened the serial channel on the PC", currentSize]
+            \BtnArray:=["Ready","Positioning", "Canvas Tools", "Park"]
             \Icon:=iconInfo);
         IF answer = 1 THEN
             ! Operator said ready
             paintProgram;
         ELSEIF answer = 2 THEN 
-            ! operator said clean
-            MoveL approachClean, v500,z50,paintBrush;
-            cleanCycle 1;
-            MoveL approachClean, v500,z50,paintBrush;
-            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+            
+            CALIBRATIONTOOLS;
         ELSEIF answer = 3 THEN 
-            MoveL approachClean, v500,z50,paintBrush;
-            MoveL overDryer,v500,z20,paintBrush;
-            MoveL dryer,v100,fine,paintBrush;
-            WaitTime 3;
-            MoveL overDryer,v500,z50,paintBrush;
-            MoveL approachClean, v500,z50,paintBrush;
-            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
-        ELSEIF answer = 4 THEN 
-            MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+            
+            CANVASTOOLS;
         ELSE 
             ! Parking spot for storage. 
             MoveL [[489,0,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
@@ -150,6 +141,104 @@ MODULE Painter
        
 
     ENDPROC
+    
+    PROC CALIBRATIONTOOLS()
+        VAR num exitcode;
+        VAR num canvasAnswer;
+        VAR btnres answer1;
+        
+        exitcode:=0;
+        
+        WHILE exitcode = 0 DO 
+            
+            answer1:= UIMessageBox(
+            \Header:="Equipment Position Helper"
+            \MsgArray:=["Select an option from the selection below","", "","",""]
+            \BtnArray:=["Clean","Super-Dry", "Touch","Home","Return"]
+            \Icon:=iconInfo);
+            
+            IF answer1 = 1 THEN
+                ! operator said clean
+                MoveL approachClean, v500,z50,paintBrush;
+                cleanCycle 1;
+                MoveL approachClean, v500,z50,paintBrush;
+                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+            ELSEIF answer1 = 2 THEN 
+                MoveL approachClean, v500,z50,paintBrush;
+                MoveL overDryer,v500,z20,paintBrush;
+                MoveL dryer,v100,fine,paintBrush;
+                WaitTime 3;
+                MoveL overDryer,v500,z50,paintBrush;
+                MoveL approachClean, v500,z50,paintBrush;
+                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+            ELSEIF answer1 = 3 THEN 
+                ! ends 10mm from both sides, starts at corner. 
+                MoveL [[400,-230,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+                MoveL [[400,-230,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                MoveL [[410,-220,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v50,z5,paintBrush;
+            ELSEIF answer1 = 4 THEN 
+                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+            else
+                exitcode := 1;
+            ENDIF 
+        
+        ENDWHILE 
+        
+    ENDPROC 
+    
+    PROC CANVASTOOLS()
+        VAR num exitcode;
+        VAR num canvasAnswer;
+        VAR btnres answer2;
+        VAR string currentSize;
+        exitcode:=0;
+        
+        WHILE exitcode = 0 DO 
+            
+            currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm";
+            answer2:= UIMessageBox(
+                \Header:="Canvas Tools Menu"
+                \MsgArray:=["Welcome to Canvas Setup!","The values entered here are stored between controller restarts",  currentSize,"Note: Ensure the corner of the canvas is at ","x:400, y:-230"]
+                \BtnArray:=["Z","X", "Y","Return"]
+                \Icon:=iconWarning);
+                
+            IF answer2 = 1 THEN 
+                canvasAnswer := UINumEntry(
+                \Header:="Canvas Vertical Height Setup (Z-AXIS)"
+                \MsgArray :=["What is the vertical height, in mm, of the canvas"," from the floor of the workcell?"]
+                \Icon:=iconInfo
+                \InitValue:=0
+                \MinValue:=0
+                \MaxValue:=100
+                \AsInteger);
+                canvasHeight := canvasAnswer;
+            ELSEIF answer2 = 2 THEN 
+                canvasAnswer := UINumEntry(
+                \Header:="Canvas Height Setup (X-AXIS)"
+                \MsgArray:=["What is the height, in mm, of the canvas?","Note: Use 250 for wide canvas due to mobility reasons"]
+                \Icon:=iconInfo
+                \InitValue:=250
+                \MinValue:=50
+                \MaxValue:=500
+                \AsInteger);
+                canvasXmax := canvasXmin + canvasAnswer;
+            ELSEIF answer2 = 3 THEN 
+                canvasAnswer := UINumEntry(
+                \Header:="Canvas Width Setup (Y-AXIS)"
+                \MsgArray:=["What is the width, in mm, of the canvas?","Note: A wide canvas restricts X movement, and","can put parts of the image out of bounds"]
+                \Icon:=iconInfo
+                \InitValue:=500
+                \MinValue:=50
+                \MaxValue:=500
+                \AsInteger);
+                canvasYmax := canvasYmin + canvasAnswer;
+
+            else 
+                exitcode := 1;
+            ENDIF 
+        ENDWHILE 
+    ENDPROC
+    
     
     !***********************************************************
     !
