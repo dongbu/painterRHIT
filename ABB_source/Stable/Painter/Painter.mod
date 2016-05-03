@@ -21,6 +21,7 @@ MODULE Painter
     CONST num paintHeight:=5;
     CONST num canvasHeight:=0;
     CONST num PAINT_MAX_DIST:=50;
+    CONST num PAINT_MAX_DIST:=30;
     
     ! Of Relation to Colors:
     CONST num firstPaint{2}:=[276, -290];
@@ -654,12 +655,20 @@ MODULE Painter
 
             WriteStrBin iodev1, "\06";
                 
-            IF isRotated THEN 
+            !
+            !   The image as given to the robot is in a mirrored state. 
+            !   We must fix this. 
+            !   If we need to rotate it, the easiest thing is to simply transpose it. 
+            !   Otherwise, we need to flip (mirror) the image. 
+            !
+            IF isRotated THEN ! Transpose the image
                 tempA := tX;
                 tempB := tY;  
                 tX:= tempB;
                 tY:= tempA; 
-            ENDIF
+            ELSE ! mirror the image across the X-axis
+                tX := sizeX - tX;
+            ENDIF 
             testCheck:=checkForBadPoints( tX,tY);
             XTGT:=(SF*tX)+canvasXmin;
             YTGT:=(SF*tY)+canvasYmin;
@@ -742,16 +751,20 @@ MODULE Painter
         ConfL\Off;
         IF distanceTravelled>=PAINT_MAX_DIST OR newStroke=TRUE THEN
             !if we've gone maximum distance or we reach the end of a line.
-            IF distanceTravelled > (PAINT_MAX_DIST / 2) THEN 
-            GotoPaint(currentColor);
-            distanceTravelled:=0;
+            IF distanceTravelled > (PAINT_MAX_DIST) THEN 
+                GotoPaint(currentColor);
+                distanceTravelled:=0;
             ENDIF 
             IF newStroke AND (NOT firstTimeRun) THEN 
                 MoveL [[lastX,lastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush; 
                 MoveL [[XCoord,YCoord,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z10,paintBrush; 
+                vectorMag := 0;
             ENDIF 
         ENDIF
-        IF NOT (newStroke=TRUE) THEN
+        IF (newStroke=FALSE) THEN
+            vX:=XCoord-lastX;
+            vY:=YCoord-lastY;
+            vectorMag:=sqrt(vX*vX+vY*vY);
             distanceTravelled:=distanceTravelled+vectorMag;
         ENDIF
         
@@ -911,9 +924,6 @@ MODULE Painter
     !
     !***********************************************************
     PROC niceStroke()
-        vX:=XTGT-lastX;
-        vY:=YTGT-lastY;
-        vectorMag:=sqrt(vX*vX+vY*vY);
         ! Actual nice strokes nuked for now. FUTURE: Create actual nice quaternion strokes. 
         paintStrokeQuat:=ZeroZeroQuat;
     ENDPROC
