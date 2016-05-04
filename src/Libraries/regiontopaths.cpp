@@ -409,7 +409,7 @@ public:
 	// are in the desired region to be painted
 	int imageOnlyHasColor(std::vector<cv::Point> *points, int offsetx = 0, int offsety = 0) {
 		cv::Point p;
-		int debug = 0;
+		int debug = 1;
 		if (debug) printf(" - points has %i points, offset %i,%i\n", (int)points->size(), offsetx, offsety);
 
 		int num_ok_pixels = 0;
@@ -684,7 +684,7 @@ public:
 		uint64 start = GetTimeMs64();
 
 		int num_loops = 1;
-		int max_loops = 20;
+		int max_loops = 20;//does not influence filled region bug (where it doesn't completely fill if brush is small)
 		while (1 && num_loops <= max_loops && one_border_candidate_pixels.size()>0) {
 			//printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
 			num_loops++;
