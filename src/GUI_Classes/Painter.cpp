@@ -57,18 +57,6 @@ void Painter::save(std::string name) {
 	myfile << xml;
 	myfile.close();
 
-
-	std::string txt = "";
-	txt.append(std::to_string(this->sketch->getWidth()));
-	txt.append(",");
-	txt.append(std::to_string(this->sketch->getHeight()));
-	txt.append(",;,");
-	txt.append(shapes->getText());
-	std::ofstream myfile2;
-	myfile2.open((name.substr(0, name.size() - 4) + "text.txt"));
-	myfile2 << txt;
-	myfile2.close();
-
 }
 
 /**

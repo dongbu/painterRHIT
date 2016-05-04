@@ -96,9 +96,6 @@
     <ClCompile Include="..\src\Libraries\webcam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GUI_Classes\workspacewizard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Libraries\shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -150,12 +147,6 @@
     <ClCompile Include="Release\moc_runLogic.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_workspacewizard.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_workspacewizard.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
@@ -177,9 +168,6 @@
     <ClCompile Include="Release\moc_ABBRunner.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Libraries\Serial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\include\Libraries\CVImageWidget.h">
@@ -198,9 +186,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\GUI_Classes\runLogic.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\include\GUI_Classes\workspacewizard.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\Libraries\kmeansSegment.hpp">
@@ -376,9 +361,6 @@
     <CustomBuild Include="Sketchpad.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="workspacewizard.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="myres.qrc">
@@ -390,9 +372,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_Sketchpad.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_workspacewizard.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_StartWindow.h">
@@ -409,9 +388,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_brushUI.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Libraries\Serial.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

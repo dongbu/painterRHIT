@@ -94,6 +94,9 @@ void Sketchpad::setupQt() {
 	brushForm = new QDialog();
 	brushUi.setupUi(brushForm);
 	brushForm->setWindowTitle("Brush Options");
+	std::cout << "cur Brush: w: " << Ava->curBrush->getWidth() << " h: " << Ava->curBrush->getHeight() << "\n";
+	brushUi.widthInput->setText("40");
+	brushUi.heightInput->setText("20");
 	brushUi.widthInput->setValidator(new QIntValidator(1, 30));
 	brushUi.heightInput->setValidator(new QIntValidator(1, 30));
 	connect(brushUi.accept, SIGNAL(clicked()), this, SLOT(brushChanged()));
@@ -701,10 +704,13 @@ void Sketchpad::changeSize(int *width, int *height) {
 
 
 void Sketchpad::brushChanged() {
-	int w = brushUi.heightInput->text().toInt();
-	int h = brushUi.widthInput->text().toInt();
+	brushForm->hide();
+	int h = brushUi.heightInput->text().toInt();
+	int w = brushUi.widthInput->text().toInt();
 	std::string brushType = brushUi.shapeInput->currentText().toStdString();
 	Ava->curBrush = new Brush(w, h, brushType);
+	std::cout << "brush width: " << Ava->curBrush->getWidth() << " height: " << Ava->curBrush->getHeight();
+	printf("\n");
 }
 
 void Sketchpad::hideBrushUi() { brushForm->hide(); }

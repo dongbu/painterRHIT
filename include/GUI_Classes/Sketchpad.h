@@ -8,7 +8,6 @@
 #include "DrawWindow.cpp"
 #include "imageparser.cpp"
 #include "Webcam.cpp"
-#include "WorkspaceWizard.h"
 #include "ABBRunner.h"
 
 namespace Ui {
@@ -36,7 +35,7 @@ public:
 private:
 	void closeEvent(QCloseEvent *event);
 
-	void getColor();
+	//void getColor();
 	void setupQt();
 	void flood(cv::Point p);
 

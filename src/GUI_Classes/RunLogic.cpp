@@ -184,7 +184,6 @@ void RunLogic::runClicked() {
 	}
 	else if (mode == "Paint w/o feedback") {
 		if (!Ava->connected && !chappie->connected) { printf("Please connect the robot before continuing\n"); return; }
-		Ava->curBrush = new Brush(2, 2, "ellipse");
 		auto d1 = std::async(&RunLogic::paintThread, this, simWin);
 	}
 	else if (mode == "Paint w/ feedback") {
@@ -239,10 +238,6 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 	// put a halo of N pixels around the desired region where allowed to paintover (could be done in define path too)
 	RTP.expandOverpaintableAroundDesired(3);
 
-	if (chappie->connected) {
-		Ava->curBrush->setWidth(10);
-		Ava->curBrush->setHeight(10);
-	}
 	RTP.defineBrush(Ava->curBrush);
 
 	RTP.definePaths();

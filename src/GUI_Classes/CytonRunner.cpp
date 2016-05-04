@@ -1,5 +1,4 @@
 #include "CytonRunner.h"
-#include "workspacewizard.h"
 
 #define FRAME_EE_SET 1
 #define JOINT_CONTROL_EE_SET 0xFFFFFFFF
@@ -362,8 +361,8 @@ void CytonRunner::setCanvasSize(double width, double height){
 //used to startup the workspace wizard.
 void CytonRunner::createWorkspace(){
 	this->goToJointHome(0);
-	WorkspaceWizard *w = new WorkspaceWizard(this);
-	w->show();
+	printf("Previous \"Workspace Wizard\" has been removed as it was bad\n");
+	printf("the only way to create the workspace at current is via text editing\n");
 }
 
 //fixes the robot to paint things in the canvas region.
