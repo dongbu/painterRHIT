@@ -169,6 +169,7 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, 
 void Painter::showGUI(){
 	stuffshowing = true;
 	sketch = new Sketchpad(width, height, shapes, Ava, chappie, Web);
+	sketch->setAttribute(Qt::WA_QuitOnClose);
 	commandWin = new CommandWindow(shapes);
 	logic = new RunLogic(*width, *height, shapes, Ava, chappie);
 
@@ -195,6 +196,8 @@ void Painter::showGUI(){
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
 	connect(sketch, SIGNAL(hideAll()), this, SLOT(newClicked()));
 	connect(sketch, SIGNAL(resizeSimWin(int*, int*)), this, SLOT(resize(int*, int*)));
+	
+
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
 	connect(sketch->ui->actionQuit, SIGNAL(triggered()), this, SLOT(murderousRampage()));
