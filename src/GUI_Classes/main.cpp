@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
 	std::string date = __DATE__;
 	std::string titleEnd = ")";
 
+	// attach the new console to this application's process
+	AttachConsole(GetCurrentProcessId());
 
 	SetConsoleTitleA((titleString + date + titleEnd).c_str());
 	freopen("conin$", "r", stdin);
