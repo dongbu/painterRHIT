@@ -55,6 +55,10 @@ private:
 	double angleDiff(cv::Point p1, cv::Point p2);
 	bool tooClose(cv::Point p1, cv::Point p2);
 	bool tooFar(cv::Point p1, cv::Point p2);
+	double getDistBetweenPoints(cv::Point p1, cv::Point p2);
+
+	//get paint frequency variables for simulation
+	double distTraveled;
 
 public slots:
 	void updateMode(QString mode, int delay);

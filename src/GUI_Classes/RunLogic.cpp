@@ -20,6 +20,8 @@ RunLogic::RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava, ABBR
 	clearClicked();
 	simWin->hideWindow();
 	mode = "Simulate Magic Marker";
+
+	this->distTraveled = 0.0;
 }
 
 /**
@@ -262,7 +264,7 @@ void RunLogic::paintFill(DrawWindow *W, Shape *s) {
 // given contiguous pts, draw them in the simulator and optionally using robot
 void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall) {
 	Ava->curBrush->loadPaintPixels(); // should be in "getPaint()";
-	Ava->curBrush->drawContiguousPoints(W, &pts);
+	
 	if (chappie->connected && running) { 
 		for (int i = 0; i < pts.size(); i++) { //running through points in one stroke
 			i = straighten(pts, i);
@@ -272,9 +274,31 @@ void RunLogic::doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSm
 			if (!chappie->sendCoord(pts.at(i).x, pts.at(i).y)) { break; }
 		}
 	}
+	else if (mode == "Simulate Real Brush") {
+		distTraveled = 0.0;
+		cv::Point prevP(-1, -1);
+		for (int i = 0; i < pts.size(); i++) { //running through points in one stroke
+			i = straighten(pts, i);
+			//printf("%d/%d\n", i,pts.size()-1);
+			W->show();
+			distTraveled = 0.0;
+			if (prevP.x != -1 && prevP.y != -1) {
+				Ava->curBrush->drawLine(W, prevP.x, prevP.y, pts.at(i).x, pts.at(i).y);
+			}
+			distTraveled += getDistBetweenPoints(prevP, pts.at(i));
+			if (distTraveled >= 50.0) {
+				Ava->curBrush->loadPaintPixels();
+				distTraveled = 0.0;
+			}
+			prevP = pts.at(i);
+		}
+	}
+	else { Ava->curBrush->drawContiguousPoints(W, &pts); }
 
 	W->show();
-	chappie->next();
+	if (chappie->connected) {
+		chappie->next();
+	}
 }
 
 
@@ -355,9 +379,13 @@ double RunLogic::angleDiff(cv::Point p1, cv::Point p2) {
 }
 
 bool RunLogic::tooClose(cv::Point p1, cv::Point p2) {
-	return 10 > sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+	return 10 > getDistBetweenPoints(p1, p2);
 }
 
 bool RunLogic::tooFar(cv::Point p1, cv::Point p2) {
-	return 50 < sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+	return 50 < getDistBetweenPoints(p1, p2);
+}
+
+double RunLogic::getDistBetweenPoints(cv::Point p1, cv::Point p2) {
+	return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
