@@ -93,8 +93,9 @@ bool ABBRunner::decidePaint(char col) {
 	if (!connected) {
 		return false;
 	}
-	std::string color = col + "";
-	std::string command = "SWAP:" + color + ";";
+	std::string command = "SWAP:";
+	command += col;
+	command+=";";
 	if (sendSerial(command)) {
 		if (!getSerialResponse()) {
 			return false;
