@@ -33,7 +33,7 @@ public:
 	int getHeight();
 
 private:
-	void closeEvent(QCloseEvent *event);
+	
 
 	//void getColor();
 	void setupQt();
@@ -64,8 +64,11 @@ private:
 	Ui::brush brushUi;
 	cv::Mat savedPicture;
 	std::string imageLocation;
+	void closeEvent(QCloseEvent *event);
 
 private slots:
+	void closeEventSlot();
+
 	void respondClick(int x, int y);
 	void startNewCommand();
 
@@ -122,6 +125,7 @@ signals:
 	void loadRobot(std::string);
 	void loadPhotoCanny(cv::Mat, int, int, int);
 	void loadPhotoKmeans(cv::Mat, int, int, int);
+	void windowClosing();
 };
 
 #endif // SKETCHPAD_H

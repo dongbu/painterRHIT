@@ -40,22 +40,28 @@ bool ABBRunner::sendCoord(int x, int y) {
 
 //call this if something goes wrong.
 void ABBRunner::abort() {
-	connected = false;
-	printf("Closing Serial Port \"COM");
-	if (helps != NULL) {
-		if (helps->portNum != NULL) {
-			std::cout << helps->portNum;
+	if (connected == TRUE) {
+		
+		printf("Closing Serial Port \"COM");
+		if (helps != NULL) {
+			if (helps->portNum != NULL) {
+				std::cout << helps->portNum;
+			}
+			else {
+				std::cout << "#2#";
+			}
 		}
 		else {
-			std::cout << "#2#";
+			std::cout << "#1#";
+		}
+		printf("\"\n");
+		if (hSerial) {
+			CloseHandle(hSerial);
+			connected = FALSE;
 		}
 	}
 	else {
-		std::cout << "#1#";
-	}
-	printf("\"\n");
-	if (hSerial) {
-		CloseHandle(hSerial);
+		printf("No serial port to close.\n");
 	}
 }
 
@@ -273,7 +279,7 @@ bool ABBRunner::connectToSerial(int port) {
 		abort();
 		return false;
 	}
-	connected = true;
+	connected = TRUE;
 	return true;
 }
 ///////////////////////////////////////////////

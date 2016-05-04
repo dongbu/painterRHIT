@@ -169,9 +169,11 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, 
 void Painter::showGUI(){
 	stuffshowing = true;
 	sketch = new Sketchpad(width, height, shapes, Ava, chappie, Web);
-	sketch->setAttribute(Qt::WA_QuitOnClose);
+	
 	commandWin = new CommandWindow(shapes);
+	
 	logic = new RunLogic(*width, *height, shapes, Ava, chappie);
+	logic->setParent(this);
 
 	//commandWindow && runLogic connections
 	connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
@@ -200,7 +202,9 @@ void Painter::showGUI(){
 
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
-	connect(sketch->ui->actionQuit, SIGNAL(triggered()), this, SLOT(murderousRampage()));
+	
+	connect(sketch, SIGNAL(windowClosing()), this, SLOT(murderousRampage()));
+
 	sketch->show();
 }
 
@@ -226,9 +230,9 @@ void Painter::resize(int *width, int *height){
 }
 
 void Painter::murderousRampage(){
-	std::printf("We need to return to main somehow and call \"return 0\"");
+	std::printf("Bye\n");
 	//this->exit();
-	this->closeAllWindows();
+	this->exit();
+	//QTimer::singleShot(250, this, SLOT(quit()));
 	
-	this->quit();
 }

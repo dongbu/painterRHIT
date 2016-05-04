@@ -55,6 +55,9 @@ ui(new Ui::Sketchpad)
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(setABB()));
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(setCyton()));
 	connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectRobot()));
+
+	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(closeEventSlot()));
+
 	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(completeConnection()));
 }
 
@@ -175,22 +178,28 @@ Sketchpad::~Sketchpad()
 void Sketchpad::closeEvent(QCloseEvent *event) {
 	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
 	if (!unsaved) {
-		if (chappie) {
+		//if (chappie != NULL) {
 			chappie->abort();
-		}
-		this->close();
+		//}
+		//event->accept();
+		emit windowClosing();
 	}
 	else {
 		QMessageBox::StandardButton dialog;
 		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
 			QMessageBox::Yes | QMessageBox::No);
 		if (dialog == QMessageBox::Yes) { 
-			if (chappie) {
+			//if (chappie != NULL) {
 				chappie->abort();
-			}
-			this->close(); }
+			//}
+			//event->accept();
+			emit windowClosing();
+		}
 		else { event->ignore(); }
 	}
+}
+void Sketchpad::closeEventSlot() {
+	this->closeEvent(new QCloseEvent);
 }
 
 //redraws everything on the grid.
@@ -722,3 +731,4 @@ int Sketchpad::getWidth(){
 int Sketchpad::getHeight(){
 	return this->cvWindow->height;
 }
+

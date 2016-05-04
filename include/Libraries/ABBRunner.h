@@ -27,11 +27,9 @@ public:
 	void abort();
 
 	Shapes *shape;
-
-	bool connected;
 	void connectWin();
 
-
+	bool connected = FALSE;
 
 private:
 	ABBHelper *helps;
@@ -44,6 +42,8 @@ private:
 
 	int width;
 	int height;
+
+	
 
 private slots:
 	void acceptedWin();
