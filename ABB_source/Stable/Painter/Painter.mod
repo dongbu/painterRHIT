@@ -20,7 +20,7 @@ MODULE Painter
     CONST num brushLength:=200;
     CONST num paintHeight:=5;
     PERS num canvasHeight:=31; ! 0 for painting on the floor of the work cell. 
-    CONST num PAINT_MAX_DIST:=30;
+    PERS num PAINT_MAX_DIST:=30;
     
     ! Of Relation to Colors:
     CONST num firstPaint{2}:=[276, -290];
@@ -115,7 +115,7 @@ MODULE Painter
     PROC main()
         VAR btnres answer;
         VAR string currentSize;
-        currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm";
+        currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm, Paint Dist:"+NumToStr(PAINT_MAX_DIST,0);
         ConfL\Off;
         initializeProgram;
             
@@ -195,17 +195,17 @@ MODULE Painter
         
         WHILE exitcode = 0 DO 
             
-            currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm";
+            currentSize := "Canvas Dims: Z:"+ NumToStr(canvasHeight,0) + "mm, X:"+NumToStr(canvasXmax-canvasXmin,0)+"mm, Y:"+NumToStr(canvasYmax-canvasYmin,0)+"mm, Paint Dist:"+NumToStr(PAINT_MAX_DIST,0);
             answer2:= UIMessageBox(
                 \Header:="Canvas Tools Menu"
                 \MsgArray:=["Welcome to Canvas Setup!","The values entered here are stored between controller restarts",  currentSize,"Note: Ensure the corner of the canvas is at ","x:400, y:-230"]
-                \BtnArray:=["Z","X", "Y","Return"]
+                \BtnArray:=["Z","X", "Y","L","Return"]
                 \Icon:=iconWarning);
                 
             IF answer2 = 1 THEN 
                 canvasAnswer := UINumEntry(
                 \Header:="Canvas Vertical Height Setup (Z-AXIS)"
-                \MsgArray :=["What is the vertical height, in mm, of the canvas"," from the floor of the workcell?"]
+                \MsgArray :=["What is the vertical height, in mm, of the canvas"," from the floor of the workcell?", "Current Dim: Z:"+ NumToStr(canvasHeight,0) ]
                 \Icon:=iconInfo
                 \InitValue:=0
                 \MinValue:=0
@@ -215,7 +215,7 @@ MODULE Painter
             ELSEIF answer2 = 2 THEN 
                 canvasAnswer := UINumEntry(
                 \Header:="Canvas Height Setup (X-AXIS)"
-                \MsgArray:=["What is the height, in mm, of the canvas?","Note: Use 250 for wide canvas due to mobility reasons"]
+                \MsgArray:=["What is the height, in mm, of the canvas?","Note: Use 250 for wide canvas due to mobility reasons", "Current Dim: X:"+NumToStr(canvasXmax-canvasXmin,0)]
                 \Icon:=iconInfo
                 \InitValue:=250
                 \MinValue:=50
@@ -225,14 +225,23 @@ MODULE Painter
             ELSEIF answer2 = 3 THEN 
                 canvasAnswer := UINumEntry(
                 \Header:="Canvas Width Setup (Y-AXIS)"
-                \MsgArray:=["What is the width, in mm, of the canvas?","Note: A wide canvas restricts X movement, and","can put parts of the image out of bounds"]
+                \MsgArray:=["What is the width, in mm, of the canvas?","Note: A wide canvas restricts X movement, and","can put parts of the image out of bounds", "Current Dim: Y:"+NumToStr(canvasYmax-canvasYmin,0)]
                 \Icon:=iconInfo
                 \InitValue:=500
                 \MinValue:=50
                 \MaxValue:=500
                 \AsInteger);
                 canvasYmax := canvasYmin + canvasAnswer;
-
+            ELSEIF answer2 = 4 THEN 
+                canvasAnswer := UINumEntry(
+                \Header:="Brush Stroke Length (L)"
+                \MsgArray:=["How long should the brush travel before getting more paint?","TRY: Using 50 for paper, 30 for canvas", "Current Paint Dist:"+NumToStr(PAINT_MAX_DIST,0)]
+                \Icon:=iconInfo
+                \InitValue:=50
+                \MinValue:=10
+                \MaxValue:=80
+                \AsInteger);
+                PAINT_MAX_DIST := canvasAnswer;
             else 
                 exitcode := 1;
             ENDIF 
