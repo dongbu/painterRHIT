@@ -20,27 +20,26 @@ int main(int argc, char *argv[])
 	//So why is it even here?!@?
 	//if (cmdOptionExists(argv, argv + argc, "-debug")){
 
-	//console window//
-	AllocConsole();
+	////console window//
+	//AllocConsole();
 
-	std::string  titleString = "Robot Artist V3 (";
-	std::string date = __DATE__;
-	std::string titleEnd = ")";
+	//std::string  titleString = "Robot Artist V3 (";
+	//std::string date = __DATE__;
+	//std::string titleEnd = ")";
 
 
 
-	SetConsoleTitleA((titleString + date + titleEnd).c_str());
-	freopen("conin$", "r", stdin);
-	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
-	//console window//
-	//}
+	//SetConsoleTitleA((titleString + date + titleEnd).c_str());
+	//freopen("conin$", "r", stdin);
+	//freopen("conout$", "w", stdout);
+	//freopen("conout$", "w", stderr);
+	////console window//
+	////}
 
 
 	//actual program//
-	Painter p;
-	p.showGUI();
+	Painter p(argc, argv);
 	//actual program//
 
-	return a.exec();
+	return p.exec();
 }

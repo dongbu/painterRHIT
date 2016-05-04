@@ -17,7 +17,7 @@ Using Qt, creates && links 3 main windows:  Sketchpad, CommandWindow, SimWin.
 /**
  * @brief default constructor
  */
-Painter::Painter() {
+Painter::Painter(int argc, char* argv[]) : QApplication(argc, argv) {
 	width = new int(600);
 	height = new int(600);
 	Ava = new CytonRunner(width, height);
@@ -25,7 +25,9 @@ Painter::Painter() {
 	this->shapes = new Shapes();
 	chappie = new ABBRunner(*width, *height, this->shapes);
 	Web = new Webcam(width, height);
+	this->showGUI();
 }
+
 
 /**
  * @brief set painter dimensions
@@ -222,4 +224,8 @@ void Painter::resize(int *width, int *height){
 
 void Painter::murderousRampage(){
 	std::printf("We need to return to main somehow and call \"return 0\"");
+	//this->exit();
+	this->closeAllWindows();
+	
+	this->quit();
 }
