@@ -626,6 +626,8 @@ MODULE Painter
         ! TODO: Test this
         IF directive = "NEXT" THEN 
             WriteStrBin iodev1, "\06";
+            ! Prevents the pogo-of-death where pogoing with 0-distance points makes the brush run out of paint            
+            distanceTravelled := distanceTravelled + 2; 
             newStroke:=TRUE;
             
             RETURN TRUE;
