@@ -159,25 +159,31 @@ MODULE Painter
             
             IF answer1 = 1 THEN
                 ! operator said clean
-                MoveL approachClean, v500,z50,paintBrush;
+                MoveL approachClean, v100,z50,paintBrush;
                 cleanCycle 1;
-                MoveL approachClean, v500,z50,paintBrush;
-                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+                MoveL approachClean, v100,z50,paintBrush;
+                MoveL [[canvasXmin,canvasYmin-20,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
             ELSEIF answer1 = 2 THEN 
-                MoveL approachClean, v500,z50,paintBrush;
-                MoveL overDryer,v500,z20,paintBrush;
+                MoveL approachClean, v100,z50,paintBrush;
+                MoveL overDryer,v100,z20,paintBrush;
                 MoveL dryer,v100,fine,paintBrush;
                 WaitTime 3;
-                MoveL overDryer,v500,z50,paintBrush;
-                MoveL approachClean, v500,z50,paintBrush;
-                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+                MoveL overDryer,v100,z50,paintBrush;
+                MoveL approachClean, v100,z50,paintBrush;
+                MoveL [[canvasXmin,canvasYmin-20,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
             ELSEIF answer1 = 3 THEN 
-                ! ends 10mm from both sides, starts at corner. 
-                MoveL [[400,-230,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
-                MoveL [[400,-230,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
-                MoveL [[410,-220,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v50,z5,paintBrush;
+                ! touches opposing corners of the canvas, pausing for a second and a half.  
+                MoveL [[canvasXmin,canvasYmin,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                MoveL [[canvasXmin,canvasYmin,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                WaitTime 1.5;    
+                MoveL [[canvasXmin,canvasYmin,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                MoveL [[canvasXmax,canvasYmax,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                MoveL [[canvasXmax,canvasYmax,canvasHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                WaitTime 1.5;
+                MoveL [[canvasXmax,canvasYmax,canvasHeight+10],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
+                
             ELSEIF answer1 = 4 THEN 
-                MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+                MoveL [[canvasXmin,canvasYmin-20,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,z50,paintBrush;
             else
                 exitcode := 1;
             ENDIF 
@@ -207,7 +213,7 @@ MODULE Painter
                 \Header:="Canvas Vertical Height Setup (Z-AXIS)"
                 \MsgArray :=["What is the vertical height, in mm, of the canvas"," from the floor of the workcell?", "Current Dim: Z:"+ NumToStr(canvasHeight,0) ]
                 \Icon:=iconInfo
-                \InitValue:=0
+                \InitValue:=canvasHeight
                 \MinValue:=0
                 \MaxValue:=100
                 \AsInteger);
@@ -217,7 +223,7 @@ MODULE Painter
                 \Header:="Canvas Height Setup (X-AXIS)"
                 \MsgArray:=["What is the height, in mm, of the canvas?","Note: Use 250 for wide canvas due to mobility reasons", "Current Dim: X:"+NumToStr(canvasXmax-canvasXmin,0)]
                 \Icon:=iconInfo
-                \InitValue:=250
+                \InitValue:=(canvasXmax-canvasXmin)
                 \MinValue:=50
                 \MaxValue:=500
                 \AsInteger);
@@ -227,7 +233,7 @@ MODULE Painter
                 \Header:="Canvas Width Setup (Y-AXIS)"
                 \MsgArray:=["What is the width, in mm, of the canvas?","Note: A wide canvas restricts X movement, and","can put parts of the image out of bounds", "Current Dim: Y:"+NumToStr(canvasYmax-canvasYmin,0)]
                 \Icon:=iconInfo
-                \InitValue:=500
+                \InitValue:=(canvasYmax-canvasYmin)
                 \MinValue:=50
                 \MaxValue:=500
                 \AsInteger);
@@ -237,7 +243,7 @@ MODULE Painter
                 \Header:="Brush Stroke Length (L)"
                 \MsgArray:=["How long should the brush travel before getting more paint?","TRY: Using 50 for paper, 30 for canvas", "Current Paint Dist:"+NumToStr(PAINT_MAX_DIST,0)]
                 \Icon:=iconInfo
-                \InitValue:=50
+                \InitValue:=PAINT_MAX_DIST
                 \MinValue:=10
                 \MaxValue:=80
                 \AsInteger);
@@ -322,6 +328,7 @@ MODULE Painter
         currentColor:= "A";
         lastColor := "A";
         cupIndex := 0;
+		paintCupYOffset :=0;
         overPaint := [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight+70],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         inPaint:= [[firstPaint{1} + (paintCupRadius * cupIndex),(-290 - (paintCupRadius*paintCupYOffset)),paintHeight],paintCupQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         serialTimeout := 25;
@@ -647,7 +654,7 @@ MODULE Painter
     !
     ! function result directiveWithParams(directive, params)
     !           directive: "COORD" or "SWAP"
-    !           params: "X:NUM,Y:NUM" or a character in range A-F inclusive.
+    !           params: "X:NUM,Y:NUM" or a character in range A-Z inclusive.
     !           Returns TRUE or FALSE if it passes or fails. 
     !
     !   does the asssociated directive and echoes OK or FAILED
@@ -810,7 +817,7 @@ MODULE Painter
         IF NOT firstTimeRun THEN 
         MoveL [[LastX,LastY,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z20,paintBrush;
         ENDIF 
-        MoveL [[400,-250,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
+        MoveL [[canvasXmin,canvasYmin-20,canvasHeight+100],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z50,paintBrush;
         WriteStrBin iodev1, "\15";
         Close iodev1;        
         main;
@@ -818,7 +825,7 @@ MODULE Painter
     !***********************************************************
     !
     ! procedure  GotoPaint(paintString)
-    !       paintString: a character from A-F inclusive
+    !       paintString: a character from A-Z inclusive
     !          
     !      Moves and gets paint. If the paint color has changed, clean the brush.
     !
