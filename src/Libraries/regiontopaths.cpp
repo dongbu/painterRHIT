@@ -409,7 +409,7 @@ public:
 	// are in the desired region to be painted
 	int imageOnlyHasColor(std::vector<cv::Point> *points, int offsetx = 0, int offsety = 0) {
 		cv::Point p;
-		int debug = 1;
+		int debug = 0;
 		if (debug) printf(" - points has %i points, offset %i,%i\n", (int)points->size(), offsetx, offsety);
 
 		int num_ok_pixels = 0;
