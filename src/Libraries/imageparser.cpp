@@ -310,7 +310,7 @@ public:
 
 		// blur and try again... perhaps will make the transitions more smooth
 		//result = adaptiveThreshold(result,255,ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY,11,2)
-		if (blur_loops) {
+		if (blur_loops && 0) {
 			for (int i = 0; i < 2; i++) {
 				blur(kmeans_image, kmeans_image, cv::Size(3, 3));
 				kmeans_image = kmeans.segment(kmeans_image);
