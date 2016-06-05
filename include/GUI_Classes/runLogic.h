@@ -5,6 +5,7 @@
 #include "DrawWindow.cpp"
 #include "Shapes.cpp"
 #include "CytonRunner.h"
+#include "ABBRunner.h"
 
 class RunLogic : public QObject
 
@@ -18,7 +19,7 @@ class RunLogic : public QObject
 	};
 
 public:
-    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava);
+    RunLogic(int width, int height, Shapes *shapes, CytonRunner *Ava, ABBRunner *chappie);
 	
 	int width, height;
 
@@ -38,15 +39,26 @@ private:
     Shapes *shapes;
 	int COMMAND_DELAY;
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 
 	DrawWindow *simWin;
 
 	void paintFill(DrawWindow *W, Shape *s);
 	void setAvaPenColor(Shape *s);
-	void doStroke(std::vector<cv::Point> pts, DrawWindow *W);
+	void doStroke(std::vector<cv::Point> pts, DrawWindow *W, bool ignoreSmall = false);
 	void drawPolyLine(std::vector<cv::Point> pts, DrawWindow *W);
 
 	STEP stepTaken;
+
+	int straighten(std::vector<cv::Point> pts, int index);
+	bool endCheck(std::vector<cv::Point> pts, int index);
+	double angleDiff(cv::Point p1, cv::Point p2);
+	bool tooClose(cv::Point p1, cv::Point p2);
+	bool tooFar(cv::Point p1, cv::Point p2);
+	double getDistBetweenPoints(cv::Point p1, cv::Point p2);
+
+	//get paint frequency variables for simulation
+	double distTraveled;
 
 public slots:
 	void updateMode(QString mode, int delay);

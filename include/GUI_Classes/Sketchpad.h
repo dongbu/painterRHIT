@@ -8,7 +8,7 @@
 #include "DrawWindow.cpp"
 #include "imageparser.cpp"
 #include "Webcam.cpp"
-#include "WorkspaceWizard.h"
+#include "ABBRunner.h"
 
 namespace Ui {
 	class Sketchpad;
@@ -19,10 +19,11 @@ class Sketchpad : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent = 0);
+	explicit Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, ABBRunner *Chappie, Webcam *W, QWidget *parent = 0);
 	~Sketchpad();
 
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 	bool connected;
 	Ui::Sketchpad *ui;
 	DrawWindow *cvWindow;
@@ -32,9 +33,9 @@ public:
 	int getHeight();
 
 private:
-	void closeEvent(QCloseEvent *event);
+	
 
-	void getColor();
+	//void getColor();
 	void setupQt();
 	void flood(cv::Point p);
 
@@ -63,8 +64,11 @@ private:
 	Ui::brush brushUi;
 	cv::Mat savedPicture;
 	std::string imageLocation;
+	void closeEvent(QCloseEvent *event);
 
 private slots:
+	void closeEventSlot();
+
 	void respondClick(int x, int y);
 	void startNewCommand();
 
@@ -121,6 +125,7 @@ signals:
 	void loadRobot(std::string);
 	void loadPhotoCanny(cv::Mat, int, int, int);
 	void loadPhotoKmeans(cv::Mat, int, int, int);
+	void windowClosing();
 };
 
 #endif // SKETCHPAD_H

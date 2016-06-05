@@ -112,6 +112,9 @@ public:
 
         retranslateUi(canny);
 
+        accept->setDefault(true);
+
+
         QMetaObject::connectSlotsByName(canny);
     } // setupUi
 

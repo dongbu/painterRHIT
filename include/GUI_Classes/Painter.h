@@ -6,17 +6,20 @@
 #include "SketchPad.h"
 #include "RunLogic.h"
 #include "imageparser.cpp"
+#include "ABBRunner.h"
 
-class Painter : public QObject
+class Painter : public QApplication
 
 {
 	Q_OBJECT
 
 public:
-    Painter();
+    Painter(int argc, char* argv[]);
+
 
 	Sketchpad *sketch;
 	Webcam *Web;
+	
 
     void setDimensions(int *width, int *height);
     void showGUI();
@@ -29,6 +32,7 @@ private:
     CommandWindow *commandWin;
     RunLogic *logic;
 	CytonRunner *Ava;
+	ABBRunner *chappie;
 
 	std::string getXMLHelper(std::string xml);
 	void parseXML(pugi::xml_node *canvasInfo, pugi::xml_node *webcamInfo);

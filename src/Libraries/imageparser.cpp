@@ -1,8 +1,6 @@
 #pragma once
 
 #include <opencv/cv.h>
-#include <QProgressBar.h>
-#include <QApplication.h>
 
 #ifdef __APPLE__
 #include "kmeansSegment.cpp"
@@ -223,7 +221,7 @@ public:
 
 			if ((signed)contours_poly[i].size()>min_contour_length) {
 				// printf("Contour:%i [%lu points]\n",i,contours_poly[i].size());
-				for (size_t j = 0; j < contours_poly[i].size(); j+=skip_freq) {
+				for (size_t j = 0; j < contours_poly[i].size(); j++) {
 					//printf("(%i,%i)",contours[i][j].x,contours[i][j].y);
 					//if (j!=contours_poly[i].size()-1) { printf(","); }
 					PL->addPoint(contours_poly[i][j].x, contours_poly[i][j].y);
@@ -292,7 +290,6 @@ protected:
 	int min_region_pixels; // smallest number of pixels to be in a region
 	int reduce_specs_loops;
 	cv::Mat kmeans_image;
-	QProgressBar *progress;
 
 public:
 	void setNumColors(int num) { colors = num; }
@@ -313,7 +310,7 @@ public:
 
 		// blur and try again... perhaps will make the transitions more smooth
 		//result = adaptiveThreshold(result,255,ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY,11,2)
-		if (blur_loops) {
+		if (blur_loops && 0) {
 			for (int i = 0; i < 2; i++) {
 				blur(kmeans_image, kmeans_image, cv::Size(3, 3));
 				kmeans_image = kmeans.segment(kmeans_image);
@@ -609,35 +606,18 @@ public:
 
 	*/
 	void defineShapes(Shapes *S, int skip_freq = 1) {
-		progress = new QProgressBar();
-		progress->setMinimum(0);
-		progress->setMaximum(regions.size());
-		progress->setValue(0);
-		progress->setFixedWidth(300);
-		progress->setWindowTitle("creating pixel region " + QString::number(0) + " of " + QString::number(0));
-		progress->show();
-		QApplication::instance()->processEvents();
-		cv::RNG rng(12345);
 		for (int r = 0; r < regions.size(); r++) {
-			progress->setWindowTitle("creating pixel region " + QString::number(r+1) + " of " + QString::number(regions.size()));
 			int num_pixels = regions[r].size();
 			if (num_pixels >= min_region_pixels) {
 				PixelRegion *PR = new PixelRegion();
 				PR->setPenColor(region_colors[r][0], region_colors[r][1], region_colors[r][2]);
-				if (use_random_colors) { PR->setPenColor(rng.uniform(100, 200), rng.uniform(100, 200), rng.uniform(100, 200)); }
 
-				progress->setMaximum(regions[r].size());
-				for (int p = 0; p < regions[r].size(); p += skip_freq) {
+				for (int p = 0; p < regions[r].size(); p ++) {
 					PR->addPoint(regions[r][p].x, regions[r][p].y);
-					progress->setValue(p);
-					QApplication::instance()->processEvents();
 				}
-				progress->setValue(0);
 				S->addShape(PR);
 			}
 		}
-		progress->close();
-
 	}
 
 	ImageParserKmeans() : ImageParser() { colors = 10; min_region_pixels = 10; reduce_specs_loops = 10; }

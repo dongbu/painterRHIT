@@ -13,28 +13,32 @@ bool cmdOptionExists(char** begin, char** end, const std::string& option)
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
-
-	//!!
-	//There is a memory leak. never, ever run this without debug parameters
-	//So why is it even here?!@?
-	//if (cmdOptionExists(argv, argv + argc, "-debug")){
-
-	//console window//
+	
+	////console window//
 	AllocConsole();
 
-	SetConsoleTitleA("Robot Artist v3 (11/8/15)");
+	std::string  titleString = "Robot Artist V3 (";
+	std::string date = __DATE__;
+	std::string titleEnd = ")";
+
+	// attach the new console to this application's process
+	AttachConsole(GetCurrentProcessId());
+
+	SetConsoleTitleA((titleString + date + titleEnd).c_str());
 	freopen("conin$", "r", stdin);
 	freopen("conout$", "w", stdout);
 	freopen("conout$", "w", stderr);
-	//console window//
-	//}
-
-
-	//actual program//
-	Painter p;
-	p.showGUI();
 	//actual program//
 
-	return a.exec();
+	try {
+		Painter p(argc, argv);
+		//actual program//
+
+		p.exec();
+	}
+	catch (const std::exception &e) {
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
+	return 0;
 }

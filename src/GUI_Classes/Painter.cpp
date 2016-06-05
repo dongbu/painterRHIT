@@ -17,14 +17,17 @@ Using Qt, creates && links 3 main windows:  Sketchpad, CommandWindow, SimWin.
 /**
  * @brief default constructor
  */
-Painter::Painter() {
+Painter::Painter(int argc, char* argv[]) : QApplication(argc, argv) {
 	width = new int(600);
 	height = new int(600);
 	Ava = new CytonRunner(width, height);
 	this->stuffshowing = false;
 	this->shapes = new Shapes();
+	chappie = new ABBRunner(*width, *height, this->shapes);
 	Web = new Webcam(width, height);
+	this->showGUI();
 }
+
 
 /**
  * @brief set painter dimensions
@@ -55,18 +58,6 @@ void Painter::save(std::string name) {
 	myfile.open(name);
 	myfile << xml;
 	myfile.close();
-
-
-	std::string txt = "";
-	txt.append(std::to_string(this->sketch->getWidth()));
-	txt.append(",");
-	txt.append(std::to_string(this->sketch->getHeight()));
-	txt.append(",;,");
-	txt.append(shapes->getText());
-	std::ofstream myfile2;
-	myfile2.open((name.substr(0, name.size() - 4) + "text.txt"));
-	myfile2 << txt;
-	myfile2.close();
 
 }
 
@@ -177,9 +168,12 @@ void Painter::loadPhotoKmeans(cv::Mat image, int colorCount, int minRegionSize, 
  */
 void Painter::showGUI(){
 	stuffshowing = true;
-	sketch = new Sketchpad(width, height, shapes, Ava, Web);
+	sketch = new Sketchpad(width, height, shapes, Ava, chappie, Web);
+	
 	commandWin = new CommandWindow(shapes);
-	logic = new RunLogic(*width, *height, shapes, Ava);
+	
+	logic = new RunLogic(*width, *height, shapes, Ava, chappie);
+	logic->setParent(this);
 
 	//commandWindow && runLogic connections
 	connect(commandWin->ui->actionBackward, SIGNAL(triggered()), logic, SLOT(backwardClicked()));
@@ -204,9 +198,13 @@ void Painter::showGUI(){
 	connect(sketch->ui->actionNew, SIGNAL(triggered()), this, SLOT(newClicked()));
 	connect(sketch, SIGNAL(hideAll()), this, SLOT(newClicked()));
 	connect(sketch, SIGNAL(resizeSimWin(int*, int*)), this, SLOT(resize(int*, int*)));
+	
+
 	connect(commandWin, SIGNAL(modifiedCommand()), sketch, SLOT(redraw()));
 	connect(commandWin, SIGNAL(highlightShape(int)), sketch, SLOT(highlightShape(int)));
-	connect(sketch->ui->actionQuit, SIGNAL(triggered()), this, SLOT(murderousRampage()));
+	
+	connect(sketch, SIGNAL(windowClosing()), this, SLOT(murderousRampage()));
+
 	sketch->show();
 }
 
@@ -232,5 +230,9 @@ void Painter::resize(int *width, int *height){
 }
 
 void Painter::murderousRampage(){
-	std::printf("We need to return to main somehow and call \"return 0\"");
+	std::printf("Bye\n");
+	//this->exit();
+	this->exit();
+	//QTimer::singleShot(250, this, SLOT(quit()));
+	
 }

@@ -11,7 +11,7 @@ using namespace cv;
  * @param W
  * @param parent
  */
-Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, Webcam *W, QWidget *parent) :
+Sketchpad::Sketchpad(int *width, int *height, Shapes *ss, CytonRunner *Ava, ABBRunner *chappie, Webcam *W, QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::Sketchpad)
 {
@@ -20,6 +20,7 @@ ui(new Ui::Sketchpad)
 	this->height = height;
 	this->shapes = ss;
 	this->Ava = Ava;
+	this->chappie = chappie;
 	this->Web = W;
 	this->paintingNamePath = "unpathed";
 	this->title = "unnamed";
@@ -54,6 +55,9 @@ ui(new Ui::Sketchpad)
 	connect(ui->actionABB, SIGNAL(triggered()), this, SLOT(setABB()));
 	connect(ui->actionCyton, SIGNAL(triggered()), this, SLOT(setCyton()));
 	connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(connectRobot()));
+
+	connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(closeEventSlot()));
+
 	connect(Ava, SIGNAL(finishedSettingWorkspace()), this, SLOT(completeConnection()));
 }
 
@@ -93,6 +97,9 @@ void Sketchpad::setupQt() {
 	brushForm = new QDialog();
 	brushUi.setupUi(brushForm);
 	brushForm->setWindowTitle("Brush Options");
+	std::cout << "cur Brush: w: " << Ava->curBrush->getWidth() << " h: " << Ava->curBrush->getHeight() << "\n";
+	brushUi.widthInput->setText("40");
+	brushUi.heightInput->setText("20");
 	brushUi.widthInput->setValidator(new QIntValidator(1, 30));
 	brushUi.heightInput->setValidator(new QIntValidator(1, 30));
 	connect(brushUi.accept, SIGNAL(clicked()), this, SLOT(brushChanged()));
@@ -171,15 +178,28 @@ Sketchpad::~Sketchpad()
 void Sketchpad::closeEvent(QCloseEvent *event) {
 	bool unsaved = this->windowTitle().at(this->windowTitle().length() - 1) == "*";
 	if (!unsaved) {
-		this->close();
+		//if (chappie != NULL) {
+			chappie->abort();
+		//}
+		//event->accept();
+		emit windowClosing();
 	}
 	else {
 		QMessageBox::StandardButton dialog;
 		dialog = QMessageBox::warning(this, "close warning", "You have unsaved work.  Do you still want to close?",
 			QMessageBox::Yes | QMessageBox::No);
-		if (dialog == QMessageBox::Yes) { this->close(); }
+		if (dialog == QMessageBox::Yes) { 
+			//if (chappie != NULL) {
+				chappie->abort();
+			//}
+			//event->accept();
+			emit windowClosing();
+		}
 		else { event->ignore(); }
 	}
+}
+void Sketchpad::closeEventSlot() {
+	this->closeEvent(new QCloseEvent);
 }
 
 //redraws everything on the grid.
@@ -379,6 +399,7 @@ void Sketchpad::loadPhotoClicked() {
 		widthDim = widthDim / scale;
 		heightDim = heightDim / scale;
 		changeSize(&widthDim, &heightDim);
+		chappie->setSize(widthDim, heightDim);
 
 		cv::resize(temp, cvWindow->grid, cvWindow->grid.size(), 0, 0, 1);
 		cv::resize(temp, savedPicture, cvWindow->grid.size(), 0, 0, 1);
@@ -629,8 +650,18 @@ void Sketchpad::setCyton(){
 }
 
 void Sketchpad::connectRobot(){
+	printf("robot selected\n");
 	if (robotSelected == 1){
-		printf("connect to ABB\n");
+		if (!chappie->connected) {
+			Sleep(100);
+			chappie->connectWin();
+			ui->actionConnect->setText("Disconnect");
+		}
+		else {
+			chappie->abort();
+			ui->actionConnect->setText("Connect");
+		}
+
 	}
 	else if (robotSelected == 0){
 		if (!Ava->connected){
@@ -682,10 +713,13 @@ void Sketchpad::changeSize(int *width, int *height) {
 
 
 void Sketchpad::brushChanged() {
-	int w = brushUi.heightInput->text().toInt();
-	int h = brushUi.widthInput->text().toInt();
+	brushForm->hide();
+	int h = brushUi.heightInput->text().toInt();
+	int w = brushUi.widthInput->text().toInt();
 	std::string brushType = brushUi.shapeInput->currentText().toStdString();
 	Ava->curBrush = new Brush(w, h, brushType);
+	std::cout << "brush width: " << Ava->curBrush->getWidth() << " height: " << Ava->curBrush->getHeight();
+	printf("\n");
 }
 
 void Sketchpad::hideBrushUi() { brushForm->hide(); }
@@ -697,3 +731,4 @@ int Sketchpad::getWidth(){
 int Sketchpad::getHeight(){
 	return this->cvWindow->height;
 }
+

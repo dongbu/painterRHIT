@@ -96,7 +96,19 @@
     <ClCompile Include="..\src\Libraries\webcam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GUI_Classes\workspacewizard.cpp">
+    <ClCompile Include="..\src\Libraries\shapes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Libraries\drawwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Libraries\pixeltools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GUI_Classes\StartWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Libraries\paint_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_CVImageWidget.cpp">
@@ -135,29 +147,26 @@
     <ClCompile Include="Release\moc_runLogic.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_workspacewizard.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_workspacewizard.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_myres.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Libraries\shapes.cpp">
+    <ClCompile Include="..\src\GUI_Classes\abbhelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Libraries\drawwindow.cpp">
+    <ClCompile Include="Debug\moc_abbhelper.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_abbhelper.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Libraries\ABBRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Libraries\pixeltools.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Debug\moc_ABBRunner.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GUI_Classes\StartWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Libraries\paint_util.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Release\moc_ABBRunner.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,18 +187,6 @@
     </CustomBuild>
     <CustomBuild Include="..\include\GUI_Classes\runLogic.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\include\GUI_Classes\workspacewizard.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_CommandWindow.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_Sketchpad.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_workspacewizard.h">
-      <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\Libraries\kmeansSegment.hpp">
       <Filter>Header Files</Filter>
@@ -329,9 +326,6 @@
     <CustomBuild Include="StartWindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_StartWindow.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="Icon Storage\clear.png">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -344,22 +338,19 @@
     <CustomBuild Include="colorChangeUI.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_cannyUI.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_colorChangeUI.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_kMeansUI.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="brushUI.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_brushUI.h">
-      <Filter>Generated Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\include\Libraries\paint_util.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\include\GUI_Classes\abbhelper.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="abbhelper.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\include\Libraries\ABBRunner.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -370,13 +361,68 @@
     <CustomBuild Include="Sketchpad.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="workspacewizard.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="myres.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_CommandWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_Sketchpad.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_StartWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kMeansUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cannyUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_colorChangeUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_brushUI.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icon Storage\canvas.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\OffButton.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\wrench.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\eyeball.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\trace.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\splatter.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\switch.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\gavel.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\reset.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\resize.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icon Storage\sizeBrush.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

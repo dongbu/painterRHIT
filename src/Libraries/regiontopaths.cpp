@@ -37,6 +37,12 @@ public:
 
 	int getWidth() { return width; }
 	int getHeight() { return height; }
+	void setWidth(int w) {
+		this->width = w;
+	}
+	void setHeight(int h) {
+		this->height = h;
+	}
 	cv::Point getCenter() { return cv::Point(centerx, centery); }
 	std::vector<cv::Point> getPixels() { return pixels; }
 	void setColor(int r, int g, int b) { color = cv::Scalar(b, g, r); }
@@ -678,7 +684,7 @@ public:
 		uint64 start = GetTimeMs64();
 
 		int num_loops = 1;
-		int max_loops = 20;
+		int max_loops = 20;//does not influence filled region bug (where it doesn't completely fill if brush is small)
 		while (1 && num_loops <= max_loops && one_border_candidate_pixels.size()>0) {
 			//printf("IMA6.5 loop:%i %i one border candidate pixels\n", num_loops, (int)one_border_candidate_pixels.size());
 			num_loops++;
